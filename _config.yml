@@ -18,7 +18,7 @@ timezone: Asia/Shanghai
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: lhb's Blog 
+title: hxf's Blog 
 
 tagline: Go get some fries on the pier. # it will display as the sub-title
 
@@ -26,10 +26,10 @@ description: >- # used by seo meta and the atom feed
   A minimal, responsive and feature-rich Jekyll theme for technical writing.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
-url: "https://lhbvvvvv.github.io"
+url: "https://hxf0223.github.io"
 
 github:
-  username: lhbvvvvv # change to your github username
+  username: hxf0223 # change to your github username
 
 twitter:
   username: twitter_username # change to your twitter username
@@ -37,11 +37,11 @@ twitter:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: lhb
-  email: 1260497933@qq.com # change to your email address
+  name: Roderick.Huang
+  email: hxf0223@hotmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://github.com/lhbvvvvv # change to your github homepage
+    - https://github.com/hxf0223 # change to your github homepage
     - https://twitter.com/username # change to your twitter homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username

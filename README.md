@@ -26,8 +26,8 @@ Sign in to GitHub and [**use this template**][use-template] to generate a brand 
 
 Then clone it to your local machine and run:
 
-```
-$ bundle
+```bash
+> bundle
 ```
 
 ## Usage
