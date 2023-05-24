@@ -38,6 +38,6 @@ sudo make install
 
 ## 引用资料
 
-* [Build 3rd-parties -- Linux]([Build 3rd-parties - Open CASCADE Technology Documentation](https://dev.opencascade.org/doc/overview/html/build_upgrade_building_3rdparty.html#build_3rdparty_linux))
-* [Build OCCT]([Build OCCT - Open CASCADE Technology Documentation](https://dev.opencascade.org/doc/occt-7.6.0/overview/html/build_upgrade__building_occt.html#build_occt_win_cmake))
-* [openCascade release]([Download - Open CASCADE Technology](https://dev.opencascade.org/release))
+* [Build 3rd-parties - Open CASCADE Technology Documentation](https://dev.opencascade.org/doc/overview/html/build_upgrade_building_3rdparty.html#build_3rdparty_linux)
+* [Build OCCT - Open CASCADE Technology Documentation](https://dev.opencascade.org/doc/occt-7.6.0/overview/html/build_upgrade__building_occt.html#build_occt_win_cmake)
+* [Download - Open CASCADE Technology](https://dev.opencascade.org/release)
