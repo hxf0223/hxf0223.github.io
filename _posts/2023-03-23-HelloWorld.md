@@ -71,3 +71,5 @@ tags: [TAG]     # TAG names should always be lowercase
 
 * [chirpy官方网站](https://chirpy.cotes.page)
 * [使用Jekyll + Github Pages搭建静态网站](https://www.cnblogs.com/duanguyuan/p/16126654.html)
+* [参考样板](https://github.com/jekyll/jekyll/wiki/Sites)
+* [Jekyll CN](https://jekyllcn.com/)
