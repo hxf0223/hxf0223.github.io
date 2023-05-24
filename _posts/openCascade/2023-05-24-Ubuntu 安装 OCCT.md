@@ -12,7 +12,7 @@ mermaid: true
 
 ## 编译命令
 
-### 编译第三方库
+### 1. 编译第三方库
 
 * 注意要 `tcl-dev`, `tk-dev`, `tcllib`, `tklib`，除非自己编译安装，此时要设置TCL/TK相关的路径，比较麻烦。
 
@@ -21,7 +21,7 @@ sudo apt-get install tcllib tklib tcl-dev tk-dev libfreetype-dev libx11-dev libg
 sudo apt-get install rapidjson-dev libdraco-dev
 ```
 
-### 编译 OCCT
+### 2. 编译 OCCT
 
 ```bash
 cd opencascade-7.7.0
@@ -29,6 +29,19 @@ mdkir build && cd build
 make -j6
 sudo make install
 ```
+
+### 3. 安装或编译Qt5
+
+* 安装 Qt5
+
+```bash
+sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+sudo apt-get install qtcreator
+```
+
+* 编译 Qt5
+
+编译及设置环境变量见 [VTK（1）：ubuntu 22.04 源码编译安装 Qt5.15.6](https://www.cnblogs.com/vaughnhuang/articles/16678048.html)
 
 ## 国内学习博客
 
