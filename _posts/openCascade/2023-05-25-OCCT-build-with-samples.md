@@ -16,17 +16,11 @@ mermaid: true
 
 使用手动编译安装的`Qt`，并设置好相关环境变量可正常编译带`samples`的`OCCT`。手动编译安装`Qt`见：[VTK（1）：ubuntu 22.04 源码编译安装 Qt5.15.6](https://www.cnblogs.com/vaughnhuang/articles/16678048.html) 。
 
-## 2. 修改OCCT编译脚本
+## 2. 编译OCCT及samples
 
-顶层`CMakeLists.txt`中有变量`BUILD_SAMPLES_QT`控制是否编译`samples`（包括qt相关samples）。在此通过直接修改`CMakeLists.txt`：
-
-```cmake
-set (BUILD_SAMPLES_QT ON CACHE BOOL "${BUILD_SAMPLES_QT_DESCR}")
-```
-
-## 3. 编译OCCT及samples
+顶层`CMakeLists.txt`中有变量`BUILD_SAMPLES_QT`控制是否编译`samples`（包括qt相关samples）。
 
 ```bash
-cmake -D3RDPARTY_QT_DIR=/usr/local/Qt-5.15.6 -DCMAKE_BUILD_TYPE=Debug ..
+cmake -D3RDPARTY_QT_DIR=/usr/local/Qt-5.15.6 -DCMAKE_BUILD_TYPE=Debug -DBUILD_SAMPLES_QT=ON ..
 make -j
 ```
