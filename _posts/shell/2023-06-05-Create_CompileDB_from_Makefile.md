@@ -17,6 +17,8 @@ mermaid: true
 pip install compiledb
 ```
 
-```bash
+使用方法：
 
+```bash
+compiledb make
 ```
