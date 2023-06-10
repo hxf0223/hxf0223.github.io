@@ -28,6 +28,9 @@ vncpasswd
 # 重启vncserver
 vncserver :1
 
+# 重启vncserver方式2
+vncserver -geometry 1920x1080 :1
+
 # 查看vncserver log
 tail -f ~/.vnc/log_name.log
 ```
