@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 编译 OCCT + samples
+title: Ubuntu 编译 Qt + VTK + OCCT + samples
 date: 2023-05-25 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [OCCT]
 tags: [occt]      # TAG names should always be lowercase
@@ -16,7 +16,11 @@ mermaid: true
 
 使用手动编译安装的`Qt`，并设置好相关环境变量可正常编译带`samples`的`OCCT`。手动编译安装`Qt`见：[VTK（1）：ubuntu 22.04 源码编译安装 Qt5.15.6](https://www.cnblogs.com/vaughnhuang/articles/16678048.html) 。
 
-## 2. 编译OCCT及samples
+## 2. 编译 VTK
+
+[VTK （2）：ubuntu 22.04 编译 VTK 9.2 rc2](https://www.cnblogs.com/vaughnhuang/articles/16683118.html)
+
+## 2. 编译 OCCT 及 samples
 
 顶层`CMakeLists.txt`中有变量`BUILD_SAMPLES_QT`控制是否编译`samples`（包括qt相关samples）。
 
