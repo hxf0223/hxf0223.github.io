@@ -29,6 +29,11 @@ http://ftp.gnu.org/gnu/gcc/gcc-9.2.0/gcc-9.2.0.tar.gz
 ./contrib/download_prerequisites
 ```
 
+* [gmp-6.1.0.tar.bz2](/assets/misc/gmp-6.1.0.tar.bz2)
+* [mpfr-3.1.4.tar.bz2](/assets/misc/mpfr-3.1.4.tar.bz2)
+* [mpc-1.0.3.tar.gz](/assets/misc/mpc-1.0.3.tar.gz)
+* [isl-0.18.tar.bz2](/assets/misc/isl-0.18.tar.bz2)
+
 下载下来之后，放到`gcc_9.2.0`目录下，并执行上面的这个`download_prerequisites`脚本。之后即可开始编译gcc9.2.0 。
 
 ## Build commands
