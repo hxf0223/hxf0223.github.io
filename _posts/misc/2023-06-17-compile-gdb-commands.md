@@ -34,10 +34,14 @@ http://ftp.gnu.org/gnu/gcc/gcc-9.2.0/gcc-9.2.0.tar.gz
 ## Build commands
 
 ```bash
-CC="$CC" CXX="$CXX" CFLAGS="$OPT_FLAGS"     CXXFLAGS="`echo " $OPT_FLAGS " | sed 's/ -Wall / /g'`"     ../configure --prefix=/meda_home/ai0157/opt     --enable-bootstrap     --enable-shared     --enable-threads=posix     --enable-checking=release     --with-system-zlib     --enable-__cxa_atexit     --disable-libunwind-exceptions     --enable-linker-build-id     --enable-languages=c,c++,lto     --disable-vtable-verify     --with-default-libstdcxx-abi=new     --enable-libstdcxx-debug      --without-included-gettext      --enable-plugin     --disable-initfini-array     --disable-libgcj     --enable-plugin      --disable-multilib     --with-tune=generic     --build=x86_64-unknown-linux-gnu     --target=x86_64-unknown-linux-gnu     --host=x86_64-unknown-linux-gnu
+CC="$CC"
+CXX="$CXX"
+CFLAGS="$OPT_FLAGS" CXXFLAGS="`echo " $OPT_FLAGS " | sed 's/ -Wall / /g'`"     
+../configure --prefix=/meda_home/ai0157/opt --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib     --enable-__cxa_atexit --disable-libunwind-exceptions --enable-linker-build-id --enable-languages=c,c++,lto --disable-vtable-verify --with-default-libstdcxx-abi=new --enable-libstdcxx-debug --without-included-gettext --enable-plugin --disable-initfini-array --disable-libgcj --enable-plugin --disable-multilib --with-tune=generic --build=x86_64-unknown-linux-gnu --target=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu
 ```
 
 ## References
 
 * [build_gcc_9.sh](https://github.com/darrenjs/howto/blob/5b239a503a55e7641137762e55a7e78c109194bc/build_scripts/build_gcc_9.sh#L252)
 * [linux gcc-9.2.0 源码编译](https://blog.csdn.net/whatday/article/details/122114434)
+* [Ubuntu环境下LLVM 15.0 完全编译 附windows编译LLVM master](https://www.cnblogs.com/vaughnhuang/p/15817603.html)
