@@ -13,3 +13,55 @@ mermaid: true
 ## Reference
 
 * [VTK examples](https://github.com/Kitware/vtk-examples/blob/c1c8af1e70708e65d6fa4bf69fab814f03c99dc2/src/Cxx/GeometricObjects/Hexahedron.cxx)
+
+## 添加 field (dataset) 数据
+
+### 第一步，创建VTK的`field`数据
+
+```c++
+vtkSmartPointer<vtkDoubleArray> fieldDataArray = vtkSmartPointer<vtkDoubleArray>::New();
+fieldDataArray->SetNumberOfComponents(1); // assuming scalar data
+
+// Assuming "dataset" is your std::map<std::string, std::vector<double>>
+for (const auto& pair : dataset) {
+    const std::string& fieldName = pair.first;
+    const std::vector<double>& fieldValues = pair.second;
+
+    fieldDataArray->SetName(fieldName.c_str());
+    for (double value : fieldValues) {
+        fieldDataArray->InsertNextValue(value);
+    }
+
+    // Assuming "grid" is your vtkUnstructuredGrid object
+    grid->GetPointData()->AddArray(fieldDataArray);
+}
+```
+
+* 根据`dataset`的属性`field`是`scalar`数据还是`tensor`数据，设置`SetNumberOfComponents`的参数；
+* 根据`dataset`的属性`field`是`scalar`数据还是`tensor`数据，选择`InsertNectValue`或者`InsertNextTuple`；
+* 根据`dataset`的属性`location type`属性是`vetex`还是`element`，`grid`选取`GetPointData`或者`GetCellData`；
+
+### 第二步，添加VTK `field`数据到`mapper`
+
+```C++
+vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
+mapper->SetInputData(grid);
+mapper->SetScalarModeToUsePointData(); // or SetScalarModeToUseCellData()
+mapper->SelectColorArray("fieldName"); // replace "fieldName" with the name of the field you want to use for coloring
+
+vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+lut->SetRange(minValue, maxValue); // set range according to your data
+mapper->SetLookupTable(lut);
+
+vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+actor->SetMapper(mapper);
+
+vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
+scalarBar->SetLookupTable(mapper->GetLookupTable());
+
+vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+renderer->AddActor(actor);
+renderer->AddActor2D(scalarBar);
+```
+
+* 根据`dataset`的属性`location type`属性是`vetex`还是`element`，`mapper`调用`SetScalarModeToUsePointData`或者`SetScalarModeToUseCellData`；
