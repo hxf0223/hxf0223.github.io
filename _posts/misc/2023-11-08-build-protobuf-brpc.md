@@ -15,6 +15,10 @@ mermaid: true
 # pin: true
 ---
 
+`bRPC`依赖于`protobuf`及`leveldb`。`leveldb`是一个`key-value`存储引擎，`protobuf`是`google`开源的`key-value`序列化协议。需要先编译`leveldb`及`protobuf`。
+
+- [leveldb](https://github.com/google/leveldb.git)
+
 ## 1. 编译 protobuf
 
 由于`protobuf 22`以后依赖于`google abseil`，`brpc`编译出现`abseil`相关错误。故选择`protobuf v3.21.9`版本进行编译。
