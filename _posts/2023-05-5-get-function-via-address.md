@@ -10,6 +10,8 @@ mermaid: true
 # pin: true
 ---
 
+# 通过函数指针地址找到函数
+
 ```bash
 # 通过地址找到函数声明
 info symbol 0x7f0db14cf57e

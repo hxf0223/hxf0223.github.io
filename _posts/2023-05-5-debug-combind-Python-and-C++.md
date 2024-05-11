@@ -10,6 +10,8 @@ mermaid: true
 # pin: true
 ---
 
+# Python与C++混合调试
+
 vscode启动python与C++混合调试时，gdb需要管理员权限。
 [Remote attach using non-root account would fail directly](https://github.com/microsoft/vscode-remote-release/issues/2053)
 

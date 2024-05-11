@@ -10,6 +10,8 @@ mermaid: true
 # pin: true
 ---
 
+# clang-tidy rule file sample [1]
+
 文件名：`.clang-tidy`
 部分检查项目中文解释：[selfboot/ClangTidyChecks](https://github.com/selfboot/ClangTidyChecks)
 

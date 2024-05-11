@@ -10,6 +10,8 @@ mermaid: true
 # pin: true
 ---
 
+# clang-tidy rule file sample [2]
+
 文件名：`.clang-tidy`
 引用自 [cnl/.clang-tidy at main · johnmcfarlane/cnl (github.com)](https://github.com/johnmcfarlane/cnl/blob/main/.clang-tidy)
 

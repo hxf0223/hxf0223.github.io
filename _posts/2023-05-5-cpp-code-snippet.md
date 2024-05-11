@@ -10,6 +10,8 @@ mermaid: true
 # pin: true
 ---
 
+# cpp code snippet
+
 ## 1. 获取数组长度
 
 ```cpp
