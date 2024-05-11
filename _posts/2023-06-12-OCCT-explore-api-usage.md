@@ -12,7 +12,7 @@ mermaid: true
 
 # OCC TopExp_Explorer 用法
 
-```c++
+```cpp
 #include <iostream>
 #include <TopoDS_Shape.hxx>
 #include <TopExp_Explorer.hxx>

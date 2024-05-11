@@ -16,7 +16,7 @@ mermaid: true
 
 ### Demo code 1
 
-```C++
+```cpp
 #include <BVH_Tree.hxx>
 #include <TopoDS_Shape.hxx>
 #include <vector>
@@ -46,7 +46,7 @@ bvhTree->Select([](const TopoDS_Shape& shape1, const TopoDS_Shape& shape2) {
 
 ### Demo code 2
 
-```C++
+```cpp
 #include <SpatialHash.hxx>
 #include <TopoDS_Shape.hxx>
 

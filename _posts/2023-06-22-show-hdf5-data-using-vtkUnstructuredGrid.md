@@ -20,7 +20,7 @@ mermaid: true
 
 ### 第一步，创建VTK的`field`数据
 
-```C++
+```cpp
 vtkSmartPointer<vtkDoubleArray> fieldDataArray = vtkSmartPointer<vtkDoubleArray>::New();
 fieldDataArray->SetNumberOfComponents(1); // assuming scalar data
 
@@ -45,7 +45,7 @@ for (const auto& pair : dataset) {
 
 ### 第二步，添加VTK `field`数据到`mapper`
 
-```C++
+```cpp
 vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
 mapper->SetInputData(grid);
 mapper->SetScalarModeToUsePointData(); // or SetScalarModeToUseCellData()
@@ -72,7 +72,7 @@ renderer->AddActor2D(scalarBar);
 
 使用`vtkColorTranslationFunction`转换：
 
-```C++
+```cpp
 // Create a vtkColorTransferFunction to map scalar values to colors
 vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
 colorTransferFunction->AddRGBPoint(minScalarValue, r, g, b); // Add as many points as needed

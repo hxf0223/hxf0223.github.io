@@ -18,7 +18,7 @@ mermaid: true
 `std::variant` 为这一问题提供了一个现代、类型安全的解决方案。它允许你在一个单一的变量中存储多种不同的类型，并能在运行时安全地访问它们，并能获取他们的类型信息。
 可以把它看作是一个可以存储多种类型中的任一种的类型安全的容器。下面是一个基本用法的例子：
 
-```c++
+```cpp
 #include <variant>
 #include <iostream>
 
@@ -45,7 +45,7 @@ int main() {
 尽管 std::variant 非常强大，但它并不是万能的。它的一个主要限制是，虽然它可以存储多种类型，但在任何给定时间点，它只能存储其中一种。这意味着，如果你想存储多种类型，你需要使用 `std::visit` 函数来访问它们。
 当然，你可以使用 `std::holds_alternative` 或 `std::get_if` 进行手动检查，但这样做的代码通常既繁琐又容易出错。
 
-```c++
+```cpp
 std::variant<int, double, std::string> v = 42;
 if (std::holds_alternative<int>(v)) {
     int value = std::get<int>(v);  // 安全
@@ -66,7 +66,7 @@ if (std::holds_alternative<int>(v)) {
 
 函数原型如下：
 
-```c++
+```cpp
 template<class Visitor, class... Variants>
 constexpr visit(Visitor&& vis, Variants&&... vars);
 ```
@@ -90,7 +90,7 @@ constexpr visit(Visitor&& vis, Variants&&... vars);
 `std::visit` 允许你传入一个可调用对象（callable object），通常是一个 `lambda 表达式`。现代 C++ 提供了一种特殊的 `lambda` 表达式，称为`泛型 lambda 表达式`（generic lambda）。
 `泛型 lambda` 是一个使用 `auto` 关键字作为参数类型的 `lambda 表达式`。这意味着 `lambda` 可以接受任何类型的参数，并在函数体内进行处理。
 
-```c++
+```cpp
 auto generic_lambda = [](auto x) {
     // do something with x
 };
@@ -113,7 +113,7 @@ auto generic_lambda = [](auto x) {
 
 #### 综合应用：泛型 lambda 与类型判断
 
-```c++
+```cpp
 std::variant<int, double, std::string> v = "hello";
 
 std::visit([](auto&& arg) {
@@ -135,7 +135,7 @@ std::visit([](auto&& arg) {
 
 一个简单的 `std::visit` 使用示例。在这个例子中，我将使用 `std::variant` 来存储不同类型的数据，并展示如何使用 `std::visit` 以类型安全的方式访问和处理这些数据。
 
-```c++
+```cpp
 #include <iostream>
 #include <variant>
 #include <string>
@@ -183,7 +183,7 @@ int main() {
 如果您想要在 `operator()` 中添加额外的参数，`std::visit` 本身不会直接支持这种用法，因为 `std::visit` 期望的可调用对象的参数必须与传递给它的 `std::variant` 类型匹配。不过，您可以通过一些技巧来实现这个功能。
 一种常用的方法是使用 `lambda 表达式`或`绑定器`（如 `std::bind`）来封装您的访问者对象和额外的参数。这里有一个简单的示例说明如何做到这一点：
 
-```c++
+```cpp
 #include <variant>
 #include <iostream>
 #include <functional>

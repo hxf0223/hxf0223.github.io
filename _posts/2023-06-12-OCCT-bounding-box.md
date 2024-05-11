@@ -14,7 +14,7 @@ mermaid: true
 
 ## bounding box 方式检测
 
-```C++
+```cpp
 #include <Bnd_Box.hxx>
 #include <BRepBndLib.hxx>
 
@@ -29,7 +29,7 @@ bool isInterfering = !boundingBox1.IsOut(boundingBox2);
 
 ## distance 方式检测
 
-```C++
+```cpp
 #include <BRepExtrema_DistShapeShape.hxx>
 
 BRepExtrema_DistShapeShape distShapeShape(shape1, shape2);
