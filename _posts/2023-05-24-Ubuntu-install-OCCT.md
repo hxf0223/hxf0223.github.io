@@ -112,7 +112,12 @@ sudo apt-get install qtcreator
 
 * [OpenCascade基本框架介绍-昨夜星辰 (hustlei.github.io)](https://hustlei.github.io/2014/10/opencascade-introduction-and-compile.html)
 * [OpenCASCADE入门指南 - opencascade - 博客园 (cnblogs.com)](https://www.cnblogs.com/opencascade/p/OpenCASCADE_StartGuide.html)
-* [2.OpenCASCADE - eryar - C++博客 (cppblog.com)](http://cppblog.com/eryar/category/17808.html?Show=All)
+
+`http` 链接：
+
+```txt
+2.OpenCASCADE - eryar - C++博客 (cppblog.com) http://cppblog.com/eryar/category/17808.html?Show=All
+```
 
 ## 引用资料
 

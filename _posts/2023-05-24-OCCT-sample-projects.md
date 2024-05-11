@@ -30,7 +30,12 @@ sudo apt install mesa-utils
 
 ### Boolean
 
-* [Open Cascade中的布尔操作](http://cppblog.com/eryar/archive/2013/01/17/197357.html)
+一些`http`链接：
+
+```txt
+Open Cascade中的布尔操作 http://cppblog.com/eryar/archive/2013/01/17/197357.html
+```
+
 * [OpenCASCADE 布尔运算简介](https://www.cnblogs.com/opencascade/p/OCCT_BO_Intro.html)
 * [OpenCasCade拓扑几何的布尔运算](https://blog.csdn.net/qq_22642239/article/details/97271457)
 * [Boolean Operations](https://dev.opencascade.org/doc/overview/html/occt_user_guides__modeling_algos.html#occt_modalg_5)
