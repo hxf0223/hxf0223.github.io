@@ -43,7 +43,7 @@ PowerShellGet\Update-Module posh-git
 
 ## 配置 posh-git
 
-在powershell终端对$PROFILE文件进行编辑：
+在`powershell`终端对`$PROFILE`文件进行编辑：
 
 ```powershell
 notepad $PROFILE
