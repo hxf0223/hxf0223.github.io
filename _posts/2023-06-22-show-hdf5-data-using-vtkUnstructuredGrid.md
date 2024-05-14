@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# vtkUnstructuredGrid 显示 HDF5 数据
-
 ## Reference
 
 * [VTK examples](https://github.com/Kitware/vtk-examples/blob/c1c8af1e70708e65d6fa4bf69fab814f03c99dc2/src/Cxx/GeometricObjects/Hexahedron.cxx)

@@ -15,8 +15,6 @@ mermaid: true
 # pin: true
 ---
 
-# Linux 系统下编译 gcc 9.2
-
 ## 操作
 
 下载 gcc源码包，解压生成`gcc-9.2.0`：

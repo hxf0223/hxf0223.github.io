@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# VTK 官方examples记录，及优秀VTK blog列表
-
 ## 概览列表
 
 关于CXX的示例说明，在官方examples代码的相关README里面有简单介绍，路径：src/Cxx.md
@@ -21,11 +19,14 @@ mermaid: true
 * 演示`vtkUnstructureGrid`及mesh显示(`EdgeVisibilityOn`) [UGrid](https://examples.vtk.org/site/Cxx/UnstructuredGrid/UGrid/)
 
 ## Color a mesh by dotting a vector from the origin to each point with a specified vector
+
 * [SimpleElevationFilter](https://examples.vtk.org/site/Cxx/Meshes/SimpleElevationFilter/)
 
 ## Vector field -- 显示矢量场箭头
+
 * [VectorField](https://examples.vtk.org/site/Cxx/Visualization/VectorField/)
 * [VectorFieldNonZeroExtraction](https://examples.vtk.org/site/Cxx/Filtering/VectorFieldNonZeroExtraction/)
- 
+
 ## VTK blog
+
 * [VTK入门范例2](https://www.michaelapp.com/posts/2019/2019-03-20-VTK%E5%85%A5%E9%97%A8%E8%8C%83%E4%BE%8B2/)

@@ -16,4 +16,5 @@ echo -en "\e[H\e[J\e[3J"
 ```
 
 ## reference
+
 * [clear command in Konsole](https://superuser.com/questions/122911/what-commands-can-i-use-to-reset-and-clear-my-terminal)

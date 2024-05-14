@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# OCCT projects on github
-
 ## OCCT samples
 
 需要安装 `OpenGL`： [基于Ubuntu搭建OpenGL开发环境](https://www.cnblogs.com/jiujiubashiyi/p/16429717.html)

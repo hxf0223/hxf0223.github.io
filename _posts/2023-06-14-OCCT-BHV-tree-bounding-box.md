@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# OCCT 使用 BVH 树加速 bounding box 查找遍历
-
 ## Demo code
 
 ### Demo code 1

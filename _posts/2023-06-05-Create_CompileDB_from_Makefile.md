@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# 从Makefile创建compile_commands.json
-
 ## 操作步骤
 
 ```bash

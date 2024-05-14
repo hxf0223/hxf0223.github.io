@@ -10,13 +10,10 @@ mermaid: true
 # pin: true
 ---
 
-# Qt VSCode 开发，使能PowerShell Git自动完成
-
 ## 准备
 
 需要使用 [posh-git](https://github.com/dahlbyk/posh-git)。
 首先确定`PowerShell`版本（在安装`PowerShell 7`之后，vscode默认使用的是`PowerShell 7`）：
-
 
 ```powershell
 $PSVersionTable.PSVersion
@@ -96,4 +93,3 @@ Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
 - [posh-git](https://github.com/dahlbyk/posh-git)
 - [Windows安装posh](https://blog.csdn.net/cxs5534/article/details/129737617)
-

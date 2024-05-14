@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# Ubuntu 编译 Qt + VTK + OCCT + samples
-
 ## 1. 卸载安装的Qt，编译安装Qt
 
 实践发现使用安装的`Qt`，编译带`samples`的`OCCT`在`CMake`阶段就出错（可能是Ubuntu系统中环境有问题，或者是没有完整设置`Qt`相关变量）。

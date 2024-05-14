@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# Ubuntu 22.04 安装 Qt5，以编译 VTK
-
 ## 1. install commands
 
 ```bash

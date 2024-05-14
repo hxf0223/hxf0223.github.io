@@ -10,7 +10,4 @@ mermaid: true
 # pin: true
 ---
 
-
-# 如何使用`github pages`以及`Chirpy Theme`创建博客
-
 - [使用Chirpy Theme在GitHub Pages部署Jekyll](https://zhang-nianqiang.github.io/posts/Deploy-Jekyll-on-GitHub-Pages-using-Chirpy-Theme/)

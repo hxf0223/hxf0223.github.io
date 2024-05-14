@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# OCC TopExp_Explorer 用法
-
 ```cpp
 #include <iostream>
 #include <TopoDS_Shape.hxx>

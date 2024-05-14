@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# kill信号不同分类的影响
-
 与`kill -KILL`不同的是，`kill -INT -PID` 将通知被结束进程，等同于`Ctrl+C`。
 例如如果结束一个script，该script中同步启动了一个APP，使用`kill -INT -<PIDofScript>`可以同时将这个APP结束掉，`kill -KILL`则不行。
 

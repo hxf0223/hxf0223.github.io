@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# OCC boundding box 以及 distance
-
 ## bounding box 方式检测
 
 ```cpp

@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# VSCode 开发，shelll高效操作设置（PowerShell） 
-
 ## PowerShell 清屏快捷键设置
 
 由于 `VSCode` Windows 开发使用 `cls` 命令不能执行清屏操作（仅仅是滚动SCREEN缓冲区），所以使用快捷键代替清屏操作。

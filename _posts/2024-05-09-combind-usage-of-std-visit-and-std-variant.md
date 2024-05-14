@@ -10,8 +10,6 @@ mermaid: true
 # pin: true
 ---
 
-# C++ 17新功能： std::visit 和 std::variant 配合使用
-
 ## 1. `std::variant` （变体）
 
 在很多编程场景中，我们经常遇到需要处理多种类型的情况。传统上，这可以通过多种方式来实现，例如使用 `union` 或 `void*` 指针，甚至使用一系列的 `if-else` 语句和类型转换。但这些方法通常都有各种缺点，如类型不安全、容易出错或难以维护。
@@ -107,6 +105,7 @@ auto generic_lambda = [](auto x) {
 使用 `if constexpr`，你可以在一个统一的代码块中处理多种类型，而无需使用多个繁琐的 `if-else` 语句。这不仅让代码看起来更简洁，而且更易于维护。
 
 #### 类型萃取：认识你的类型
+
 `类型萃取（Type Traits）`是 `C++11` 引入的一组模板，用于在编译时获取类型的属性。例如，`std::is_same_v<T1, T2>` 可以告诉你 `T1` 和 `T2` 是否是同一种类型。
 
 通过结合 `if constexpr` 和类型萃取，你可以写出高度灵活且类型安全的代码。这也是 `std::visit` 能发挥最大威力的地方。
@@ -173,6 +172,7 @@ int main() {
 ```
 
 在这个例子中：
+
 - 我们定义了一个 `std::variant` 类型 `MyVariant`，它可以存储 `int`、`double` 或 `std::string`。
 - `VariantVisitor` 是一个重载了 operator() 的结构体，对每种可能的类型提供了一个处理方法。
 - 在 `main` 函数中，我们创建了三个 `MyVariant` 实例，分别存储不同的类型。
