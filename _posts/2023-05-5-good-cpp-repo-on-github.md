@@ -16,3 +16,42 @@ mermaid: true
 
 Intel并行库 [oneTBB](https://github.com/oneapi-src/oneTBB)
 包含[malloc](https://github.com/oneapi-src/oneTBB/tree/master/src/tbbmalloc)
+
+## 2. 高性能json库
+
+[glaze](https://github.com/stephenberry/glaze)
+
+使用例子：
+
+```cpp
+struct my_struct
+{
+  int i = 287;
+  double d = 3.14;
+  std::string hello = "Hello World";
+  std::array<uint64_t, 3> arr = { 1, 2, 3 };
+  std::map<std::string, int> map{{"one", 1}, {"two", 2}};
+};
+
+my_struct s{};
+std::string buffer = glz::write_json(s);
+```
+
+输出：
+
+```json
+{
+   "i": 287,
+   "d": 3.14,
+   "hello": "Hello World",
+   "arr": [
+      1,
+      2,
+      3
+   ],
+   "map": {
+      "one": 1,
+      "two": 2
+   }
+}
+```
