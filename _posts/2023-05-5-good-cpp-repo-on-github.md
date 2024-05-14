@@ -10,14 +10,12 @@ mermaid: true
 # pin: true
 ---
 
-# good cpp repo on github
-
 ## 1. oneTBB
 
-Intel并行库 [oneTBB](https://github.com/oneapi-src/oneTBB)
-包含[malloc](https://github.com/oneapi-src/oneTBB/tree/master/src/tbbmalloc)
+Intel并行库 [oneTBB](https://github.com/oneapi-src/oneTBB).
+包含[tbb malloc](https://github.com/oneapi-src/oneTBB/tree/master/src/tbbmalloc).
 
-## 2. 高性能json库
+## 2. 高性能 json 库
 
 [glaze](https://github.com/stephenberry/glaze)
 
@@ -36,4 +34,3 @@ struct my_struct
 my_struct s{};
 std::string buffer = glz::write_json(s);
 ```
-
