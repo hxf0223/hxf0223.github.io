@@ -37,21 +37,3 @@ my_struct s{};
 std::string buffer = glz::write_json(s);
 ```
 
-输出：
-
-```json
-{
-   "i": 287,
-   "d": 3.14,
-   "hello": "Hello World",
-   "arr": [
-      1,
-      2,
-      3
-   ],
-   "map": {
-      "one": 1,
-      "two": 2
-   }
-}
-```
