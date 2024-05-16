@@ -15,3 +15,4 @@ mermaid: true
 ## 参考
 
 - [万字详解 GoF 23 种设计模式（多图、思维导图、模式对比），让你一文全面理解](https://blog.csdn.net/penriver/article/details/118571991)
+- [Design Patterns In Modern C++ 中文版翻译 -第24章：访问者模式](https://geekdaxue.co/read/design-pattern-in-modern-c/docs-chapter-24-visitor.md)
