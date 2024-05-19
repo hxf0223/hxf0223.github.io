@@ -2,7 +2,7 @@
 title: VSCode 开发，使能PowerShell Git自动完成
 date: 2024-05-12 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
-tags: [cpp]      # TAG names should always be lowercase
+tags: [powershell]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -11,6 +11,38 @@ mermaid: true
 ---
 
 ## 准备
+
+### 配置 VSCode 使用 PowerShell7
+
+`VSCode`快捷键打开**用户配置文件(Json)**：`ctrl+shift+p`，输入`open user settings`，选择打开`settings.json`文件。添加以下内容：
+
+```json
+"terminal.integrated.profiles.windows": {
+    "PowerShell": {
+        "source": "PowerShell7",
+        "icon": "terminal-powershell"
+    },
+    "Command Prompt": {
+        "path": [
+            "${env:windir}\\Sysnative\\cmd.exe",
+            "${env:windir}\\System32\\cmd.exe"
+        ],
+        "args": [],
+        "icon": "terminal-cmd"
+    },
+    "Git Bash": {
+        "source": "Git Bash"
+    },
+    "PowerShell7": {
+        "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+        "args": [],
+        "icon": "terminal-powershell"
+    }
+},
+"terminal.integrated.defaultProfile.windows": "PowerShell7",
+```
+
+### 下载 posh-git
 
 需要使用 [posh-git](https://github.com/dahlbyk/posh-git)。
 首先确定`PowerShell`版本（在安装`PowerShell 7`之后，vscode默认使用的是`PowerShell 7`）：
