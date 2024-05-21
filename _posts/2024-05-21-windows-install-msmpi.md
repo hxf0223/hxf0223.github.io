@@ -63,3 +63,8 @@ int main(int argc, char** argv) {
   MPI_Finalize();
 }
 ```
+
+## 教程参考
+
+- [MPI Tutorial](https://mpitutorial.com/tutorials/mpi-introduction/zh_cn/)
+- [Open MPI 入门笔记](https://jinbridger.github.io/docs/hpc/openmpi-programming-101/)
