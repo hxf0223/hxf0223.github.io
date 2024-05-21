@@ -26,6 +26,8 @@ set MSMPI
 
 ## 建立第一个测试程序
 
+[hello_mpi](https://gitee.com/mpi_1/hello_mpi)
+
 ```cmake
 find_package(MPI REQUIRED)
 
