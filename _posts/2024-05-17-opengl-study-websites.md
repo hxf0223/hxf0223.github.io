@@ -12,3 +12,9 @@ mermaid: true
 
 - [opengl-tutorial (cn)](https://www.opengl-tutorial.org/cn/)
 - [LearnOpenGL-CN](https://learnopengl-cn.readthedocs.io/zh/latest/)
+
+## 官方教程
+
+- [OpenGL Tutorials](https://www.opengl.org/sdk/docs/tutorials/)
+- [TyphoonLabs' OpenGL Shading Language tutorials](https://www.opengl.org/sdk/docs/tutorials/TyphoonLabs/)
+- [TyphoonLabs' OpenGL Shader Designer IDE](https://www.opengl.org/sdk/tools/ShaderDesigner/)
