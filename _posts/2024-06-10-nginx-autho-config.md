@@ -16,3 +16,19 @@ sudo setenforce Permissive
 sudo setsebool -P httpd_can_network_connect on
 sudo chcon -Rt httpd_sys_content_t /usr/share/nginx/html/
 ```
+
+### nginx不能启动，提示端口不能绑定 8090 端口
+
+查看服务状态信息，提示如下信息：
+
+```bash
+nginx: [emerg] bind() to 0.0.0.0:80 failed (13: permission denied)
+```
+
+```bash
+# 查看是否在http_port_t类型下
+sudo semanage port -l | grep http_port_t
+
+# 如果不在，添加到http_port_t类型下
+sudo semanage port -a -t http_port_t  -p tcp 8090
+```
