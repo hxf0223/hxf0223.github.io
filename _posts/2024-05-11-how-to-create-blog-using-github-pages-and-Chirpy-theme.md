@@ -11,3 +11,5 @@ mermaid: true
 ---
 
 - [使用Chirpy Theme在GitHub Pages部署Jekyll](https://zhang-nianqiang.github.io/posts/Deploy-Jekyll-on-GitHub-Pages-using-Chirpy-Theme/)
+- [使用Jekyll + Github Pages搭建静态网站](https://whuwangyong.github.io/2022-03-29-jekyll/)
+- [Text and Typography](https://chirpy.cotes.page/posts/text-and-typography/)

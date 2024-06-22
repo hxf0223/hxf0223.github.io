@@ -21,7 +21,7 @@ make && make install
 
 ## 2. 将 gperftools 链接进待测试程序
 
-如何在`CMake`中查找`gperftools`的路径，参考笔记 [CMake 编写FindPackage 模块](_site/posts/2024-06-21-cmake-find_package.md)，添加自定义CMake Find Package模块，并在`CMakeLists.txt`中添加`find_package(gperftools)`，即可找到`gperftools`的路径。
+如何在`CMake`中查找`gperftools`的路径，参考笔记 `CMake 编写FindPackage 模块`: `posts/2024-06-21-cmake-find_package.md`，添加自定义CMake Find Package模块，并在`CMakeLists.txt`中添加`find_package(gperftools)`，即可找到`gperftools`的路径。
 
 编译脚本添加如下：
 
