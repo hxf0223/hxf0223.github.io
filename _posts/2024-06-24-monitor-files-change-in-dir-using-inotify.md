@@ -10,6 +10,8 @@ mermaid: true
 # pin: true
 ---
 
+通过结合使用`epoll`和`inotify` 实现监控功能的同时，以超时的方式实现轮询，适合线程退出。
+
 ```cpp
 int inotifyId = inotify_init();
 if (-1 == inotifyId) {
@@ -43,7 +45,12 @@ if (watchFd < 0) {
 SPDLOG_INFO("start monitor path: {}", pathName);
 // 循环监听事件
 {
-  char buf[INOTIFY_BUF_LEN] = {};
+  /* Some systems cannot read integer variables if they are not
+              properly aligned. On other systems, incorrect alignment may
+              decrease performance. Hence, the buffer used for reading from
+              the inotify file descriptor should have the same alignment as
+              struct inotify_event. */
+  char buf[INOTIFY_BUF_LEN] = {} __attribute__ ((aligned(__alignof__(struct inotify_event))));
   struct epoll_event events[20];
   while (runningFlag) {
     int nfds = epoll_wait(epfd, events, 20, 100);
@@ -77,3 +84,6 @@ close(inotifyId);
 ## 参考
 
 - [Linux C 使用 inotify 监控文件或目录变化](https://www.cnblogs.com/PikapBai/p/14480881.html)
+- [linux 文件监控之 inotify](https://www.cnblogs.com/jssyjam/p/15490634.html)
+- [inotify(7) — Linux manual page](https://man7.org/linux/man-pages/man7/inotify.7.html)
+- [Monitor file system activity with inotify](https://developer.ibm.com/tutorials/l-ubuntu-inotify/)
