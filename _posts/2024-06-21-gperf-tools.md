@@ -44,8 +44,8 @@ endif()
 ```cmake
 if(ENABLE_PROFILER)
   message(STATUS "enable profiler")
-  target_compile_options(${target_test} PRIVATE -pg -fno-omit-frame-pointer)
-  target_link_options(${target_test} PRIVATE -pg -fno-omit-frame-pointer)
+  target_compile_options(${target_test} PRIVATE -fno-omit-frame-pointer)
+  target_link_options(${target_test} PRIVATE -fno-omit-frame-pointer)
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
   # set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer")
 endif()
@@ -61,6 +61,15 @@ CPUPROFILE=test_flow_benchmark.prof CPUPROFILE_FREQUENCY=500 ./test --gtest_filt
 # 生成pdf报告
 pprof --pdf ./server server.prof > perf.pdf
 ```
+
+## 4. 使用 GNU gprof 分析程序性能
+
+```cmake
+target_compile_options(${target_test} PRIVATE -pg -g)
+  target_link_options(${target_test} PRIVATE -pg -g)
+```
+
+gprof 不支持多线程应用，多线程下只能采集主线程性能数据。多线程需要重写`pthread_create()`。参考：[Linux性能优化gprof使用](https://www.cnblogs.com/youxin/p/7988479.html) 。
 
 ## 参考
 
