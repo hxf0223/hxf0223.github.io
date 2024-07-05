@@ -44,5 +44,5 @@ OK
 
 - [监控 redis 执行命令](https://www.cnblogs.com/weihanli/p/monitor-redis-command.html)
 - [redis 介绍和常用命令](https://www.cnblogs.com/weihanli/p/rediscommands.html)
-- [Redis | Redis常用命令及示例总结（API）](https://www.cnblogs.com/dlhjw/p/15639773.html)
-- [如何查看/修改Redis密码](https://www.cnblogs.com/qq1445496485/p/14476560.html)
+- [Redis 常用命令及示例总结](https://www.cnblogs.com/dlhjw/p/15639773.html)
+- [如何查看 修改 Redis 密码](https://www.cnblogs.com/qq1445496485/p/14476560.html)
