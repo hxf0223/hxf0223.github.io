@@ -17,7 +17,7 @@ sudo setsebool -P httpd_can_network_connect on
 sudo chcon -Rt httpd_sys_content_t /usr/share/nginx/html/
 ```
 
-### nginx不能启动，提示端口不能绑定 8090 端口
+## nginx不能启动，提示端口不能绑定 8090 端口
 
 查看服务状态信息，提示如下信息：
 
@@ -32,3 +32,7 @@ sudo semanage port -l | grep http_port_t
 # 如果不在，添加到http_port_t类型下
 sudo semanage port -a -t http_port_t  -p tcp 8090
 ```
+
+## 学习资料
+
+- [nginx 安装配置及使用 启动权限拒绝问题](https://www.cnblogs.com/carl-/p/15599437.html)
