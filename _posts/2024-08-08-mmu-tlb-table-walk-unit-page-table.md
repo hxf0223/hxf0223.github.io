@@ -1,5 +1,5 @@
 ---
-title: 总结：MMU -- 包括TBL以及Table Walk Unit，以及内存 Page Table
+title: 总结：MMU -- 包括 `TLB` 以及`Table Walk Unit`，以及内存 Page Table
 date: 2024-08-08 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPU]
 tags: [linux, cpu]      # TAG names should always be lowercase
