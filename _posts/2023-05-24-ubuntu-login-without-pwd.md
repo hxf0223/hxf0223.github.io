@@ -26,6 +26,8 @@ ssh-keygen -t RSA -C "name@mail.com"
 ```bash
 cat id_rsa.pub >> ~/.ssh/authorized_keys
 rm id_rsa.pub
+
+sudo chmod 600 ~/.ssh/authorized_keys
 ```
 
 3. vscode连接
