@@ -12,5 +12,5 @@ mermaid: true
 
 聚类算法资料收集
 
-- [github -- Allocator](https://github.com/moya-lang/Allocator)
+- [github -- memory](https://github.com/foonathan/memory)
 - [github -- poolSTL](https://github.com/alugowski/poolSTL)
