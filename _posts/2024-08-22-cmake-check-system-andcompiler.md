@@ -24,7 +24,6 @@ MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 ```
 
-
 ## 判断编译器
 
 ```cmake
