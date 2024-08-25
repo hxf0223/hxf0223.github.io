@@ -45,3 +45,7 @@ export https_proxy=http://192.168.9.165:10809
 
 1. 编译选项`OPENCV_EXTRA_MODULES_PATH`设置extra模块路径：`~/tmp/opencv/opencv_contrib/modules`。
 2. `OpenCV`还依赖其他第三方库：TBB、Eigen、VTK 等。可以先安装上。
+
+## 参考
+
+- [cmake编译opencv指南](https://www.cnblogs.com/zjutzz/p/6714490.html)
