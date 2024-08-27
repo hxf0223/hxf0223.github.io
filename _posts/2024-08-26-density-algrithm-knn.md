@@ -199,7 +199,7 @@ TODO: 测试小数据集下的性能对比。
 ### 1.5 参考
 
 - [nanoflann](https://github.com/jlblancoc/nanoflann)
-- [四叉树、八叉树、BSP树、K-D树](https://www.cnblogs.com/KillerAery/p/10878367.html)
+- [空间数据结构(四叉树/八叉树/BVH树/BSP树/k-d树)](https://www.cnblogs.com/KillerAery/p/10878367.html)
 - [数据结构-k-d树](https://yanglei253.github.io/2020/07/11/dataStructure/dataStructure-kdtree/)
 - [nanoflann库使用笔记](https://zxl19.github.io/nanoflann-note/)
 
