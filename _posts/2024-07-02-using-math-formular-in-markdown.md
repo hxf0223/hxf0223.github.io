@@ -1,5 +1,5 @@
 ---
-title: 在Markdown中使用数学公式
+title: 在 Markdown 中使用数学公式
 date: 2024-07-02 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [markdown]
 tags: [misc, markdown]      # TAG names should always be lowercase
@@ -37,5 +37,5 @@ $$
 
 更多数学公式的使用：
 
-- [[markdown语法]公式篇--整理总结了常用的公式语法全](https://blog.csdn.net/m0_37769093/article/details/107732606)
+- [如何优雅地在Markdown中输入数学公式](https://www.cnblogs.com/syqwq/p/15190115.html)
 - [Markdown 数学公式指导手册](https://freeopen.github.io/mathjax/)

@@ -2,7 +2,7 @@
 title: 聚类算法（密度）：基于 nano-flann
 date: 2024-08-26 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [算法]
-tags: [算法, c++]      # TAG names should always be lowercase
+tags: [algorithm, c++]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -10,7 +10,23 @@ mermaid: true
 # pin: true
 ---
 
-## 1. 类点云数据聚类算法
+## 0. DBSCAN 算法及 K-D 树介绍
+
+`DBSCAN`算法相关概念：
+
+1. 邻域半径 `eps`。
+2. 核心点，最少核心点 `minPts`。
+3. 直接密度可达。
+4. 密度可达。
+5. 密度相连。
+
+![DBSCAN 密度概念](/assets/images/algorithm/DBSCAN_20240827/dbscan_density.png)
+
+`K-D`树的时间复杂度：
+
+Kdtree 算法的构建时间复杂度为 O(nlogn)，搜索时间复杂度最好为 O($\log_2 N$)，最坏为 O($N^{1-1/k}$)。
+
+## 1. 背景
 
 采集到的二维点云数据(samples)，生成`K-D`搜索树，使用广度优先搜索，聚合成`block`数据。后续的识别/分类算法，在`block`数据基础上进行。
 
