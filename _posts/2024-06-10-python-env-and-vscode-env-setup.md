@@ -94,3 +94,5 @@ Windows：
     ]
 }
 ```
+
+附件见 `python_prj/.vscode.zip` 。
