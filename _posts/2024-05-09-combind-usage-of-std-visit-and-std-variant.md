@@ -1,5 +1,5 @@
 ---
-title: C++ 17新功能： std::visit 和 std::variant 配合使用
+title: C++ 17 新功能： std::visit 和 std::variant 配合使用 (待更新删除冗余描述)
 date: 2024-05-09 16:38:33 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
 tags: [cpp]      # TAG names should always be lowercase
@@ -236,6 +236,7 @@ int main() {
 
 ## 7. 参考
 
+- [C++17之std::visit的具体使用](https://www.zhangshengrong.com/p/QrXebvBL1d/)
 - [【C++ 17 新功能 std::visit 】深入解析 C++17 中的 std::visit：从原理到实践](https://blog.csdn.net/qq_21438461/article/details/132659408)
 - [std::variant 与 std::visit](https://wanghenshui.github.io/2018/08/15/variant-visit)
 - [Visiting a std::variant with the Overload Pattern](https://www.modernescpp.com/index.php/visiting-a-std-variant-with-the-overload-pattern/)
