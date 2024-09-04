@@ -35,7 +35,7 @@ class HoleDetector2 : public HoleDetectorBase<HoleDetector2<condPairFuncT, condG
 };
 ```
 
-* 继承写法为：`HoleDetector2<condPairFuncT, condGHIPairFuncT>`，即带上template参数。
+* 继承写法为：`HoleDetector2<condPairFuncT, condGHIPairFuncT>`，即带上`template`参数。
 
 ### 2.1 添加在基类中封装子类的函数
 
@@ -51,9 +51,20 @@ DerivedT const& underlying() const { return static_cast<DerivedT const&>(*this);
 };
 ```
 
-## 3. 参考资料
+* Note：基类中不能引用子类中的子类型，因为对父类而言，子类是`incomplete type`。
+
+## 3. 子类中使用 CRTP 父类的成员方法
+
+子类中使用父类的成员函数，需要加上`base_t::`前缀，或者`this`指针。
+
+```c++
+auto groups = base_t::group_holes(valid_holes);
+```
+
+## 4. 参考资料
 
 * [unique_ptr 与抽象类的多态](https://hedzr.com/c++/algorithm/unique_ptr-and-abstract-class/)
 * [An Implementation Helper For The Curiously Recurring Template Pattern](https://www.fluentcpp.com/2017/05/19/crtp-helper/)
 * [The Curiously Recurring Template Pattern in C++](https://eli.thegreenplace.net/2011/05/17/the-curiously-recurring-template-pattern-in-c/#id3)
 * [The cost of dynamic (virtual calls) vs. static (CRTP) dispatch in C++](https://eli.thegreenplace.net/2013/12/05/the-cost-of-dynamic-virtual-calls-vs-static-crtp-dispatch-in-c)
+* [C++CRTP概念与应用和concept](https://www.cnblogs.com/chen-pi/p/17841127.html)
