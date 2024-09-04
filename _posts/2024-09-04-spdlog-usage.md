@@ -32,4 +32,10 @@ endif()
   spdlog::set_level(spdlog::level::info);
   spdlog::set_pattern("%H:%M:%S.%e %t %s %! %v");
 #endif
+
+// back to default format
+// spdlog::set_pattern("%+"); 
+
+// alignment: 左对齐, 右对齐
+spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
 ```

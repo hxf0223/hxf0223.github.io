@@ -95,7 +95,7 @@ struct PointCloud {
 #include "flann_adaptor.h"
 #include "typedef.h"
 
-namespace rias::alg {
+namespace rias::test {
 
 class BFSDensitySampleSearch {
   static constexpr int32_t kDIM = 2;
@@ -135,7 +135,7 @@ class BFSDensitySampleSearch {
 
     std::vector<bool> visited(pts_.size(), false);
     for (size_t i = 0; i < pts_.size(); i++) {
-      if (visited[i] || densities[i] < minPts_) {  // 0. skip visited or low density points
+      if (visited[i] /*|| densities[i] < minPts_*/) {  // 0. skip visited or low density points
         continue;
       }
 
@@ -179,7 +179,7 @@ class BFSDensitySampleSearch {
   std::vector<std::vector<size_t>> clusters_;
 };
 
-}  // namespace rias::alg
+}  // namespace rias::test
 ```
 
 ### 2.3 测试代码
@@ -200,7 +200,7 @@ class BFSDensitySampleSearch {
       //spdlog::info("{}", fmt::join(cluster, ", "));
       spdlog::info("cluster: {}", cluster);
     }*/
-  }
+}
 ```
 
 ### 2.4 测试
@@ -209,7 +209,7 @@ class BFSDensitySampleSearch {
 [2024-08-26 21:47:35.648] [warning] [dataxy_loader.cc:146] under flow 870 samples in dataset
 [2024-08-26 21:47:35.649] [info] load data from file: 0.37393689999999996 seconds
 
-[2024-08-26 21:47:37.740] [info] search in 1503894 points. found 438931 clusters. time: 2.090 seconds
+[2024-08-26 21:47:37.740] [info] search in 1503894 points. found 438931 clusters. time: 2.133 seconds
 ```
 
 TODO: 测试小数据集下的性能对比。
