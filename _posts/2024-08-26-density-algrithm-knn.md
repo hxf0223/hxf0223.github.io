@@ -2,7 +2,7 @@
 title: 聚类算法（密度）：基于 nano-flann
 date: 2024-08-26 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [algorithm]
-tags: [algorithm, c++]      # TAG names should always be lowercase
+tags: [algorithm, cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true

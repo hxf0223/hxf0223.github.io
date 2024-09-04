@@ -1,8 +1,8 @@
 ---
 title: 使用 mmap 读取文件
 date: 2024-08-27 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [c++]
-tags: [c++, perf]      # TAG names should always be lowercase
+categories: [cpp]
+tags: [cpp, perf]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
