@@ -45,6 +45,8 @@ git clone https://github.com/KhronosGroup/OpenCL-SDK.git --recursive
 
 * [Getting started with OpenCL on Ubuntu Linux](https://github.com/KhronosGroup/OpenCL-Guide/blob/main/chapters/getting_started_linux.md)
 * [CMake Build System Support](https://github.com/KhronosGroup/OpenCL-Guide/blob/main/chapters/cmake_build-system_support.md)
+* [Khronos Community -- OpenCL](https://community.khronos.org/c/opencl)
+* [Intel Community -- OpenCL* for CPU](https://community.intel.com/t5/OpenCL-for-CPU/bd-p/opencl)
 
 ## 参考资料
 
