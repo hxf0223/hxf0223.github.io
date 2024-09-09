@@ -39,7 +39,7 @@ git clone https://github.com/KhronosGroup/OpenCL-SDK.git --recursive
 # 编译 & 安装 OpenCL SDK .....
 ```
 
-* 额外安装：`Intel OpenCL Runtime`，用于支持在`CPU`上运行`OpenCL`程序（模拟`GPU` ??），需要先安装`OpenCL Loader`(Installable Client Driver Loader，`ICD Loader`)。参考 [ubuntu安装OpenCL运行及编译环境](http://liujiayi771.github.io/2019/01/18/ubuntu%E5%AE%89%E8%A3%85OpenCL%E8%BF%90%E8%A1%8C%E5%8F%8A%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/)。
+* 额外安装：`Intel OpenCL Runtime`，用于支持在`CPU`上运行`OpenCL`程序（模拟`GPU` ??），需要先安装`OpenCL Loader`(Installable Client Driver Loader，`ICD Loader`)。参考 http://liujiayi771.github.io/2019/01/18/ubuntu%E5%AE%89%E8%A3%85OpenCL%E8%BF%90%E8%A1%8C%E5%8F%8A%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/。
 
 ### 1.3 参考
 
