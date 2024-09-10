@@ -48,10 +48,16 @@ git clone https://github.com/KhronosGroup/OpenCL-SDK.git --recursive
 * [Khronos Community -- OpenCL](https://community.khronos.org/c/opencl)
 * [Intel Community -- OpenCL* for CPU](https://community.intel.com/t5/OpenCL-for-CPU/bd-p/opencl)
 
-## 参考资料
+## 2. 参考资料
 
 1. [OpenCL SDK](https://github.com/KhronosGroup/OpenCL-SDK)
 2. [OpenCL C++ Bindings](https://github.com/KhronosGroup/OpenCL-CLHPP)
 3. [OpenCL 2.0 异构计算 第三版](https://chenxiaowei.gitbook.io/heterogeneous-computing-with-opencl2-0)
 4. [一文说清OpenCL框架](https://www.cnblogs.com/LoyenWang/p/15085664.html)
-5. [Benchmarking OpenCL, OpenACC, OpenMP, and CUDA](https://arxiv.org/pdf/1704.05316)
+
+## 3. 安装 Intel OpenCL 支持(Ongoing)
+
+* 安装 `Intel OpenCL Runtime`：[github -- Intel OpenCL Runtime](https://github.com/intel/compute-runtime/releases)
+* [Intel ARC intel-i915-dkms dpkg error upgrading to HWE kernel 6.5](https://askubuntu.com/questions/1504148/intel-arc-intel-i915-dkms-dpkg-error-upgrading-to-hwe-kernel-6-5)
+* [How To Deploy OpenCL™ Code on Intel® Hardware](https://www.intel.com/content/www/us/en/developer/tools/opencl/run.html)
+* [openCL on Ubuntu still can't detect my intel graphics platform after I install some relevant drivers](https://community.intel.com/t5/GPU-Compute-Software/openCL-on-Ubuntu-still-can-t-detect-my-intel-graphics-platform/m-p/1164878)
