@@ -48,7 +48,7 @@ git clone https://github.com/KhronosGroup/OpenCL-SDK.git --recursive
 * [Khronos Community -- OpenCL](https://community.khronos.org/c/opencl)
 * [Intel Community -- OpenCL* for CPU](https://community.intel.com/t5/OpenCL-for-CPU/bd-p/opencl)
 
-## 2. 参考资料
+## 2. 资源
 
 1. [OpenCL SDK](https://github.com/KhronosGroup/OpenCL-SDK)
 2. [OpenCL C++ Bindings](https://github.com/KhronosGroup/OpenCL-CLHPP)
@@ -57,7 +57,40 @@ git clone https://github.com/KhronosGroup/OpenCL-SDK.git --recursive
 
 ## 3. 安装 Intel OpenCL 支持(Ongoing)
 
+### 3.1 安装 Intel OpenCL Runtime for GPU
+
+安装步骤，以及遇到问题的解决办法：
+
 * 安装 `Intel OpenCL Runtime`：[github -- Intel OpenCL Runtime](https://github.com/intel/compute-runtime/releases)
 * [Intel ARC intel-i915-dkms dpkg error upgrading to HWE kernel 6.5](https://askubuntu.com/questions/1504148/intel-arc-intel-i915-dkms-dpkg-error-upgrading-to-hwe-kernel-6-5)
 * [How To Deploy OpenCL™ Code on Intel® Hardware](https://www.intel.com/content/www/us/en/developer/tools/opencl/run.html)
 * [openCL on Ubuntu still can't detect my intel graphics platform after I install some relevant drivers](https://community.intel.com/t5/GPU-Compute-Software/openCL-on-Ubuntu-still-can-t-detect-my-intel-graphics-platform/m-p/1164878)
+
+### 3.2 安装额外支持包
+
+安装如下包 (可能不是必须的)：
+
+```bash
+sudo apt-get install xserver-xorg-video-intel
+sudo apt-get install mesa-utils
+```
+
+### 3.3 使能 User 用户权限
+
+权限使能，并重启系统。(如果`GPU`已经使能，不添加权限只能使用`sudo`查看到`GPU`设备)
+
+```bash
+sudo usermod -a -G render $USER
+sudo usermod -a -G video $USER
+```
+
+### 3.4 验证
+
+```bash
+clinfo -l
+
+Platform #0: Intel(R) OpenCL
+ `-- Device #0: Intel(R) Core(TM) i5-8260U CPU @ 1.60GHz
+Platform #1: Intel(R) OpenCL Graphics
+ `-- Device #0: Intel(R) UHD Graphics 620
+```
