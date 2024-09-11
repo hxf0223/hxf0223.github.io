@@ -10,9 +10,9 @@ mermaid: true
 # pin: true
 ---
 
-## 1. 虚拟内存分配
+## 1. 虚拟内存分配 ##
 
-### 1.1 mmap
+### 1.1 mmap ###
 
 `mmap`用于建立`文件映射`，或者`匿名映射`。
 
@@ -20,7 +20,7 @@ mermaid: true
 
 用`mmap`用户建立`匿名映射`时，将用户空间的一段虚拟内存空间直接映射到某段物理内存上，这段虚拟内存称为`匿名页`。`匿名映射`用于`malloc`操作（大于128KB）。
 
-### 1.2 malloc / free
+### 1.2 malloc / free ###
 
 在现代操作系统中，`malloc`的作用是分配虚拟内存空间，并不实际分配物理内存。当分配的虚拟内存空间第一次被访问时，才会真正的分配物理内存（OS的写时分配行为）。
 
@@ -33,24 +33,24 @@ mermaid: true
 ![malloc-brk](/assets/images/os/malloc_20240827/malloc_brk.png)
 ![malloc-mmap](/assets/images/os/malloc_20240827/malloc_mmap1.png)
 
-### 1.3 new / delete
+### 1.3 new / delete ###
 
 `new` / `delete`操作时，在调用`malloc`/`free`基础上，对`non-trival`对象，调用其构造/析构函数；对于`trival`对象，不需要调用构造/析构函数，直接分配/释放内存。
 
-## 2. 内存分配优化
+## 2. 内存分配优化 ##
 
 * 用户态内存分配：intel TBB malloc, tcmalloc，Vulkan Memory Allocator等。（ 经测试，microsoft mimalloc适配性不是很好，使用过程中会出错；intel TBB malloc overhead似乎比较大）
 * 内存池。（见下面资料链接）
 * 对象池。
 
-### 2.1 参考资料
+### 2.1 参考资料 ###
 
 * [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
 * [Vulkan Memory Allocator -- docs](https://gpuopen-librariesandsdks.github.io/VulkanMemoryAllocator/html/quick_start.html)
 * [游戏架构设计：内存管理](https://www.cnblogs.com/KillerAery/p/10765893.html)
 * [游戏架构设计：高性能并行编程](https://www.cnblogs.com/KillerAery/p/16333348.html)
 
-## 3. github -- 内存池仓库
+## 3. github -- 内存池仓库 ##
 
 * [github -- memory](https://github.com/foonathan/memory)
 * [github -- poolSTL](https://github.com/alugowski/poolSTL)

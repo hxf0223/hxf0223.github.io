@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## bash alias
+## bash alias ##
 
 ```bash
 ###################
@@ -31,7 +31,7 @@ alias c='clear'
 alias r='reset'
 ```
 
-## bash 显示 git status
+## bash 显示 git status ##
 
 ```bash
 # Show git branch name

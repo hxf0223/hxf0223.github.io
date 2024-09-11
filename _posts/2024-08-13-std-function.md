@@ -12,7 +12,7 @@ mermaid: true
 
 `std::function` 可以将`函数`,`函数对象（仿函数）`,`lambda表达式`包装成一个`对象`。`std::function``对象`本身可以作为函数参数，并且是可复制的（复制构造、赋值）。
 
-## 1. 封装函数指针
+## 1. 封装函数指针 ##
 
 ```cpp
 int add(int a, int b) { return a + b; }
@@ -25,7 +25,7 @@ int main() {
 }
 ```
 
-## 2. 封装函数对象（仿函数）
+## 2. 封装函数对象（仿函数） ##
 
 ```cpp
 struct Adder {
@@ -41,7 +41,7 @@ int main() {
 }
 ```
 
-## 3. 封装 lambda 表达式
+## 3. 封装 lambda 表达式 ##
 
 ```cpp
 int main() {
@@ -53,7 +53,7 @@ int main() {
 }
 ```
 
-## 4. 与 std::bind 结合使用
+## 4. 与 std::bind 结合使用 ##
 
 ```cpp
 int add(int a, int b) { return a + b; }
@@ -66,7 +66,7 @@ int main() {
 }
 ```
 
-## 5. lambda 表达式
+## 5. lambda 表达式 ##
 
 `lambda`表达式是一个匿名`函数对象`，即编译器会创建一个`仿函数`( 调用时，调用 `operator()(....)` )，并将外部捕获的变量，添加到该匿名对象中。这些是`lambda`的额外开销。
 
@@ -115,7 +115,6 @@ int main()
 }
 ```
 
-## 参考
+## 参考 ##
 
 - [What is a lambda expression, and when should I use one?](https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-and-when-should-i-use-one)
-

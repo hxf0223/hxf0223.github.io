@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## CMake 查找 Intel TBB
+## CMake 查找 Intel TBB ##
 
 ```cmake
 find_package(
@@ -23,7 +23,7 @@ if(TBB_FOUND)
 endif()
 ```
 
-## 链接引入 TBB 库
+## 链接引入 TBB 库 ##
 
 ```cmake
 if (MSVC)
@@ -32,7 +32,7 @@ if (MSVC)
 endif()
 ```
 
-## cpp 代码中引入 TBB 符号，防止库链接被优化掉
+## cpp 代码中引入 TBB 符号，防止库链接被优化掉 ##
 
 ```cpp
 #if defined(WITH_TBB_MALLOC) && defined(_MSC_VER) //&& defined(NDEBUG)
@@ -43,7 +43,7 @@ endif()
 #endif
 ```
 
-## 查看内存分配函数替换是否出错
+## 查看内存分配函数替换是否出错 ##
 
 ```cpp
 #if defined(WITH_TBB_MALLOC) && defined(_MSC_VER) //&& defined(NDEBUG)
@@ -65,6 +65,6 @@ endif()
 #endif
 ```
 
-## 资料
+## 资料 ##
 
 * [How to Use oneTBB for Efficient Memory Allocation in C++ Applications](https://www.intel.cn/content/www/cn/zh/developer/articles/technical/how-to-use-onetbb-for-memory-allocation-cpp.html)

@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## 使用时的编译选项
+## 使用时的编译选项 ##
 
 ```cmake
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -21,7 +21,7 @@ else()
 endif()
 ```
 
-## 日志级别，日志格式
+## 日志级别，日志格式 ##
 
 ```c++
 #include <spdlog/spdlog.h>

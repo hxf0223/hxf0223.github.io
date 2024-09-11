@@ -14,7 +14,7 @@ mermaid: true
 
 使用跨平台支持的三方库[github -- mio](https://github.com/vimpunk/mio)。
 
-## 1. 使用 mio 映射内存读取文件
+## 1. 使用 mio 映射内存读取文件 ##
 
 相关头文件：
 
@@ -79,7 +79,7 @@ sample_dataset_t loadDataXYFromFileMM(const std::string& filename) {
 }  // namespace
 ```
 
-## 2. 使用 fstream 读取文件
+## 2. 使用 fstream 读取文件 ##
 
 ```c++
 namespace {
@@ -124,7 +124,7 @@ sample_dataset_t loadDataXYFromFileFS(const std::string& filename) {
 }  // namespace
 ```
 
-## 3. 性能对比
+## 3. 性能对比 ##
 
 读取及解析文件耗时对比(10次)，使用`mmap`时间约为`fstream`的`1/4`。
 
@@ -151,6 +151,6 @@ sample_dataset_t loadDataXYFromFileFS(const std::string& filename) {
 [2024-08-27 23:57:17.751] [info] 2. Loaded 1503894 samples in 240.08 ms
 ```
 
-## 4. 资料
+## 4. 资料 ##
 
 - [github -- mio](https://github.com/vimpunk/mio)

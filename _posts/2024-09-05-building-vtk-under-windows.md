@@ -10,11 +10,11 @@ mermaid: true
 # pin: true
 ---
 
-## 1. 依赖项
+## 1. 依赖项 ##
 
 从`OpenCascade`官网下载编译好的包，提取里面的依赖包。下载地址：[OpenCascade](https://dev.opencascade.org/release)
 
-## 批量编译 VTK -- 同时编译Debug/Release版本
+## 批量编译 VTK -- 同时编译Debug/Release版本 ##
 
 使用`CMake`生成完成之后，打开`Visual Studio`进行编译。
 

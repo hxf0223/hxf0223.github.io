@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## 依赖项安装
+## 依赖项安装 ##
 
 ```bash
 sudo apt-get update  
@@ -25,7 +25,7 @@ sudo apt-get install -y libtbb2 libtbb-dev libdc1394-22-dev
 sudo apt-get install -y libopencv-dev
 ```
 
-## 下载 OpenCV 源码
+## 下载 OpenCV 源码 ##
 
 ```bash
 git clone https://github.com/opencv/opencv.git
@@ -34,7 +34,7 @@ git clone https://github.com/opencv/opencv_contrib.git
 # opencv opencv_contrib 检出同一个版本
 ```
 
-## 编译 OpenCV
+## 编译 OpenCV ##
 
 `cmake`配置过程中，需要下载依赖包。设置代理：
 
@@ -46,6 +46,6 @@ export https_proxy=http://192.168.9.165:10809
 1. 编译选项`OPENCV_EXTRA_MODULES_PATH`设置extra模块路径：`~/tmp/opencv/opencv_contrib/modules`。
 2. `OpenCV`还依赖其他第三方库：TBB、Eigen、VTK 等。可以先安装上。
 
-## 参考
+## 参考 ##
 
 - [cmake编译opencv指南](https://www.cnblogs.com/zjutzz/p/6714490.html)

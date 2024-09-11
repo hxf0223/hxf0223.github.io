@@ -10,13 +10,13 @@ mermaid: true
 # pin: true
 ---
 
-## 1. 提取完整音频
+## 1. 提取完整音频 ##
 
 ```bash
 ffmpeg -i sample.mp4 -q:a 0 -map a sample.mp3
 ```
 
-## 2. 提取特定时段的音频
+## 2. 提取特定时段的音频 ##
 
 ```bash
 ffmpeg -i sample.mp4 -ss 00:03:05 -t 00:00:45.0 -q:a 0 -map a sample.mp3
@@ -26,6 +26,6 @@ ffmpeg -i sample.mp4 -ss 00:03:05 -t 00:00:45.0 -q:a 0 -map a sample.mp3
 * 时间戳必须采用 `HH：MM：SS.xxx` 格式或以秒为单位。
 * 如果你不指定 `t` 选项，它将会结束。
 
-## 资料来源
+## 资料来源 ##
 
 * [FFmpeg 提取视频的音频](https://www.cnblogs.com/CodeAndMoe/p/13360011.html)

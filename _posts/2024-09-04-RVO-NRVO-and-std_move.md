@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## RVO 以及 NRVO
+## RVO 以及 NRVO ##
 
 * RVO：返回值优化，其功能为：消除子函数返回的`临时对象`导致的拷贝构造。
 * NRVO：其功能为：消除子函数中返回的`局部对象`导致的拷贝构造。
@@ -30,7 +30,7 @@ Object getObjNRVO() {
 }
 ```
 
-## std::move
+## std::move ##
 
 使用场景：
 
