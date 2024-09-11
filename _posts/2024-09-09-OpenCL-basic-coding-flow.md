@@ -87,7 +87,9 @@ cl_int err = clEnqueueNDRangeKernel(
 
 ### 3.1 例子：矩阵转置
 
-`work item index` 演示代码 -- `kernel` 部分：
+`work item index` 演示代码，例程 [003_opengl_matrix_transpose](https://gitee.com/open-gl_3/003_opengl_matrix_transpose)。
+
+ `kernel` 部分：
 
 ```c++
 __kernel void matrixTransposeSimple(__global float* input, __global float* output, const uint width, const uint height) {
