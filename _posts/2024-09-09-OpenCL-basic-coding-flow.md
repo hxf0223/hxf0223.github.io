@@ -42,19 +42,21 @@ mermaid: true
 
 ## 3. 概念解释：work group、work item 与 设置 index
 
+类似于 `CUDA` 中的 `warp` 概念以及 `thread` 概念，`OpenCL` 中也有 `get_global_id()` 和 `get_local_id()` 这两个函数，用来获取当前 `work item` 的全局和局部索引，用于表示当前任务的`index`。
+
 使用 `clEnqueueNDRangeKernel` 时，需要设置维度参数，函数原型如下：
 
 ```c++
 cl_int clEnqueueNDRangeKernel(
-    cl_command_queue command_queue, // 命令队列
-    cl_kernel kernel,               // 要执行的内核
-    cl_uint work_dim,               // 工作维度，范围是1到3
-    const size_t *global_work_offset, // 全局工作项的偏移
-    const size_t *global_work_size,   // 全局工作项的大小
-    const size_t *local_work_size,    // 局部工作项的大小
-    cl_uint num_events_in_wait_list,  // 依赖的事件数量
-    const cl_event *event_wait_list,  // 依赖事件的列表
-    cl_event *event                  // 返回的事件
+    cl_command_queue command_queue,     // 命令队列
+    cl_kernel kernel,                   // 要执行的内核
+    cl_uint work_dim,                   // 工作维度，范围是1到3
+    const size_t *global_work_offset,   // 全局工作项的偏移
+    const size_t *global_work_size,     // 全局工作项的大小
+    const size_t *local_work_size,      // 局部工作项的大小
+    cl_uint num_events_in_wait_list,    // 依赖的事件数量
+    const cl_event *event_wait_list,    // 依赖事件的列表
+    cl_event *event                     // 返回的事件
 );
 ```
 
@@ -83,3 +85,49 @@ cl_int err = clEnqueueNDRangeKernel(
 );
 ```
 
+### 3.1 例子：矩阵转置
+
+`work item index` 演示代码 -- `kernel` 部分：
+
+```c++
+__kernel void matrixTransposeSimple(__global float* input, __global float* output, const uint width, const uint height) {
+  uint gdx = get_global_id(0);
+  uint gdy = get_global_id(1);
+  output[gdy * width + gdx] = input[gdx * height + gdy];
+}
+```
+
+`work item index` 演示代码 -- `C++`部分代码：
+
+```c++
+// 5. 准备数据，并创建 cl buffers
+  Eigen::MatrixXf dst_matrix = Eigen::MatrixXf::Zero(kMatrixSize, kMatrixSize);
+  Eigen::MatrixXf src_matrix = Eigen::MatrixXf::Random(kMatrixSize, kMatrixSize);
+  auto src_matrix_ptr = src_matrix.data(), dst_matrix_ptr = dst_matrix.data();
+  const size_t cl_buff_size = kMatrixSize * kMatrixSize * sizeof(cl_float);
+
+  cl_mem clsrc = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, cl_buff_size, src_matrix_ptr, NULL);
+  cl_mem cldst = clCreateBuffer(context, CL_MEM_READ_WRITE, cl_buff_size, NULL, NULL);
+
+  // 6. 设置 kernel 参数，并执行 kernel
+  cl_int dimx = kMatrixSize, dimy = kMatrixSize;
+  const auto err1 = clSetKernelArg(kernel, 0, sizeof(cl_mem), &clsrc);  // param 0: source matrix
+  const auto err2 = clSetKernelArg(kernel, 1, sizeof(cl_mem), &cldst);  // param 1: destination matrix
+  const auto err3 = clSetKernelArg(kernel, 2, sizeof(cl_int), &dimx);   // param 2: width
+  const auto err4 = clSetKernelArg(kernel, 3, sizeof(cl_int), &dimy);   // param 3: height
+
+  size_t global_work_size[] = {kMatrixSize, kMatrixSize}, local_work_size[] = {16, 16};
+  const auto err6 = clEnqueueNDRangeKernel(queue, kernel, 2,                      //
+                                           0, global_work_size, local_work_size,  //
+                                           0, 0, 0);
+
+  const auto err7 = clFinish(queue);
+```
+
+## 4. 参考及资料
+
+* [OpenCL矩阵转置](https://blog.csdn.net/songzitea/article/details/12178619)
+* [OpenCL Matrix Transpose](https://clhne.github.io/2017/11/28/OpenCL-matrix-transpose/)
+* [opencl(十八)----矩阵转置、矩阵乘法](https://www.cnblogs.com/feihu-h/p/12107384.html)
+* [Some Basic Usage of Eigen with C++](https://www.chenshiyu.top/blog/2020/09/25/Some-Basic-Usage-of-Eigen-with-C++/)
+* [编程与调试 C++ -- OpenCL & CUDA 初探](https://sunocean.life/blog/blog/2022/04/16/opencl)
