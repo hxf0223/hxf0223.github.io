@@ -133,3 +133,5 @@ __kernel void matrixTransposeSimple(__global float* input, __global float* outpu
 * [opencl(十八)----矩阵转置、矩阵乘法](https://www.cnblogs.com/feihu-h/p/12107384.html)
 * [Some Basic Usage of Eigen with C++](https://www.chenshiyu.top/blog/2020/09/25/Some-Basic-Usage-of-Eigen-with-C++/)
 * [编程与调试 C++ -- OpenCL & CUDA 初探](https://sunocean.life/blog/blog/2022/04/16/opencl)
+* [Intel -- opencl-sdk_developer-guide-processor-graphics_2019.4](/assets/pdf/opencl/opencl-sdk_developer-guide-processor-graphics_2019.4.pdf)
+* [Eigenvalues and Eigenvectors](/assets/pdf/opencl/Eigenvalues%20and%20Eigenvectors.pdf)
