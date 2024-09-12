@@ -87,7 +87,7 @@ cl_int err = clEnqueueNDRangeKernel(
 
 ### 3.1 例子：矩阵转置 ###
 
-`work item index` 演示代码，例程 [003_opengl_matrix_transpose](https://gitee.com/open-gl_3/003_opengl_matrix_transpose)。
+`work item index` 演示代码，测试代码 [003_opengl_matrix_transpose](https://gitee.com/open-gl_3/003_opengl_matrix_transpose)。
 
  `kernel` 部分：
 
@@ -128,7 +128,28 @@ __kernel void matrixTransposeSimple(__global float* input, __global float* outpu
 
 ### 3.2 如何设置 `local_work_size` ###
 
-FIXME: 待补充
+在`kernel`中，有如下函数，分别获取指定维度上的`local index`，`group index`，`global index`：
+
+```c++
+size_t get_global_id(uint D); // 获取全局索引，D=0,1,2
+size_t get_local_id(uint D);  // 获取局部索引, D=0,1,2
+size_t get_group_id(uint D);  // 获取组索引，D=0,1,2
+```
+
+使用`CL_KERNEL_WORK_GROUP_SIZE`获取`work group`的最大尺寸：
+
+```c++
+size_t max_work_group_size{}, max_work_group_size2{};
+clGetKernelWorkGroupInfo(kernel, device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), &max_work_group_size, NULL);
+clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(size_t), &max_work_group_size2, NULL);
+SPDLOG_INFO("Max work group size: {} / {}", max_work_group_size, max_work_group_size2); // 输出 256 / 256
+```
+
+在调用`clEnqueueNDRangeKernel`时，参数`local_work_size`设置为`null`，`kernel`将自动选择合适的`local work size`。
+
+FIXME：使用`clinf` 查看 `Intel UHD Graphics 620`信息，显示推荐的`local work size`为 8, 16, 32。
+
+* [Affect of local_work_size on performance and why it is](https://stackoverflow.com/questions/13761191/affect-of-local-work-size-on-performance-and-why-it-is/13762847#13762847)
 
 ## 4. 参考及资料 ##
 
