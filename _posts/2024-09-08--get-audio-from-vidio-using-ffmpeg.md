@@ -26,6 +26,14 @@ ffmpeg -i sample.mp4 -ss 00:03:05 -t 00:00:45.0 -q:a 0 -map a sample.mp3
 * 时间戳必须采用 `HH：MM：SS.xxx` 格式或以秒为单位。
 * 如果你不指定 `t` 选项，它将会结束。
 
-## 资料来源 ##
-
 * [FFmpeg 提取视频的音频](https://www.cnblogs.com/CodeAndMoe/p/13360011.html)
+
+## 3. 直接提取音频流 ##
+
+```bash
+ffmpeg -i input.flv -vn -codec copy out.m4a
+```
+
+其中，`-i`的意思是`input`，后接输入源。`-codec`的意思是直接复制流。
+
+* [利用FFmpeg无损提取视频中源音频流](https://blog.csdn.net/tomwillow/article/details/90372606)
