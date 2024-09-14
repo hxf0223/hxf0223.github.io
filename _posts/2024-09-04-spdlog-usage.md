@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## 使用时的编译选项 ##
+## 1. 使用时的编译选项 ##
 
 ```cmake
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -21,7 +21,7 @@ else()
 endif()
 ```
 
-## 日志级别，日志格式 ##
+## 2. 日志级别，日志格式 ##
 
 ```c++
 #include <spdlog/spdlog.h>
@@ -38,4 +38,16 @@ endif()
 
 // alignment: 左对齐, 右对齐
 spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
+```
+
+## 3. 使用技巧 ##
+
+### 3.1 打印 std::vector ###
+
+```c++
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/bundled/ranges.h"
+
+logger->info ("vector: {}", fmt::join(vec, ", "));
+SPDLOG_INFO("vector: {}", vec);
 ```
