@@ -10,6 +10,12 @@ mermaid: true
 # pin: true
 ---
 
+## 0. GPU驱动相关
+
+```bash
+sudo add-apt-repository ppa:oibaf/graphics-drivers
+```
+
 ## 1. OpenCL 环境准备
 
 ### 1.1 查看 OpenCL 设备
