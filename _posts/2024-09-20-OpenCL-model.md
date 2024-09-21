@@ -112,5 +112,5 @@ $$
 ## 5. 附加资料 ##
 
 * [Emulating Command Buffer Extensions with OpenCL Layers](https://www.iwocl.org/wp-content/uploads/6895-James-Brodman-Intel.pdf)
-* [OpenCL -- GPU 设备信息查询](http://opencl.gpuinfo.org/listdevices.php)
+* [OpenCL -- GPU 设备信息查询](https://opencl.gpuinfo.org/listdevices.php)
 * [github -- Intercept Layer for OpenCLTM Applications](https://github.com/intel/opencl-intercept-layer)
