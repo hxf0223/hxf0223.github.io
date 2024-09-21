@@ -59,6 +59,7 @@ git clone https://github.com/KhronosGroup/OpenCL-SDK.git --recursive
 1. [OpenCL SDK](https://github.com/KhronosGroup/OpenCL-SDK)
 2. [OpenCL C++ Bindings](https://github.com/KhronosGroup/OpenCL-CLHPP)
 3. [官方 blog](https://www.khronos.org/blog/)
+4. [Exploiting Task Parallelism with OpenCL: A Case Study](https://link.springer.com/content/pdf/10.1007/s11265-018-1416-1.pdf)
 
 ## 3. 安装 Intel OpenCL 支持(Ongoing)
 

@@ -20,9 +20,15 @@ mermaid: true
 
 ![OpenCL 平台模型](/assets/images/opencl/OpenCL平台模型.png)
 
-## 2. 执行模型 ##
+## 2. 内存模型 ##
 
-### 2.1 Context ###
+![OpenCL 内存模型](/assets/images/opencl/opencl内存模型_OpenCL-Guide.jpg)
+
+* [github -- OpenCL Guide --Memory Model](https://github.com/KhronosGroup/OpenCL-Guide/blob/main/chapters/opencl_programming_model.md#memory-model)
+
+## 3. 执行模型 ##
+
+### 3.1 Context ###
 
 `Context` 是针对`Host`端编程而产生的概念，表示设备的执行环境，包含：
 
@@ -33,7 +39,7 @@ mermaid: true
 
 ![OpenCL 执行模型-Context](/assets/images/opencl/OpenCL执行模型--Context.png)
 
-#### 2.1.1 命令队列 Command Queue ####
+#### 3.1.1 命令队列 Command Queue ####
 
 一个`Command Queue` 对应一个`Device`。一个 `Command Queue` 中的命令包含如下三种类型：
 
@@ -61,7 +67,7 @@ mermaid: true
 
 * 个人理解：一个`Command Queue` 同时存在于主机端，以及设备端 ？？
 
-### 2.2 NDRange -- 索引空间 ###
+### 3.2 NDRange -- 索引空间 ###
 
 表示一维 / 二维 / 三维索引空间：global index, group index, local index。
 
@@ -69,7 +75,7 @@ mermaid: true
 
 ![OpenCL 执行模型-NDRange](/assets/images/opencl/OpenCL执行模型--NDRange.png)
 
-### 2.3 Work-Item index 关系 ###
+### 3.3 Work-Item index 关系 ###
 
 划分好 `work group size` 之后，可以相互换算`global index` 和 `local index`，以及 `group index`。例如`matrix`大小为 $G_{x}$ x $G_{y}$，将其划分为 $W_{x}$ x $W_{y}$ 个工作组， 每个工作组的大小为 $L_{x}$ x $L_{y}$，则：
 
@@ -93,23 +99,23 @@ $$
 
 ![OpenCL 执行模型-Work-Item index 关系](/assets/images/opencl/OpenCL执行模型--index.png)
 
-## 3. 编程模型 ##
+## 4. 编程模型 ##
 
-### 3.1 编程模型 ###
+### 4.1 编程模型 ###
 
 ![OpenCL 编程模型](/assets/images/opencl/OpenCL编程模型.png)
 
-### 3.2 编程流程 ###
+### 4.2 编程流程 ###
 
 ![OpenCL 编程流程](/assets/images/opencl/OpenCL编程流程.png)
 
-## 4. 参考资料 ##
+## 5. 参考资料 ##
 
 * [一文说清OpenCL框架](https://www.cnblogs.com/LoyenWang/p/15085664.html)
 * [OpenCL 平台模型 - 执行模型 - 内存模型 - 编程模型](https://blog.csdn.net/chengyq116/article/details/108045936)
 * [OpenCL 3.0 Spec](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html)
 
-## 5. 附加资料 ##
+## 6. 附加资料 ##
 
 * [Emulating Command Buffer Extensions with OpenCL Layers](https://www.iwocl.org/wp-content/uploads/6895-James-Brodman-Intel.pdf)
 * [OpenCL -- GPU 设备信息查询](https://opencl.gpuinfo.org/listdevices.php)
