@@ -33,6 +33,34 @@ mermaid: true
 
 ![OpenCL 执行模型-Context](/assets/images/opencl/OpenCL执行模型--Context.png)
 
+#### 2.1.1 命令队列 Command Queue ####
+
+一个`Command Queue` 对应一个`Device`。一个 `Command Queue` 中的命令包含如下三种类型：
+
+* `Kernel` 相关命令：执行 `Kernel` 函数；
+* `Memory` 相关命令：
+  * `host` <--> `device` 数据传输；
+  * `host` <--> `device` memory map / unmap；
+  * `Memory Objects` 之间数据传输；
+* 同步相关命令；
+
+除了主机端往命令队列中添加命令外，在设备端，`Kernel`执行的时候，也可以往`设备端`的命令队列中添加命令，比如启动 `Child kernel`。
+
+如下图中的`Ended`表示所有该命令中的所有`Work Group`执行完毕，但可能`Child kernel`还没有执行完毕，以及更新`global memory`中的数据。
+
+![OpenCL 执行模型-Command Queue State](/assets/images/opencl/OpenCL执行模型-Command_state.png)
+
+关于每个状态的解释，参考 [OpenCL 3.0 Spec -- 3.2. Execution Model](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#_execution_model)
+
+1. `Queued`：初始状态；
+2. `Submitted`：提交到`Device`，还没还有放入设备端的 `work pool` -- 比如需要的资源没有准备好，或者`work pool` 满；
+3. `Ready`：命令提交到`work pool`，等待被调度；
+4. `Running`：已经被调度器调度到 `CU` 开始执行；
+5. `Ended`：所有 `work group` 执行完毕；
+6. `Complete`：`Child kernel` 执行完毕，`global memory` 中的数据更新完毕；
+
+* 个人理解：一个`Command Queue` 同时存在于主机端，以及设备端 ？？
+
 ### 2.2 NDRange -- 索引空间 ###
 
 表示一维 / 二维 / 三维索引空间：global index, group index, local index。
@@ -79,3 +107,9 @@ $$
 
 * [一文说清OpenCL框架](https://www.cnblogs.com/LoyenWang/p/15085664.html)
 * [OpenCL 平台模型 - 执行模型 - 内存模型 - 编程模型](https://blog.csdn.net/chengyq116/article/details/108045936)
+* [OpenCL 3.0 Spec](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html)
+
+## 5. 附加资料 ##
+
+* [Emulating Command Buffer Extensions with OpenCL Layers](https://www.iwocl.org/wp-content/uploads/6895-James-Brodman-Intel.pdf)
+* [OpenCL -- GPU 设备信息查询](http://opencl.gpuinfo.org/listdevices.php)
