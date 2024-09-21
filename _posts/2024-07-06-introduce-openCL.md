@@ -58,8 +58,7 @@ git clone https://github.com/KhronosGroup/OpenCL-SDK.git --recursive
 
 1. [OpenCL SDK](https://github.com/KhronosGroup/OpenCL-SDK)
 2. [OpenCL C++ Bindings](https://github.com/KhronosGroup/OpenCL-CLHPP)
-3. [OpenCL 2.0 异构计算 第三版](https://chenxiaowei.gitbook.io/heterogeneous-computing-with-opencl2-0)
-4. [一文说清OpenCL框架](https://www.cnblogs.com/LoyenWang/p/15085664.html)
+3. [官方 blog](https://www.khronos.org/blog/)
 
 ## 3. 安装 Intel OpenCL 支持(Ongoing)
 
@@ -100,3 +99,10 @@ Platform #0: Intel(R) OpenCL
 Platform #1: Intel(R) OpenCL Graphics
  `-- Device #0: Intel(R) UHD Graphics 620
 ```
+
+### 3.5 Intel OpenCL 调试
+
+Intel OpenCL 调试，需要作一些设置。安装驱动以及调试符号等，对`GPU`硬件有要求（如要求GPU gen 12以上）；以及不同`GPU`硬件，支持的`Ubuntu`等linux发行版也不同。
+
+* [Get Started with Intel® SDK for OpenCL™ Applications 2020 on Linux* OS with Training Sample](https://www.intel.cn/content/www/cn/zh/developer/articles/guide/sdk-for-opencl-2020-gsg-linux-os.html)
+* [Get Started with Intel® Distribution for GDB* on Linux* OS Host](https://www.intel.com/content/www/us/en/docs/distribution-for-gdb/get-started-guide-linux/2024-2/overview.html)
