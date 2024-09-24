@@ -2,7 +2,7 @@
 title: OpenCL 环境准备及资料
 date: 2024-07-06 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [OpenCL]
-tags: [OpenCL，c++]      # TAG names should always be lowercase
+tags: [OpenCL，cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
