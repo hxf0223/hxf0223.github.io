@@ -46,6 +46,16 @@ void work_group_barrier(cl_mem_fence_flags flags,
                         memory_scope scope);
 ```
 
+`flags` 含义：
+
+* `CLK_LOCAL_MEM_FENCE`：The barrier function will either flush any variables stored in `local memory` or queue a memory fence to ensure correct ordering of memory operations to local memory.
+* `CLK_GLOBAL_MEM_FENCE`：The barrier function will queue a memory fence to ensure correct ordering of memory operations to `global memory`. This can be useful when work-items, for example, write to buffer or image objects and then want to read the updated data.
+
+参考：
+
+* [Barriers in OpenCL](https://stackoverflow.com/questions/6890302/barriers-in-opencl)
+* [OpenCL 1.2 man -- Barrier](https://manpages.debian.org/bullseye/opencl-1.2-man-doc/barrier.3clc.en.html)
+
 ## 2. 同步点 -- synchronization points ##
 
 ### 2.1 clFinish ###
@@ -120,3 +130,16 @@ execution_status);
 * [OpenCL API -- clEnqueueBarrierWithWaitList](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#clEnqueueBarrierWithWaitList)
 * [OpenCL API -- Flush and Finish](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#_flush_and_finish)
 * [OpenCL: A Hands-on Introduction](https://www.nersc.gov/assets/pubs_presos/MattsonTutorialSC14.pdf)
+
+## 4. 更多资料 ##
+
+* [OpenCL 3.0 man pages](https://registry.khronos.org/OpenCL/sdk/3.0/docs/man/html/)
+* [OpenCL reference Guide](https://www.khronos.org/files/opencl30-reference-guide.pdf)
+* [Intel Tools for OpenCL™ Applications](https://www.intel.com/content/www/us/en/developer/articles/tool/tools-for-opencl-applications.html)
+* [CUDA Toolkit 4.0](https://developer.nvidia.com/cuda-toolkit-40)
+
+论文资源：
+
+* [Google Scholar](https://scholar.google.com/)
+* [IEEE Xplore](https://ieeexplore.ieee.org/Xplore/guesthome.jsp?reload=true)
+* [ACM Digital Library](https://dl.acm.org/)
