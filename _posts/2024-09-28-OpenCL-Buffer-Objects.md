@@ -35,6 +35,8 @@ cl_mem clsrc = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, c
 
 由于是 `host malloc` 分配的内存，`runtime` 会分配一个相应的 `buffer`，`kernel`开始执行时，将从`host_ptr`拷贝到`OpenCL`的`buffer`中。<font color="#ff0000">应该避免使用该标志位</font>。
 
+所谓`开始执行时`，是指`NDRangeKernel`创建的命令，在`device`上执行时，状态变为`Ready`的时候。
+
 个人理解：针对与`host`共享物理内存的`device`，如果`host_ptr`已经是地址对齐的，那么`runtime`应该不用分配内存了（要考虑物理内存页要连续？？）。
 
 ```text
