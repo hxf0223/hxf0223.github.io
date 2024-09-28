@@ -37,7 +37,7 @@ cl_mem clsrc = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, c
 
 所谓`开始执行时`，是指`NDRangeKernel`创建的命令，在`device`上执行时，状态变为`Ready`的时候。
 
-个人理解：针对与`host`共享物理内存的`device`，如果`host_ptr`已经是地址对齐的，那么`runtime`应该不用分配内存了（要考虑物理内存页要连续？？）。
+针对与`host`共享物理内存的`device`，如果`host_ptr`已经是地址对齐的，那么`runtime`应该不用分配内存了。如果`host_ptr`没有内存对齐，则`runtime`将进行拷贝操作。（要考虑物理内存页要连续？？）。
 
 ```text
 Use this when an aligned buffer already exists on the host side.  It must be aligned to a 4096 byte boundary and be a multiple of 64 bytes or you don't actually get zero copy.
@@ -73,3 +73,4 @@ memcpy(map_cl_src, src_matrix_ptr, cl_buff_size);
 * [编程与调试 C++ -- OpenCL & CUDA 初探 -- 十三、内存问题探讨](https://sunocean.life/blog/blog/2022/04/16/opencl#%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E6%8E%A2%E8%AE%A8)
 * [Intel Community -- Why is it needed to use CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR instead of just CL_MEM_COPY_HOST_PTR for Intel HD Graphics?](https://community.intel.com/t5/OpenCL-for-CPU/Why-is-it-needed-to-use-CL-MEM-ALLOC-HOST-PTR-CL-MEM-COPY-HOST/m-p/1070056)
 * [Arm Guide to OpenCL Programming -- 8.3 Memory Allocation](/assets/pdf/opencl/Arm%20Guide%20to%20OpenCL%20Programming.pdf)
+* [opencl-sdk_developer-guide-core-xeon_2018](/assets/pdf/opencl/opencl-sdk_developer-guide-core-xeon_2018-773005-773006.pdf)
