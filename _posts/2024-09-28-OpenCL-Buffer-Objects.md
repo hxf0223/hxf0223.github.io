@@ -74,3 +74,4 @@ memcpy(map_cl_src, src_matrix_ptr, cl_buff_size);
 * [Intel Community -- Why is it needed to use CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR instead of just CL_MEM_COPY_HOST_PTR for Intel HD Graphics?](https://community.intel.com/t5/OpenCL-for-CPU/Why-is-it-needed-to-use-CL-MEM-ALLOC-HOST-PTR-CL-MEM-COPY-HOST/m-p/1070056)
 * [Arm Guide to OpenCL Programming -- 8.3 Memory Allocation](/assets/pdf/opencl/Arm%20Guide%20to%20OpenCL%20Programming.pdf)
 * [opencl-sdk_developer-guide-core-xeon_2018](/assets/pdf/opencl/opencl-sdk_developer-guide-core-xeon_2018-773005-773006.pdf)
+* [Getting the Most from OpenCL™ 1.2: How to Increase Performance by Minimizing Buffer Copies on Intel® Processor Graphics](https://www.intel.com/content/www/us/en/developer/articles/training/getting-the-most-from-opencl-12-how-to-increase-performance-by-minimizing-buffer-copies-on-intel-processor-graphics.html)
