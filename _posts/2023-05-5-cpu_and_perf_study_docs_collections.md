@@ -27,3 +27,5 @@ Intel并行库 [oneTBB](https://github.com/oneapi-src/oneTBB).
 
 * [MoreEffectiveC++笔记](https://august295.github.io/posts/MoreEffectiveC++%E7%AC%94%E8%AE%B0/)
 * [现代CPU性能分析与优化 -- CPU架构，性能分析](https://weedge.github.io/perf-book-cn/zh/)
+* [C++17 the complete guide](/assets/pdf/C++17%20the%20complete%20guide.pdf)
+* [Learn LLVM 17](/assets/pdf/Learn_LLVM-17-zh.pdf)
