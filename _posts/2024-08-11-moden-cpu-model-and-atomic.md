@@ -1,5 +1,5 @@
 ---
-title: 整理：内存模型 (OnGoing)
+title: 整理：内存模型
 date: 2024-08-11 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
 tags: [cpp, cpu, linux]      # TAG names should always be lowercase
@@ -40,6 +40,16 @@ mermaid: true
 
 所以，在`MESI`协议的基础上，再添加一个`memory fence`，以保证`CPU0`与`CPU1`的`cache`数据一致性。
 
+#### 2.2.1 详细解释 ####
+
+由于多核处理器 `CPU` 之间独立的`L1/L2 cache`，会出现`cache line`不一致的问题，为了解决这个问题，有相关协议模型，比如 `MESI` 协议来保证 `cache` 数据一致，同时由于 `CPU` 对 `MESI` 进行的异步优化，对写和读分别引入了「`store buffer`」和「`invalid queue`」，很可能导致后面的指令查不到前面指令的执行结果（各个指令的执行顺序非代码执行顺序），这种现象很多时候被称作「`CPU乱序执行`」。
+
+为了解决乱序问题（也可以理解为可见性问题，修改完没有及时同步到其他的CPU），又引出了「`内存屏障`」的概念；内存屏障可以分为三种类型：`写屏障`，`读屏障`以及`全能屏障（包含了读写屏障）`，屏障可以简单理解为：在操作数据的时候，往数据插入一条”特殊的指令”。只要遇到这条指令，那前面的操作都得「完成」。
+
+CPU当发现写屏障指令时，会把该指令「之前」存在于「`store Buffer`」所有写指令刷入高速缓存。就可以让`CPU`修改的数据马上暴露给其他`CPU`，达到「写操作」可见性的效果。
+
+读屏障也是类似的：CPU当发现读屏障的指令时，会把该指令「之前」存在于「invalid queue」所有的指令都处理掉。通过这种方式就可以确保当前CPU的缓存状态是准确的，达到「读操作」一定是读取最新的效果。由于不同CPU架构的缓存体系不一样、缓存一致性协议不一样、重排序的策略不一样、所提供的内存屏障指令也有差异，所以一些语言c++/java/go/rust 都有实现自己的内存模型, 比如 golang大牛Russ Cox写的内存模型系列文章 Memory Models: https://research.swtch.com/mm 值得深入了解。
+
 详细知识参考：
 
 - [说透缓存一致性与内存屏障](https://www.cnblogs.com/chanmufeng/p/16523365.html)
@@ -58,4 +68,7 @@ mermaid: true
 
 ## HTTP 参考资料 ##
 
-- memory ordering: http://gavinchou.github.io/summary/c++/memory-ordering
+- [memory ordering](https://gavinchou.github.io/summary/c++/memory-ordering)
+- [现代CPU性能分析与优化 -- 现代CPU设计](https://weedge.github.io/perf-book-cn/zh/chapters/3-CPU-Microarchitecture/3-8_Modern_CPU_design_cn.html)
+- [现代CPU性能分析与优化 -- README](https://weedge.github.io/perf-book-cn/zh/)
+- [现代CPU性能分析与优化 -- pdf](/assets/pdf/cpu/perf-book-cn.pdf)
