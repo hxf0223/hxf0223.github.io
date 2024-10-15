@@ -1,5 +1,5 @@
 ---
-title: 使用 Boost::DLL 创建及使用插件
+title: Plugin 的创建及使用
 date: 2024-10-15 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
 tags: [cpp, plugin]      # TAG names should always be lowercase
