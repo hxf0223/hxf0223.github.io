@@ -10,6 +10,8 @@ mermaid: true
 # pin: true
 ---
 
+![process_stack](/assets/images/os/malloc_20240827/wfl3VM8icKWzunj.png)
+
 ## 1. 虚拟内存分配 ##
 
 ### 1.1 mmap ###
