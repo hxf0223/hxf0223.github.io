@@ -15,6 +15,8 @@ mermaid: true
 2. 使用 `import_alias` 导入插件接口。
 3. 使用 `creator` / `Factory` 模式，提供创建插件实例的接口。
 
+Demo Code: [test_plugin_dll](https://gitee.com/occt/test_plugin_dll)
+
 ## 1. 实现插件接口 ##
 
 ### 1.1 DSO/DLL原型定义 ###
