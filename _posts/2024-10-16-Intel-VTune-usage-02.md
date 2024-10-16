@@ -12,6 +12,8 @@ mermaid: true
 
 测试代码：[test_tbb_perf_vtune_profiler](https://gitee.com/hpc_5/test_tbb_perf_vtune_profiler)
 
+注意：编译选项需要添加"-g"，以便于`VTune Profiler`可以显示源码信息。
+
 ## 1. 测试原始来源 ##
 
  `VTune Profiler` 进行性能分析：[使用VTune Profiler测试TBB overhead](https://www.intel.com/content/www/us/en/docs/vtune-profiler/cookbook/2024-1/intel-tbb-scheduling-overhead.html)。
