@@ -71,6 +71,15 @@ perf record -F 599 -e cycles,cache-misses -ag -p 12738 -- sleep 200
 
 ## 3. VTune 分析数据 ##
 
+使用`VTune Profiler` 导入经过重命名的 `data.perf` ：
+
+1. `Menu` -> `Import Result...`;
+2. `Import raw trace data`， 选择 `data.perf` 文件；
+3. `Import` 按钮；
+
+![import_perf_format_file](/assets/images/perf/20241020_perf_vtune_import_perf_tools/vtune_profiler_import_perf_01.png)
+![import_perf_format_file_step_2](/assets/images/perf/20241020_perf_vtune_import_perf_tools/vtune_profiler_import_perf_02.png)
+
 ## 4. 参考资料 ##
 
 * [现代CPU性能分析与优化 -- Linux Perf](https://weedge.github.io/perf-book-cn/zh/chapters/7-Overview-Of-Performance-Analysis-Tools/7-4_Linux_perf_cn.html)
