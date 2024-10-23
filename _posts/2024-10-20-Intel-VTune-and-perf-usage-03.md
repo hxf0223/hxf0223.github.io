@@ -1,5 +1,5 @@
 ---
-title: Intel VTune 以及 linux perf 使用 03
+title: Intel VTune 配置与使用 (3) -- 配合 linux perf 使用
 date: 2024-10-20 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [perf]
 tags: [perf, vtune, tbb]      # TAG names should always be lowercase
