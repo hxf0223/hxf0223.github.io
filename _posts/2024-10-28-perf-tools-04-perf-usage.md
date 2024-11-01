@@ -14,7 +14,7 @@ mermaid: true
 
 `perf stat` 基本功能 -- 统计：
 
-* `cycles` 数, `IPC (instructions per cycle)`
+* `cycles` 数, `IPC (instructions per cycle)`。`IPC` >= 1 表示指令执行效率高
 * 分支切换次数(`branchs`), 分支预测失败次数(`branch-misses`)，以及失败比例
 * 上下文切换次数(`context switches`)，以及每秒切换次数
 * CPU迁移次数(`migrations`)，以及每秒迁移次数
