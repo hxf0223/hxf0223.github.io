@@ -124,7 +124,16 @@ perf annotate        # 自动定位到最耗时的地方
 
 ## 3. When build with `Release` ##
 
-如果使用`-O2`或者`-O3`编译，编译器使用了`vector`相关指令(针对32位的 `pcmpgtd`)，消除了`if`分支语句。其结果就是，`sort`与`unsort`的性能差距不大，甚至`sort`的性能更好。
+如果使用`-O2`或者`-O3`编译，编译器使用`SIMD`指令，且消除了`if`语句。其结果就是，`sort`与`unsort`的性能差距不大，甚至`sort`的性能更好:
+
+* `pcmpgtd` -- `SIMD`比较指令，得到位掩码结果，存在结果寄存器中；
+* `pand` -- `SIMD`按bit进行and操作；
+
+基本等效于：
+
+```bash
+sum += data[c] & -(data[c] >= 128);
+```
 
 ## references ##
 
