@@ -21,7 +21,7 @@ mermaid: true
 * [geogram](https://github.com/BrunoLevy/geogram) : A programming library of geometric algorithms
 * [github -- libigl](https://libigl.github.io/) : A simple C++ geometry processing library
 * [MMG](https://www.mmgtools.org/) : Robust, open source & multidisciplinary software for remeshing.
-* [Qhull](http://www.qhull.org/) : Engine for convex hulls, Delaunay triangulations, Voronoi diagrams computations.
+* [Qhull](https://www.qhull.org/) : Engine for convex hulls, Delaunay triangulations, Voronoi diagrams computations.
 * [Quartet](https://github.com/crawforddoran/quartet) : A tetrahedral mesh generator that does isosurface stuffing with an acute tetrahedral tile.
 * [TetGen](https://wias-berlin.de/software/index.jsp?id=TetGen&lang=1) : Tetrahedral mesh generation engine.
 * [Triangle](https://www.cs.cmu.edu/~quake/triangle.html) : A two-Dimensional quality mesh generator and Delaunay triangulator.
