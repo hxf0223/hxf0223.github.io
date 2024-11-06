@@ -1,6 +1,6 @@
 ---
-title: C++ 中 auto 和 decltype 的用法
-date: 2024-05-16 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
+title: C++ 中 auto 和 decltype 的用法 (update 20241106)
+date: 2024-11-06 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
 tags: [cpp]      # TAG names should always be lowercase
 
@@ -14,27 +14,17 @@ mermaid: true
 
 ### 1.1 规则
 
-1. 如果初始化表达式是引用，则去除引用语义。
+`auto`推导的原则为：保持原有变量的类型(如`cv`限定)，大致分两种情况:
 
-```cpp
-int a = 10;
-int &b = a;
+* `auto`: `auto`含义是`创建了一个新的变量`:
+  * 表达式为`T`或者`T&`或者`const T&` -- `auto`推导为`T` -- 即新变量的类型去除`cv`限定 (如果原有表达式有`cv`限定);
+  * 表达式为`T* const`或者`T*` -- `auto`推导为`T*` -- 新变量去除`cv`限定;
+  * 表达式为`const T*`或者`const T* const` -- `auto`推导为`const T*`，即保持指针指向的内存区域的`const`属性。
+* `auto&`: `auto&`含义是`alias`，故`auto&`推导的结果是原有类型的的引用，不能少任何一个限定符，如:
+  * `const T* const`推导为`const T* const &`；
+  * `const T`推导为`const T&`；
 
-auto c = b;  // c: int，（去除引用）
-auto &d = b; // d: int&
-```
-
-2. 如果初始化表达式为 `cv` 值（`const` / `volatile`），则除去**顶层的** `const` / `volatile` 语义。
-
-```cpp
-const int a1 = 10;
-auto  b1 = a1;      // b1: int，而非 const int（去除const）
-const auto c1 = a1; // c1: const int
-
-audo d1 = &a1; // d1: const int*
-```
-
-`d1` 是 `const int*`, 这个可以这样看，`const int*`实际上是`(const int)*`（当然代码不能这样写），`const`不是顶层修饰符了，就没有忽略。
+![auto_deference](/assets/images/cpp/cpp_auto_deference.png)
 
 ### 1.2 一些应用场景
 
