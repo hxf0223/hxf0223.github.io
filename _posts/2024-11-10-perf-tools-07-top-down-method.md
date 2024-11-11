@@ -100,6 +100,42 @@ struct S1 {
   } CACHE_LINE;
 ```
 
+## 5. Hazard 介绍 ##
+
+### 5.1 StructuralHazards -- 结构性冲突 ###
+
+结构性冲突本质是`CPU`中硬件资源的竞争，比如流水线中，前后指令之间都需要经过译码器，访问内存，形成对译码器的争用。
+
+### 5.2 DataHazards -- 数据依赖 ###
+
+五级流水线：取指`IF` -> 解码`ID` -> 执行`EX` -> 内存访问`MEM` -> 写回`WB`。
+
+`Data Hazard`是指后一条指令的操作数，依赖于前一条指令的结果。操作数依赖分为三种关系：
+
+* 先写后读(`Write-after-Read`) -- `Data Denpendency`
+* 先读后写(`Read-after-Write`) -- `Anti-Dependency`
+* 写后写(`Write-after-Write`) -- `Output Dependency`
+
+`CPU`处理`Data Hazard`办法有两种：
+
+* 插入`NOP`指令，流水线停顿(`Pipeline Stall`)，或者叫流水线冒泡(`Pipeline Bubbling`)。
+* `Operand Forwarding` -- 操作数转发。
+
+`Operand Forwarding`：在第一条指令的执行阶段完成之后，直接将结果数据传输给到下一条指令的 `ALU`。然后，下一条指令不需要再插入两个 `NOP` 阶段，就可以继续正常走到执行阶段。这样的解决方案，我们就叫作操作数前推(`Operand Forwarding`)，或者操作数旁路(`Operand Bypassing`)。其实更合适的名字应该叫操作数转发。这里的 Forward，其实就是我们写 Email 时的“转发”（Forward）的意思。
+
+![pipeline_bubbling](/assets/images/perf/20241110-top-down-method/pipeline-bububle.jpg)
+![operand_forwarding](/assets/images/perf/20241110-top-down-method/operand-forwarding.jpg)
+
+### 5.3 ControlHazards -- 控制依赖 ###
+
+主要使用分支预测。
+
+### 5.4 流水线 -- 乱序执行 ###
+
+![instruction_out_of_order](/assets/images/perf/20241110-top-down-method/pipeline_out-of-order_execution.jpg)
+
+更详细资料：[cnblogs -- 计算机组成原理——原理篇 处理器（中）](https://www.cnblogs.com/wwj99/p/12830844.html)
+
 ## 资料 ##
 
 * [自顶向下的微架构分析方法](https://www.intel.cn/content/www/cn/zh/docs/vtune-profiler/cookbook/2023-0/top-down-microarchitecture-analysis-method.html)
@@ -108,7 +144,6 @@ struct S1 {
 * [cnblogs --C/C++ 性能优化背后的方法论：TMAM](https://www.cnblogs.com/vivotech/p/14547399.html)
 * [调优指南: Xeon E5 v3](https://zzqcn.github.io/perf/intel_vtune/tunning_guide_e5v3.html)
 * [pdf -- intel lectures: Intel_VTune_Amplifier-jackson](/assets/pdf/perf/perf_docs_20241110/Intel_VTune_Amplifier-jackson.pdf)
-* [EE357Unit18_Pipelining_Notes](/assets/pdf/perf/perf_docs_20241110/EE357Unit18_Pipelining_Notes.pdf)
 
 ## 更多阅读 ##
 
