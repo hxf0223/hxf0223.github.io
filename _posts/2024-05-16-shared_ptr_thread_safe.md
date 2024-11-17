@@ -34,6 +34,14 @@ All member functions (including copy constructor and copy assignment) can be cal
 2. `std::make_shared`的性能接近`new`；但`std::shared_ptr<T>(new T)`耗时较明显；
 3. 在`x86`平台，`std::shared_ptr`的访问时间应该接近`T*`；但`ARM`平台应该会有明显的性能差异；
 
+使用原始指针并赋值给`shared_ptr`，`shared_ptr`管理对象与控制块内存布局:
+
+![shared_ptr_layout](/assets/images/cpp/2024-05-16-shared_ptr/shared_ptr_new_alloc.png)
+
+而使用`std::make_shared`，`shared_ptr`管理对象与控制块内存布局:
+
+![shared_ptr_layout_make_shared](/assets/images/cpp/2024-05-16-shared_ptr/make_shared_alloc.png)
+
 ## 3. 更多资料 ##
 
 * [合集 - C++系列(18) C++: weak_ptr到底有什么用？](https://www.cnblogs.com/qiangz/p/17843039.html)
