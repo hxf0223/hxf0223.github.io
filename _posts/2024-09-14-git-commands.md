@@ -19,3 +19,8 @@ git pull origin main --allow-unrelated-histories
 # 删除远程分之
 git push origin --delete <branch_name>
 ```
+
+```bash
+# 更新远程分支列表
+git remote update origin --prune
+```
