@@ -1,8 +1,8 @@
 ---
 title: 总结：内存访问优化
 date: 2024-08-27 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [cpp]
-tags: [cpp, perf]      # TAG names should always be lowercase
+categories: [cpp, perf]
+tags: [cpp, perf, memory]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -47,7 +47,7 @@ mermaid: true
 
 `new` / `delete`操作时，在调用`malloc`/`free`基础上，对`non-trival`对象，调用其构造/析构函数；对于`trival`对象，不需要调用构造/析构函数，直接分配/释放内存。
 
-## 2. 内存分配优化 ##
+## 2. 用户态 malloc ##
 
 * 用户态内存分配：intel TBB malloc, tcmalloc，Vulkan Memory Allocator等。（ 经测试，microsoft mimalloc适配性不是很好，使用过程中会出错；intel TBB malloc overhead似乎比较大）
 * 内存池。（见下面资料链接）
@@ -60,7 +60,108 @@ mermaid: true
 * [游戏架构设计：内存管理](https://www.cnblogs.com/KillerAery/p/10765893.html)
 * [游戏架构设计：高性能并行编程](https://www.cnblogs.com/KillerAery/p/16333348.html)
 
-## 3. github -- 内存池仓库 ##
+### 2.2 内存池仓库 ###
 
 * [github -- memory](https://github.com/foonathan/memory)
 * [github -- poolSTL](https://github.com/alugowski/poolSTL)
+
+## 3. Linux Huge page ##
+
+设置`Huge Page`，减少内存访问需要的的缺页中断，提高内存访问效率。以及减少`TLB`未命中导致的性能下降 -- 未命中`TLB`则需要逐级查询`page table`。
+
+`Linux`使用`Huge Page`有两种方式：
+
+### 3.1 Transparent Huge Page ###
+
+主流`Linux kernel`发布版本都是默认支持`THP`的（`TRANSPARENT_HUGEPAGE`）。但是在用户态使能，需要开启设置`khugepaged`: [kernel -- Transparent Hugepage Support](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html)
+
+```bash
+$ cat /sys/kernel/mm/transparent_hugepage/enabled
+
+always [madvise] never
+```
+
+设置`khugepaged`:
+
+```bash
+# run as root
+echo "always" >! /sys/kernel/mm/transparent_hugepage/enabled
+```
+
+选项:
+
+* `always`: 开启`THP`，内核尝试将连续的内存页合并成一个`THP`页。用户层不需要任何操作。
+* `madvise`: 开启`THP`，内核尝试将连续的内存页合并成一个`THP`页。用户层可以使用`madvise()`系统调用，将内存标记为`THP`。
+
+对`x86-64`系统，`THP`页大小为`2MB`。查看`Huge Page`的页大小:
+
+```bash
+cat /sys/kernel/mm/transparent_hugepage/hpage_pmd_size
+```
+
+使用`THP`，需要在分配内存时，需要将分配的内存对齐，比如`2MB`大页对齐:
+
+```c++
+#include <iostream>
+#include <sys/mman.h>
+ 
+// ... definition of is_huge() and is_thp() ...
+ 
+constexpr size_t HPAGE_SIZE = 2 * 1024 * 1024;
+ 
+int main() {
+  auto size = 4 * HPAGE_SIZE;
+  void *mem = aligned_alloc(HPAGE_SIZE, size);
+
+  madvise(mem, size, MADV_HUGEPAGE);
+
+  // Make sure the page is present
+  static_cast<char *>(mem)[0] = 'x';
+
+  std::cout << "Is huge? " << is_huge(mem) << "\n";
+  std::cout << "Is THP? " << is_thp(mem) << "\n";
+}
+```
+
+完整代码[thp.cpp](https://www.lukas-barth.net/blog/linux-allocating-huge-pages/files/thp.cpp)
+
+```bash
+g++ --std=c++17 thp.cpp -o thp
+```
+
+### 3.2 HugeTLB ###
+
+可以通过仅仅链接`libhugetlbfs`，即可使用大页内存:
+
+```bash
+# https://github.com/libhugetlbfs/libhugetlbfs
+
+sudo apt-get install libhugetlbfs-dev libhugetlbfs-bin -y
+sudo ln -s /usr/bin/ld.hugetlbfs /usr/share/libhugetlbfs/ld
+
+# 分配1000个大页，一个page大小为2MB，总共2GB. 需要管理员权限
+echo 1000 > /proc/sys/vm/nr_hugepages
+
+# 确认大页是否可用
+cat /proc/meminfo | grep HugePages_
+```
+
+链接`libhugetlbfs`:
+
+```bash
+-B /usr/share/libhugetlbfs -Wl,--hugetlbfs-align -no-pie -Wl,--no-as-needed
+```
+
+参考 [ARM -- Introduction to libhugetlbfs](https://learn.arm.com/learning-paths/servers-and-cloud-computing/libhugetlbfs/libhugetlbfs_general/)
+
+另外，使用`HugeTLB`分配一个`10MB`匿名映射:
+
+```c++
+void *addr = mmap(0, 10*1024*1024, (PROT_READ | PROT_WRITE),
+                  (MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB), 0, 0);
+```
+
+参考:
+
+* [Linux HugeTLB: What is the advantage of the filesystem approach?](https://unix.stackexchange.com/questions/753039/linux-hugetlb-what-is-the-advantage-of-the-filesystem-approach)
+* [Allocating Huge Pages on Linux](https://www.lukas-barth.net/blog/linux-allocating-huge-pages/)
