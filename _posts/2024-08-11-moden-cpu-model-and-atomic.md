@@ -87,7 +87,7 @@ aligned_value aligned_data[2] CACHE_ALIGNED;
 
 详细知识参考：
 
-* [Sequential Consistency，Cache-Coherence及Memory barrier](http://blog.kongfy.com/2016/10/cache-coherence-sequential-consistency-and-memory-barrier/)
+* [Sequential Consistency，Cache-Coherence及Memory barrier (HTTP)](https://blog.kongfy.com/2016/10/cache-coherence-sequential-consistency-and-memory-barrier/)
 * [说透缓存一致性与内存屏障](https://www.cnblogs.com/chanmufeng/p/16523365.html)
 * [CPU 缓存一致性与内存屏障](https://wingsxdu.com/posts/note/cpu-cache-and-memory-barriers/)
 * [Cache一致性和内存一致性](https://wudaijun.com/2019/04/cache-coherence-and-memory-consistency/)
@@ -99,12 +99,12 @@ aligned_value aligned_data[2] CACHE_ALIGNED;
 
 ## 更多资料 ##
 
-- [C++ Concurrency In Action 2ed 中文翻译](https://simonhancrew.github.io/CppConcurencyInAction/)
-- [C++ Concurrency in Action, 2nd Edition](/assets/pdf/cpu/C++%20Concurrency%20in%20Action,%202nd%20Edition.pdf)
+* [C++ Concurrency In Action 2ed 中文翻译](https://simonhancrew.github.io/CppConcurencyInAction/)
+* [C++ Concurrency in Action, 2nd Edition](/assets/pdf/cpu/C++%20Concurrency%20in%20Action,%202nd%20Edition.pdf)
 
 ## HTTP 参考资料 ##
 
-- [memory ordering](https://gavinchou.github.io/summary/c++/memory-ordering)
-- [现代CPU性能分析与优化 -- 现代CPU设计](https://weedge.github.io/perf-book-cn/zh/chapters/3-CPU-Microarchitecture/3-8_Modern_CPU_design_cn.html)
-- [现代CPU性能分析与优化 -- README](https://weedge.github.io/perf-book-cn/zh/)
-- [现代CPU性能分析与优化 -- pdf](/assets/pdf/cpu/perf-book-cn.pdf)
+* [memory ordering](https://gavinchou.github.io/summary/c++/memory-ordering)
+* [现代CPU性能分析与优化 -- 现代CPU设计](https://weedge.github.io/perf-book-cn/zh/chapters/3-CPU-Microarchitecture/3-8_Modern_CPU_design_cn.html)
+* [现代CPU性能分析与优化 -- README](https://weedge.github.io/perf-book-cn/zh/)
+* [现代CPU性能分析与优化 -- pdf](/assets/pdf/cpu/perf-book-cn.pdf)
