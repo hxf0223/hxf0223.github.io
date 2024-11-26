@@ -1,7 +1,7 @@
 ---
 title: 总结：内存访问优化
 date: 2024-08-27 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [cpp, perf]
+categories: [cpp]
 tags: [cpp, perf, memory]      # TAG names should always be lowercase
 
 # 以下默认false
@@ -27,6 +27,13 @@ mermaid: true
 * 通常情况下(除了`MAP_POPULATE`)，`mmap`创建时，只是在用户空间分配一段地址空间(`VMA`)，只有访问地址空间时，才会分配物理地址空间(`Page fault`中断分配内存)，并更新映射到`VMA`，建立映射关系。
 * `mmap`映射的物理内存，可以跨进程共享，但需要进程之间加锁访问(写操作)。如果多个进程写同一个`mmap`映射的物理内存，会触发`Copy On Write(COW)`，内核重新分配一个新的物理内存，并复制原有物理内存的内容。
 * 通过`msync()`将内存写回硬盘，`munmap()`释放内存。
+
+`MAP_POPULATE`标志位: 建立页表，这将使得内核进行一些预读(实测没有性能提升)。使用方式：
+
+* 使用`open` + 选项`O_RDONLY | O_DIRECT`打开文件;
+* 以及使用`mmap` + `MAP_POPULATE`选项，在打开文件时建立页表。
+
+`MAP_LOCKED`标志位: 锁定映射内存，阻止被换出。类似于`mlock()`。
 
 更多`I/O`相关: [about IO performance](https://www.cnblogs.com/stdpain/p/17646856.html)
 
