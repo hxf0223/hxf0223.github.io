@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## 依赖NVIDIA
+## 1. 依赖于 NVIDIA
 
 * Nvidia 显卡驱动(.run文件安装)
 * CUDA Toolkit(.run文件安装)
@@ -65,7 +65,7 @@ watch -n 1 nvidia-smi -i 0 -q -d UTILIZATION
 * [download -- nvidia 525.183.01 driver for linux](https://www.nvidia.com/en-us/drivers/details/226764/)
 * [CUDA Toolkit 12.6 Update 3 Downloads](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Debian&target_version=12&target_type=deb_local)
 
-## 依赖库安装
+## 2. FFMPEG 编译依赖库安装
 
 ```bash
 sudo apt-get -y install autoconf automake build-essential libass-dev libfreetype6-dev libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
@@ -75,7 +75,7 @@ sudo apt-get -y install libx264-dev libx265-dev libvpx-dev libdav1d-dev # video
 sudo apt-get install libfdk-aac-dev libmp3lame-dev libopus-dev libopus-dev # audio
 ```
 
-## 编译FFMPEG
+## 3. 编译 FFMPEG
 
 ```bash
 git clone https://github.com/FFmpeg/nv-codec-headers.git
@@ -91,17 +91,19 @@ make -j$(nproc)
 sudo make install
 ```
 
-## 测试
+## 4. 测试
 
 ```bash
-ffmpeg -hwaccels
-ffmpeg -codecs
+# https://github.com/omen23/ffmpeg-ffnvcodec-explanation
+ffmpeg -hide_banner -encoders  | grep nvenc
+ffmpeg -hide_banner -decoders | grep cuvid
+ffmpeg -hide_banner -hwaccels
 
 # https://d2axc7bbtmotmv.cloudfront.net/chrome_test/Temple.mp4
 ffmpeg -c:v h264_cuvid -i input output.mkv # 使用 nvidia cuvid 解码
 ```
 
-## 参考
+## 5. 参考
 
 * [FFMPEG -- HWAccel Intro -- CUDA (NVENC/NVDEC)](https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC)
 * [FFMPEG -- Compile FFmpeg for Ubuntu, Debian, or Mint](https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu)
@@ -109,7 +111,7 @@ ffmpeg -c:v h264_cuvid -i input output.mkv # 使用 nvidia cuvid 解码
 * [ffmpeg NVIDIA编解码三：英伟达硬编码](https://blog.csdn.net/weixin_43147845/article/details/136834858)
 * [LINUX下，ffmpeg增加NVIDIA硬件编解码的步骤及解决办法](https://blog.csdn.net/quantum7/article/details/82713833)
 
-## 附加
+## 6. 附加
 
 `VAAPI`相关的一些可能的设置选项:
 
@@ -157,11 +159,11 @@ vainfo
 vulkaninfo --summary 
 ```
 
-## 附加2 Chromium 一些资料
+## 7. 附加2 Chromium 一些资料
 
 * [Chromium sources](https://source.chromium.org/chromium/chromium/src)
 
-### 安装Chromium
+### 7.1 安装Chromium
 
 ```bash
 apt install software-properties-common apt-transport-https ca-certificates curl -y
@@ -170,7 +172,7 @@ echo deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.
 apt install google-chrome-stable
 ```
 
-### 一些启动命令尝试
+### 7.2 一些启动命令尝试
 
 ```bash
 # export GOOGLE_API_KEY="no"
@@ -196,7 +198,7 @@ apt install google-chrome-stable
 * [How To Enable Hardware Acceleration on Chrome, Chromium & Puppeteer on AWS in Headless mode](https://mirzabilal.com/how-to-enable-hardware-acceleration-on-chrome-chromium-puppeteer-on-aws-in-headless-mode)
 * [blog -- vdpau](https://wdv4758h.github.io/notes/blog/vdpau.html)
 
-### 定制化Chromium/FFmpeg
+### 7.3 定制化 Chromium/FFmpeg
 
 ```bash
 # media/ffmpeg/scripts/build_ffmpeg.py
@@ -209,7 +211,7 @@ apt install google-chrome-stable
 export PATH=`pwd`/third_party/llvm-build/Release+Asserts/bin:$PATH
 ./media/ffmpeg/scripts/build_ffmpeg.py linux x64 --branding Chrome
 ./third_party/ffmpeg/chromium/scripts/copy_config.sh
- python3 ./media/ffmpeg/scripts/generate_gn.py
+python3 ./media/ffmpeg/scripts/generate_gn.py
 ```
 
 ```python
