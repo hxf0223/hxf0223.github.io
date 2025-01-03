@@ -109,3 +109,4 @@ std::shared_ptr<test::plugin::DIInterface> diLoader(const std::string& infoFile,
 
 * [Boost DLL -- Plugin](https://www.boost.org/doc/libs/1_86_0/doc/html/boost_dll/tutorial.html)
 * [跨平台的 plugin 開發函式庫：Boost DLL - 進階](https://viml.nchc.org.tw/archive_blog_614/)
+* [Boost Plugin Loader](https://gitee.com/vaughnHuang/boost_plugin_loader)

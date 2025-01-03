@@ -83,6 +83,6 @@ auto add(T t, U u) -> decltype(t + u) {
 
 ## 3. 参考
 
-- [C++11特性：decltype关键字](https://www.cnblogs.com/QG-whz/p/4952980.html)
-- [c++11-17 模板核心知识（九）—— 理解decltype与decltype(auto)](https://zhuanlan.zhihu.com/p/338822626)
-- [decltype specifier](https://en.cppreference.com/w/cpp/language/decltype)
+* [C++11特性：decltype关键字](https://www.cnblogs.com/QG-whz/p/4952980.html)
+* [c++11-17 模板核心知识（九）—— 理解decltype与decltype(auto)](https://zhuanlan.zhihu.com/p/338822626)
+* [decltype specifier](https://en.cppreference.com/w/cpp/language/decltype)
