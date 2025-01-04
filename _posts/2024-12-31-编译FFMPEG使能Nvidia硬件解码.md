@@ -248,3 +248,8 @@ autoninja -j4 -C out/release -v chrome
 ```
 
 * [重新配置chrome中ffmpeg插件](https://blog.csdn.net/hongszh/article/details/126167387)
+* [chromium -- debugging](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/linux/debugging.md)
+* [Tips for debugging on Linux](https://chromium.googlesource.com/chromium/src/+/0e94f26e8/docs/linux_debugging.md)
+* [How to get a stack trace at runtime](https://www.chromium.org/chromium-os/developer-library/guides/debugging/stack-traces/#typography-conventions)
+* [Some tricks about debugging Chromium](https://blog.lazym.io/2020/06/09/Some-tricks-about-debugging-Chromium/)
+* [Chromium 编译与调试笔记](https://yplam.com/Pub/Chromium/chromium-build-debug/)
