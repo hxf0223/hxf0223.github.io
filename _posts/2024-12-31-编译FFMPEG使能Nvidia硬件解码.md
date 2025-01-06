@@ -85,7 +85,7 @@ sudo make install PREFIX=/usr # 如果安装到其他目录，需要将路径天
 ```
 
 ```bash
-./configure --extra-cflags="-I/usr/local/cuda/include" --extra-ldflags="-L/usr/local/cuda/lib64" --extra-libs=-lpthread --extra-libs=-lm --enable-shared  --enable-gpl --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libx264 --enable-libx265 --enable-nonfree --enable-cuda --enable-cuvid --enable-nvenc --enable-libnpp --enable-ffnvcodec
+./configure --extra-cflags="-I/usr/local/cuda/include" --extra-ldflags="-L/usr/local/cuda/lib64" --extra-libs=-lpthread --extra-libs=-lm --enable-shared  --enable-gpl --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libx264 --enable-libx265 --enable-nonfree --enable-cuda --enable-cuvid --enable-nvenc --enable-libnpp --enable-ffnvcodec --enable-cuvid
 
 make -j$(nproc)
 sudo make install
