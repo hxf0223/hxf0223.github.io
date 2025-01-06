@@ -225,6 +225,8 @@ configure_flags['Chrome'].extend([
         '--enable-nvdec',
         '--enable-nvenc',
         '--enable-vdpau',
+        '--enable-hwaccel=h264_vdpau',
+        '--enable-hwaccel=h264_nvdec',
         '--extra-cflags=-isystem/usr/include',
         '--extra-cxxflags=-isystem/usr/include'
     ])
@@ -245,6 +247,23 @@ proprietary_codecs = true
 # enable_linux_installer = true
 
 autoninja -j4 -C out/release -v chrome
+```
+
+```bash
+gn args out/debug
+
+is_debug = true
+is_component_build = true
+target_cpu = "x64"
+enable_nacl = false
+symbol_level = 2
+is_official_build = false
+chrome_pgo_phase = 0
+ffmpeg_branding = "Chrome"
+#proprietary_codecs = true
+disable_fieldtrial_testing_config=true
+media_use_ffmpeg=true
+exclude_unwind_tables=false
 ```
 
 * [重新配置chrome中ffmpeg插件](https://blog.csdn.net/hongszh/article/details/126167387)
