@@ -85,7 +85,7 @@ sudo make install PREFIX=/usr # 如果安装到其他目录，需要将路径天
 ```
 
 ```bash
-./configure --extra-cflags="-I/usr/local/cuda/include" --extra-ldflags="-L/usr/local/cuda/lib64" --extra-libs=-lpthread --extra-libs=-lm --enable-shared  --enable-gpl --enable-libfdk_aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libx264 --enable-libx265 --enable-nonfree --enable-cuda --enable-cuvid --enable-nvenc --enable-libnpp --enable-ffnvcodec --enable-cuvid
+./configure --extra-cflags="-I/usr/local/cuda/include" --extra-ldflags="-L/usr/local/cuda/lib64" --extra-libs=-lpthread --extra-libs=-lm --enable-shared  --enable-gpl --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libx264 --enable-libx265 --enable-nonfree --enable-cuda --enable-cuvid --enable-nvenc --enable-ffnvcodec --enable-cuvid # --enable-libfdk_aac --enable-libnpp 
 
 make -j$(nproc)
 sudo make install
@@ -252,6 +252,10 @@ autoninja -j4 -C out/release -v chrome
 ```bash
 gn args out/debug
 
+google_api_key="AIzaSyDxKL42zsPjbke5O8_rPVpVrLrJ8aeE9rQ"
+google_default_client_id="595013732528-llk8trb03f0ldpqq6nprjp1s79596646.apps.googleusercontent.com"
+google_default_client_secret="5ntt6GbbkjnTVXx-MSxbmx5e"
+
 is_debug = true
 is_component_build = true
 target_cpu = "x64"
@@ -260,10 +264,13 @@ symbol_level = 2
 is_official_build = false
 chrome_pgo_phase = 0
 ffmpeg_branding = "Chrome"
-#proprietary_codecs = true
+proprietary_codecs = true
 disable_fieldtrial_testing_config=true
 media_use_ffmpeg=true
 exclude_unwind_tables=false
+
+enable_ffmpeg_video_decoders=true
+enable_widevine=false
 ```
 
 * [重新配置chrome中ffmpeg插件](https://blog.csdn.net/hongszh/article/details/126167387)
