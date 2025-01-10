@@ -101,6 +101,15 @@ ffmpeg -hide_banner -hwaccels
 
 # https://d2axc7bbtmotmv.cloudfront.net/chrome_test/Temple.mp4
 ffmpeg -c:v h264_cuvid -i input output.mkv # 使用 nvidia cuvid 解码
+
+# 拉流，使用cuda硬件解码
+ffmpeg -hwaccel cuda -i https://d2axc7bbtmotmv.cloudfront.net/chrome_test/Temple.mp4 out.mp4 out.mp4
+
+# 拉流，使用nvdec硬件解码
+ffmpeg -c:v h264_cuvid -i https://d2axc7bbtmotmv.cloudfront.net/chrome_test/Temple.mp4 out.mp4 out.mp4
+
+# 使用nvenc硬件编码
+ffmpeg -i input.mp4 -c:v h264_nvenc output.mp4
 ```
 
 ## 5. 参考
