@@ -280,6 +280,17 @@ exclude_unwind_tables=false
 
 enable_ffmpeg_video_decoders=true
 enable_widevine=false
+
+use_sysroot=false
+blink_symbol_level=0
+v8_symbol_level=0
+```
+
+```bash
+# run if
+# use_sysroot=false
+# sudo ./build/install-build-deps.sh
+# sudo apt install qtbase5-dev
 ```
 
 * [重新配置chrome中ffmpeg插件](https://blog.csdn.net/hongszh/article/details/126167387)
