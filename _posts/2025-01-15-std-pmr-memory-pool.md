@@ -47,3 +47,4 @@ user_class_alloc_traits::deallocate(userclass_allocator, userclass, 1);
 
 * [cppreference -- pmr benchmark](https://en.cppreference.com/w/cpp/memory/monotonic_buffer_resource)
 * [test source code](https://gitee.com/hpc_5/mem_pool_cpp17_pmr/tree/main)
+* [C++17 the complete guide -- Chap 29. 多态内存资源(PMR)](/assets/pdf/C++17%20the%20complete%20guide.pdf)
