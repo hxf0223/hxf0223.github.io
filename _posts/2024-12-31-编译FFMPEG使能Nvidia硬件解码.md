@@ -242,7 +242,7 @@ configure_flags['Chrome'].extend([
 ```
 
 ```bash
-gn args out/release
+# gn args out/release
 
 is_debug = false
 is_component_build = false
@@ -259,7 +259,7 @@ autoninja -j4 -C out/release -v chrome
 ```
 
 ```bash
-gn args out/debug
+# gn args out/debug
 
 google_api_key="AIzaSyDxKL42zsPjbke5O8_rPVpVrLrJ8aeE9rQ"
 google_default_client_id="595013732528-llk8trb03f0ldpqq6nprjp1s79596646.apps.googleusercontent.com"
@@ -281,13 +281,24 @@ exclude_unwind_tables=false
 enable_ffmpeg_video_decoders=true
 enable_widevine=false
 
-use_sysroot=false
+rtc_use_h264=true
+
 blink_symbol_level=0
 v8_symbol_level=0
+
+
+enable_stack_trace_line_numbers = true
+enable_backup_ref_ptr_support=false
+enable_dangling_raw_ptr_checks=false
+enable_dangling_raw_ptr_feature_flag=false
+#use_partition_alloc_as_malloc=false
+#use_allocator_shim=false
+#use_partition_alloc=false
+use_qt=false
 ```
 
 ```bash
-# run if
+# run following if
 # use_sysroot=false
 # sudo ./build/install-build-deps.sh
 # sudo apt install qtbase5-dev
