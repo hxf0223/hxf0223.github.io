@@ -104,9 +104,11 @@ TODO
 
 ## 5. 资料 ##
 
+* [TBB并发库代码学习](https://woodpenker.github.io/2022/01/16/TBB%E5%B9%B6%E5%8F%91%E5%BA%93%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/)
 * [c++并行计算库TBB和PPL的基本用法](https://www.cnblogs.com/qicosmos/p/3517166.html)
 * [并行计算】tbb::parallel c++并行计算的用法总结](https://blog.csdn.net/qq_40145095/article/details/131783443)
 * [intel-TBB使用笔记](https://chuckiewill.github.io/2022/01/26/C++/IntelTBB/)
 * [Intel Thread Building Blocks (TBB) 入门篇](https://www.cnblogs.com/ybqjymy/p/13679446.html)
+* [TBB开启并行编程之旅](https://ming-blog.top/2024/11/09/C++/%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/TBB%E5%BC%80%E5%90%AF%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%97%85/)
 * [Migrating from tbb::task_scheduler_init](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/Migration_Guide/Task_Scheduler_Init.html)
-* [ntel Community](https://community.intel.com/)
+* [Intel Community](https://community.intel.com/)
