@@ -26,6 +26,9 @@ mermaid: true
 
 Kdtree 算法的构建时间复杂度为 O(nlogn)，搜索时间复杂度最好为 O($\log_2 N$)，最坏为 O($N^{1-1/k}$)。
 
+* [基于k-d 树的查询算法实现与二维可视化](https://dsa.cs.tsinghua.edu.cn/~deng/cg/project/2021s/2021s-k.pdf)
+* [KD-Tree详解: 从原理到编程实现](https://blog.csdn.net/qq_42688495/article/details/124049811)
+
 ## 1. 背景 ##
 
 采集到的二维点云数据(samples)，生成`K-D`搜索树，使用广度优先搜索，聚合成`block`数据。后续的识别/分类算法，在`block`数据基础上进行。
