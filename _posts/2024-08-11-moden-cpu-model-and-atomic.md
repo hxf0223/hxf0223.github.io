@@ -22,7 +22,7 @@ mermaid: true
 
 结构如下图所示：
 
-![CPU cache structure](/assets/images/cpu/memory_order_20240811/core_structure_cache_store_buffer_inv_queue.png)
+![CPU cache structure](/assets/images/cpu/memory_order_20240811/core_structure_cache_store_buffer_inv_queue2.png)
 
 ### 1.1 `Cahce`一致性协议 `MESI` ###
 
@@ -79,9 +79,9 @@ aligned_value aligned_data[2] CACHE_ALIGNED;
 
 为了解决乱序问题（也可以理解为可见性问题，修改完没有及时同步到其他的CPU），又引出了「`内存屏障`」的概念；内存屏障可以分为三种类型：`写屏障`，`读屏障`以及`全能屏障（包含了读写屏障）`，屏障可以简单理解为：在操作数据的时候，往数据插入一条`特殊的指令`。只要遇到这条指令，那前面的操作都得「完成」。
 
-1. `CPU`当发现写屏障指令时，会把该指令「之前」存在于「`store Buffer`」所有写指令刷入`cache`。就可以让`CPU`修改的数据马上暴露给其他`CPU`，达到「写操作」可见性的效果。
+1. `写屏障`指令(write barrier, or sfence)，等待之前的写操作完成，并把该指令「之前」存在于「`store Buffer`」中的所有写指令刷入`cache`。就可以让`CPU`修改的数据马上暴露给其他`CPU`(`MESI`)，达到「写操作」可见性的效果。
 
-2. 读屏障也是类似的：CPU当发现读屏障的指令时，会把该指令「之前」存在于「`invalid queue`」所有的指令都处理掉。通过这种方式就可以确保当前CPU的缓存状态是准确的，达到「读操作」一定是读取最新的效果。
+2. `读屏障`指令(read barrier, or lfence)，会把该指令「之前」存在于「`invalid queue`」中的所有的指令都处理掉。通过这种方式就可以确保当前CPU的缓存状态是准确的，达到「读操作」一定是读取最新的效果。
 
 由于不同CPU架构的缓存体系不一样、缓存一致性协议不一样、重排序的策略不一样、所提供的内存屏障指令也有差异，所以一些语言c++/java/go/rust 都有实现自己的内存模型, 比如golang大牛`Russ Cox`写的内存模型系列文章 [Memory Models](https://research.swtch.com/mm) 值得深入了解。
 
@@ -92,6 +92,7 @@ aligned_value aligned_data[2] CACHE_ALIGNED;
 * [CPU 缓存一致性与内存屏障](https://wingsxdu.com/posts/note/cpu-cache-and-memory-barriers/)
 * [Cache一致性和内存一致性](https://wudaijun.com/2019/04/cache-coherence-and-memory-consistency/)
 * [Acquire and Release Fences](https://preshing.com/20130922/acquire-and-release-fences/)
+* [從硬體觀點了解 memory barrier 的實作和效果](https://medium.com/fcamels-notes/%E5%BE%9E%E7%A1%AC%E9%AB%94%E8%A7%80%E9%BB%9E%E4%BA%86%E8%A7%A3-memry-barrier-%E7%9A%84%E5%AF%A6%E4%BD%9C%E5%92%8C%E6%95%88%E6%9E%9C-416ff0a64fc1)
 
 ## 3. memory order seq_cst 与 release_acquire 区别 ##
 
