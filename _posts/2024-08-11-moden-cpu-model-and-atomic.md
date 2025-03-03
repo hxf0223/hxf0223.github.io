@@ -1,5 +1,5 @@
 ---
-title: 整理：内存模型
+title: 整理：内存一致模型
 date: 2024-08-11 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
 tags: [cpp, cpu]      # TAG names should always be lowercase
@@ -93,6 +93,7 @@ aligned_value aligned_data[2] CACHE_ALIGNED;
 * [Cache一致性和内存一致性](https://wudaijun.com/2019/04/cache-coherence-and-memory-consistency/)
 * [Acquire and Release Fences](https://preshing.com/20130922/acquire-and-release-fences/)
 * [從硬體觀點了解 memory barrier 的實作和效果](https://medium.com/fcamels-notes/%E5%BE%9E%E7%A1%AC%E9%AB%94%E8%A7%80%E9%BB%9E%E4%BA%86%E8%A7%A3-memry-barrier-%E7%9A%84%E5%AF%A6%E4%BD%9C%E5%92%8C%E6%95%88%E6%9E%9C-416ff0a64fc1)
+* [CPU架构和MESI缓存一致性->内存模型一致性->内存屏障和原子操作->内存序->C++内存序](https://www.cnblogs.com/yiwanfengweng/articles/18657841)
 
 ## 3. memory order seq_cst 与 release_acquire 区别 ##
 
