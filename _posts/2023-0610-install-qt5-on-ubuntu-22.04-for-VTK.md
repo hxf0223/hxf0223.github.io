@@ -31,7 +31,9 @@ find_package(
   REQUIRED)
 ```
 
-## 3. windows 安装 Qt5 ##
+## 3. 在线安装包 Qt5 ##
+
+同时适用于windows/linux平台：
 
 下载在线安装包：[Qt downloads](https://download.qt.io/official_releases/online_installers/)
 
