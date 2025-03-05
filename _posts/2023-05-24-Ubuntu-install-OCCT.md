@@ -30,6 +30,7 @@ git clone https://git.dev.opencascade.org/repos/occt.git occt
 * 注意要 `tcl-dev`, `tk-dev`, `tcllib`, `tklib`，除非自己编译安装，此时要设置TCL/TK相关的路径，比较麻烦。
 
 ```bash
+sudo apt install doxygen doxygen-gui graphviz graphviz-doc libx11-xcb-dev
 sudo apt-get install tcllib tklib tcl-dev tk-dev libfreetype-dev libx11-dev libgl1-mesa-dev libfreeimage-dev
 sudo apt-get install rapidjson-dev libdraco-dev
 ```
