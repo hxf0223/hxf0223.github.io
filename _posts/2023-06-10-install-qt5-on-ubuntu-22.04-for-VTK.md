@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 22.04 安装 Qt5，以编译 VTK
+title: Ubuntu 22.04 安装 Qt5
 date: 2023-06-10 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
 tags: [cpp, qt]      # TAG names should always be lowercase
