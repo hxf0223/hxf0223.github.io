@@ -50,7 +50,7 @@ python3 self_check.py
 
 ## 2. 参考及资料 ##
 
-* [【性能】性能分析工具VTune|perf相关性工具](https://www.cnblogs.com/bandaoyu/p/16751995.html)
+* [Intel® VTune™ Profiler 分析 C++ 程序的常见性能瓶颈( Windows 平台)](https://www.zevorn.cn/posts/8)
 * [perf Examples](https://www.brendangregg.com/perf.html)
 * [现代CPU性能分析与优化 -- Intel Vtune](https://weedge.github.io/perf-book-cn/zh/chapters/7-Overview-Of-Performance-Analysis-Tools/7-1_Intel_Vtune_cn.html)
 * [intel-TBB使用笔记](https://chuckiewill.github.io/2022/01/26/C++/IntelTBB/)
