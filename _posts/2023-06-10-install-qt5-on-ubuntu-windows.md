@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 22.04 安装 Qt5
+title: Ubuntu 及 Windows 系统下安装 Qt5
 date: 2023-06-10 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [cpp]
 tags: [cpp, qt]      # TAG names should always be lowercase
@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## 1. install commands ##
+## 1. Ubuntu 安装 Qt5 命令 ##
 
 安装`Qt5`：
 
@@ -43,7 +43,7 @@ find_package(
 .\qt-unified-windows-x64-online.exe --mirror https://mirrors.ustc.edu.cn/qtproject
 ```
 
-## 4. refs ##
+## 4. 额外链接 ##
 
 * [gist](https://gist.githubusercontent.com/simos/8de45464687d87407041e4c2d2f69500/raw/4530829479584f290a91020a75c4f6e360492704/setup_buildenv_ubuntu22.04.sh)
 * [Which dev packages are needed to build a QtQuick application on Ubuntu 20.04?](https://stackoverflow.com/questions/64882226/which-dev-packages-are-needed-to-build-a-qtquick-application-on-ubuntu-20-04)
