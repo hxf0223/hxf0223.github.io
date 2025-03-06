@@ -15,7 +15,7 @@ mermaid: true
 安装`Qt5`：
 
 ```bash
-sudo apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qtmultimedia5-dev qttools5-dev qttools5-dev-tools qtcreator libqt5svg5-dev libqt5charts5 libqt5charts5-dev qtdeclarative5-dev
+sudo apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qtmultimedia5-dev qttools5-dev qttools5-dev-tools qtcreator libqt5svg5-dev libqt5charts5 libqt5charts5-dev qtdeclarative5-dev libqt5xmlpatterns5-dev libqt5x11extras5-dev cmake-qt-gui
 ```
 
 ```bash
@@ -33,7 +33,7 @@ find_package(
 
 ## 3. 在线安装包 Qt5 ##
 
-同时适用于windows/linux平台：
+同时适用于`windows`/`linux`平台：
 
 下载在线安装包：[Qt downloads](https://download.qt.io/official_releases/online_installers/)
 
