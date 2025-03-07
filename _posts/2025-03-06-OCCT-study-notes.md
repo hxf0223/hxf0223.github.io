@@ -28,3 +28,8 @@ mermaid: true
 * [OpenCASCADE 线面求交](https://www.cnblogs.com/opencascade/p/occt_intcs.html)
 * [解析几何求交之直线与二次曲面](https://www.cnblogs.com/opencascade/p/IntAna_IntConicQuad.html)
 * [Modeling Algorithms](https://old.opencascade.com/doc/occt-7.4.0/overview/html/occt_user_guides__modeling_algos.html)
+
+## FreeCAD ##
+
+* [github -- Module developer's guide to FreeCAD source code -- FreeCAD overview and architecture](https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide/blob/master/chapters/1.FreeCAD_overview_architecture.md)
+* [github -- CAD modules in FreeCAD -- CAD modules in FreeCAD](https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide/blob/master/chapters/7.FreeCAD_CAD_modules.md)
