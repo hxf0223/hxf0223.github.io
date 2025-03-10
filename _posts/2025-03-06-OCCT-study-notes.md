@@ -29,7 +29,19 @@ mermaid: true
 * [解析几何求交之直线与二次曲面](https://www.cnblogs.com/opencascade/p/IntAna_IntConicQuad.html)
 * [Modeling Algorithms](https://old.opencascade.com/doc/occt-7.4.0/overview/html/occt_user_guides__modeling_algos.html)
 
-## FreeCAD ##
+## 2. Quaoar Workshop 的学习资料 ##
+
+* [youtube教学视频](https://www.youtube.com/c/QuaoarsWorkshop)
+* [开源项目 Analysis Situs](https://analysissitus.org/)
+* [OCC论坛 Analysis Situs Forums](https://analysissitus.org/forum/index.php)
+* [gitlab -- AnalysisSitus](https://gitlab.com/ssv/AnalysisSitus)
+
+## 3. 开源项目 Mayo ##
+
+* [Get started with Mayo](https://librearts.org/2023/01/introducing-mayo-free-cad-files-viewer/)
+* [github -- Mayo](https://github.com/fougue/mayo)
+
+## 4. FreeCAD ##
 
 * [github -- Module developer's guide to FreeCAD source code -- FreeCAD overview and architecture](https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide/blob/master/chapters/1.FreeCAD_overview_architecture.md)
 * [github -- CAD modules in FreeCAD -- CAD modules in FreeCAD](https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide/blob/master/chapters/7.FreeCAD_CAD_modules.md)
