@@ -10,7 +10,9 @@ mermaid: true
 # pin: true
 ---
 
-## 1. 求交 ##
+## 1. 笔记 ##
+
+### 1.1. 求交 ###
 
 对二次曲线与二次曲面求交，使用解析几何的方法，计算出交点，依赖底层数学库`math_DirectPolynomialRoots`。类`math_DirectPolynomialRoots`可以对最多4次方程进行求解。
 
@@ -28,6 +30,14 @@ mermaid: true
 * [OpenCASCADE 线面求交](https://www.cnblogs.com/opencascade/p/occt_intcs.html)
 * [解析几何求交之直线与二次曲面](https://www.cnblogs.com/opencascade/p/IntAna_IntConicQuad.html)
 * [Modeling Algorithms](https://old.opencascade.com/doc/occt-7.4.0/overview/html/occt_user_guides__modeling_algos.html)
+
+### 1.2. OCC中的实体表示 -- Modelling ###
+
+`OCC`表示`B-Rep`，其核心概念有两个：几何，拓扑。几何表示实体的形状，如二次曲线方程，`Bezier`曲线、`NURBS`曲线等。拓扑为存储结构，是一个树形结构，组成一个实体的各个部分，如顶点、边、面、体、轮廓等。
+
+![topo_demo](/assets/images/occ/03_topology.png)
+
+* [OpenCascade Overview](https://quaoar.su/blog/page/opencascade-overview)
 
 ## 2. Quaoar Workshop 的学习资料 ##
 
