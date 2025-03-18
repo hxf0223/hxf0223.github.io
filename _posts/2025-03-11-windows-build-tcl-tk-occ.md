@@ -43,8 +43,8 @@ TODO
 
 下载及编译`TCL/TK 8.6.16`源码：
 
-* [TCL 8.6.16](http://prdownloads.sourceforge.net/tcl/tcl8616-src.zip)
-* [TK 8.6.16](http://prdownloads.sourceforge.net/tcl/tk8616-src.zip)
+* TCL 8.6.16 http://prdownloads.sourceforge.net/tcl/tcl8616-src.zip
+* TK 8.6.16  http://prdownloads.sourceforge.net/tcl/tk8616-src.zip
 
 分别修改`TCL`及`TK`子目录`win`下的`rules.vc`文件：
 
