@@ -18,5 +18,4 @@ mermaid: true
 ## Ubunut 22.04 ##
 
 * [华为](https://mirrors.huaweicloud.com/ubuntu-releases/22.04/)
-* [阿里云](http://mirrors.aliyun.com/ubuntu-releases/22.04/)
-
+* [阿里云](https://mirrors.aliyun.com/ubuntu-releases/22.04/)
