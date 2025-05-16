@@ -29,7 +29,11 @@ mermaid: true
 
 ## QGC master依赖于GStreamer ##
 
+需要同时按照`runtime`版本和`devel`版本。
+
 * [Download GStreamer](https://gstreamer.freedesktop.org/download/#windows)
 * [Gstreamer安装和使用](https://yadiq.github.io/2022/08/15/MediaGstreamerInstall/)
 * [pkg-config for windows](https://github.com/lua-batteries/pkg-config/releases)
 * [gstreamer 中文教程](https://www.cnblogs.com/O-ll-O/p/17438361.html)
+* [常见问题：GStreamer的使用](https://kernel-zhang.github.io/posts/UsingGStreamer/)
+* [PX4 -- Simulation](https://bresch.gitbooks.io/devguide/content/en/simulation/)
