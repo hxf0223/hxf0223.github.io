@@ -29,7 +29,11 @@ mermaid: true
 
 ## QGC master依赖于GStreamer ##
 
-需要同时按照`runtime`版本和`devel`版本。
+需要同时按照`runtime`版本和`devel`版本，安装完成之后，设置环境变量`GSTREAMER_1_0_ROOT_MSVC_X86_64`：
+
+```bash
+GSTREAMER_1_0_ROOT_MSVC_X86_64 = d:\dev_libs\gstreamer\1.0\msvc_x86_64\
+```
 
 * [Download GStreamer](https://gstreamer.freedesktop.org/download/#windows)
 * [Gstreamer安装和使用](https://yadiq.github.io/2022/08/15/MediaGstreamerInstall/)
