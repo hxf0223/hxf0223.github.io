@@ -20,6 +20,7 @@ mermaid: true
 ## QGC开发入门资料 ##
 
 * [QGC开发指南翻译+个人注解](https://zhuanlan.zhihu.com/p/647096410)
+* [QGC分析（一）-整体分析和通信流程](https://blog.csdn.net/qaaaaaaz/article/details/130460042)
 
 ## 界面相关资料 ##
 
@@ -27,7 +28,14 @@ mermaid: true
 * [QianWindow](https://github.com/nuoqian-lgtm/QianWindow)
 * [gitee amap](https://gitee.com/IOthellOI/amap)
 
-## QGC master依赖于GStreamer ##
+## 其他地面站工程 ##
+
+* [JAGCS -- 参考其代码架构](https://github.com/MishkaRogachev/JAGCS)
+* [Simple GCS -- imGUI](https://github.com/Sanmopre/Simple_GCS)
+* [ControlTower -- 基于 WayWise](https://github.com/RISE-Dependable-Transport-Systems/ControlTower)
+* [WayWise: a rapid prototyping library for connected, autonomous vehicles](https://ccam-sunrise-project.eu/wp-content/uploads/2024/09/WayWise_Software_Impacts.pdf)
+
+## QGC(master) 编译 ##
 
 需要同时按照`runtime`版本和`devel`版本，安装完成之后，设置环境变量`GSTREAMER_1_0_ROOT_MSVC_X86_64`：
 
