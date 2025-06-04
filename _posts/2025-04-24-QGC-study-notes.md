@@ -49,3 +49,17 @@ GSTREAMER_1_0_ROOT_MSVC_X86_64 = d:\dev_libs\gstreamer\1.0\msvc_x86_64\
 * [gstreamer 中文教程](https://www.cnblogs.com/O-ll-O/p/17438361.html)
 * [常见问题：GStreamer的使用](https://kernel-zhang.github.io/posts/UsingGStreamer/)
 * [PX4 -- Simulation](https://bresch.gitbooks.io/devguide/content/en/simulation/)
+
+## QGC 核心架构图示 ##
+
+UML 核心类图（下载本地放大查看）：
+
+![QGC 主要 UML](/assets/images/qgc/20250604/qgc_uml.png)
+
+核心系统分析图（下载本地放大查看）：
+
+![QGC 主要系统分析](/assets/images/qgc/20250604/qgc_core_arch_call.png)
+
+引用：
+
+* [CSDN -- QGC(GGroundControl) 系统核心架构图](https://blog.csdn.net/qq_16504163/article/details/124005216)
