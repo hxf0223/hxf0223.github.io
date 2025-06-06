@@ -111,3 +111,7 @@ void GCS_MAVLINK_Copter::handle_message(const mavlink_message_t &msg)
 ### 2.3. MAVLink 消息的确认与重传 ###
 
 `MAVLink`协议支持消息的确认与重传机制。发送方在发送消息后，会等待接收方的确认响应。如果在一定时间内没有收到确认响应，发送方会重新发送该消息，直到收到确认或达到最大重试次数。
+
+## 3. 资料 ##
+
+* [MAVLink Wireshark抓包插件](https://github.com/nextpilot/nextpilot-flight-control/tree/43de1097f3f668c9d9a6b37dd5cf718f38e23e51/docs/develop/09.%E5%88%86%E6%9E%90%E8%B0%83%E8%AF%95)
