@@ -19,10 +19,9 @@ mermaid: true
 * [官方user guide](https://docs.qgroundcontrol.com/Stable_V4.4/en/qgc-user-guide/)
 * [官方dev guide](https://docs.qgroundcontrol.com/Stable_V4.4/en/qgc-dev-guide/)
 
-### 1.2. QGC开发入门资料 ###
+### 1.2. QGC优化 ###
 
-* [QGC开发指南翻译+个人注解](https://zhuanlan.zhihu.com/p/647096410)
-* [QGC分析（一）-整体分析和通信流程](https://blog.csdn.net/qaaaaaaz/article/details/130460042)
+* [PR: QML: Various easy optimizations](https://github.com/mavlink/qgroundcontrol/pull/12968)
 
 ### 1.3. 界面相关资料 ###
 
