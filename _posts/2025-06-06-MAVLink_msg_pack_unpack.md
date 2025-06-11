@@ -84,11 +84,11 @@ uint16_t mavlink_msg_to_send_buffer(uint8_t *buf, const mavlink_message_t *msg);
 ```c++
 uint8_t mavlink_frame_char(uint8_t chan, uint8_t c, mavlink_message_t* r_message, mavlink_status_t* r_mavlink_status)
 {
-	return mavlink_frame_char_buffer(mavlink_get_channel_buffer(chan),
-					 mavlink_get_channel_status(chan),
-					 c,
-					 r_message,
-					 r_mavlink_status);
+    return mavlink_frame_char_buffer(mavlink_get_channel_buffer(chan),
+        mavlink_get_channel_status(chan),
+        c,
+        r_message,
+        r_mavlink_status);
 }
 ```
 
