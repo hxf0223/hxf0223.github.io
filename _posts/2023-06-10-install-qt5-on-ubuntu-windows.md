@@ -43,6 +43,13 @@ find_package(
 .\qt-unified-windows-x64-online.exe --mirror https://mirrors.ustc.edu.cn/qtproject
 ```
 
+升级/维护时使用国内镜像：
+
+```bash
+# 可以创建快捷方式
+MaintenanceTool.exe --mirror https://mirror.nju.edu.cn/qt
+```
+
 ## 4. 额外链接 ##
 
 * [gist](https://gist.githubusercontent.com/simos/8de45464687d87407041e4c2d2f69500/raw/4530829479584f290a91020a75c4f6e360492704/setup_buildenv_ubuntu22.04.sh)
