@@ -10,9 +10,9 @@ mermaid: true
 # pin: true
 ---
 
-## 准备
+## 准备 ##
 
-### 配置 VSCode 使用 PowerShell7
+### 配置 VSCode 使用 PowerShell7 ###
 
 `VSCode`快捷键打开**用户配置文件(Json)**：`ctrl+shift+p`，输入`open user settings`，选择打开`settings.json`文件。添加以下内容：
 
@@ -42,7 +42,7 @@ mermaid: true
 "terminal.integrated.defaultProfile.windows": "PowerShell7",
 ```
 
-### 下载 posh-git
+### 下载 posh-git ###
 
 需要使用 [posh-git](https://github.com/dahlbyk/posh-git)。
 首先确定`PowerShell`版本（在安装`PowerShell 7`之后，vscode默认使用的是`PowerShell 7`）：
@@ -51,7 +51,7 @@ mermaid: true
 $PSVersionTable.PSVersion
 ```
 
-## 安装 posh-git
+## 安装 posh-git ##
 
 脚本执行策略必须设置为 RemoteSigned 或 Unlimited，需要以管理员身份在powershell中执行以下语句
 
@@ -70,7 +70,7 @@ PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 PowerShellGet\Update-Module posh-git
 ```
 
-## 配置 posh-git
+## 配置 posh-git ##
 
 在`powershell`终端对`$PROFILE`文件进行编辑：
 
@@ -111,7 +111,7 @@ WARNING: posh-git appears to already be imported in one of your profile scripts.
 WARNING: If you want to force the add, use the -Force parameter.
 ```
 
-## PowerShell 的一个小技巧
+## PowerShell 的一个小技巧 ##
 
 PowerShell按TAB键自动提示。
 在powershell的$PROFILE文件中，追加以下内容：
@@ -121,7 +121,7 @@ PowerShell按TAB键自动提示。
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 ```
 
-## 参考
+## 参考 ##
 
 - [posh-git](https://github.com/dahlbyk/posh-git)
 - [Windows安装posh](https://blog.csdn.net/cxs5534/article/details/129737617)
