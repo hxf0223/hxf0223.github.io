@@ -39,3 +39,4 @@ function g { git status -sb }
 ## 参考资料 ##
 
 * [安装powershell7](https://www.cnblogs.com/DumpInfou/p/18204045)
+* [终端高级功能](https://vscode.js.cn/docs/terminal/advanced)
