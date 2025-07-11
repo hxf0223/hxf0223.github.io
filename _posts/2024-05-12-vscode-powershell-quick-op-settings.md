@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-## PowerShell 清屏快捷键设置 ##
+## 1. PowerShell 清屏快捷键设置 ##
 
 由于 `VSCode` Windows 开发使用 `cls` 命令不能执行清屏操作（仅仅是滚动SCREEN缓冲区），所以使用快捷键代替清屏操作。
 `VSCode` 中，`Ctrl + Shift + p` 打开设置，搜索 `Terminal: Clear`，找到 `Terminal: Clear`，将快捷键设置为 `Ctrl + l`。
@@ -36,9 +36,9 @@ function g { git status -sb }
 
 ```
 
-## Poewrshell 安装 oh my posh ##
+## 2. Poewrshell 安装 oh my posh ##
 
-### 安装插件 ###
+### 2.1. 安装插件 ###
 
 ```powershell
 # 0.允许使用脚本 
@@ -57,7 +57,7 @@ winget install JanDeDobbeleer.OhMyPosh -s winget
 Install-Module oh-my-posh -Scope CurrentUser
 ```
 
-### 配置文件 ###
+### 2.2. 配置文件 ###
 
 ```powershell
 # 1. 打开配置文件
@@ -105,10 +105,17 @@ Import-Module oh-my-posh
 # Set-PoshPrompt -Theme Paradox
 ```
 
-### 效果 ###
+### 2.3. 乱码处理 ###
+
+`PowerShell`终端会出现乱码，需要安装及使用`Fira Code`字体。
+
+* [Fira Code 字体](https://github.com/tonsky/FiraCode)
+
+安装字体之后，打开`PowerShell`终端，在`默认值->外观->字体`中选择`Fira Code`字体。
 
 ## 参考资料 ##
 
 * [oymyposh themes](https://ohmyposh.dev/docs/themes/)
 * [powershell7升级笔记](https://www.cnblogs.com/DumpInfou/p/18204045)
 * [终端高级功能](https://vscode.js.cn/docs/terminal/advanced)
+* [Windows Terminal 更新后 oh-my-posh 报错的问题分析与解决](https://lzw.me/a/windows-terminal-update-oh-my-posh.html)
