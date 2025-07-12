@@ -80,12 +80,24 @@ perf record -F 599 -e cycles,cache-misses -ag -p 12738 -- sleep 200
 ![import_perf_format_file](/assets/images/perf/20241020_perf_vtune_import_perf_tools/vtune_profiler_import_perf_01.png)
 ![import_perf_format_file_step_2](/assets/images/perf/20241020_perf_vtune_import_perf_tools/vtune_profiler_import_perf_02.png)
 
-## 4. 参考资料 ##
+## 4. 编译配置 ##
+
+`Windows`下配置如下：
+
+* 确保`Debug Information Format`设置为`Program Database (/Zi)`;
+* 确保`Optimization`选项设置为`Maximum Optimizations (Favor Size) (/O1)`;
+* 将`Optimization Diagnostic Level`设置为`Level 2 (/Qopt-report:2)`;
+
+参考：
+
+* [Intel® VTune™ Profiler 分析 C++ 程序的常见性能瓶颈( Windows 平台)](https://github.com/zevorn/blog/discussions/8)
+
+## 5. 参考资料 ##
 
 * [现代CPU性能分析与优化 -- Linux Perf](https://weedge.github.io/perf-book-cn/zh/chapters/7-Overview-Of-Performance-Analysis-Tools/7-4_Linux_perf_cn.html)
 * [perf Examples](https://www.brendangregg.com/perf.html)
 
-## 5. 更多学习资料 ##
+## 6. 更多学习资料 ##
 
 * [Performance Analysis and Tuning on Modern CPU 中文翻译](https://github.com/weedge/perf-book-cn)
 * [Using Linux perf at Netflix](https://brendangregg.com/Slides/KernelRecipes_Perf_Events.pdf)
