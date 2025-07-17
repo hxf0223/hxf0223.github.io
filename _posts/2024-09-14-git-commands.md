@@ -37,3 +37,36 @@ rm -rf .git/modules/3rd/xz-v5.8.1
 # Remove the entry in .gitmodules and remove the submodule directory located at path/to/submodule
 git rm -f 3rd/xz-v5.8.1
 ```
+
+## 删除git记录中的大文件及blob ##
+
+```bash
+# 执行命令之前，保证仓库没有待提交的更改
+
+# 清理
+git gc
+
+# 根据文件名查找大文件的完整路径
+git rev-list --objects --all | grep <filename>
+
+# 使用完整大文件路径删除大文件
+git filter-branch --force --index-filter 'git rm -rf --cached --ignore-unmatch <full_path_filename>' --prune-empty --tag-name-filter cat -- --all
+
+# 列出前5个大文件
+# git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -5 | awk '{print$1}')"
+
+# 推送到远程仓库
+git push origin --force --all
+
+# 清除缓存
+rm -rf .git/refs/original/
+git reflog expire --expire=now --all
+git gc --prune=now
+
+# 查看当前Git对象统计信息
+git count-objects -v
+```
+
+### gitlab无法强行推送问题解决 ###
+
+需要`owner`设置如下：仓库的`Settings` -> `Repository` -> `Protected branches` 改成`unprotected`。
