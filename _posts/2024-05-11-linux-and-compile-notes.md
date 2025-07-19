@@ -42,3 +42,18 @@ LD_DEBUG=libs ./test_app
 
 * [Linux运行时动态库搜索路径优先级](https://www.cnblogs.com/ForestCherry/p/18497797)
 * [gitee -- 测试代码](https://gitee.com/misc_projects/dup_symbol_test)
+
+## 2. Linux命令：查看APP/DSO的编译器信息 ##
+
+查看架构：
+
+```bash
+file bin/jouav_cluster_msg_simu
+# readelf -h bin/jouav_cluster_msg_simu | grep Machine
+```
+
+查看编译器版本：
+
+```bash
+readelf -p .comment bin/jouav_cluster_msg_simu
+```
