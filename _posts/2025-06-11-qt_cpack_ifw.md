@@ -82,3 +82,4 @@ cpack.exe ./CPackConfig.cmake
 * [Revisiting the Qt Installer Framework with CMake](https://www.ics.com/blog/revisiting-qt-installer-framework-cmake)
 * [cmake-qt-packaging-example](https://github.com/miurahr/cmake-qt-packaging-example/blob/master/Packaging.cmake)
 * [基于 CMake 的打包](https://sirlis.cn/posts/c-cmake-development/#4-%E5%9F%BA%E4%BA%8E-cmake-%E7%9A%84%E6%89%93%E5%8C%85)
+* [gist](https://gist.github.com/TheBloke/b933a4a98e0ea7352b8f5c4574575d45)
