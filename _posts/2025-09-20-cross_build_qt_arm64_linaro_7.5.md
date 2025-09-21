@@ -79,10 +79,10 @@ export PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig:${SYSROOT}/share/pkgconfig
 ../configure -pkg-config -xplatform aarch64-linux-gnu-g++ -prefix $DEST_PREFIX -release -opensource -confirm-license -sysroot $SYSROOT -nomake tests -nomake examples -skip qtwebengine -skip qt3d -skip qtwebview -skip qtnetworkauth -skip qtserialport -skip qtsensors -skip qtmultimedia -skip qtdoc -skip qtmacextras -skip qtandroidextras -no-opengl
 
 # 添加skip qtlocation，qtlocation编译报错
-../configure -pkg-config -xplatform aarch64-linux-gnu-g++ -prefix $DEST_PREFIX -release -opensource -confirm-license -sysroot $SYSROOT -nomake tests -nomake examples -skip qtwebengine -skip qt3d -skip qtwebview -skip qtnetworkauth -skip qtserialport -skip qtsensors -skip qtmultimedia -skip qtdoc -skip qtmacextras -skip qtandroidextras -skip qtlocation -no-opengl
+# ../configure -pkg-config -xplatform aarch64-linux-gnu-g++ -prefix $DEST_PREFIX -release -opensource -confirm-license -sysroot $SYSROOT -nomake tests -nomake examples -skip qtwebengine -skip qt3d -skip qtwebview -skip qtnetworkauth -skip qtserialport -skip qtsensors -skip qtmultimedia -skip qtdoc -skip qtmacextras -skip qtandroidextras -skip qtlocation -no-opengl
 
-# 去掉几乎所有界面相关模块
-../configure -pkg-config -xplatform aarch64-linux-gnu-g++ -prefix $DEST_PREFIX -release -opensource -confirm-license -sysroot $SYSROOT -nomake tests -nomake examples -skip qtwebengine -skip qt3d -skip qtwebview -skip qtnetworkauth -skip qtserialport -skip qtsensors -skip qtmultimedia -skip qtdoc -skip qtmacextras -skip qtandroidextras -skip qtlocation -no-gui -skip qtdeclarative -skip qtquickcontrols -skip qtquickcontrols2 -skip qtgraphicaleffects -no-opengl
+# 去掉几乎所有界面相关模块，只保留QtGui，QtWidget界面组件
+# ../configure -pkg-config -xplatform aarch64-linux-gnu-g++ -prefix $DEST_PREFIX -release -opensource -confirm-license -sysroot $SYSROOT -nomake tests -nomake examples -skip qtwebengine -skip qt3d -skip qtwebview -skip qtnetworkauth -skip qtserialport -skip qtsensors -skip qtmultimedia -skip qtdoc -skip qtmacextras -skip qtandroidextras -skip qtlocation -skip qtdeclarative -skip qtquickcontrols -skip qtquickcontrols2 -skip qtgraphicaleffects -no-opengl
 
 make -j8
 sudo make install
