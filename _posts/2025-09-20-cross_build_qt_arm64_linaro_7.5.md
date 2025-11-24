@@ -58,7 +58,7 @@ QMAKE_NM                = /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu
 QMAKE_STRIP             = /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-strip
 ```
 
-3. 编译 Qt 源码
+## 3. 编译 Qt 源码 ##
 
 如下为编译一个比较精简的`Qt`库，去掉了很多模块。
 
@@ -88,6 +88,6 @@ make -j8
 sudo make install
 ```
 
-4. 资料
+## 4. 资料 ##
 
 * [qt5.15.2 交叉编译 arm64](https://august295.github.io/posts/qt5.15.2%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91arm64/)
