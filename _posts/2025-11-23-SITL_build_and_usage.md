@@ -1,5 +1,5 @@
 ---
-title: 交叉编译 Qt 5.15.2
+title: ArduPilot SITL的编译及使用
 date: 2025-11-23 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [ardupilot]
 tags: [sitl]      # TAG names should always be lowercase
@@ -26,12 +26,42 @@ git submodule update --init --recursive
 
 安装之后，可能会提示有一些包没有安装成功，可以手动安装这些包。另外，创建`venv`环境可能会好一些。
 
-编译`SITL`：
+编译`SITL`（编译为固定翼SITL）：
 
 ```bash
+# do not use waf using sudo
 ./waf configure --board sitl
 ./waf plane -j6
 ```
+
+### 1.1. 编译参数 ###
+
+使用`waf`配置以及编译的参数格式分别为：
+
+```bash
+./waf configure --board <board_name>
+./waf <vehicle_type> -j<cpu_cores>
+```
+
+`ArduPilot`支持的板子非常多，使用如下命令列出支持的板子：
+
+```bash
+./waf list_boards
+```
+
+而常见的`vehicle`命令如下：
+
+```bash
+./waf copter                            # All multirotor types
+./waf heli                              # Helicopter types
+./waf plane                             # Fixed wing airplanes including VTOL
+./waf rover                             # Ground-based rovers and surface boats
+./waf sub                               # ROV and other submarines
+./waf antennatracker                    # Antenna trackers
+./waf AP_Periph                         # AP Peripheral
+```
+
+内容来自[`github -- ArduPilot -- BUILD.md`](https://github.com/ArduPilot/ardupilot/blob/master/BUILD.md)。
 
 ## 2. SITL仿真 ##
 
