@@ -61,7 +61,7 @@ git submodule update --init --recursive
 ./waf AP_Periph                         # AP Peripheral
 ```
 
-内容来自[`github -- ArduPilot -- BUILD.md`](https://github.com/ArduPilot/ardupilot/blob/master/BUILD.md)。
+* 内容来自 [`github -- ArduPilot -- BUILD.md`](https://github.com/ArduPilot/ardupilot/blob/master/BUILD.md)。
 
 ## 2. SITL仿真 ##
 
@@ -92,7 +92,7 @@ HefeiHighTech=31.837722,117.169167,25,0
 HefeiDowntown=31.864444,117.283056,28,0
 ```
 
-### 2.1 TCP连接 ###
+### 2.1. TCP连接 ###
 
 ```bash
 # 创建TCP连接的`SITL`仿真的命令如下，禁用`MAVProxy`
@@ -108,7 +108,7 @@ Port： 5760  （或 5770）
 
 * `TCP`连接时，`SITL`中的飞控作为服务端，`QGC`作为客户端进行连接。
 
-### 2.2 UDP连接 ###
+### 2.2. UDP连接 ###
 
 ```bash
 ./Tools/autotest/sim_vehicle.py --vehicle=ArduPlane --model=plane --count=2 --auto-sysid --location Hefei --auto-offset-line=0,100 --no-mavproxy -A "--serial0=udpclient:192.168.11.139:14550"
@@ -124,18 +124,24 @@ Local Port： 14550
 * 此时，`SITL`中的飞控作为客户端，`QGC`作为服务端，监听端口`14550`的消息。
 * 经过测试，似乎此时不能发送`UDP`消息给`SITL`，只能接收`SITL`发送过来的消息。
 
-## 3. 第三方启动脚本 ##
+## 3. ArduPilot 代码解读 ##
+
+### 3.1. model 参数 ###
+
+运行编译好的`SITL`时，可以通过`--model`参数指定仿真器模型，`model`参数列表定义在`SITL_cmdline.cpp`文件的`model_constructors`中[SITL_cmdline.cpp](https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_HAL_SITL/SITL_cmdline.cpp)。
+
+## 4. 第三方启动脚本 ##
 
 * [ap-swarm-launcher](https://github.com/hxf0223/ap-swarm-launcher)
 
-## 4. 资料 ##
+## 5. 资料 ##
 
 * [deepwiki -- ArduPilot SITL](https://deepwiki.com/ArduPilot/ardupilot/5.2-software-in-the-loop-(sitl))
 * [example -- 自定义SITL启动脚本：多机主从](https://github.com/ArduPilot/ardupilot/blob/master/libraries/SITL/examples/follow-copter.sh)
 * [github -- Intelligent Quads Tutorials](https://github.com/Intelligent-Quads/iq_tutorials)
 * [Ardupilot discuss](https://discuss.ardupilot.org/)
 
-### 4.1 资源 ###
+### 5.1 资源 ###
 
 * [Microsoft Flight Simulator 202x ↔ ArduPilot SITL Bridge release!](https://discuss.ardupilot.org/t/microsoft-flight-simulator-202x-ardupilot-sitl-bridge-release/141039)
 * [github -- SITL_Models : 仿真器模型资源](https://github.com/ArduPilot/SITL_Models)
