@@ -94,14 +94,18 @@ Local Port： 14550
 * 此时，`SITL`中的飞控作为客户端，`QGC`作为服务端，监听端口`14550`的消息。
 * 经过测试，似乎此时不能发送`UDP`消息给`SITL`，只能接收`SITL`发送过来的消息。
 
-### 2.3 资料 ###
+## 3. 第三方启动脚本 ##
+
+* [ap-swarm-launcher](https://github.com/hxf0223/ap-swarm-launcher)
+
+## 4. 资料 ##
 
 * [deepwiki -- ArduPilot SITL](https://deepwiki.com/ArduPilot/ardupilot/5.2-software-in-the-loop-(sitl))
 * [example -- 自定义SITL启动脚本：多机主从](https://github.com/ArduPilot/ardupilot/blob/master/libraries/SITL/examples/follow-copter.sh)
 * [github -- Intelligent Quads Tutorials](https://github.com/Intelligent-Quads/iq_tutorials)
 * [Ardupilot discuss](https://discuss.ardupilot.org/)
 
-### 2.4 资源 ###
+### 4.1 资源 ###
 
 * [Microsoft Flight Simulator 202x ↔ ArduPilot SITL Bridge release!](https://discuss.ardupilot.org/t/microsoft-flight-simulator-202x-ardupilot-sitl-bridge-release/141039)
 * [github -- SITL_Models : 仿真器模型资源](https://github.com/ArduPilot/SITL_Models)
