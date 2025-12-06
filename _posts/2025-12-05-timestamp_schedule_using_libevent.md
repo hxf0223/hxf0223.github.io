@@ -82,7 +82,7 @@ void PcapngPlayer::start() {
 }
 ```
 
-实现帧时间计算及调度启动：
+创建`event`，实现本次帧时间计算及调度启动：
 
 ```cpp
 void PcapngPlayer::scheduleNextPacket() {
@@ -99,7 +99,7 @@ void PcapngPlayer::scheduleNextPacket() {
 }
 ```
 
-实现定时器回调函数，以及下一帧启动：
+实现定时器回调函数，销毁本次定时器`event`，以及下一帧启动：
 
 ```cpp
 void PcapngPlayer::timerCallback(evutil_socket_t fd, short what, void* arg) {
