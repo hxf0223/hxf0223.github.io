@@ -29,7 +29,7 @@ mermaid: true
 
 资料：
 
-* [位置模式（多旋翼）](https://docs.ncnynl.com/en/px4/zh/flight_modes_mc/position.html)
+* [PX4 Guide -- 位置模式（多旋翼）](https://docs.ncnynl.com/en/px4/zh/flight_modes_mc/position.html)
 
 ### 1.2. Altitude：定高模式 ###
 
@@ -40,7 +40,7 @@ mermaid: true
 
 资料：
 
-* [定高模式（多旋翼）](https://docs.ncnynl.com/en/px4/zh/flight_modes_mc/altitude.html)
+* [PX4 Guide -- 定高模式（多旋翼）](https://docs.ncnynl.com/en/px4/zh/flight_modes_mc/altitude.html)
 
 ### 1.3. Position：定点模式 ###
 
@@ -54,7 +54,7 @@ mermaid: true
 
 资料：
 
-* [位置模式（多旋翼）](https://docs.ncnynl.com/en/px4/zh/flight_modes_mc/position.html)
+* [PX4 Guide -- 位置模式（多旋翼）](https://docs.ncnynl.com/en/px4/zh/flight_modes_mc/position.html)
 
 ### 1.4. Offboard：板外模式/指令模式 ###
 
@@ -67,8 +67,30 @@ mermaid: true
 
 TBD
 
+## 3. 摇杆 ##
+
+遥控器摇杆控制：俯仰(pitch)、横滚(roll)、偏航(yaw)、油门(throttle)：
+
+![rc_basic_commands](/assets/images/qgc/20251211/rc_basic_commands.BUO2xOt.png)
+
+对应的飞机运动：
+
+![rc_basic_movements](/assets/images/qgc/20251211/basic_movements_forward.DyNpVOoP.png)
+
+* 俯仰 => 上升/下降。
+* 横滚 => 向左/右倾斜并转弯。
+* 偏航 => 机尾向左/右转动并转弯。
+* 油门 => 改变前进速度。
+
+以上指固定翼飞机，其他类型飞机类似。
+
+资料：
+
+* [PX4 Guide -- 固定翼飞机基础飞行指南](https://docs.ncnynl.com/en/px4/zh/flying/basic_flying_fw.html)
+
 ## 参考资料 ##
 
-* [PX4多旋翼无人机飞行模式（Flight Mode）](https://wiki.yundrone.cn/docs/PX4-duo-xuan-yi-wu-ren-ji-fei-xing-mo-shi-Flight-Mode)
+* [PX4 Guide -- PX4多旋翼无人机飞行模式（Flight Mode）](https://wiki.yundrone.cn/docs/PX4-duo-xuan-yi-wu-ren-ji-fei-xing-mo-shi-Flight-Mode)
 * APM/Pixhawk常用飞行模式讲解：http://www.nufeichuiyun.com/?p=1128
 * [【无人机】多旋翼无人机控制器架构，PX4控制器，PID控制](https://blog.csdn.net/weixin_60324241/article/details/146954708)
+* [开放航空航天仿真工具集锦](https://spacefan.github.io/2018/06/28/OpenTools/)
