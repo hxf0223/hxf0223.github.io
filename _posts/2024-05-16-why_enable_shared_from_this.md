@@ -124,6 +124,14 @@ void test() {
 }
 ```
 
+## 保证对象的线程安全
+
+在多线程中，访问`shared_ptr`指向的对象时，一个方法是加锁，另一个是使用原子变量：
+
+```cpp
+std::atomic<std::shared_ptr<int>> atomic_shared;
+```
+
 ## 参考
 
 - [深入理解 enable_shared_from_this](https://iliubang.cn/posts/cpp/2022-05-03-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3enable_shared_from_this/)
