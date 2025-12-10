@@ -39,7 +39,7 @@ public:
 class Derived : public Base {
 public:
     // 使用协变返回类型，返回类型是 Base 的派生类型 Derived*
-    virtual Derived* clone() const override {
+    Derived* clone() const override {
         std::cout << "Derived::clone()" << std::endl;
         return new Derived(*this);
     }
@@ -59,6 +59,33 @@ int main() {
 作用域不同，同名函数不能生成`override`，而是覆盖。子类中的成员函数、数据成员，将覆盖基类中的同名函数、数据成员。
 
 如果要调用基类中的同名函数，需要使用`基类名::函数名`，或者使用`using`引入。
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Base {
+public:
+    void func() { cout << "Base::func()" << endl; }
+    void func(int) { cout << "Base::func(int)" << endl; }
+};
+
+class Derived : public Base {
+public:
+    void func() { cout << "Derived::func()" << endl; } // 隐藏基类所有 func 版本
+    void callBaseFunc() { Base::func(); } // 显式调用基类的 func()
+};
+
+int main() {
+    Derived d;
+
+    d.func();        // 调用 Derived::func()
+    // d.func(1);    // 编译错误，基类 func(int) 被隐藏
+    d.Base::func(1); // 显式调用基类的 func(int)
+
+    return 0;
+}
+```
 
 ## 4. 引用
 
