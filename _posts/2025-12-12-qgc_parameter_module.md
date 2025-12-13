@@ -82,9 +82,74 @@ mavlink_msg_param_set_send(xxx, xxx, param.param_float, param.type, xxx);
 * 没有同步保证一致性机制，即发送修改命令，飞机端的参数可能已经更新了，跟`QGC`不一样了。安全的方式是：设置时，`QGC`将修改前的值带入，让飞机端进行比较。
 * 如果有多个关联参数需要一起设置的，没有原子操作机制。
 
+新增的服务`Extended Parameter Protocol`，数据类型可以支持`uint64_t`以及字节流：
+
+```cpp
+MAVPACKED(
+typedef struct {
+    union {
+        float       param_float;
+        double      param_double;
+        int64_t     param_int64;
+        uint64_t    param_uint64;
+        int32_t     param_int32;
+        uint32_t    param_uint32;
+        int16_t     param_int16;
+        uint16_t    param_uint16;
+        int8_t      param_int8;
+        uint8_t     param_uint8;
+        uint8_t     bytes[MAVLINK_MSG_PARAM_EXT_SET_FIELD_PARAM_VALUE_LEN];
+    };
+    uint8_t type;
+}) param_ext_union_t;
+```
+
+* [Extended Parameter Protocol](https://mavlink.io/en/services/parameter_ext.html)
+* [github -- mavlink-devguide: Extended Parameter Protocol](https://github.com/mavlink/mavlink-devguide/blob/master/zh/services/parameter_ext.md)
+
 ### 1.3. 资料 ###
 
 * [github -- PX4 Drone Autopilot](https://github.com/PX4/PX4-Autopilot)
 
 ## 2. QGC参数管理模块 ##
 
+参数管理模块`ParameterManager`主要提供参数的请求，缓存功能，以及参数的设置功能。以及对外提供参数访问接口（参数管理模块不直接对UI层提供参数列表，由各个`AutoPilotPlugin`中各个部件模块提供比较合理），故参数模块应该作为一个公共模块，提供给`plugin`使用。另外，还提供了离线参数加载功能，离线参数文件定义在`FirmwarePlugin`中。
+
+下载的参数，存储在成员变量`_mapCompId2FactMap`中：
+
+```cpp
+QMap<int /* comp id */, QMap<QString /* parameter name */, Fact*>> _mapCompId2FactMap;
+```
+
+缓存的文件名格式为`<系统ID>_<组件ID>.v2`，存储目录定义在`ParameterManager::parameterCacheDir()`中。参数存储格式为：
+
+```cpp
+typedef QPair<int /* FactMetaData::ValueType_t */, QVariant /* Fact::rawValue */> ParamTypeVal;
+typedef QMap<QString /* parameter name */, ParamTypeVal> CacheMapName2ParamTypeVal;
+
+// 展开之后为
+// QMap<QString, std::pair<int, QVariant>>
+// 即 QMap<参数名称, <参数类型枚举, 参数值>>
+```
+
+### 2.1. 参数请求 ###
+
+在`QGC`初始化时，请求所有参数：
+
+* 从网站（不是飞控）下载参数文件，仅针对`APM`固件，入口：`APMAirframeComponentController::loadParameters`；
+* 使用`FTP`从飞控下载参数文件，入口函数`refreshAllParameters`；
+* 通过参数服务请求参数，入口函数`refreshAllParameters`。
+
+请求完成之后，都需要调用`_checkInitialLoadComplete`。
+
+在`ParameterManager`中，跟请求相关的主要的数据结构定义：
+
+```cpp
+QMap<int, int> _paramCountMap;                              ///< Key: Component id, Value: count of parameters in this component
+QMap<int, QMap<int, int>> _waitingReadParamIndexMap;        ///< Key: Component id, Value: Map { Key: parameter index still waiting for, Value: retry count }
+QMap<int, QList<int>> _failedReadParamIndexMap;             ///< Key: Component id, Value: failed parameter index
+```
+
+### 2.2. 参数设置 ###
+
+由于生成的参数列表，存在`_mapCompId2FactMap`中，及每个参数以`Fact`表示，使用`Fact`值变更的信号，设置单个参数。
