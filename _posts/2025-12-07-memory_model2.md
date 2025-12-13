@@ -1,7 +1,7 @@
 ---
 title: 内存模型(Memory Model)：从多处理器到高级语言
 date: 2025-12-07 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [cpu]
+categories: [CPU]
 tags: [cpu, cpp]      # TAG names should always be lowercase
 
 # 以下默认false
