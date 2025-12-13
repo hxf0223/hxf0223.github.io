@@ -1,8 +1,8 @@
 ---
 title: 交叉编译 Qt 5.15.2
 date: 2025-09-20 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [CPP]
-tags: [cpp, qt]      # TAG names should always be lowercase
+categories: [QT]
+tags: [qt]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
