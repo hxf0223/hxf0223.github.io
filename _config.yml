@@ -109,7 +109,7 @@ toc: true
 
 comments:
   # Global switch for the post-comment system. Keeping it empty means disabled.
-  provider: # [disqus | utterances | giscus]
+  provider: giscus # [disqus | utterances | giscus]
   # The provider options are as follows:
   disqus:
     shortname: # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
@@ -119,15 +119,17 @@ comments:
     issue_term: # < url | pathname | title | ...>
   # Giscus options › https://giscus.app
   giscus:
-    repo: https://github.com/hxf0223/hxf0223.github.io
+    repo: hxf0223/hxf0223.github.io
     repo_id: R_kgDOL6EGLA
-    category: Announcements
-    category_id: DIC_kwDOL6EGLM4Czxtp
-    mapping: # optional, default to 'pathname'
-    strict: # optional, default to '0'
-    input_position: # optional, default to 'bottom'
-    lang: # optional, default to the value of `site.lang`
-    reactions_enabled: # optional, default to the value of `1`
+    category: General
+    category_id: DIC_kwDOL6EGLM4Czxtq
+    mapping: pathname
+    strict: "0"
+    input_position: bottom
+    lang: zh-CN
+    reactions_enabled: "1"
+    emit_metadata: "0"
+    theme: preferred_color_scheme
 
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
