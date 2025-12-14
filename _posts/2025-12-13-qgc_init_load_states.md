@@ -131,5 +131,5 @@ FactMetaData* meta = _compInfoParam->factMetaDataForName("PARAM_NAME");
 
 ## 4. 请求系统参数列表 ##
 
-这个步骤请求飞机的所有参数，使用`MAVLink`的微服务`Parameter Protocol`，在`QGC`的`ParameterManager`模块中实现，见上一篇[QGC参数模块解析](./2025-12-12-qgc_parameter_module.md)。
+这个步骤请求飞机的所有参数，使用`MAVLink`的微服务`Parameter Protocol`，在`QGC`的`ParameterManager`模块中实现，见上一篇`QGC代码架构解析：MAVLink参数服务及QGC参数管理模块`。
 
