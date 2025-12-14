@@ -49,3 +49,8 @@ unset color_prompt force_color_prompt
 ```
 
 参考：[How do I show the git branch with colours in Bash prompt?](https://askubuntu.com/questions/730754/how-do-i-show-the-git-branch-with-colours-in-bash-prompt)
+
+## Bash增强：自动完成 ##
+
+* [ble.sh](https://github.com/akinomyoga/ble.sh)
+* [Setup ble.sh for PowerShell-like history completion in bash](https://gist.github.com/rkitover/970543715c23976ca86a6c3390f2cbf2)
