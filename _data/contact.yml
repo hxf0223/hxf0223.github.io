@@ -13,6 +13,11 @@
 - type: rss
   icon: "fas fa-rss"
   noblank: true
+
+- type: cnblogs
+  icon: "fab fa-wordpress"
+  url: "https://www.cnblogs.com/vaughnhuang"
+
 # Uncomment and complete the url below to enable more contact options
 #
 # - type: mastodon
