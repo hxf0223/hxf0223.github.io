@@ -44,11 +44,15 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
 
 主要获取飞机支持的标准模式。获取的模式列表用于设置给`FirmwarePlugin`，并在`Vehicle`中使用。
 
-## 3. 请求组件信息 ##
+## 3. 请求组件元数据（META）信息 ##
 
-由于这一步请求处理多个信息，整个处理放在单独的模块（源码文件）`ComponentInformationManager`中，且也使用状态机来实现：请求`General`数据、`Param`数据、`Events`数据、`Actuator`数据。`General`是指组件的信息（主要是飞控自身），而`Events`，`Actuator`不一定每个组件都有。
+由于这一步请求处理多个信息，整个处理放在单独的模块（源码文件）`ComponentInformationManager`中，且也使用状态机来实现：请求`General`元数据、`Param`元数据、`Events`元数据、`Actuator`元数据。`General`是指组件的信息（主要是飞控自身），而`Events`，`Actuator`不一定每个组件都有。
 
-请求每个子分类数据，分为几个步骤（而是用状态机实现），在`RequestMetaDataTypeStateMachine`中实现：请求数据文件的地址`URI`（返回URI，以及CRC），根据URI请求`META`数据文件内容（具有缓存功能，所有比较CRC，不相等再请求），即数据类型描述文件。比如下一个步骤请求飞机的参数信息，就需要将请求到的参数生成`Fact`，而`Fact`的类型信息就来自于参数的`META`数据文件。
+请求每个子分类的`META`数据，分为几个步骤（还是用状态机实现），在`RequestMetaDataTypeStateMachine`中实现：请求数据文件的地址`URI`（返回URI，以及CRC），根据URI请求`META`数据文件内容（具有缓存功能，先比较CRC，不相等再请求远程`META`文件），即数据类型描述文件。比如下一个步骤请求飞机的参数信息，就需要将请求到的参数生成`Fact`，而`Fact`的类型信息就来自于参数的`META`数据文件。
+
+> 在请求`META`数据文件的过程中，定义了两个数据类：1. `struct CompInfo::Uris`：存放`META`文件的`URI`，`CRC`，以及其他一些信息（如`Fallback`请求信息）。2. `CompInfo`，以及继承自`CompInfo`的上述几种`META`文件对应的子类：`CompInfoGeneral`，`CompInfoParam`，`CompInfoEvents`，`CompInfoActuators`。其中最重要也是首先需要请求的`META`文件是`CompInfoGeneral`，因为这个文件里面包含了设备支持的`META`文件类型列表（数据成员`QMap<COMP_METADATA_TYPE, Uris>   _supportedTypes;`）。后续几个请求，要先检查设备是否支持该类型的`META`文件。
+
+> 在`ComponentInformationManager`中，维护了一个`QMap<uint8_t /* compId */, QMap<COMP_METADATA_TYPE, CompInfo*>> _compInfoMap;`，用于存放每个组件的各类`META`文件对象。这与上面所述的逻辑连接起来。
 
 > `Events`是`MAVLink`协议中的一个系统事件和诊断机制，用于飞机端向地面站实时报告系统事件、警告和错误。相关文档：[Events Interface (WIP)](https://mavlink.io/en/services/events.html)。比如可能有如下事件：
 
