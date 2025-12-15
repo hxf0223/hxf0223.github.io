@@ -2,7 +2,7 @@
 title: perf性能分析(3) -- Intel VTune 配合 linux perf 使用
 date: 2024-10-20 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [perf]
-tags: [perf, vtune, tbb]      # TAG names should always be lowercase
+tags: [perf, VTune, TBB]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
