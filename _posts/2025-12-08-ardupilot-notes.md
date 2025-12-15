@@ -1,8 +1,8 @@
 ---
 title: ArduPilot 笔记
 date: 2025-12-08 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [ardupilot]
-tags: [ardupilot, qgc]      # TAG names should always be lowercase
+categories: [Ardupilot]
+tags: [Ardupilot, QGC]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true

@@ -2,7 +2,7 @@
 title: 使用inotify监控文件目录中的文件变化（新建文件）
 date: 2024-06-24 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp, linux]      # TAG names should always be lowercase
+tags: [cpp, Linux]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true

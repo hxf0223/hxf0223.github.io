@@ -1,8 +1,8 @@
 ---
 title: 编译FFMPEG使能Nvidia硬件解码
 date: 2024-12-31 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [linux]
-tags: [linux, ffmpeg, nvidia]      # TAG names should always be lowercase
+categories: [Linux]
+tags: [Linux, FFmpeg, Nvidia]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
