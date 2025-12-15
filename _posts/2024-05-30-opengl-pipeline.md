@@ -1,7 +1,7 @@
 ---
 title: OpenGL 流水线（待消化吸收）
 date: 2024-05-30 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [opengl]
+categories: [OpenGL]
 tags: [cpp, opengl]      # TAG names should always be lowercase
 
 # 以下默认false
