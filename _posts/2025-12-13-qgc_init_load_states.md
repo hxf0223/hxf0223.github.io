@@ -21,7 +21,7 @@ mermaid: true
 
 主要初始流程入口在`InitialConnectStateMachine`中以状态机实现，且部分子流程也是以状态机实现（至多嵌套了三层状态机）：
 
-> 由于获取信息需要使用同步方式，在`InitialConnectStateMachine`状态机中，使用回调方式处理应答，在回调中进入下一个处理阶段。
+> 由于获取信息需要使用同步方式，在`InitialConnectStateMachine`状态机中，使用回调方式处理应答`Ack`，在回调中进入下一个处理阶段。参见：[1. 请求的实现，以及模拟同步请求](#1-请求的实现以及模拟同步请求)。
 
 ```cpp
 static constexpr const StateMachine::StateFn _rgStates[] = {
@@ -183,6 +183,8 @@ sequenceDiagram;
 ## 5. 请求系统参数列表 ##
 
 这个步骤请求飞机的所有参数，使用`MAVLink`的微服务`Parameter Protocol`，在`QGC`的`ParameterManager`模块中实现，见上一篇`QGC代码架构解析：MAVLink参数服务及QGC参数管理模块`。
+
+请求参数，依赖于上一步骤，即请求的参数`META`数据文件，用于创建参数对应的`FactMetaData`对象。
 
 ## 6. 请求任务列表（航点列表） ##
 
