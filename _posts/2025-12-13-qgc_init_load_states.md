@@ -36,15 +36,42 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
 };
 ```
 
-## 1. 请求飞机版本信息(`MAVLINK_MSG_ID_AUTOPILOT_VERSION`) ##
+## 1. 请求的实现，以及模拟同步请求 ##
+
+请求飞机信息，使用`MAV_CMD_REQUEST_MESSAGE`命令字，请求对应的消息ID（即子命令，比如请求飞机版本信息`MAVLINK_MSG_ID_AUTOPILOT_VERSION`），以及子命令的参数。另外，使用命令`MAV_CMD_SET_MESSAGE_INTERVAL`让飞机定期周期响应子命令消息。
+
+飞机端收到`MESSAGE`消息之后，先返回一个响应`Ack`（`Ack`中包含`msgid`，以及响应码，比如`MAV_RESULT_ACCEPTED`）。`QGC`收到该消息，继续处理之前发送的请求，实现代码主要有两个函数入口：`Vehicle::requestMessage`，`Vehicle::_handleCommandAck(mavlink_message_t& message)`，以及一个主要的数据成员`QMap<int, QMap<int, RequestMessageInfo_t*>> _requestMessageInfoMap`。
+
+`MAV_CMD_REQUEST_MESSAGE`消息的文档：[How to Request & Stream Messages](https://mavlink.io/en/mavgen_python/howto_requestmessages.html)。处理流程示例：
+
+```text
+你的程序                           飞控
+   |                               |
+   | 1. 发送 MAV_CMD_SET_MESSAGE_INTERVAL
+   |----------------------------------------→  (请求：以1Hz发送BATTERY_STATUS)
+   |
+   |                               | 处理请求
+   | 2. 接收 COMMAND_ACK  
+   |←----------------------------------------  (确认已接受)
+   |
+   | 3. 等待 BATTERY_STATUS
+   |
+   |                               | 自动发送电池信息（周期:  1秒）
+   | ← 接收 BATTERY_STATUS #1      |
+   | ← 接收 BATTERY_STATUS #2      | （自动循环，无需请求）
+   | ← 接收 BATTERY_STATUS #3      |
+   | ← 接收 BATTERY_STATUS #4      |
+```
+
+## 2. 请求飞机版本信息(`MAVLINK_MSG_ID_AUTOPILOT_VERSION`) ##
 
 主要获取飞机的编号、固件的`vender_id`、`product_id`，固件版本信息，以及`capabilities`（64位bitmask），`capabilities`相关枚举定义在`MAVLink`协议的`MAV_PROTOCOL_CAPABILITY`中。
 
-## 2. 请求飞机标准模式(`MAVLINK_MSG_ID_AVAILABLE_MODES`) ##
+## 3. 请求飞机标准模式(`MAVLINK_MSG_ID_AVAILABLE_MODES`) ##
 
 主要获取飞机支持的标准模式。获取的模式列表用于设置给`FirmwarePlugin`，并在`Vehicle`中使用。
 
-## 3. 请求组件元数据（META）信息 ##
+## 4. 请求组件元数据（META）信息 ##
 
 由于这一步请求处理多个信息，整个处理放在单独的模块（源码文件）`ComponentInformationManager`中，且也使用状态机来实现：请求`General`元数据、`Param`元数据、`Events`元数据、`Actuator`元数据。`General`是指组件的信息（主要是飞控自身），而`Events`，`Actuator`不一定每个组件都有。
 
@@ -66,7 +93,7 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
     └─ 健康检查失败 (Health & Arming Checks)
 ```
 
-### 3.1. META数据使用流程 ###
+### 4.1. META数据使用流程 ###
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
@@ -133,7 +160,29 @@ FactMetaData* meta = _compInfoParam->factMetaDataForName("PARAM_NAME");
 // 使用 meta 来验证、转换参数值
 ```
 
-## 4. 请求系统参数列表 ##
+### 4.2. 对应的 MAVLink 服务 ###
+
+请求`META`数据使用微服务[Component Metadata Protocol (WIP)](https://mavlink.io/en/services/component_information.html)，命令字：`MAVLINK_MSG_ID_COMPONENT_METADATA`。针对各个`META`数据类型，提供了枚举定义`COMP_METADATA_TYPE`。
+
+请求流程图如下所示：
+
+```mermaid
+sequenceDiagram;
+    participant Client
+    participant Server
+    Note over Server, Client: Client: Request component information.
+    Client->>Server: MAV_CMD_REQUEST_MESSAGE(param1=397)
+    Client-->>Client: Start ACK receive timeout
+      Server->>Client: CMD_ACK
+      Server->>Client: COMPONENT_METADATA( uri, file_crc)
+    Note over Server, Client: Client check file at uri has changed (using CRC in file_crc). 
+    Note over Server, Client: Client download file at uri using MAVFTP and parse. 
+    Note over Server, Client: Client download other metadata types referenced in general metadata<br> (from device or Internet). 
+```
+
+## 5. 请求系统参数列表 ##
 
 这个步骤请求飞机的所有参数，使用`MAVLink`的微服务`Parameter Protocol`，在`QGC`的`ParameterManager`模块中实现，见上一篇`QGC代码架构解析：MAVLink参数服务及QGC参数管理模块`。
+
+## 6. 请求任务列表（航点列表） ##
 
