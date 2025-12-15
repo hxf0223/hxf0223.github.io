@@ -1,8 +1,8 @@
 ---
 title: 总结：git 不常用命令
 date: 2024-09-14 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [git]
-tags: [git]      # TAG names should always be lowercase
+categories: [Git]
+tags: [Git]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -70,3 +70,5 @@ git count-objects -v
 ### gitlab无法强行推送问题解决 ###
 
 需要`owner`设置如下：仓库的`Settings` -> `Repository` -> `Protected branches` 改成`unprotected`。
+
+

@@ -1,8 +1,8 @@
 ---
 title: nginx 用户的权限配置
 date: 2024-06-06 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [NGinx]
-tags: [NGinx]      # TAG names should always be lowercase
+categories: [Nginx]
+tags: [Nginx]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -36,3 +36,5 @@ sudo semanage port -a -t http_port_t  -p tcp 8090
 ## 学习资料
 
 - [nginx 安装配置及使用 启动权限拒绝问题](https://www.cnblogs.com/carl-/p/15599437.html)
+
+

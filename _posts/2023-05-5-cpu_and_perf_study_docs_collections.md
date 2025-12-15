@@ -2,7 +2,7 @@
 title: 收藏：C++ 代码仓库，CPU & 性能资料
 date: 2023-05-5 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp, perf, cpu]      # TAG names should always be lowercase
+tags: [Cpp, Perf, CPU]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -35,3 +35,4 @@ Intel并行库 [oneTBB](https://github.com/oneapi-src/oneTBB).
 * [现代CPU性能分析与优化 -- CPU架构，性能分析](https://weedge.github.io/perf-book-cn/zh/)
 * [C++17 the complete guide](/assets/pdf/C++17%20the%20complete%20guide.pdf)
 * [Learn LLVM 17](/assets/pdf/Learn_LLVM-17-zh.pdf)
+

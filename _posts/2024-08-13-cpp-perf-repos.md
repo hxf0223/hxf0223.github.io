@@ -2,7 +2,7 @@
 title: 总结：内存访问优化
 date: 2024-08-27 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp, perf, memory]      # TAG names should always be lowercase
+tags: [Cpp, Perf, Memory]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -172,3 +172,4 @@ void *addr = mmap(0, 10*1024*1024, (PROT_READ | PROT_WRITE),
 
 * [Linux HugeTLB: What is the advantage of the filesystem approach?](https://unix.stackexchange.com/questions/753039/linux-hugetlb-what-is-the-advantage-of-the-filesystem-approach)
 * [Allocating Huge Pages on Linux](https://www.lukas-barth.net/blog/linux-allocating-huge-pages/)
+

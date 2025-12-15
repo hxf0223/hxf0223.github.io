@@ -2,7 +2,7 @@
 title: 再理解 std::condition_variable 条件变量
 date: 2025-12-06 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp]      # TAG names should always be lowercase
+tags: [Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -104,3 +104,4 @@ condVar.wait(lck);
 * [cppreference: std::condition_variable](https://en.cppreference.com/w/cpp/thread/condition_variable/wait)
 * [C++ Core Guidelines: Be Aware of the Traps of Condition Variables](https://www.modernescpp.com/index.php/c-core-guidelines-be-aware-of-the-traps-of-condition-variables/)
 * [中文翻译：条件变量condition_variable的使用及陷阱](https://www.cnblogs.com/fenghualong/p/13855360.html)
+

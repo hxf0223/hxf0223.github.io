@@ -2,7 +2,7 @@
 title: 复习：std::function 用法笔记
 date: 2024-08-13 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp]      # TAG names should always be lowercase
+tags: [Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -118,3 +118,4 @@ int main()
 ## 参考 ##
 
 - [What is a lambda expression, and when should I use one?](https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-and-when-should-i-use-one)
+

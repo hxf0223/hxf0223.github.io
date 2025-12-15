@@ -1,8 +1,8 @@
 ---
 title: CMake 编写FindPackage 模块
 date: 2024-06-21 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [cmake]
-tags: [cpp, cmake]      # TAG names should always be lowercase
+categories: [CMake]
+tags: [Cpp, CMake]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -111,3 +111,4 @@ endif()
 
 - [使用find_package引入外部依赖包](https://brightxiaohan.github.io/CMakeTutorial/FindPackage/)
 - [CMakeLists.txt](https://github.com/heavyai/heavydb/blob/72c90bc290b79dd30240da41c103a00720f6b050/CMakeLists.txt#L968)
+

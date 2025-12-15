@@ -2,7 +2,7 @@
 title: 使用inotify监控文件目录中的文件变化（新建文件）
 date: 2024-06-24 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp, Linux]      # TAG names should always be lowercase
+tags: [Cpp, Linux]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -87,3 +87,4 @@ close(inotifyId);
 - [linux 文件监控之 inotify](https://www.cnblogs.com/jssyjam/p/15490634.html)
 - [inotify(7) — Linux manual page](https://man7.org/linux/man-pages/man7/inotify.7.html)
 - [Monitor file system activity with inotify](https://developer.ibm.com/tutorials/l-ubuntu-inotify/)
+

@@ -2,7 +2,7 @@
 title: 使能 C++ 程序的核心转储
 date: 2024-06-19 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp]      # TAG names should always be lowercase
+tags: [Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -88,3 +88,4 @@ gdb program core（gdb + 可执行文件 +core文件）
 ## 5. 参考
 
 - [coredump文件生成，以及GDB工具使用](https://www.cnblogs.com/muxisuibi/p/17878055.html)
+

@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(6) -- perf实战(1) -- 分支预测
 date: 2024-11-05 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [perf]
-tags: [perf, VTune]      # TAG names should always be lowercase
+categories: [Perf]
+tags: [Perf, VTune]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -143,3 +143,5 @@ sum += data[c] & -(data[c] >= 128);
 * [StackOverflow: Why is processing an unsorted array the same speed as processing a sorted array with modern x86-64 clang?](https://stackoverflow.com/questions/66521344/why-is-processing-an-unsorted-array-the-same-speed-as-processing-a-sorted-array)
 * [知乎 -- 分支对代码性能的影响和优化](https://zhuanlan.zhihu.com/p/487690985)
 * [Modern Microprocessors -- A 90-Minute Guide!](https://www.lighterra.com/papers/modernmicroprocessors/)
+
+

@@ -2,7 +2,7 @@
 title: CRTP：使用笔记
 date: 2024-09-02 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp, template]      # TAG names should always be lowercase
+tags: [Cpp, Template]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -68,3 +68,4 @@ auto groups = base_t::group_holes(valid_holes);
 * [The Curiously Recurring Template Pattern in C++](https://eli.thegreenplace.net/2011/05/17/the-curiously-recurring-template-pattern-in-c/#id3)
 * [The cost of dynamic (virtual calls) vs. static (CRTP) dispatch in C++](https://eli.thegreenplace.net/2013/12/05/the-cost-of-dynamic-virtual-calls-vs-static-crtp-dispatch-in-c)
 * [C++CRTP概念与应用和concept](https://www.cnblogs.com/chen-pi/p/17841127.html)
+

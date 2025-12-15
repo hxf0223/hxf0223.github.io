@@ -2,7 +2,7 @@
 title: C++面向对象三个概念——重载、覆盖和隐藏
 date: 2025-01-03 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp]      # TAG names should always be lowercase
+tags: [Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -90,3 +90,4 @@ int main() {
 ## 4. 引用
 
 * [c++三大概念要分清--重载，隐藏（重定义），覆盖（重写）](https://www.cnblogs.com/linuxAndMcu/p/10292417.html)
+

@@ -2,7 +2,7 @@
 title: Ubuntu 安装 OpenCV
 date: 2024-08-23 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp, opencv]      # TAG names should always be lowercase
+tags: [Cpp, OpenCV]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -49,3 +49,4 @@ export https_proxy=http://192.168.9.165:10809
 ## 参考 ##
 
 - [cmake编译opencv指南](https://www.cnblogs.com/zjutzz/p/6714490.html)
+

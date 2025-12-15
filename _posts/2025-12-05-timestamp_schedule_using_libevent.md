@@ -2,7 +2,7 @@
 title: 使用 libevent 实现时间戳调度
 date: 2025-12-05 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [libevent, cpp]      # TAG names should always be lowercase
+tags: [Libevent, Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -171,3 +171,4 @@ int event_base_loop(struct event_base *base, int flags) {
 ```
 
 * [Event Base 与 Event Loop](https://quant67.com/post/libevent/01-core/event-base-loop.html)
+

@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(5) -- linux perf 工具介绍
 date: 2024-10-30 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [perf]
-tags: [perf, VTune, TBB]      # TAG names should always be lowercase
+categories: [Perf]
+tags: [Perf, VTune, TBB]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -235,3 +235,5 @@ perf annotate -i perf.data
 * [PerfTool pdf](/assets/pdf/perf/perf_docs_20241030/PerfTool_01182021.pdf)
 * [Blog of Aleksandar Milenkovic (PerfTool pdf作者)](https://alexmilenkovich.github.io/)
 * [edu: The Laboratory for Advanced Computer Architectures and Systems](https://lacasa.uah.edu/index.php/tools-tutorials)
+
+

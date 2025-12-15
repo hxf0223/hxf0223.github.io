@@ -2,7 +2,7 @@
 title: C++ 中 auto 和 decltype 的用法 (update 20241106)
 date: 2024-11-06 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp]      # TAG names should always be lowercase
+tags: [Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -86,3 +86,4 @@ auto add(T t, U u) -> decltype(t + u) {
 * [C++11特性：decltype关键字](https://www.cnblogs.com/QG-whz/p/4952980.html)
 * [c++11-17 模板核心知识（九）—— 理解decltype与decltype(auto)](https://zhuanlan.zhihu.com/p/338822626)
 * [decltype specifier](https://en.cppreference.com/w/cpp/language/decltype)
+

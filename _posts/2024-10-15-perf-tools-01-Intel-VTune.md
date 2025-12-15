@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(1) -- Intel VTune 配置与使用(1)
 date: 2024-10-15 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [perf]
-tags: [perf, VTune, TBB, cpp]      # TAG names should always be lowercase
+categories: [Perf]
+tags: [Perf, VTune, TBB, Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -56,3 +56,5 @@ python3 self_check.py
 * [intel-TBB使用笔记](https://chuckiewill.github.io/2022/01/26/C++/IntelTBB/)
 * [Intel TBB API 官方教程](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2021-13/reduction.html)
 * [oneTBB Developer Guide](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/title.html)
+
+

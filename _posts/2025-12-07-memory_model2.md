@@ -2,7 +2,7 @@
 title: 内存模型(Memory Model)：从多处理器到高级语言
 date: 2025-12-07 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPU]
-tags: [cpu, cpp]      # TAG names should always be lowercase
+tags: [CPU, Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -775,3 +775,4 @@ struct Singleton2 {
 - \[20\] [Memory Consistency and Event Ordering in Scalable Shared-Memory](https://eecs.vanderbilt.edu/courses/eece343/papers/p15-gharachorloo.pdf)
 - \[21\] [x86-TSO: A Rigorous and Usable Programmer’s Model for x86 Multiprocessors](https://www.cl.cam.ac.uk/~pes20/weakmemory/cacm.pdf)
 - \[22\] [Time, Clocks and the Ordering of Events in a Distributed System](https://research.microsoft.com/en-us/um/people/lamport/pubs/time-clocks.pdf)
+

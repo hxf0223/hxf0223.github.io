@@ -2,7 +2,7 @@
 title: Intel TBB 并行计算
 date: 2024-08-28 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp, perf]      # TAG names should always be lowercase
+tags: [Cpp, Perf]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -162,3 +162,4 @@ oneapi::tbb::global_control global_limit(tbb::global_control::thread_stack_size,
 * [Intel Thread Building Blocks (TBB)](https://yuhao0102.github.io/2022/03/07/Intel_TBB/)
 * [Migrating from tbb::task_scheduler_init](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/Migration_Guide/Task_Scheduler_Init.html)
 * [Intel Community](https://community.intel.com/)
+

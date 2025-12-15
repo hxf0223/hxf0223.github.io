@@ -2,7 +2,7 @@
 title: 整理：内存一致模型
 date: 2024-08-11 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPU]
-tags: [cpp, cpu]      # TAG names should always be lowercase
+tags: [Cpp, CPU]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -161,3 +161,4 @@ int main() {
 * [现代CPU性能分析与优化 -- 现代CPU设计](https://weedge.github.io/perf-book-cn/zh/chapters/3-CPU-Microarchitecture/3-8_Modern_CPU_design_cn.html)
 * [现代CPU性能分析与优化 -- README](https://weedge.github.io/perf-book-cn/zh/)
 * [现代CPU性能分析与优化 -- pdf](/assets/pdf/cpu/perf-book-cn.pdf)
+

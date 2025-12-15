@@ -2,7 +2,7 @@
 title: 为什么要使用 std::enable_shared_from_this，以及使用场景
 date: 2024-05-16 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [CPP]
-tags: [cpp]      # TAG names should always be lowercase
+tags: [Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -136,3 +136,4 @@ std::atomic<std::shared_ptr<int>> atomic_shared;
 
 - [深入理解 enable_shared_from_this](https://iliubang.cn/posts/cpp/2022-05-03-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3enable_shared_from_this/)
 - [从现代C++实现的百行线程池来了解一下线程池相关技术](https://zhuanlan.zhihu.com/p/673962006)
+

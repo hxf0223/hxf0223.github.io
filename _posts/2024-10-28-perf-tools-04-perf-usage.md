@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(4) -- linux perf 工具基本使用(1)
 date: 2024-10-28 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [perf]
-tags: [perf, VTune, TBB]      # TAG names should always be lowercase
+categories: [Perf]
+tags: [Perf, VTune, TBB]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -42,3 +42,5 @@ $ sudo perf stat -p 8460
 * [redhat -- Red Hat Enterprise Linux 8 监控和管理系统状态和性能](/assets/pdf/perf/perf_doc_20241028/Red_Hat_Enterprise_Linux-8-Monitoring_and_managing_system_status_and_performance-zh-CN.pdf)
 * [redhat -- 监控和管理系统状态和性能(网页版)](https://docs.redhat.com/zh_hans/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/index)
 * [调试技术之perf实战笔记](https://saiyn.github.io/homepage/2017/11/26/perf/)
+
+

@@ -2,7 +2,7 @@
 title: OpenCL 端编程流程及主要概念实践
 date: 2024-09-09 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [OpenCL]
-tags: [OpenCL, cpp]      # TAG names should always be lowercase
+tags: [OpenCL, Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -160,3 +160,4 @@ FIXME：使用`clinf` 查看 `Intel UHD Graphics 620`信息，显示推荐的`lo
 * [编程与调试 C++ -- OpenCL & CUDA 初探](https://sunocean.life/blog/blog/2022/04/16/opencl)
 * [Intel -- opencl-sdk_developer-guide-processor-graphics_2019.4](/assets/pdf/opencl/opencl-sdk_developer-guide-processor-graphics_2019.4.pdf)
 * [Eigenvalues and Eigenvectors](/assets/pdf/opencl/Eigenvalues%20and%20Eigenvectors.pdf)
+

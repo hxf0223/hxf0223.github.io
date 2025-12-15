@@ -2,7 +2,7 @@
 title: OpenCL 环境准备及资料
 date: 2024-07-06 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [OpenCL]
-tags: [OpenCL, cpp]      # TAG names should always be lowercase
+tags: [OpenCL, Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -144,3 +144,4 @@ git clone --recursive https://github.com/KhronosGroup/OpenCL-SDK.git
 # 需要指定 vcpkg.cmake 路径
 cmake -D CMAKE_TOOLCHAIN_FILE=D:\dev_libs\vcpkg\scripts\buildsystems\vcpkg.cmake -D VCPKG_TARGET_TRIPLET=x64-windows -D BUILD_TESTING=OFF -D BUILD_DOCS=OFF -D BUILD_EXAMPLES=OFF -D BUILD_TESTS=OFF -D OPENCL_SDK_BUILD_SAMPLES=ON -D OPENCL_SDK_TEST_SAMPLES=OFF -D CMAKE_INSTALL_PREFIX=D:\dev_libs\opencl ..
 ```
+

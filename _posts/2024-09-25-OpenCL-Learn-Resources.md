@@ -2,7 +2,7 @@
 title: OpenCL 学习资源
 date: 2024-09-26 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [OpenCL]
-tags: [OpenCL, cpp]      # TAG names should always be lowercase
+tags: [OpenCL, Cpp]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -25,3 +25,4 @@ mermaid: true
 ## SDK ##
 
 * [AMD-APP-SDKInstaller](https://github.com/smallpotato000/AMD_AppSDK/releases)
+
