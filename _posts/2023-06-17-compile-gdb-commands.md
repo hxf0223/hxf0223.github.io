@@ -1,8 +1,8 @@
 ---
 title: Linux 系统下编译 gcc 9.2
 date: 2023-06-17 22:16:15 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [misc]
-tags: [misc]     # TAG names should always be lowercase
+categories: [GCC]
+tags: [GCC]     # TAG names should always be lowercase
 
 
 <!-- author:  # 不写默认就是自己

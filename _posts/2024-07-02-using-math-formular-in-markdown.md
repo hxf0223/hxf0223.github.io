@@ -1,8 +1,8 @@
 ---
 title: 在 Markdown 中使用数学公式
 date: 2024-07-02 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [markdown]
-tags: [misc, markdown]      # TAG names should always be lowercase
+categories: [Markdown]
+tags: [Markdown]      # TAG names should always be lowercase
 
 # 以下默认false
 math: true
@@ -14,12 +14,12 @@ mermaid: true
 
 有四种宽度的空格可以使用，如下表格：
 
-| 语法       | 显示     |
-| ---       | ------   |
-| \,        | a b      |
-| \;        | a  b     |
-| \quad     | a   b    |
-| \qquad    | a     b  |
+| 语法   | 显示    |
+| ------ | ------- |
+| \,     | a b     |
+| \;     | a  b    |
+| \quad  | a   b   |
+| \qquad | a     b |
 
 一个示例如下：
 
