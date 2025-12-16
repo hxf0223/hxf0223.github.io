@@ -1,5 +1,5 @@
 ---
-title: QGC初始加载及状态机
+title: QGC代码架构解析：QGC初始加载及状态机
 date: 2025-12-13 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [QGC]
 tags: [QGC]      # TAG names should always be lowercase
@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-在收到飞机发来的心跳包后，消息发送给`MultiVehicleManager`，在manager中，检查组件ID是否是`MAV_COMP_ID_AUTOPILOT1`，以及`vehicleType`不是`GCS`等之后，会创建一个`Vehicle`对象，并进入初始化流程。
+在收到飞机发来的心跳包后，消息发送给`MultiVehicleManager`，在`MultiVehicleManager`中，检查组件ID是否是`MAV_COMP_ID_AUTOPILOT1`，以及`vehicleType`不是`GCS`等之后，会创建一个`Vehicle`对象，并进入初始化流程。
 
 > `mavlink_message_t`中已经包含了`sysid`、`compid`信息。而心跳包`mavlink_heartbeat_t`中则包含了`vehicleType`、`firmwareType`等信息。
 
@@ -73,7 +73,7 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
 
 ## 4. 请求组件元数据（META）信息 ##
 
-由于这一步请求处理多个信息，整个处理放在单独的模块（源码文件）`ComponentInformationManager`中，且也使用状态机来实现：请求`General`元数据、`Param`元数据、`Events`元数据、`Actuator`元数据。`General`是指组件的信息（主要是飞控自身），而`Events`，`Actuator`不一定每个组件都有。
+由于这一步请求处理多个类型`META`数据文件，整个处理放在单独的模块（源码文件）`ComponentInformationManager`中，且也使用状态机来实现：请求`General`元数据、`Param`元数据、`Events`元数据、`Actuator`元数据。`General`是指组件的信息（主要是飞控自身），而`Events`，`Actuator`不一定每个组件都有。
 
 请求每个子分类的`META`数据，分为几个步骤（还是用状态机实现），在`RequestMetaDataTypeStateMachine`中实现：请求数据文件的地址`URI`（返回URI，以及CRC），根据URI请求`META`数据文件内容（具有缓存功能，先比较CRC，不相等再请求远程`META`文件），即数据类型描述文件。比如下一个步骤请求飞机的参数信息，就需要将请求到的参数生成`Fact`，而`Fact`的类型信息就来自于参数的`META`数据文件。
 
@@ -95,38 +95,40 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
 
 ### 4.1. META数据使用流程 ###
 
+请求到的`META`数据文件，主要用于创建`FactMetaData`对象，进而创建`Fact`对象。以请求参数的`META`数据文件为例，流程如下所示：
+
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│           飞机端 (Autopilot)                                │
-└─────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────┐
+│           飞机端 (Autopilot)                       │
+└───────────────────────────────────────────────────┘
                        │
                        │ MAVLink
                        │
          ┌─────────────▼──────────────┐
          │ ComponentInformation       │
-         │ ┌──────────────────────┐  │
-         │ │ COMP_METADATA_TYPE  │  │
-         │ │ _PARAMETER          │  │
-         │ │ (JSON 文件 URI)     │  │
-         │ └──────────────────────┘  │
+         │ ┌──────────────────────┐   │
+         │ │ COMP_METADATA_TYPE   │   │
+         │ │ _PARAMETER           │   │
+         │ │ (JSON 文件 URI)      │   │
+         │ └──────────────────────┘   │
          └─────────────┬──────────────┘
                        │ 下载 JSON
                        │
          ┌─────────────▼──────────────┐
          │ CompInfoParam.setJson()    │
-         │ (解析 JSON 文件)           │
+         │ (解析 JSON 文件)            │
          └─────────────┬──────────────┘
                        │
          ┌─────────────▼──────────────────────────────┐
          │ FactMetaData::createFromJsonObject()       │
-         │ (将 JSON 转换为 FactMetaData 对象)         │
+         │ (将 JSON 转换为 FactMetaData 对象)          │
          └─────────────┬──────────────────────────────┘
                        │
          ┌─────────────▼──────────────────────────────┐
-         │ ParameterManager                          │
-         │ _nameToMetaDataMap[paramName]             │
-         │ (存储所有参数的元数据)                     │
-         └─────────────────────────────────────────────┘
+         │ ParameterManager                           │
+         │ _nameToMetaDataMap[paramName]              │
+         │ (存储所有参数的元数据)                       │
+         └────────────────────────────────────────────┘
 ```
 
 代码执行流程：
