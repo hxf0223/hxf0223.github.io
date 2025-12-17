@@ -151,6 +151,8 @@ MissionController::save(QJsonObject& json);
 bool _loadJsonMissionFileV2(const QJsonObject& json, QmlObjectListModel* visualItems, QString& errorString);
 ```
 
+另外还可以导出/导入`kml`格式的航点文件，记录的字段格式有所不同，另外测试发现加载有些`BUG`。
+
 航点有`SimpleItem`，以及`ComplexItem`，一个简单的航点文件样例：
 
 ```json
