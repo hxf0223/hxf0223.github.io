@@ -190,3 +190,18 @@ sequenceDiagram;
 
 ## 6. 请求任务列表（航点列表） ##
 
+这个步骤使用`Mission Protocol`，直接调用`PlanManager::loadFromVehicle`下载飞机航点信息，进行初始化同步。具体参考下一篇`QGC代码架构解析：MAVLink Mission Protocol，以及 QGC 航点管理`。
+
+由于`MAVLink v2`中，`Mission Protocol`不仅仅包含航点，还包含地理围栏(`GeoFence`)、降落点(`Rally Points`)等信息。所有这些部分都实现在`PlanManager`以及其继承子类中。
+
+## 7. 请求地理围栏列表 ##
+
+参考6。
+
+## 8. 请求降落点列表 ##
+
+参考6。
+
+## 9. 初始化完成 ##
+
+完成初始化，发送`signal`，通知`QML`界面。

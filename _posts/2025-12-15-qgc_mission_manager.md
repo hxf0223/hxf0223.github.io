@@ -58,7 +58,7 @@ mermaid: true
 * 当上传/下载的过程中失败时（对方提前返回`MISSION_ACK`并包含错误消息），`QGC`或者飞机应该终止当前流程，并恢复使用上一次的航点集。
 * 协议没有说明，上传过程中，最后一步，如果飞机没有返回`MISSION_ACK`，应该如何处理。`QGC`的实际处理方式是，认为上传成功并完成，但是`opaque_id`没有更新。
 
-#### 1.1.2. 航点消息结构：消息 MISSION_ITEM_INT，以及 MAV_CMD ####
+### 1.2. 航点消息结构：消息 MISSION_ITEM_INT，以及 MAV_CMD ###
 
 航点不仅仅只有坐标等数据，还包含动作含义，即`MAV_CMD`其实是一个命令+参数数据。`MISSION_ITEM_INT`就是用于发送这些`MAV_CMD`子命令+参数的。`MAV_CMD`分为如下几类：
 
@@ -67,6 +67,26 @@ mermaid: true
 * `MAV_CMD_CONDITION_*`：命令执行条件，比如`MAV_CMD_CONDITION_DELAY`表示等待一段时间之后，再执行下一个航点`MAV_CMD`。从`Ardupilot`文档看，`MAV_CMD_CONDITION_*`命令是作用于`MAV_CMD_DO_*`命令，参考[Ardupilot -- Mission Commands -- Conditional commands](https://ardupilot.org/dev/docs/common-mavlink-mission-command-messages-mav_cmd.html#conditional-commands)。
 
 所有`MAV_CMD`命令的完整列表，以及参数，可以参考`MAVLink`协议文档：[Commands (MAV_CMD)](https://mavlink.io/en/messages/common.html#mav_commands)。
+
+### 1.3. 航点命令总的坐标系参数 Frame ###
+
+在使用`MISSION_ITEM_INT`消息发送航点命令(`Mission Item`)时（包括`MAV_CMD_NAV_*`命令，以及`MAV_CMD_DO_*`命令），需要指定坐标系`frame`，比如`WGS84`坐标系，`NED`坐标系，或者在`WGS84`坐标系的修改，如高度改为相对`HOME`点高度，或者地形高度。坐标系枚举定义见：[MAV_FRAME](https://mavlink.io/en/messages/common.html#MAV_FRAME)。
+
+文档说明的似乎不够清晰。更多信息：
+
+* [MAVLink -- Frames & Positional Information](https://mavlink.io/en/services/mission.html#frames-positional-information)
+* [Ardupilot -- Navigation commands](https://ardupilot.org/dev/docs/common-mavlink-mission-command-messages-mav_cmd.html#navigation-commands)
+* [MAVLink -- Commands (MAV_CMD)](https://mavlink.io/en/messages/common.html#mav_commands)
+* [MAVLink -- MISSION_ITEM_INT (73)](https://mavlink.io/en/messages/common.html#MISSION_ITEM_INT)
+
+### 1.4. 航点管理相关命令消息 ###
+
+如下两个消息，用来监控航点执行进度及状态：
+
+* `MISSION_CURRENT`：当前航点改变通知消息，由飞控广播，其他信息：序号`seq`，一起当前飞机航点状态，比如是否是暂停等。
+* `MISSION_ITEM_REACHED`：与`MISSION_CURRENT`类似，`QGC`中没有处理该消息。
+
+清除航点使用消息：`MISSION_CLEAR_ALL`。
 
 ## 2. QGC 航点管理实现 ##
 
@@ -108,5 +128,67 @@ typedef enum {
 
 ### 2.2. 其他模块 ###
 
-`MissionItem`：表示单个航点数据结构，航点管理模块的基础数据类。
-`PlanMasterController`：航点管理的顶层控制类，提供`QML`接口访问航点、电子围栏、降落点。以及从文件中加载/保存（包含`kml`文件格式）。
+* `MissionItem`：表示单个航点数据结构，航点管理模块的基础数据类。
+* `MissionController`：提供`QML`接口访问航点数据。
+* `PlanMasterController`：航点管理模块的顶层控制类（入口），提供`QML`接口访问航点（`MissionController`）、电子围栏（`GeoFenceController`）、降落点（`RallyPointController`）。以及从文件中加载/保存（包含`kml`文件格式）。
+* `MissionCommandTree`：提供`MAV_CMD`命令树结构，供`QML`界面使用。
+
+### 2.3. 航点文件格式 ###
+
+`QGC`中，航点文件格式使用`JSON`格式，文件扩展名为`.plan`，保存目录样例：
+
+```text
+C:\Users\Administrator\Documents\QGroundControl Daily\Missions
+```
+
+保存时，将航点数据、电子围栏数据、降落点数据，保存到同一个文件中。保存及加载函数入口：
+
+```cpp
+PlanMasterController::saveToJson();
+MissionController::save(QJsonObject& json);
+
+// 加载实现
+bool _loadJsonMissionFileV2(const QJsonObject& json, QmlObjectListModel* visualItems, QString& errorString);
+```
+
+航点有`SimpleItem`，以及`ComplexItem`，一个简单的航点文件样例：
+
+```json
+{
+    "fileType": "Plan",
+    "version": 1,
+    "groundStation": "QGroundControl",
+    "mission": {
+        "cruiseSpeed": 5,
+        "hoverSpeed": 3,
+        "items": [
+            {
+                "AMSLAltAboveTerrain": null,
+                "autoContinue": true,
+                "command": 16,
+                "frame": 3,
+                "params": [0, 0, 0, null, 47.397742, 8.545594, 488],
+                "type": "SimpleItem"
+            },
+            {
+                "AMSLAltAboveTerrain": null,
+                "autoContinue": true,
+                "command": 16,
+                "frame": 3,
+                "params": [0, 0, 0, null, 47.397825, 8.545632, 488],
+                "type": "SimpleItem"
+            }
+        ]
+    }
+}
+```
+
+有关航点文件格式的更多信息，参考`QGC`代码仓库文档：
+
+* [Mission Command Tree](https://github.com/mavlink/qgroundcontrol/blob/master/docs/en/qgc-dev-guide/plan/mission_command_tree.md)
+* [Plan File Format](https://github.com/mavlink/qgroundcontrol/blob/master/docs/en/qgc-dev-guide/file_formats/plan.md)
+
+## 3. 参考文档 ##
+
+* [MAVLink Mission Protocol](https://mavlink.io/en/services/mission.html)
+* [Ardupilot -- Mission Commands](https://ardupilot.org/dev/docs/common-mavlink-mission-command-messages-mav_cmd.html)
