@@ -64,10 +64,49 @@ mermaid: true
 
 * `MAV_CMD_NAV_*`：导航类命令（起飞、降落、返回RTL、悬停、飞到指定航点位置），比如`MAV_CMD_NAV_WAYPOINT`表示普通航点，`MAV_CMD_NAV_LOITER_UNLIM`表示无限悬停等。
 * `MAV_CMD_DO_*`：动作类命令，比如`MAV_CMD_DO_CHANGE_SPEED`表示改变速度，`MAV_CMD_DO_SET_RELAY`表示设置继电器等；
-* `MAV_CMD_CONDITION_*`：命令执行条件，比如`MAV_CMD_CONDITION_DELAY`表示等待一段时间之后，再执行下一个航点`MAV_CMD`；
+* `MAV_CMD_CONDITION_*`：命令执行条件，比如`MAV_CMD_CONDITION_DELAY`表示等待一段时间之后，再执行下一个航点`MAV_CMD`。从`Ardupilot`文档看，`MAV_CMD_CONDITION_*`命令是作用于`MAV_CMD_DO_*`命令，参考[Ardupilot -- Mission Commands -- Conditional commands](https://ardupilot.org/dev/docs/common-mavlink-mission-command-messages-mav_cmd.html#conditional-commands)。
 
 所有`MAV_CMD`命令的完整列表，以及参数，可以参考`MAVLink`协议文档：[Commands (MAV_CMD)](https://mavlink.io/en/messages/common.html#mav_commands)。
 
 ## 2. QGC 航点管理实现 ##
 
-`QGC`中，有两个函数处理`ACK`消息：`_handleMissionAck`，`_ackTimeout`。
+`PlanManager`实现`Mission Protocol`的协议。由于`MAVLink v2`中将航点(`flight plans`)、地理围栏(`geofences`)、降落点(`rally/safe points`)都放在`Mission Protocol`中，在请求上传(`MISSION_COUNT`)/下载(`MISSION_REQUEST_INT`)，以及传输(`MISSION_ITEM_INT`)时，带有`MAV_MISSION_TYPE`字段，确定是哪种`Mission Type`，参考协议文档：[Mission Protocol -- Mission Types](https://mavlink.io/en/services/mission.html#mission_types)。
+
+* `MissionManager`：拓展航点的协议`MAV_MISSION_TYPE_MISSION`的固件实现：主要实现`Ardupilot`相关的实现，以及一些功能。
+* `GeoFenceManager`：实现`MAV_MISSION_TYPE_FENCE`。
+* `RallyPointManager`：实现`MAV_MISSION_TYPE_RALLY`。
+
+### 2.1. 航点协议上传/下载功能的实现 ###
+
+`PlanManager`使用状态机实现上传/下载流程。定义一个`TransactionType_t`枚举，表示当前的事务类型，以及一个`AckType_t`表示期望的`ACK`类型：
+
+```cpp
+typedef enum {
+    AckNone,            ///< State machine is idle
+    AckMissionCount,    ///< MISSION_COUNT message expected
+    AckMissionItem,     ///< MISSION_ITEM expected
+    AckMissionRequest,  ///< MISSION_REQUEST is expected, or MISSION_ACK to end sequence
+    AckMissionClearAll, ///< MISSION_CLEAR_ALL sent, MISSION_ACK is expected
+    AckGuidedItem,      ///< MISSION_ACK expected in response to ArduPilot guided mode single item send
+} AckType_t;
+
+typedef enum {
+    TransactionNone,
+    TransactionRead,
+    TransactionWrite,
+    TransactionRemoveAll
+} TransactionType_t;
+```
+
+请求下载入口函数：`PlanManager::loadFromVehicle`，请求上传入口函数：`PlanManager::writeMissionItems(const QList<MissionItem*>& missionItems)`。以及一个handle函数，用于处理收到的消息：
+
+* `PlanManager::_handleMissionCount`：处理`MISSION_COUNT`消息（请求下载）；
+* `PlanManager::_handleMissionItem`：处理`MISSION_ITEM_INT`消息（请求下载）；
+* `PlanManager::_handleMissionRequestInt`：处理`MISSION_REQUEST_INT`消息（请求上传）；
+
+`PlanManager`中，有两个函数处理`ACK`消息：`_handleMissionAck`，`_ackTimeout`，这两个函数驱动状态机的流转：判断`ACK`与请求步骤是否匹配，发送一下一个航点数据/请求下一个航点数据，以及结束流程。
+
+### 2.2. 其他模块 ###
+
+`MissionItem`：表示单个航点数据结构，航点管理模块的基础数据类。
+`PlanMasterController`：航点管理的顶层控制类，提供`QML`接口访问航点、电子围栏、降落点。以及从文件中加载/保存（包含`kml`文件格式）。
