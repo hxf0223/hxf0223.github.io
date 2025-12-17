@@ -12,31 +12,16 @@ mermaid: true
 
 ## 1. 资料 ##
 
-### 1.1. QGC使用入门资料 ###
+### 1.1. QGC资料收集 ###
 
-* [X-Mav QGroundControl快速上手指南](https://www.x-mav.cn/docs/QGroundControl-kuai-su-shang-shou-zhi-nan)
-* [翼辉 QGroundControl](https://docs.acoinfo.com/dup/guide/qgc_usage.html)
-* [官方user guide](https://docs.qgroundcontrol.com/Stable_V4.4/en/qgc-user-guide/)
-* [官方dev guide](https://docs.qgroundcontrol.com/Stable_V4.4/en/qgc-dev-guide/)
-
-### 1.2. QGC优化 ###
-
+* [官方user guide](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/)
+* [官方dev guide](https://docs.qgroundcontrol.com/master/en/qgc-dev-guide/)
 * [PR: QML: Various easy optimizations](https://github.com/mavlink/qgroundcontrol/pull/12968)
-
-### 1.3. 界面相关资料 ###
-
-* [github FluentUI](https://github.com/zhuzichu520/FluentUI)
-* [QianWindow](https://github.com/nuoqian-lgtm/QianWindow)
-* [gitee amap](https://gitee.com/IOthellOI/amap)
-
-### 1.4. 其他地面站工程 ###
-
-* [JAGCS -- 参考其代码架构](https://github.com/MishkaRogachev/JAGCS)
 * [Simple GCS -- imGUI](https://github.com/Sanmopre/Simple_GCS)
-* [ControlTower -- 基于 WayWise](https://github.com/RISE-Dependable-Transport-Systems/ControlTower)
-  * [WayWise: a rapid prototyping library for connected, autonomous vehicles](https://ccam-sunrise-project.eu/wp-content/uploads/2024/09/WayWise_Software_Impacts.pdf)
+* [Gazebo Sensors](https://gazebosim.org/api/sensors/8/introduction.html)：介绍了Gazebo中各种传感器的使用，包括IMU、GPS、相机等，这些传感器的数据可以通过MAVLink协议发送给QGC。
+* [知乎 -- 非线性MC](https://www.zhihu.com/people/meng-hu-hang-pai/posts)：自动驾驶仿真、路径规划相关的文章。
 
-### 1.5. QGC(master) 编译 ###
+### 1.2. QGC(master) 编译 ###
 
 需要同时按照`runtime`版本和`devel`版本，安装完成之后，设置环境变量`GSTREAMER_1_0_ROOT_MSVC_X86_64`：
 
