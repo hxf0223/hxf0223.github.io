@@ -1,0 +1,18 @@
+---
+---
+
+@import 'main
+  {%- if jekyll.environment == 'production' -%}
+    .bundle
+  {%- endif -%}
+';
+
+/* 自定义样式：强制展开 TOC 所有子目录 */
+/* 覆盖 tocbot 的折叠样式，使所有子目录始终展开 */
+.toc-list .is-collapsed {
+  max-height: none !important;
+}
+
+.toc-list .is-collapsible {
+  max-height: none !important;
+}
