@@ -31,7 +31,7 @@ mermaid: true
 | MISSION_ITEM_INT     | 请求航点           | 飞控/地面站 |
 | MISSION_ACK          | 航点响应           | 飞控/地面站 |
 
-### 1.1. 航点的上传/下载 ###
+### 1.1. 航点的上传/下载流程 ###
 
 航点上传/下载流程图（左边为QGC请求下载，右边为QGC请求上传）：
 
@@ -66,9 +66,20 @@ mermaid: true
 * `MAV_CMD_DO_*`：动作类命令，比如`MAV_CMD_DO_CHANGE_SPEED`表示改变速度，`MAV_CMD_DO_SET_RELAY`表示设置继电器等；
 * `MAV_CMD_CONDITION_*`：命令执行条件，比如`MAV_CMD_CONDITION_DELAY`表示等待一段时间之后，再执行下一个航点`MAV_CMD`。从`Ardupilot`文档看，`MAV_CMD_CONDITION_*`命令是作用于`MAV_CMD_DO_*`命令，参考[Ardupilot -- Mission Commands -- Conditional commands](https://ardupilot.org/dev/docs/common-mavlink-mission-command-messages-mav_cmd.html#conditional-commands)。
 
+主要的`MAV_CMD_NAV`命令列表：
+
+| Command ID | Name                         | Description                               |
+| ---------- | ---------------------------- | ----------------------------------------- |
+| 16         | MAV_CMD_NAV_WAYPOINT         | Navigate to a specific waypoint           |
+| 21         | MAV_CMD_NAV_LAND             | Land at the specified location            |
+| 22         | MAV_CMD_NAV_TAKEOFF          | Take off and ascend to specified altitude |
+| 20         | MAV_CMD_NAV_RETURN_TO_LAUNCH | Return to launch/home location            |
+| 80         | MAV_CMD_NAV_ROI              | Sets region of interest for camera        |
+| 82         | MAV_CMD_NAV_SPLINE_WAYPOINT  | Navigate using a spline path              |
+
 所有`MAV_CMD`命令的完整列表，以及参数，可以参考`MAVLink`协议文档：[Commands (MAV_CMD)](https://mavlink.io/en/messages/common.html#mav_commands)。
 
-### 1.3. 航点命令总的坐标系参数 Frame ###
+### 1.3. 航点命令的参数：坐标系（Frame） ###
 
 在使用`MISSION_ITEM_INT`消息发送航点命令(`Mission Item`)时（包括`MAV_CMD_NAV_*`命令，以及`MAV_CMD_DO_*`命令），需要指定坐标系`frame`，比如`WGS84`坐标系，`NED`坐标系，或者在`WGS84`坐标系的修改，如高度改为相对`HOME`点高度，或者地形高度。坐标系枚举定义见：[MAV_FRAME](https://mavlink.io/en/messages/common.html#MAV_FRAME)。
 
@@ -79,7 +90,7 @@ mermaid: true
 * [MAVLink -- Commands (MAV_CMD)](https://mavlink.io/en/messages/common.html#mav_commands)
 * [MAVLink -- MISSION_ITEM_INT (73)](https://mavlink.io/en/messages/common.html#MISSION_ITEM_INT)
 
-### 1.4. 航点管理相关命令消息 ###
+### 1.4. 航点管理中其他命令/消息 ###
 
 如下两个消息，用来监控航点执行进度及状态：
 
