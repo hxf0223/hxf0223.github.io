@@ -79,18 +79,55 @@ mermaid: true
 
 所有`MAV_CMD`命令的完整列表，以及参数，可以参考`MAVLink`协议文档：[Commands (MAV_CMD)](https://mavlink.io/en/messages/common.html#mav_commands)。
 
-### 1.3. 航点命令的参数：坐标系（Frame） ###
+### 1.3. 航点命令的参数：MISSION_ITEM_INT的参数：Frame（坐标系） ###
 
 在使用`MISSION_ITEM_INT`消息发送航点命令(`Mission Item`)时（包括`MAV_CMD_NAV_*`命令，以及`MAV_CMD_DO_*`命令），需要指定坐标系`frame`，比如`WGS84`坐标系，`NED`坐标系，或者在`WGS84`坐标系的修改，如高度改为相对`HOME`点高度，或者地形高度。坐标系枚举定义见：[MAV_FRAME](https://mavlink.io/en/messages/common.html#MAV_FRAME)。
 
-文档说明的似乎不够清晰。更多信息：
+官方文档整理下来，有关`Frame`的描述，没有完全讲清楚，整个`MAVLink`协议中，有若干个命令使用到`Frame`作为参数。常见的需要使用到`Frame`的命令：
+
+* `Mission Protocol`中少量`MAV_CMD_DO`。
+* `COMMAND_INT`需要使用`Frame`作为命令参数：[Command Protocol](https://mavlink.io/en/services/command.html)。
+
+根据文档描述，针对`MISSION_ITEM_INT`，目前`APM`以及`PX4`仅支持`global`类型的`Frame`，见文档描述[Mission Items (MAVLink Commands)](https://mavlink.io/en/services/mission.html#mavlink_commands)。另外，有少量的`MAV_CMD_DO`命令，里面也带有`frame`参数，很奇怪，有些混乱。
+
+更多信息：
 
 * [MAVLink -- Frames & Positional Information](https://mavlink.io/en/services/mission.html#frames-positional-information)
 * [Ardupilot -- Navigation commands](https://ardupilot.org/dev/docs/common-mavlink-mission-command-messages-mav_cmd.html#navigation-commands)
 * [MAVLink -- Commands (MAV_CMD)](https://mavlink.io/en/messages/common.html#mav_commands)
 * [MAVLink -- MISSION_ITEM_INT (73)](https://mavlink.io/en/messages/common.html#MISSION_ITEM_INT)
 
-### 1.4. 航点管理中其他命令/消息 ###
+### 1.4. 航点命令的参数：MISSION_ITEM_INT的参数：param1 ~ param7 ###
+
+![MISSION_ITEM_INT_params](/assets/images/qgc/20251216/MISSION_ITEM_INT_params.png)
+
+前四个参数`param1` ~ `param4`，具体含义，以及单位，由具体的`MAV_CMD`命令决定，且数据类型就是`float`，即如果是其他类型，需要`static_cast`转换为`float`。
+
+针对`MAV_CMD_NAV`命令，则是坐标信息，其中`param5`、`param6`（经纬度）是全局坐标，即`1e7`。高度参数`param7`，其含义由`frame`指定（但应该全部都是`global`类型的），`global`坐标系列表：
+
+* `MAV_FRAME_GLOBAL_INT`，
+* `MAV_FRAME_GLOBAL_RELATIVE_ALT_INT`，
+* `MAV_FRAME_GLOBAL_TERRAIN_ALT`，
+* `MAV_FRAME_GLOBAL_TERRAIN_ALT_INT`，
+* `MAV_FRAME_GLOBAL`。
+
+另外，如果`frame`是`MAV_FRAME_MISSION`，表示这`param5` ~ `param7`不是坐标，所以实现发送/接收的时候，不需要将`param5` ~ `param7`乘以`1e7`。
+
+根据协议，如果是`frame`的类型是`local`的，则发送/接收的时候`param5`、`param6`的精度应该是`1e4`，单位是米（参考协议文档[Frames & Positional Information](https://mavlink.io/en/services/mission.html#frames-positional-information)）。
+
+**总结**：协议实现的时候：
+
+* 如果`frame`是`MAV_FRAME_MISSION`：则`param5`、`param6`按原样发送值，可能需要`static_cast<int>`转换。
+* 如果`frame`是`global`类型的：则`param5`、`param6`需要乘以`1e7`进行发送，接收时需要除以`1e7`。
+* 如果`frame`是`local`类型的：则`param5`、`param6`需要乘以`1e4`进行发送，接收时需要除以`1e4`。
+* 其他`param1` ~ `param4`，以及`param7`，按原样发送/接收，可能需要`static_cast<float>`转换。
+
+另外，这个规则，应该也适用于`COMMAND_INT`命令[COMMAND_INT](https://mavlink.io/en/messages/common.html#COMMAND_INT)。且：
+
+* 使用`COMMAND_INT`命令时，有些参数没有使用到，部分样例参考：[ardupilot -- Commands supported by Copter](https://ardupilot.org/copter/docs/common-mavlink-mission-command-messages-mav_cmd.html#commands-supported-by-copter)
+* 这些浮点类型的参数，值`nan`也有有意义的，比如维持原值，具体搜索`QGC`代码中`qQNaN()`的使用地方。
+
+### 1.5. 航点管理中其他命令/消息 ###
 
 如下两个消息，用来监控航点执行进度及状态：
 
