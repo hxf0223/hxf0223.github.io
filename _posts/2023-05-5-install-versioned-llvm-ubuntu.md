@@ -17,4 +17,19 @@ sudo ./llvm.sh 18 -m https://mirrors.tuna.tsinghua.edu.cn/llvm-apt # install llv
 # sudo ./llvm.sh 18 all -m https://mirrors.tuna.tsinghua.edu.cn/llvm-apt
 ```
 
+也可以使用`apt`命令安装：
+
+```bash
+sudo apt install clangd-21 clang-format-21 clang-21
+```
+
+设置默认版本：
+
+```bash
+sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-21 210
+sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-21 210
+sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-21 210
+sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 210
+```
+
 * [How to install Clang 17 or 18 in Ubuntu 22.04 20.04](https://www.cnblogs.com/RioTian/p/17981544)
