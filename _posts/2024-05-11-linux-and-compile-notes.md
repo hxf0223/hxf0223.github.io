@@ -57,3 +57,7 @@ file bin/jouav_cluster_msg_simu
 ```bash
 readelf -p .comment bin/jouav_cluster_msg_simu
 ```
+
+## 3. 其他文章 ##
+
+* [linux更换题目(可执行文件)libc版本问题](https://www.cnblogs.com/Taolaw/p/16281185.html)

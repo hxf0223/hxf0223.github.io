@@ -32,4 +32,11 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-21 210
 sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 210
 ```
 
+查看当前版本：
+
+```bash
+update-alternatives --display clang
+update-alternatives --display clang++
+```
+
 * [How to install Clang 17 or 18 in Ubuntu 22.04 20.04](https://www.cnblogs.com/RioTian/p/17981544)
