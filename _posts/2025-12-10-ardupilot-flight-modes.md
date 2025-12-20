@@ -2,7 +2,7 @@
 title: APM/Pixhawk常用飞行模式
 date: 2025-12-10 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [Ardupilot]
-tags: [Ardupilot, QGC]      # TAG names should always be lowercase
+tags: [Ardupilot, QGC]
 
 # 以下默认false
 math: true

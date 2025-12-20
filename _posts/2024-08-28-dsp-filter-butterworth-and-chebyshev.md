@@ -2,7 +2,7 @@
 title: 信号处理资料：Butterworth 和 Chebyshev 滤波器
 date: 2024-08-28 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [Algorithm]
-tags: [Cpp, Algorithm]      # TAG names should always be lowercase
+tags: [Cpp, Algorithm]
 
 # 以下默认false
 math: true
