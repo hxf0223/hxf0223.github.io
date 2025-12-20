@@ -31,6 +31,7 @@ mermaid: true
 
 - [LunarG Vulkan SDK](https://www.lunarg.com/vulkan-sdk/)
 - [Vulkan GPU 资源](https://vulkan.net.cn/tools)
+- [Getting Started with the Linux Tarball Vulkan SDK](https://vulkan.lunarg.com/doc/view/latest/linux/getting_started.html)
 
 学习资料：
 
