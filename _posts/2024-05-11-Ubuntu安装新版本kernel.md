@@ -1,5 +1,5 @@
 ---
-title: Ubuntu 24.04 安装新版本 kernel 6.18
+title: Ubuntu 24.04 分区，以及更换 kernel 6.18
 date: 2024-05-11 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [Linux]
 tags: [Linux]
@@ -9,6 +9,12 @@ math: true
 mermaid: true
 # pin: true
 ---
+
+## Ubuntu 24.04 分区建议 ##
+
+![Ubuntu 24.04 分区建议](/assets/images/linux/20240511/ubuntu_partition.jpg)
+
+## 更换 kernel 6.18 ##
 
 ```bash
 # 查看已经有的 kernel 版本
