@@ -117,9 +117,129 @@ r1 = Y;
 
 ## 3. C++11 内存一致性模型定义 ##
 
-| 内存一致性模型       | 作用                                                                                                                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| memory_order_release | 作用于`store`操作。约束：本线程在此操作之前的所有`R/W`操作，均不能重排到此操作之后。故其他线程中`acquire`操作之后，可以看见本线程中本操作之前的所有写入操作。 |
+| 内存一致性模型       | 作用                                                                                                                                                                                    |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| memory_order_release | 作用于`store`操作。约束：本线程在此操作之前的所有`R/W`操作，均不能重排到此操作之后。<br>故其他线程中`acquire`操作之后，可以看见本线程中本操作之前的所有写入操作。一般使用在生产者线程。 |
+| memory_order_acquire | 作用于`load`操作。约束：本线程在此操作之后的所有`R/W`操作，均不能重排到此操作之前。<br>故本线程中本操作之后，可以看见其他线程中`release`操作之前的所有写入操作。一般使用在消费者线程。  |
+| memory_order_acq_rel | 作用于`read-modify-write`操作。相当于同时具有`acquire`和`release`的语义。                                                                                                               |
+| memory_order_seq_cst | 顺序一致性模型，所有线程观察到的操作顺序相同。                                                                                                                                          |
+
+### 3.1. release/acquire 如何实现局部同步 ###
+
+```cpp
+void release_store(atomic<int>* ptr, int val) {
+    // 1. 先刷新 Store Buffer（之前的所有store）
+    drain_store_buffer();
+    
+    // 2. 执行本次 store
+    *ptr = val;  // 这个写入也会进入store buffer
+    
+    // 3. 发出刷新本次store的指令（架构相关）
+    // x86: 自动（TSO模型）
+    // ARM: DMB ISHST (Store-Store barrier)
+}
+
+int acquire_load(atomic<int>* ptr) {
+    // 1. 执行 load
+    int val = *ptr;
+    
+    // 2. 处理 Invalidate Queue 中所有待处理的失效消息
+    drain_invalidate_queue();
+    
+    // 3. 防止后续的 load/store 被重排到此之前
+    // x86: 自动（不会重排 load-load, load-store）
+    // ARM: DMB ISHLD (Load-Load/Store barrier)
+    
+    return val;
+}
+```
+
+### 3.2. memory_order_seq_cst 如何实现全局同步 ###
+
+```cpp
+// x86-64 的实现示例
+void seq_cst_store(atomic<int>* ptr, int val) {
+    // 1. 完全刷新 Store Buffer（所有待写入的数据）
+    __asm__ volatile("mfence" : :: "memory");
+    
+    // 2. 使用带 LOCK 前缀的指令 或 XCHG
+    // LOCK 前缀会：
+    //   - 锁定缓存行（或总线）
+    //   - 立即刷新该地址的 store buffer
+    //   - 强制其他CPU立即处理 invalidate queue
+    __asm__ volatile(
+        "lock; xchgl %0, %1"
+        : "=r"(val)
+        : "m"(*ptr), "0"(val)
+        : "memory"
+    );
+    
+    // 或者
+    *ptr = val;
+    __asm__ volatile("mfence" ::: "memory");
+}
+
+void seq_cst_load(atomic<int>* ptr) {
+    // 1. 先屏障
+    __asm__ volatile("mfence" :::  "memory");
+    
+    // 2. Load 操作
+    int val = *ptr;
+    
+    // 3. 强制处理 invalidate queue
+    // x86 的 mfence 会等待所有失效消息被处理
+    __asm__ volatile("mfence" :::  "memory");
+    
+    return val;
+}
+```
+
+关键差异：
+
+```text
+普通的 Store Buffer 刷新（Release）：
+-----------------------------------------
+CPU 0: [Store Buffer] → L1 Cache
+                         ↓
+                    发送 Invalidate
+                         ↓
+CPU 1:              [Invalidate Queue] (异步处理)
+
+
+Seq_cst 的强制同步：
+-----------------------------------------
+CPU 0: mfence/dmb ish
+         ↓
+       等待所有 Store Buffer 完全刷新
+         ↓
+       等待所有 Invalidate 被确认
+         ↓
+       执行 store (with LOCK 或类似机制)
+         ↓
+       强制发送 Invalidate + 等待ACK
+         ↓
+CPU 1:  必须立即处理 Invalidate Queue
+         ↓
+       在下一个 mfence 时必须等待处理完成
+```
+
+`MESI`协议层：
+
+```text
+CPU0:  seq_cst_store(x, 1)
+      |
+      +--> mfence (确保之前所有操作完成)
+      +--> store x=1
+      +--> mfence (确保之后所有操作在此之后)
+      +--> 触发缓存一致性协议，广播到所有CPU
+
+CPU1, CPU2, CPU3: 
+      +--> 接收到缓存失效消息
+      +--> 后续的seq_cst_load必须等待屏障完成
+      +--> 从内存/共享缓存读取最新值
+```
+
+### 3.3. 示例代码 ###
 
 ```cpp
 #include <thread>
