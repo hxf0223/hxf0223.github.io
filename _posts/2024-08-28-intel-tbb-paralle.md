@@ -160,6 +160,13 @@ oneapi::tbb::global_control global_limit(tbb::global_control::thread_stack_size,
 
 * [TBB并发库代码学习](https://woodpenker.github.io/2022/01/16/TBB%E5%B9%B6%E5%8F%91%E5%BA%93%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/)
 * [Intel Thread Building Blocks (TBB)](https://yuhao0102.github.io/2022/03/07/Intel_TBB/)
+* [Pro TBB](https://reubensun.com/program/Pro-TBB/)
 * [Migrating from tbb::task_scheduler_init](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/Migration_Guide/Task_Scheduler_Init.html)
 * [Intel Community](https://community.intel.com/)
 
+## 官方文档 ##
+
+* [ntel® oneAPI Threading Building Blocks Developer Guide and API Reference](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-2/onetbb-developer-guide.html)
+* [Pro TBB](https://link.springer.com/book/10.1007/978-1-4842-4398-5)
+* [Today's TBB pdf](/assets/pdf/perf/Today’s-TBB.pdf)
+  * [Source Code](https://github.com/Apress/pro-TBB)
