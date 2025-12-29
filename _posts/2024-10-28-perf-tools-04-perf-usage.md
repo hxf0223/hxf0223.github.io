@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(4) -- linux perf 工具基本使用(1)
 date: 2024-10-28 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [Perf]
-tags: [Perf, VTune, TBB]
+categories: [Performance]
+tags: [Performance, VTune, TBB]
 
 # 以下默认false
 math: true

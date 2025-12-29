@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(6) -- perf实战(1) -- 分支预测
 date: 2024-11-05 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [Perf]
-tags: [Perf, VTune]
+categories: [Performance]
+tags: [Performance, VTune]
 
 # 以下默认false
 math: true
@@ -137,7 +137,7 @@ sum += data[c] & -(data[c] >= 128);
 
 ## references ##
 
-* [在 Linux 上使用 Perf 做效能分析(入門篇)](https://tigercosmos.xyz/post/2020/08/system/perf-basic/)
+* [在 Linux 上使用 Performance 做效能分析(入門篇)](https://tigercosmos.xyz/post/2020/08/system/perf-basic/)
 * [Category:Architecture/x86-assembly](https://www.aldeid.com/wiki/Category:Architecture/x86-assembly)
 * [StackOverflow: Why is processing a sorted array faster than processing an unsorted array?](https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array)
 * [StackOverflow: Why is processing an unsorted array the same speed as processing a sorted array with modern x86-64 clang?](https://stackoverflow.com/questions/66521344/why-is-processing-an-unsorted-array-the-same-speed-as-processing-a-sorted-array)

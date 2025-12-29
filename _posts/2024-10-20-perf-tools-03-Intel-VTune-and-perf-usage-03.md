@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(3) -- Intel VTune 配合 linux perf 使用
 date: 2024-10-20 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [Perf]
-tags: [Perf, VTune, TBB]
+categories: [Performance]
+tags: [Performance, VTune, TBB]
 
 # 以下默认false
 math: true
@@ -94,7 +94,7 @@ perf record -F 599 -e cycles,cache-misses -ag -p 12738 -- sleep 200
 
 ## 5. 参考资料 ##
 
-* [现代CPU性能分析与优化 -- Linux Perf](https://weedge.github.io/perf-book-cn/zh/chapters/7-Overview-Of-Performance-Analysis-Tools/7-4_Linux_perf_cn.html)
+* [现代CPU性能分析与优化 -- Linux Performance](https://weedge.github.io/perf-book-cn/zh/chapters/7-Overview-Of-Performance-Analysis-Tools/7-4_Linux_perf_cn.html)
 * [perf Examples](https://www.brendangregg.com/perf.html)
 
 ## 6. 更多学习资料 ##

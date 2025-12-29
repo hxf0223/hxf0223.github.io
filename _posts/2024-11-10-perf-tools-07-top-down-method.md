@@ -1,8 +1,8 @@
 ---
 title: perf性能分析(7) -- Top-down 分析方法
 date: 2024-11-10 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [Perf]
-tags: [Perf, VTune]
+categories: [Performance]
+tags: [Performance, VTune]
 
 # 以下默认false
 math: true
