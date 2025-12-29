@@ -53,8 +53,10 @@ python3 self_check.py
 * [Intel® VTune™ Profiler 分析 C++ 程序的常见性能瓶颈( Windows 平台)](https://www.zevorn.cn/posts/8)
 * [perf Examples](https://www.brendangregg.com/perf.html)
 * [现代CPU性能分析与优化 -- Intel Vtune](https://weedge.github.io/perf-book-cn/zh/chapters/7-Overview-Of-Performance-Analysis-Tools/7-1_Intel_Vtune_cn.html)
+* [自顶向下的微架构分析方法](https://www.intel.cn/content/www/cn/zh/docs/vtune-profiler/cookbook/2023-0/top-down-microarchitecture-analysis-method.html)
+* [Intel® VTune™ Profiler Performance Analysis Cookbook](https://www.intel.com/content/www/us/en/docs/vtune-profiler/cookbook/2025-4/overview.html)
+* [VTune Documentation & Code Samples](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler-documentation.html)
+* [HOW: Analysis Types](https://hpc.scut.edu.cn/docs/software/list/tools/intel_vtune.html#how-analysis-types)
 * [intel-TBB使用笔记](https://chuckiewill.github.io/2022/01/26/C++/IntelTBB/)
 * [Intel TBB API 官方教程](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2021-13/reduction.html)
 * [oneTBB Developer Guide](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/title.html)
-
-
