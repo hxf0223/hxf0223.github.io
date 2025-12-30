@@ -36,7 +36,7 @@ mermaid: true
 
 `False sharing`的原因是两个`CPU`访问的变量，在内存中的位置，同时落入一个`cache line`范围内，根据`MESI`协议，一个`CPU`写操作，将导致另一个`CPU`的读写操作之前，需要进行`memory`及两个`CPU`的`cache line`同步操作。通常发生在两个线程操作同一个数据结构体的时候。
 
-![false sharing](/assets/images/cpu/memory_order_20240811/false_share.png)
+![false sharing](/assets/images/cpu/memory_order_20240811/MESI-false-sharing.svg)
 
 ```c++
 #define CACHE_ALIGN_SIZE 64
