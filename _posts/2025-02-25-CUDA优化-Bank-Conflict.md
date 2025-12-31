@@ -117,7 +117,21 @@ __global__ void vectorized_loads() {
 
 ### 3.1. Padding ###
 
+`warp`内多个线程访问同一`bank`会引发冲突，导致串行化访问。 通过在二维共享内存数组的列数上 `+1 padding`，可打破冲突模式。示意图：
 
+![padding-example](/assets/images/cuda/20250223/shared_memory_padding.png)
+
+示例代码：
+
+```cpp
+__shared__ float sData[BLOCKSIZE][BLOCKSIZE + 1]; // +1 避免bank冲突
+
+int x = threadIdx.x;
+int y = threadIdx.y;
+sData[x][y] = matrix[y * col + x];
+__syncthreads();
+matrixTest[y * col + x] = sData[x][y];
+```
 
 ## 参考资料 ##
 
