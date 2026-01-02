@@ -12,7 +12,7 @@ mermaid: true
 
 ## 1. Bank Conflicts (Shared Memory) ##
 
-针对`Shared Memory`的访问，`CUDA`使用`bank`机制，将`shared memory`的访问（读/写）映射到不同的`bank`，以实现并行访问。`bank`以4字节为单位，共32个`bank`。这样，一个时钟周期内，可以并行访问32个不同的`bank`，即访问`128字节`的数据。映射公式`bank(addr) := (addr / 4) % 32`。
+针对`Shared Memory`的访问，`CUDA`使用`bank`机制，将`shared memory`的访问（读/写）映射到不同的`bank`，以实现并行访问。`bank`以4字节为单位，共32个`bank`。这样，一个时钟周期内，可以并行访问32个不同的`bank`，即访问`128字节`的数据。映射公式`bank index = (address /4) % 32`。
 
 图示`transaction`：
 
@@ -57,40 +57,44 @@ __shared__ float s[64];
 
 如下示例，产生32路`Bank Conflicts`：
 
+{% raw %}
 ```cpp
 __global__ void all_conflicts() {
-    __shared__ float s[32][32];
-    int warp_id = threadIdx.y;
-    int lane_id = threadIdx.x; // thread 在 warp 中的 id
+  __shared__ float s[32][32];
+  [[maybe_unused]] int warp_id = threadIdx.y;
+  int lane_id = threadIdx.x; // thread 在 warp 中的 id
 
-    float* ptr = &s[lane_id][0];
-    int addr = (int)ptr & 0xFFFF;
+  float *ptr = &s[lane_id][0];
+  int addr = (int)(uintptr_t)ptr & 0xFFFF;
+  [[maybe_unused]] float r1; // 声明输出变量
 
-    for (int j = 0; j < num_iters; j++) { // num_iters 定义为 100'000
-        asm volatile ("ld.volatile.shared.f32 %0, [%1];"
-                        : "=f"(r1)
-                        : "r"(addr));
-    }
+  for (int j = 0; j < num_iters; j++) { // num_iters 定义为 100'000
+    asm volatile("ld.volatile.shared.f32 %0, [%1];" : "=f"(r1) : "r"(addr));
+  }
 }
 
 // launched withall_conflicts<<<1, dim3(32, 8)>>>();
 // Gride size: 1（即只有一个Block）
 // Block size: dim3(32, 8)（即有8个warp，每个warp 32个线程）
 ```
+{% endraw %}
 
 ![bank-conflict-example](/assets/images/cuda/20250223/all-conflicts.svg)
+
+> 使用`Nsight Compute`分析`bank conflicts`（Metrics full），分析步骤见`使用Nsight Compute分析Bank Conflict`。
 
 ## 3. 矢量读写指令 ##
 
 使用矢量指令`ld.shared.v4`可以读取4个连续的32位数据。如下代码，一个线程读取`s[4*i]`, `s[4*i+1]`, `s[4*i+2]`, `s[4*i+3]`（分为四个`transaction`）。会产生四路`Bank Conflicts`：
 
+{% raw %}
 ```cpp
 __global__ void vectorized_loads() {
     __shared__ float sh[8][128];
-    
+
     int warp_id = threadIdx.y;
     int lane_id = threadIdx.x;
-        
+
     float4* ptr = reinterpret_cast<float4*>(&sh[warp_id][lane_id * 4]);
     int addr = (int)ptr & 0xFFFF;
 
@@ -102,6 +106,7 @@ __global__ void vectorized_loads() {
     }
 }
 ```
+{% endraw %}
 
 ![vectorized-loads](/assets/images/cuda/20250223/v4loads.svg)
 
