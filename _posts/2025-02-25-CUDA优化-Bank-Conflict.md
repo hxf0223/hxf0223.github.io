@@ -14,7 +14,11 @@ mermaid: true
 
 ## 1. Bank Conflicts (Shared Memory) ##
 
+### 1.1. Bank 划分 ###
+
 针对`Shared Memory`的访问，`CUDA`使用`bank`机制，将`shared memory`的访问（读/写）映射到不同的`bank`，以实现并行访问。`bank`以4字节为单位，共32个`bank`。这样，一个时钟周期内，可以并行访问32个不同的`bank`，即访问`128字节`的数据。映射公式`bank index = (address /4) % 32`。
+
+> 每次发起共享内存事务（transation）时，可以从这 32 个 bank 中分别读取一个 32 位数据。以 32 位的字为单位索引，则 bank 以地址的低 5 位进行划分，与高位没有关系。
 
 图示`transaction`：
 
@@ -37,6 +41,8 @@ __shared__ float s[64];
 如上变量，其映射如下：
 
 ![shared-memory-bank-map](/assets/images/cuda/20250223/bank-map.drawio.svg)
+
+### 1.2. Bank Conflicts ###
 
 在一次`transaction`的时候，如果，当`warp`中的不同线程访问到同一个`bank`中的不同地址时，就会产生`Bank Conflicts`，导致访问串行化：需要分成多次`transaction`。有`N`个线程访问同一个`bank`，称为`N-way Bank Conflicts`。
 
@@ -148,7 +154,7 @@ __global__ void vectorized_loads() {
 
 ### 3.1. Padding ###
 
-`warp`内多个线程访问同一`bank`会引发冲突，导致串行化访问。 通过在二维共享内存数组的列数上 `+1 padding`，可打破冲突模式。示意图：
+`warp`内多个线程访问同一`bank`会引发冲突，导致串行化访问。 通过在二维共享内存数组的列数上 `+1 padding`，可打破`映射冲突`：从第二行开始，`Shared Memory`中的数据到`bank`的映射偏移一个`bank`，且每行累积。示意图：
 
 ![padding-example](/assets/images/cuda/20250223/shared_memory_padding.png)
 
@@ -164,6 +170,78 @@ __syncthreads();
 matrixTest[y * col + x] = sData[x][y];
 ```
 
+当`warp`中的线程步长间距为128字节（32个32位数据）时，适用于`padding`，例如：
+
+| 场景       | 冲突原因         | Padding方案    |
+| ---------- | ---------------- | -------------- |
+| 列访问     | 行步长=32*4      | 列+1           |
+| 步长访问   | 步长是32*k       | 改变数组维度   |
+| 结构体数组 | 字段偏移相同     | 结构体+padding |
+| 斜向访问   | 特定步长产生周期 | 适当增加维度   |
+
+### 3.2. Swizzle ###
+
+`Swizzle`是通过重新排列线程访问顺序，来避免`Bank Conflicts`。假设有32×32的二维数组，原本按列访问产生冲突：
+
+```cpp
+// 原始访问（产生冲突）
+int x = threadIdx.x;
+int y = threadIdx.y;
+float val = s[x][y];  // 同列线程映射到同一bank
+```
+
+使用Swizzle变换：
+
+```cpp
+// Swizzle：对线程索引进行XOR操作
+int x = threadIdx.x;
+int y = threadIdx.y;
+int swizzled_x = x ^ (y % 32);  // 用XOR改变x坐标
+
+float val = s[swizzled_x][y];  // 现在不同线程映射到不同bank
+```
+
+内存布局对比：
+
+```text
+原始内存：
+[0,0] [1,0] [2,0] ... [31,0]  <- 映射到bank 0,1,2...31
+[0,1] [1,1] [2,1] ... [31,1]  <- 映射到bank 0,1,2...31（重复）
+...
+
+Swizzle后的访问顺序：
+线程[0,0]访问 s[0^0][0] = s[0,0]
+线程[1,0]访问 s[1^0][0] = s[1,0]
+线程[2,0]访问 s[2^0][0] = s[2,0]
+...
+线程[0,1]访问 s[0^1][1] = s[1,1]  <- 同列不同线程，映射不同bank
+线程[1,1]访问 s[1^1][1] = s[0,1]
+...
+
+内存物理位置不变，但访问顺序改变了
+```
+
+常见Swizzle操作：
+
+```cpp
+// 方法1：XOR swizzle（最常用）
+int swizzled = x ^ (y & (WARP_SIZE - 1));
+
+// 方法2：位移swizzle
+int swizzled = (x + y) % 32;
+
+// 方法3：混合操作
+int swizzled = (x + (y >> 4)) % 32;
+```
+
+`Swizzle`更多资料：
+
+* [bank confict和冲突消解](https://66ring.github.io/2024/08/10/universe/gpu/bank_conflict_and_swizzle/)
+* [Swizzle 布局的直观解释和推导](https://melonedo.github.io/2025/08/04/Swizzle-Layout-Explained.html)
+* [CUDA Shared Memory Swizzling](https://leimao.github.io/blog/CUDA-Shared-Memory-Swizzling/)
+* [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)
+* [issue -- Swizzling the shared memory](https://github.com/triton-lang/triton/issues/2675)
+
 ## 参考资料 ##
 
 * [How to understand the bank conflict of shared_mem](https://forums.developer.nvidia.com/t/how-to-understand-the-bank-conflict-of-shared-mem/260900)
@@ -171,5 +249,5 @@ matrixTest[y * col + x] = sData[x][y];
 ## 学习资料 ##
 
 - [CCUDA 编程手册系列第五章: 性能指南](https://developer.nvidia.com/zh-cn/blog/cuda-performance-guide-cn/)
-- [Performance Optimization: Paulius Micikevicius Programming Guidelines and GPU Architecture Reasons Behind Them](https://www.cs.emory.edu/~cheung/Courses/355/Syllabus/94-CUDA/DOCS/S3466-Programming-Guidelines-GPU-Architecture.pdf)
+- [NVIDIA -- Performance Optimization: Paulius Micikevicius Programming Guidelines and GPU Architecture Reasons Behind Them](https://www.cs.emory.edu/~cheung/Courses/355/Syllabus/94-CUDA/DOCS/S3466-Programming-Guidelines-GPU-Architecture.pdf)
 - [cuda程序优化-2.访存优化](https://www.cnblogs.com/sunstrikes/p/18252517)
