@@ -239,8 +239,12 @@ int swizzled = (x + (y >> 4)) % 32;
 * [bank confict和冲突消解](https://66ring.github.io/2024/08/10/universe/gpu/bank_conflict_and_swizzle/)
 * [Swizzle 布局的直观解释和推导](https://melonedo.github.io/2025/08/04/Swizzle-Layout-Explained.html)
 * [CUDA Shared Memory Swizzling](https://leimao.github.io/blog/CUDA-Shared-Memory-Swizzling/)
-* [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)
+* [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)：Swizzle可以提升L2 cache命中率
 * [issue -- Swizzling the shared memory](https://github.com/triton-lang/triton/issues/2675)
+
+`thread block`的`Swizzle`：
+
+* [Cuda thread block swizzling机制解析](https://zhuanlan.zhihu.com/p/6872421770)
 
 ## 参考资料 ##
 
@@ -251,3 +255,4 @@ int swizzled = (x + (y >> 4)) % 32;
 - [CCUDA 编程手册系列第五章: 性能指南](https://developer.nvidia.com/zh-cn/blog/cuda-performance-guide-cn/)
 - [NVIDIA -- Performance Optimization: Paulius Micikevicius Programming Guidelines and GPU Architecture Reasons Behind Them](https://www.cs.emory.edu/~cheung/Courses/355/Syllabus/94-CUDA/DOCS/S3466-Programming-Guidelines-GPU-Architecture.pdf)
 - [cuda程序优化-2.访存优化](https://www.cnblogs.com/sunstrikes/p/18252517)
+- [Optimize GEMM step by step](https://gty111.github.io/2023/06/20/gemm-optimize/)。代码：<https://github.com/gty111/GEMM_MMA>，优化步骤见不同分支。
