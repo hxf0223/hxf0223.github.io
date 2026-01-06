@@ -134,6 +134,6 @@ std::atomic<std::shared_ptr<int>> atomic_shared;
 
 ## 参考
 
-- [深入理解 enable_shared_from_this](https://iliubang.cn/posts/cpp/2022-05-03-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3enable_shared_from_this/)
+- [C++：深入理解 std::enable_shared_from_this 与 shared_from_this](https://haust-kevin.github.io/2025/03/16/2025-03-understanding-of-shared-from-this/)
 - [从现代C++实现的百行线程池来了解一下线程池相关技术](https://zhuanlan.zhihu.com/p/673962006)
 
