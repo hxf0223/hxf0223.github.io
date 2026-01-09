@@ -236,8 +236,8 @@ int swizzled = (x + (y >> 4)) % 32;
 
 `Swizzle`更多资料：
 
-* [bank confict和冲突消解](https://66ring.github.io/2024/08/10/universe/gpu/bank_conflict_and_swizzle/)
-* [Swizzle 布局的直观解释和推导](https://melonedo.github.io/2025/08/04/Swizzle-Layout-Explained.html)
+* [cute 之 Swizzle](https://zhuanlan.zhihu.com/p/671419093)
+* [CUTLASS CuTe GEMM细节分析（三）——Swizzle<B, M, S>模板参数的取值](https://zhuanlan.zhihu.com/p/713713957)
 * [CUDA Shared Memory Swizzling](https://leimao.github.io/blog/CUDA-Shared-Memory-Swizzling/)
 * [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)：Swizzle可以提升L2 cache命中率
 * [issue -- Swizzling the shared memory](https://github.com/triton-lang/triton/issues/2675)
