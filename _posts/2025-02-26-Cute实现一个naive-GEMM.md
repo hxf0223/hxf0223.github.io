@@ -37,4 +37,16 @@ $$
 2. 给 A、B 的 tile 分配 shared memory，并建立共享内存的视图（shape + stride）。
 3. 建立线程的累加器视图（shape + stride），并分配寄存器内存。用于累加每个线程计算的 sub-tile 结果。
 4. Thread Block 需要将数据从全局内存加载到 shared memory 中，所以需要创建一个如何从全局内存 tile 复制数据到 shared memory tile 的规则，使用 layout 表示。并最终给每个线程分配一个复制区域，以 Tensor 表示，且全局内存分配一个 Tensor，Shared Memory 分配一个 Tensor。
-5. 
+
+
+
+## 资料 ##
+
+* [cute 之 简单GEMM实现](https://zhuanlan.zhihu.com/p/667521327)
+* [cute 之 Copy抽象](https://zhuanlan.zhihu.com/p/666232173)
+* [cute 之 GEMM流水线](https://zhuanlan.zhihu.com/p/665082713)
+* [cute 之 Swizzle](https://zhuanlan.zhihu.com/p/671419093)
+* [CUTLASS CuTe GEMM细节分析（三）——Swizzle<B, M, S>模板参数的取值](https://zhuanlan.zhihu.com/p/713713957)
+* [Lei Mao -- CuTe Local Tile](https://leimao.github.io/blog/CuTe-Local-Tile/)
+* [CUDA Tutorial 中文](https://github.com/PaddleJitLab/CUDATutorial/tree/develop)
+* [Optimize GEMM step by step](https://gty111.github.io/2023/06/20/gemm-optimize/)
