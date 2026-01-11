@@ -60,3 +60,8 @@ python3 self_check.py
 * [intel-TBB使用笔记](https://chuckiewill.github.io/2022/01/26/C++/IntelTBB/)
 * [Intel TBB API 官方教程](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2021-13/reduction.html)
 * [oneTBB Developer Guide](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/title.html)
+
+## 3. TBB 调度实现 ##
+
+* [TBB并发库代码学习](https://woodpenker.github.io/2022/01/16/TBB%E5%B9%B6%E5%8F%91%E5%BA%93%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/)
+* [C++ TBB 并行编程教程 -- 控制用于执行的线程数量](https://github.com/apachecn/apachecn-c-cpp-zh-pt3/blob/master/docs/cpp-paral-prog-thrd-bb/11.md)
