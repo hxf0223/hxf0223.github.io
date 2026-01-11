@@ -65,3 +65,4 @@ python3 self_check.py
 
 * [TBB并发库代码学习](https://woodpenker.github.io/2022/01/16/TBB%E5%B9%B6%E5%8F%91%E5%BA%93%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/)
 * [C++ TBB 并行编程教程 -- 控制用于执行的线程数量](https://github.com/apachecn/apachecn-c-cpp-zh-pt3/blob/master/docs/cpp-paral-prog-thrd-bb/11.md)
+* [oneTBB Developer Guide](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/title.html)
