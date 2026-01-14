@@ -1,5 +1,5 @@
 ---
-title: 使用 Nsight Compute 进行性能分析
+title: 使用 Nsight Compute 进行 kernel 性能分析
 date: 2025-02-26 +1200
 categories: [CUDA]
 tags: [CUDA, Nsight Compute]
