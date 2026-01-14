@@ -36,3 +36,8 @@ mermaid: true
 
 ![nsight_call_stack](/assets/images/cuda/20250226/nsight_compute/test_source_bank_conflict.png)
 
+查看Bank Conflicts 是否严重，从 GPU Speed of Light 节中，查看 L1/TEX Cahce(%) 是否比较高，具体参考论坛帖子：[Shared memory bank conflicts and nsight metric](https://forums.developer.nvidia.com/t/shared-memory-bank-conflicts-and-nsight-metric/115731)。
+
+相关资料：
+
+* [Requests, Wavefronts, Sectors Metrics: Understanding and Optimizing Memory-Bound Kernels with Nsight Compute](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s32089/)。视频资料。
