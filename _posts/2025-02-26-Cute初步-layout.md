@@ -168,3 +168,4 @@ const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(
 * [NVIDIA -- CUTLASS：基于张量和空间微核处理多维数据的原理抽象](https://developer.nvidia.cn/blog/cutlass-principled-abstractions-for-handling-multidimensional-data-through-tensors-and-spatial-microkernels/)
 * [reed -- cute Layout 的代数和几何解释](https://zhuanlan.zhihu.com/p/662089556)
 * [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
+* [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)
