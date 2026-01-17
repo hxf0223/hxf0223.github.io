@@ -61,6 +61,7 @@ Tensor thr_a = tiled_a(threadIdx.x, make_coord(_,_)); // (2,3)
 * [reed -- cute Layout 的代数和几何解释](https://zhuanlan.zhihu.com/p/662089556)
 * [reed -- cute 之 Tensor](https://zhuanlan.zhihu.com/p/663093816?theme=light)
 * [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
+* [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)。一个中文博客，介绍 CuTe Layout 代数。
 
 比如，`zipped_divide` 切分方式如下：
 
