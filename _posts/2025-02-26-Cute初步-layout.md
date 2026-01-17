@@ -1,5 +1,5 @@
 ---
-title: CUTLASS-Cute基础：Layout
+title: CUTLASS-Cute 初步(1)：Layout
 date: 2025-02-26 +0800
 categories: [CUDA]
 tags: [CUDA]
@@ -163,7 +163,7 @@ const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(
 * Int<3>{}，Int<3>() 编译时整数，称为静态整数。另外，定义了一些字面量：比如 `_1`、`_2`、`_3` 分别定义为 Int<1>{}、Int<2>{}、Int<3>{}。
 * 带有任何模板参数的 IntTuple，比如 make_tuple(int{2}, Int<3>{})。
 
-## 参考 ##
+## 参考及资料 ##
 
 * [NVIDIA -- CUTLASS：基于张量和空间微核处理多维数据的原理抽象](https://developer.nvidia.cn/blog/cutlass-principled-abstractions-for-handling-multidimensional-data-through-tensors-and-spatial-microkernels/)
 * [reed -- cute Layout 的代数和几何解释](https://zhuanlan.zhihu.com/p/662089556)
