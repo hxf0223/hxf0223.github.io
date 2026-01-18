@@ -1,5 +1,5 @@
 ---
-title: 使用 CuTe 实现一个 naive GEMM（未完成）
+title: 使用 CuTe 实现一个 naive GEMM
 date: 2025-02-26 +1200
 categories: [CUDA]
 tags: [CUDA]
@@ -14,7 +14,7 @@ mermaid: true
 
 ## 1. navie tile GEMM ##
 
-* 代码文件：[navie tile GEMM](./gemm_tile_naive.cu)
+* 代码文件：[navie tile GEMM](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive.cu)
 
 基于分块矩阵乘法的简单实现，按照 Thread Block 将矩阵划分为多个tile进行计算，在 Thread Block内，再次将 tile 划分为多个子块，由每个线程负责计算子块。
 
@@ -24,7 +24,7 @@ mermaid: true
 
 ## 2. CuTe 版本 naive tile GEMM ##
 
-* 代码文件：[CuTe naive tile GEMM](./gemm_tile_naive_cute.cu)
+* 代码文件：[CuTe naive tile GEMM](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive_cute.cu)
 
 使用 CuTe 库重写的分块矩阵乘法，使用 slice-k 方法，即分块（tile）沿着 K 维度累加所有结果子矩阵。
 
