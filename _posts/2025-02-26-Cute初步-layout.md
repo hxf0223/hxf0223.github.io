@@ -178,6 +178,7 @@ Layout Algebra 是 Cute 中用于操作 Layout 的代数系统。它提供了一
 * [github -- code for layout algebra](https://github.com/botbw/cutlass_learn/blob/main/layout_algebra.cu)
 * [NVIDIA PPT -- A Generalized Micro-kernel Abstraction for GPU Linear Algebra](https://www.cs.utexas.edu/~flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
 * [CuTe Layout Algebra](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md) 官方文档
+* [deepwiki -- cutlass -- Layout Algebra](https://deepwiki.com/NVIDIA/cutlass/2.1-layout-algebra)
 
 ## 参考及资料 ##
 
