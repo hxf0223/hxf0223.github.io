@@ -49,6 +49,7 @@ offset = Σ (index[i] * stride[i])
 ```
 
 ```cpp
+// A(m, n) = storage[m*1 + n*2]
 const auto val = tensor_layout(1, 2); // 访问张量元素 (1,2)，值为 5
 ```
 
@@ -102,6 +103,7 @@ const auto val = tensor_layout(1, 2); // 访问张量元素 (1,2)，值为 5
 ```
 
 ```cpp
+// A(i, (j, k)) = storage[i*4 + j*1 + k*2]
 const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(1,0))，值为 9
 ```
 
@@ -134,6 +136,7 @@ const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(
 ```
 
 ```cpp
+// A(i, (j, k)) = storage[i*2 + j*1 + k*8]
 const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(1,0))，值为 5
 ```
 
@@ -153,7 +156,7 @@ const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(
 
 > 关于几何解释，更多理解内容参考帖子 <https://note.gopoux.cc/hpc/cute/layout/>
 
-### 1.1. Shape 以及 Stride 定义嵌套 ###
+### 1.5. Shape 以及 Stride 定义嵌套 ###
 
 定义多维 Tensor 时，可以使用嵌套的 Shape 和 Stride 来定义子 Tensor 的形状和步长。在 Cute 中，使用 template tuple 表示表示嵌套的 Shape 和 Stride。
 
@@ -162,6 +165,18 @@ const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(
 * int{3}，运行时整数。
 * Int<3>{}，Int<3>() 编译时整数，称为静态整数。另外，定义了一些字面量：比如 `_1`、`_2`、`_3` 分别定义为 Int<1>{}、Int<2>{}、Int<3>{}。
 * 带有任何模板参数的 IntTuple，比如 make_tuple(int{2}, Int<3>{})。
+
+### 1.6. 总结 ###
+
+Cute 中，Layout 由 Shape + Stride 定义，使用 Stride，解耦了内存布局和张量形状的关系，从而可以灵活定义各种内存布局。
+
+## 2. Layout Algebra （待完成）##
+
+Layout Algebra 是 Cute 中用于操作 Layout 的代数系统。它提供了一组操作符和函数，用于组合、转换和操作 Layout，从而实现复杂的内存布局。
+
+* [CUTLASS 3: CuTe Layout Algebra](https://zhuanlan.zhihu.com/p/22300321859)
+* [github -- code for layout algebra](https://github.com/botbw/cutlass_learn/blob/main/layout_algebra.cu)
+* [NVIDIA PPT -- A Generalized Micro-kernel Abstraction for GPU Linear Algebra](https://www.cs.utexas.edu/~flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
 
 ## 参考及资料 ##
 
