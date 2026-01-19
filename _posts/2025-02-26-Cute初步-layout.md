@@ -174,9 +174,10 @@ Cute 中，Layout 由 Shape + Stride 定义，使用 Stride，解耦了内存布
 
 Layout Algebra 是 Cute 中用于操作 Layout 的代数系统。它提供了一组操作符和函数，用于组合、转换和操作 Layout，从而实现复杂的内存布局。
 
-* [CUTLASS 3: CuTe Layout Algebra](https://zhuanlan.zhihu.com/p/22300321859)
+* [知乎 -- CUTLASS 3: CuTe Layout Algebra](https://zhuanlan.zhihu.com/p/22300321859)
 * [github -- code for layout algebra](https://github.com/botbw/cutlass_learn/blob/main/layout_algebra.cu)
 * [NVIDIA PPT -- A Generalized Micro-kernel Abstraction for GPU Linear Algebra](https://www.cs.utexas.edu/~flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
+* [CuTe Layout Algebra](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md) 官方文档
 
 ## 参考及资料 ##
 
