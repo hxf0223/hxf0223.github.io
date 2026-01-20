@@ -110,6 +110,11 @@
     <link rel="stylesheet" href="{{ site.data.origin[type].glightbox.css | relative_url }}">
   {% endif %}
 
+  {% if page.math %}
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="{{ site.data.origin[type].katex.css | relative_url }}" crossorigin="anonymous">
+  {% endif %}
+
   <!-- Scripts -->
 
   <script src="{{ '/assets/js/dist/theme.min.js' | relative_url }}"></script>

@@ -65,10 +65,10 @@
 <script defer src="{{ script | relative_url }}"></script>
 
 {% if page.math %}
-  <!-- MathJax -->
-  <script src="{{ '/assets/js/data/mathjax.js' | relative_url }}"></script>
-  <script async src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="{{ site.data.origin[type].mathjax.js | relative_url }}"></script>
+  <!-- KaTeX JS -->
+  <script defer src="{{ site.data.origin[type].katex.js | relative_url }}" crossorigin="anonymous"></script>
+  <script defer src="{{ site.data.origin[type].katex.auto_render | relative_url }}" crossorigin="anonymous"></script>
+  <script defer src="{{ '/assets/js/data/katex.js' | relative_url }}"></script>
 {% endif %}
 
 <!-- Pageviews -->
