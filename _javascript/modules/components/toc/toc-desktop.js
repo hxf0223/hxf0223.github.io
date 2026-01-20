@@ -7,6 +7,7 @@ export class TocDesktop {
     headingSelector: 'h2, h3, h4',
     orderedList: false,
     scrollSmooth: false,
+    collapseDepth: 6, // Expand all heading levels
     headingsOffset: 16 * 2 // 2rem
   };
 
