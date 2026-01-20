@@ -206,14 +206,14 @@ Step<_1, X> 表示使用 M 维度参与分区。
 线程的 tCsA 起始行号为：
 
 $$
-\mathrm{row\_offset}_{A} = \mathrm{tC\_row} \times \mathrm{TM} = (\mathrm{tid} \mod 8) \times 8
+\text{row\_offset}_{A} = \text{tC\_row} \times \text{TM} = (\text{tid} \% 8) \times 8
 $$
 
 线程访问 sA 的地址计算公式：
 
 $$
 \begin{aligned}
-& \mathrm{addr}_{sA}[m, k] = (\mathrm{row\_offset}_{A} + m) + k \times 64 \\
+& \text{addr}_{sA}[m, k] = (\text{row\_offset}_{A} + m) + k \times 64 \\
 & m \in [0, 7], k \in [0, 15]
 \end{aligned}
 $$
