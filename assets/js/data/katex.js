@@ -19,11 +19,18 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
+  // Helper function to decode HTML entities
+  function decodeHTMLEntities(text) {
+    var textArea = document.createElement('textarea');
+    textArea.innerHTML = text;
+    return textArea.value;
+  }
+
   // Convert kramdown's MathJax format to KaTeX
   // Handle inline math: <script type="math/tex">...</script>
   document.querySelectorAll("script[type='math/tex']").forEach(function(el) {
-    var tex = el.textContent;
-    var rendered = katex.renderToString(tex, {displayMode: false, throwOnError: false});
+    var tex = decodeHTMLEntities(el.textContent);
+    var rendered = katex.renderToString(tex, {displayMode: false, throwOnError: false, strict: false, trust: true});
     var span = document.createElement("span");
     span.innerHTML = rendered;
     el.parentNode.replaceChild(span, el);
@@ -31,8 +38,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Handle display math: <script type="math/tex; mode=display">...</script>
   document.querySelectorAll("script[type='math/tex; mode=display']").forEach(function(el) {
-    var tex = el.textContent;
-    var rendered = katex.renderToString(tex, {displayMode: true, throwOnError: false});
+    var tex = decodeHTMLEntities(el.textContent);
+    var rendered = katex.renderToString(tex, {displayMode: true, throwOnError: false, strict: false, trust: true});
     var div = document.createElement("div");
     div.innerHTML = rendered;
     el.parentNode.replaceChild(div, el);
