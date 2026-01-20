@@ -240,14 +240,14 @@ Step<X, _1> 表示使用 N 维度参与分区。
 每个线程的 tCsB 起始行号为：
 
 $$
-\mathrm{row\_offset}_{B} = \mathrm{tC\_col} \times \mathrm{TN} = \lfloor \mathrm{tid} / 8 \rfloor \times 8
+\text{row\_offset}_{B} = \text{tC}\_col * \text{TN} = (\text{tid} / 8) \times 8
 $$
 
 线程访问 sB 的地址计算公式：
 
 $$
 \begin{aligned}
-& \mathrm{addr}_{sB}[n, k] = (\mathrm{row\_offset}_{B} + n) + k \times 64 \\
+& \text{addr}_{sB}[n, k] = (\text{row\_offset}_{B} + n) + k \times 64 \\
 & n \in [0, 7], k \in [0, 15]
 \end{aligned}
 $$
