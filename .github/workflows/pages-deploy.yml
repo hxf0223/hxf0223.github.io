@@ -52,7 +52,7 @@ jobs:
 
       - name: Build assets
         run: |
-          npm ci
+          npm install
           npm run build
 
       - name: Build site
