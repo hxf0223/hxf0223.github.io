@@ -108,6 +108,14 @@ social_preview_image: /assets/images/仰望星空.jpg
 # boolean type, the global switch for TOC in posts.
 toc: true
 
+# Math equation rendering engine.
+math:
+  # Choose engine for rendering math equations.
+  # mathjax — client-side rendering (loads JavaScript library)
+  # katex — server-side rendering via jektex plugin (faster, no JS required, requires Node.js)
+  # Note: KaTeX/jektex processes ALL files globally, while MathJax only processes files with math:true
+  engine: mathjax # [mathjax | katex]
+
 comments:
   # Global switch for the post-comment system. Keeping it empty means disabled.
   provider: giscus # [disqus | utterances | giscus]
@@ -168,6 +176,13 @@ kramdown:
     block:
       line_numbers: true
       start_line: 1
+
+# Jektex configuration for server-side KaTeX rendering
+jektex:
+  cache_dir: ".jektex-cache" # Cache directory for rendered equations
+  ignore: ["*.xml"] # Process markdown files, ignore feed.xml
+  silent: false # Show rendering progress
+  macros: [] # Global LaTeX macros (e.g., [["\\\\Q", "\\\\mathbb{Q}"]])
 
 collections:
   tabs:

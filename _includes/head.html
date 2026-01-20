@@ -111,8 +111,11 @@
   {% endif %}
 
   {% if page.math %}
-    <!-- KaTeX CSS -->
-    <link rel="stylesheet" href="{{ site.data.origin[type].katex.css | relative_url }}" crossorigin="anonymous">
+    {% assign math_engine = site.math.engine | default: 'mathjax' %}
+    {% if math_engine == 'katex' %}
+      <!-- KaTeX CSS for server-side rendering -->
+      <link rel="stylesheet" href="{{ site.data.origin[type].katex.css | relative_url }}">
+    {% endif %}
   {% endif %}
 
   <!-- Scripts -->

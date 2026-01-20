@@ -271,6 +271,148 @@ P(Mn,"options",{
 
 **推荐**：对于技术博客，KaTeX 是更好的选择。
 
+## 六、支持 KaTeX 服务器端渲染（PR #2603）
+
+### 背景
+
+参考上游仓库 PR [#2603](https://github.com/cotes2020/jekyll-theme-chirpy/pull/2603)，该 PR 添加了对 KaTeX 服务器端渲染的支持，通过 jektex 插件在构建时渲染数学公式，而不是在浏览器端通过 JavaScript 渲染。
+
+### 实施方案
+
+#### 1. 添加数学引擎配置
+
+修改 `_config.yml`，添加数学引擎选择配置：
+
+```yaml
+# Math equation rendering engine.
+math:
+  # Choose engine for rendering math equations.
+  # mathjax — client-side rendering (loads JavaScript library)
+  # katex — server-side rendering via jektex plugin (faster, no JS required)
+  engine: # [mathjax | katex]
+```
+
+#### 2. 添加 jektex 配置
+
+在 `_config.yml` 的 kramdown 配置后添加 jektex 配置：
+
+```yaml
+# Jektex configuration for server-side KaTeX rendering
+jektex:
+  cache_dir: ".jektex-cache" # Cache directory for rendered equations
+  ignore: ["**/*"] # Ignore all by default (enable when math.engine is katex)
+  silent: false # Show rendering progress
+  macros: [] # Global LaTeX macros (e.g., [["\\\\Q", "\\\\mathbb{Q}"]])
+```
+
+#### 3. 更新 .gitignore
+
+添加 jektex 缓存目录到 `.gitignore`：
+
+```text
+# Misc
+.jektex-cache
+```
+
+#### 4. 条件加载 CSS
+
+修改 `_includes/head.html`，根据引擎类型加载 CSS：
+
+```html
+{% raw %}{% if page.math %}
+  {% assign math_engine = site.math.engine | default: 'mathjax' %}
+  {% if math_engine == 'katex' %}
+    <!-- KaTeX CSS for server-side rendering -->
+    <link rel="stylesheet" href="{{ site.data.origin[type].katex.css | relative_url }}">
+  {% endif %}
+{% endif %}{% endraw %}
+```
+
+#### 5. 条件加载 JavaScript
+
+修改 `_includes/js-selector.html`，只在使用 MathJax 时加载 JS：
+
+```html
+{% raw %}{% if page.math %}
+  {% assign math_engine = site.math.engine | default: 'mathjax' %}
+  {% if math_engine == 'mathjax' %}
+    <!-- MathJax -->
+    <script src="{{ '/assets/js/data/mathjax.js' | relative_url }}"></script>
+    <script async src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="{{ site.data.origin[type].mathjax.js | relative_url }}"></script>
+  {% endif %}
+  {%- comment -%} KaTeX is rendered server-side via jektex plugin, only CSS needed {%- endcomment -%}
+{% endif %}{% endraw %}
+```
+
+#### 6. 添加 KaTeX 样式
+
+修改 `_sass/base/_base.scss`，添加 KaTeX 溢出处理：
+
+```scss
+/* KaTeX */
+.katex-display {
+  overflow: auto hidden;
+}
+```
+
+#### 7. 添加 jektex 依赖
+
+修改 `jekyll-theme-chirpy.gemspec`，添加 jektex 依赖：
+
+```ruby
+spec.add_runtime_dependency "jektex", "~> 0.1.1"
+```
+
+### 使用方法
+
+#### 选择 MathJax（默认）
+
+不需要配置，或显式设置：
+
+```yaml
+math:
+  engine: mathjax
+```
+
+#### 选择 KaTeX
+
+在 `_config.yml` 中设置：
+
+```yaml
+math:
+  engine: katex
+
+jektex:
+  ignore: ["*.xml"]  # 处理 markdown 文件，忽略 feed.xml
+```
+
+然后运行：
+
+```bash
+bundle add jektex
+bundle install
+```
+
+### 特性对比
+
+| 特性                 | MathJax           | KaTeX (jektex) |
+| -------------------- | ----------------- | -------------- |
+| 渲染方式             | 客户端 JavaScript | 服务器端构建时 |
+| 页面加载速度         | 较慢              | 快             |
+| LaTeX 支持           | 更完整            | 常用功能完整   |
+| `\label` 和 `\eqref` | ✓                 | ✗              |
+| 需要 JavaScript      | ✓                 | ✗              |
+| 缓存支持             | ✗                 | ✓              |
+
+### 注意事项
+
+1. **兼容性**：KaTeX 不支持某些 LaTeX 特性，如 `\label` 和 `\eqref`
+2. **构建时间**：首次构建时，KaTeX 会渲染所有公式并缓存，后续构建会快很多
+3. **默认行为**：如果不配置 `math.engine`，默认使用 MathJax（保持向后兼容）
+
+**提交记录**：参考 PR [#2603](https://github.com/cotes2020/jekyll-theme-chirpy/pull/2603)
+
 ### 4. 配置文件管理
 
 - 关键配置文件建议纳入版本控制
