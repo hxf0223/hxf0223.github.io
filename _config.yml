@@ -99,11 +99,7 @@ theme_mode: # [light | dark]
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-<<<<<<< HEAD
 avatar: /assets/images/仰望星空_Favicon.jpg
-=======
-avatar:
->>>>>>> 3a77bc8 (fix: add Node.js build step for jekyll-theme-chirpy)
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
