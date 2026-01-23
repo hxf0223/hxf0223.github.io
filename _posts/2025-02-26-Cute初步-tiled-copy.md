@@ -72,6 +72,15 @@ print_typst(tiled_copy)
 
 * [MoYe.jl -- TiledCopy & TiledMMA](https://yichengdwu.github.io/MoYe.jl/dev/manual/tiled_matmul/)
 
+**cute-viz**
+
+*[cute-viz](https://github.com/NTT123/cute-viz)
+
+**print-cute-tv-layout**
+
+* [print-cute-tv-layout](https://gist.github.com/NTT123/05f603c748e5f26bbc07bb636883e9ee)：gist Python 代码
+* [[FEA] [CuTeDSL] print_latex in CuTeDSL #2453](https://github.com/NVIDIA/cutlass/issues/2453)
+
 ## 2. MMAAtom 以及 TiledMMA ##
 
 *[MMA Atoms and TiledMMA](https://deepwiki.com/NVIDIA/cutlass/2.3-mma-atoms-and-tiledmma)
