@@ -244,20 +244,28 @@ auto coord = make_coord(row_coord, col_coord);
 
 ![hierarchy_layout_coord](/assets/images/cuda/20250226/cute_layout/coord_visit_1.jpg)
 
-## 3. Layout Algebra 待完成 ##
+### 2.4. slice 操作 ###
 
-Layout Algebra 是 Cute 中用于操作 Layout 的代数系统。它提供了一组操作符和函数，用于组合、转换和操作 Layout，从而实现复杂的内存布局。
+CuTe 提供了 slice 函数，使用 UnderScore `cute::_`，用于获取指定维度的子 layout。如下图所示：
 
-* [知乎 -- CUTLASS 3: CuTe Layout Algebra](https://zhuanlan.zhihu.com/p/22300321859)
-* [github -- code for layout algebra](https://github.com/botbw/cutlass_learn/blob/main/layout_algebra.cu)
-* [NVIDIA PPT -- A Generalized Micro-kernel Abstraction for GPU Linear Algebra](https://www.cs.utexas.edu/~flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
-* [CuTe Layout Algebra](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md) 官方文档
-* [deepwiki -- cutlass -- Layout Algebra](https://deepwiki.com/NVIDIA/cutlass/2.1-layout-algebra)
+![hierarchy_layout_slice](/assets/images/cuda/20250226/cute_layout/cute_slice_01.jpg)
+
+使用方式如下：
+
+```cpp
+auto layout = make_layout(
+    make_shape(make_shape(2, 4), make_shape(3, 5)),
+    make_stride(make_stride(3, 6), make_stride(1, 24))
+);
+
+auto row_coord = make_coord(1, 1);
+auto col_coord = make_coord(cute::_, cute::_);
+auto coord = make_coord(row_coord, col_coord); // 获取子块 B
+auto sub_layout = cute::slice(coord, layout);
+```
 
 ## 参考及资料 ##
 
-* [NVIDIA -- CUTLASS：基于张量和空间微核处理多维数据的原理抽象](https://developer.nvidia.cn/blog/cutlass-principled-abstractions-for-handling-multidimensional-data-through-tensors-and-spatial-microkernels/)
-* [reed -- cute Layout 的代数和几何解释](https://zhuanlan.zhihu.com/p/662089556)
 * [reed -- cute 之 Layout](https://zhuanlan.zhihu.com/p/661182311)
 * [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
 * [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)

@@ -58,10 +58,14 @@ Tensor thr_a = tiled_a(threadIdx.x, make_coord(_,_)); // (2,3)
 有关 `zipped_divide` 函数，以及其他针对 Layout 的数学操作，需要学习并参考：
 
 * [CuTe Layout Algebra](https://github.com/NVIDIA/cutlass/blob/v4.0.0/media/docs/cpp/cute/02_layout_algebra.md#zipped-tiled-flat-divides)。官方文档
+* [deepwiki -- cutlass -- Layout Algebra](https://deepwiki.com/NVIDIA/cutlass/2.1-layout-algebra)
 * [reed -- cute Layout 的代数和几何解释](https://zhuanlan.zhihu.com/p/662089556)
-* [reed -- cute 之 Tensor](https://zhuanlan.zhihu.com/p/663093816?theme=light)
 * [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
-* [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)。一个中文博客，介绍 CuTe Layout 代数。
+* [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)。来自 DeclK's Blog 中文。
+
+三方学习测试代码：
+
+* [github -- code for layout algebra](https://github.com/botbw/cutlass_learn/blob/main/layout_algebra.cu)
 
 比如，`zipped_divide` 切分方式如下：
 
@@ -71,3 +75,7 @@ Tiler Shape  : <TileM, TileN>
 
 zipped_divide  : ((TileM,TileN), (RestM,RestN,L,...))
 ```
+
+## 参考及学习资料 ##
+
+* [A Generalized Micro-kernel Abstraction for GPU Linear Algebra](https://www.cs.utexas.edu/~flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)：NVIDIA PPT
