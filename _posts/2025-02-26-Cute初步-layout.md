@@ -170,15 +170,20 @@ const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(
 
 > 关于几何解释，更多理解内容参考帖子 <https://note.gopoux.cc/hpc/cute/layout/>
 
-### 1.5. Shape 以及 Stride 定义嵌套 ###
+### 1.5. CuTe IntTuple ###
 
 定义多维 Tensor 时，可以使用嵌套的 Shape 和 Stride 来定义子 Tensor 的形状和步长。在 Cute 中，使用 template tuple 表示表示嵌套的 Shape 和 Stride。
 
-具体是使用 IntTule 表示：IntTuple 可以是一个整形，也可以是一个 tuple，并且可以嵌套。一下都是一个合法的 IntTuple：
+具体是使用 IntTule 表示：IntTuple 可以是一个整形，也可以是一个 tuple，并且可以嵌套。以下都是一个合法的 IntTuple：
 
 * int{3}，运行时整数。
 * Int<3>{}，Int<3>() 编译时整数，称为静态整数。另外，定义了一些字面量：比如 `_1`、`_2`、`_3` 分别定义为 Int<1>{}、Int<2>{}、Int<3>{}。
 * 带有任何模板参数的 IntTuple，比如 make_tuple(int{2}, Int<3>{})。
+
+在对 layout 进行一些操作时，还定义了一些常量表示这些操作：
+
+* cute::_ : 获取 slice 时，表示或者这个维度（轴）的所有数据，在 Python 中类似于 `:`。
+* cute::X ：在切分操作（比如partition）的时候，表示不对这个维度进行切分。
 
 ## 2. Hierarchy Layout ##
 
