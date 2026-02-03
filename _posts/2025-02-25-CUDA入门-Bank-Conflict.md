@@ -1,5 +1,5 @@
 ---
-title: CUDA优化：Bank Conflict
+title: CUDA入门：Bank Conflict
 date: 2025-02-25 +0800
 categories: [CUDA]
 tags: [CUDA]
@@ -10,7 +10,7 @@ mermaid: true
 # pin: true
 ---
 
-> 使用到的测试代码：[github -- cuda_perf](https://github.com/HPC02/cuda_perf)
+使用到的测试代码：[bank_conflict.cu](https://github.com/HPC02/cuda_perf/blob/master/src/bank_conflict/bank_conflict/bank_conflict.cu)
 
 ## 1. Bank Conflicts (Shared Memory) ##
 
@@ -27,7 +27,7 @@ Thread（在CUDA Core中）
     ↓
   访问Shared Memory
     ↓
-[Bank系统处理] ← Transaction在这里发生
+[Bank系统处理] ← Transaction 在这里发生
     ↓
 返回数据到Thread
 ```
@@ -46,7 +46,8 @@ __shared__ float s[64];
 
 在一次`transaction`的时候，如果，当`warp`中的不同线程访问到同一个`bank`中的不同地址时，就会产生`Bank Conflicts`，导致访问串行化：需要分成多次`transaction`。有`N`个线程访问同一个`bank`，称为`N-way Bank Conflicts`。
 
-> `Bank Conflicts`影响仅限一个`warp`内的一次`transaction`，且内存为`shared memory`。
+> 所谓 `Bank Conflicts`，只与`transaction`有关，即其由 `Shared Memory` 访问控制器相关。引用<https://forums.developer.nvidia.com/t/how-to-understand-the-bank-conflict-of-shared-mem/260900/2>：
+> When you store (or load) more than 4 bytes per thread, which is like saying more than 128 bytes per warp, the GPU does not issue a single transaction. The largest transaction size is 128 bytes. If you request 16 bytes per thread, then warp wide that will be a total of 512 bytes per request (warp-wide). The GPU will break that up into 4 transactions (in that case: T0-T7 make up a transaction, T8-T15 are a transaction, and so on), each of which is 128 bytes wide. The determination of bank conflicts is made per transaction, not per request or per warp or per instruction.
 
 如下情况，会产生`Bank Conflicts`：
 
@@ -67,6 +68,8 @@ __shared__ float s[64];
 
 {% raw %}
 ```cpp
+const int num_iters = 10000;  // 全局常量
+
 __global__ void all_conflicts() {
   __shared__ float s[32][32];
   [[maybe_unused]] int warp_id = threadIdx.y;
@@ -89,7 +92,9 @@ __global__ void all_conflicts() {
 
 ![bank-conflict-example](/assets/images/cuda/20250223/all-conflicts.svg)
 
-> 使用`Nsight Compute`分析`bank conflicts`（Metrics full），分析步骤见`使用Nsight Compute分析Bank Conflict`。
+由于是 32-way Bank Conflicts，则每个 warp 产生的 bank conflicts 次数是 10000 * 31，所有 warp 总共是 8 * 10000 * 31 = 2,480,000 次。与 Nsight Compute 测量结果吻合。
+
+![ncu_32_way_bank_conflicts](/assets/images/cuda/20250225/cuda_basic_bank_conflicts/ncu_bank_conflicts_demo1.png)
 
 ### 2.1. conflict free 代码参考 ###
 
@@ -236,19 +241,9 @@ int swizzled = (x + (y >> 4)) % 32;
 
 `Swizzle`更多资料：
 
-* [cute 之 Swizzle](https://zhuanlan.zhihu.com/p/671419093)
 * [CUTLASS CuTe GEMM细节分析（三）——Swizzle<B, M, S>模板参数的取值](https://zhuanlan.zhihu.com/p/713713957)
-* [CUDA Shared Memory Swizzling](https://leimao.github.io/blog/CUDA-Shared-Memory-Swizzling/)
 * [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)：Swizzle可以提升L2 cache命中率
 * [issue -- Swizzling the shared memory](https://github.com/triton-lang/triton/issues/2675)
-
-`thread block`的`Swizzle`：
-
-* [Cuda thread block swizzling机制解析](https://zhuanlan.zhihu.com/p/6872421770)
-
-## 参考资料 ##
-
-* [How to understand the bank conflict of shared_mem](https://forums.developer.nvidia.com/t/how-to-understand-the-bank-conflict-of-shared-mem/260900)
 
 ## 学习资料 ##
 
