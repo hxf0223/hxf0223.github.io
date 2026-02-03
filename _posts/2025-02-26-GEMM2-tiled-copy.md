@@ -1,5 +1,5 @@
 ---
-title: GEMM优化2：GMEM、SMEM 内存访问优化
+title: GEMM版本2：TiledCopy优化 GMEM 到 SMEM 传输
 date: 2025-02-26 +1300
 categories: [CUDA]
 tags: [CUDA]
@@ -32,7 +32,7 @@ CTA 内部线程数较少，无法充分掩藏指令延迟。
 ## 1. TiledCopy 优化 GMEM -> SMEM 传输 ##
 
 * [gemm_tile_naive_cute.cu](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive_cute.cu)：使用 Cute 实现的 naive 分块 GEMM
-* [gemm_tile_opt1.cu](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_opt1.cu)：使用 TiledCopy 优化 GMEM -> SMEM 传输
+* [gemm_tile_opt1_tiled_copy.cu](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_opt1_tiled_copy.cu)：使用 TiledCopy 优化 GMEM -> SMEM 传输
 * [tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例
 
 在 CTA 处理过程中，GMEM -> SMEM 传输时，naive 版本使用 local_partition 计算得到 sub-tile（即所谓 outter-partition）：

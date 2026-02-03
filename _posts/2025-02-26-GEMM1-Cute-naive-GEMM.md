@@ -1,5 +1,5 @@
 ---
-title: GEMM优化1：使用 CuTe 实现一个 naive GEMM
+title: GEMM 版本1：使用 CuTe 实现一个 naive GEMM
 date: 2025-02-26 +1200
 categories: [CUDA]
 tags: [CUDA]
