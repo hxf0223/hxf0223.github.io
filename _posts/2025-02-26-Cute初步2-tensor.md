@@ -153,7 +153,7 @@ auto result = composition(layout_1d, tiler);  // (5,4):(8,2)
 
 ![reshape_example](/assets/images/cuda/20250226/cute_tensor_al/compose_reshape.svg)
 
-** Extract Subtile**
+**Extract Subtile**
 
 ```cpp
 // (12,(4,8)):(59,(13,1))
