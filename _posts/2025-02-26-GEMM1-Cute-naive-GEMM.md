@@ -332,6 +332,7 @@ Tensor tCrC = ...;   // thread partition (for C compute) of register C
 
 * [Matrix Multiplication Background User's Guide](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)。如何计算 GEMM 的性能指标
 * [CuTe dense matrix-matrix multiply tutorial](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0x_gemm_tutorial.html)。CuTe GEMM 官方 Document。
-* [reed -- cute 之 简单GEMM实现](https://zhuanlan.zhihu.com/p/667521327)
-* [reed -- cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)
-* [Mao Lei -- CuTe Local Partition](https://leimao.github.io/blog/CuTe-Local-Partition/)
+* [cute 之 简单GEMM实现](https://zhuanlan.zhihu.com/p/667521327)：reed 知乎文章
+* [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：reed 知乎文章
+* [CuTe Local Partition](https://leimao.github.io/blog/CuTe-Local-Partition/)：Mao Lei博客
+* [CUDA Matrix Multiplication Optimization](https://leimao.github.io/article/CUDA-Matrix-Multiplication-Optimization/)：Mao Lei博客，GEMM优化步骤全解析
