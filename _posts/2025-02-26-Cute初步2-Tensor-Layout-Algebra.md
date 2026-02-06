@@ -183,6 +183,8 @@ auto result = composition(a, tiler);
 * [deepwiki -- cutlass -- Layout Algebra](https://deepwiki.com/NVIDIA/cutlass/2.1-layout-algebra)
 * [cute Layout 的代数和几何解释](https://zhuanlan.zhihu.com/p/662089556)。来自知乎 reed 文章
 * [CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)。来自Yifan Yang (杨轶凡) 博客
+* [CuTe Layout 的范畴论基础](https://shenh10.github.io/papercache/papers/mlsys/gpu/2025/09/01/categorical-foundations-for-cute-layouts.html)
+* [CuTe 02 - Layout 运算](https://wangyu.me/posts/cuda/cute-layout-algebra/)
 
 三方学习测试代码：
 

@@ -336,3 +336,4 @@ Tensor tCrC = ...;   // thread partition (for C compute) of register C
 * [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：reed 知乎文章
 * [CuTe Local Partition](https://leimao.github.io/blog/CuTe-Local-Partition/)：Mao Lei博客
 * [CUDA Matrix Multiplication Optimization](https://leimao.github.io/article/CUDA-Matrix-Multiplication-Optimization/)：Mao Lei博客，GEMM优化步骤全解析
+* [Colfax Research Cute Tutorial](https://research.colfax-intl.com/category/papers/tutorials/)：Colfax Research Cute Tutorial
