@@ -78,13 +78,13 @@ auto result = coalesce(layout);    // _12:_1
 * (_1, s1) : (d0, d1) => s1 * d1。忽略第一维的 stride。
 * (s0, s1) : (d0, d1) => s0 + s1 * d0。当 d1 == d0 * s0 时，可以展平为一维。
 
-其他情况不能展平为一维 layout，比如 layout codomain 出现空洞，即不是连续映射的。
+其他情况不能展平为一维 layout，比如 layout codomain 出现空洞，即不是连续映射的。不能展平的维度任然维持原有的 shape 和 stride 信息。
 
 > 在 CuTe 中，以一个二维 layout 为例，可以使用layout(m, n) 索引的形式访问，也可以使用 layout(k) 的形式访问。使用一维索引 k 访问时，其应该等于使用 coalesce 展平后的 layout 进行访问。见<https://github.com/NVIDIA/cutlass/blob/main/test/unit/cute/core/coalesce.cpp>。
 
 #### 2.1.1. By-mode Coalesce：展平部分轴 ####
 
-例如 layout ` ((M, N), K, L) : ((1, M), M * N, M * N * K)`，希望展平子 layout `(M, N):(1, M)`，保持其他轴的 shape 不变：
+例如 layout `((M, N), K, L) : ((1, M), M * N, M * N * K)`，希望展平子 layout `(M, N):(1, M)`，保持其他轴的 shape 不变：
 
 ```cpp
 coalesce(layout, Step<_1, _1, _1>{});
