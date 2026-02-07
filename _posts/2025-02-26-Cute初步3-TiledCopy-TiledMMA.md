@@ -74,11 +74,219 @@ void copy_if(TiledCopy const& copy, PrdTensor const& pred, Tensor const& src, Te
 
 ## 2. MMAAtom 以及 TiledMMA ##
 
-*[MMA Atoms and TiledMMA](https://deepwiki.com/NVIDIA/cutlass/2.3-mma-atoms-and-tiledmma)
+分块 MMA 抽象，将 MMA_Atom 分为几个可组合的层次：
+
+* MMAOperation：封装 D=A*B + C 的指令封装，以使用不同的数据类型以及 PTX 指令，包括使用 CUDA Core / Tensor Core。如 UniversalFMA<>、SM80_16x8x8_F32F16F16F32_TN。
+* MMA_Traits：和 Copy_Traits 类似，提供了 MMAOperation 类型没有提供，但是其使用者 MMA_Atom 却需要的起到桥梁作用的信息。如数据类型信息，TV layout 信息。
+* MMA_Atom：将 MMAOperation 和 MMA_Traits 结合，并提供 fragment 划分接口。
+* TiledMMA：根据 LayoutTile_TV 切分的线程布局，重复使用 MMA_Atom 完成分块矩阵乘加计算。
+* ThrMMA：完成实际的生成线程对应的 tensor。
+
+### 2.1. MMAOperation ###
+
+以**SM80_16x8x8_F32F16F16F32_TN**为例，封装了 SM80 架构下，16x8x8 大小的矩阵乘加指令 **D=A * B + C**，数据类型为 A:F16、B:F16、C:F32、D:F32。A 矩阵 row-major，B 矩阵 column-major。
+
+> BLAS 中约定 normal 矩阵为列优先。T(transpose) 表示使用转置矩阵，即 row-major 存储。
+> 下图原图见 Thakkar_BLISRetreat2023.pdf 第 30 页。
+
+![SM80_16x8x8_F32F16F16F32_TN](/assets/images/cuda/20250226/cute_tiled_mma/abc_layout_SM80_16x8x8_F32F16F16F32_TN.png)
+
+* **TODO: SM80_16x8x8_F32F16F16F32_TN 一条指令处理几个数据？**
+* **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
+
+CUDA PTX 文档也给出了指令 m16n8k8 的布局信息：
+
+[9.7.14.5.7. Matrix Fragments for mma.m16n8k8](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-1688)
+
+### 2.2. MMA_Traits ###
+
+MMA_Traits 提供数据类型信息，以及 TV layout 信息，比如需要根据 MMAOperation 中定义的指令，补充 A/B/C 的 layout 信息。需要提供的信息如下：
+
+```cpp
+using ElementDVal =  // Logical A-value type
+using ElementAVal =  // Logical B-value type
+using ElementBVal =  // Logical C-value type
+using ElementCVal =  // Logical D-value type
+
+using ElementAFrg =  // A-type consumed by MMA  (if ommitted, same as ElementAVal)
+using ElementBFrg =  // B_type consumed by MMA  (if ommitted, same as ElementBVal)
+using ElementCFrg =  // C_type consumed by MMA  (if ommitted, same as ElementCVal)
+
+using Shape_MNK =    // Logical MxNxK shape of the MMA
+
+using ThrID     =    // Logical thread id (tid) -> tidx
+
+using ALayout =      // (Logical thread id (tid), Logical value id (vid)) -> Flat MK-coord
+using BLayout =      // (Logical thread id (tid), Logical value id (vid)) -> Flat NK-coord
+using CLayout =      // (Logical thread id (tid), Logical value id (vid)) -> Flat MN-coord
+```
+
+### 2.3. TiledMMA ###
+
+TiledMMA 的模版参数表达了 TiledMMA 在 MMA_Atom 上的扩展逻辑：AtomLayoutMNK表示 M、N、K 方向上分别重复几次 Atom，这种重复会要求更多的执行线程。get_slice、get_thread_slice 函数功过给定线程 id 则获取线程对应到 ThrMMA 结构。
+
+```cpp
+template <class MMA_Atom,
+          class AtomLayoutMNK,
+          class PermutationMNK = Tile<Underscore,Underscore,Underscore>>
+struct TiledMMA : MMA_Atom {
+  auto get_slice(ThrIdx const& thr_idx) const {
+    auto thr_vmnk = thr_layout_vmnk_.get_flat_coord(thr_idx);
+    return ThrMMA<TiledMMA, decltype(thr_vmnk)>{*this, thr_vmnk};
+  }
+  
+  auto get_thread_slice(ThrIdx const& thr_idx) const {
+    return get_slice(thr_idx);
+  }
+
+  auto thrfrg_C(CTensor&& ctensor) const {
+    ....
+  }
+};
+```
+
+### 2.4. ThrMMA ###
+
+TiledMMA根据具体的线程id分解得到 ThrMMA 结构，提供 partition 函数接口，以及 partition_fragment 函数接口。
+
+如Tensor C为BLK_M x BLK_N，则partition_C可以得到线程级别的任务，维度为（MMA, MMA_M, MMA_N）, MMA表达了TileMMA一次能计算的单元，MMA_M, MMA_N表达了M方向和N方向需要分块数量。
+
+partition_fragment 类函数是按照 partition 类函数返回的 Tensor 形状生成的对应的寄存器表示。
+
+```cpp
+template <class TiledMMA, class ThrVMNK>
+struct ThrMMA : TiledMMA {
+  Tensor partition_C(Tensor C);
+  Tensor partition_A(Tensor A);
+  Tensor partition_B(Tensor B);
+  Tensor partition_fragment_C(Tensor C);
+  Tensor partition_fragment_A(Tensor A);
+  Tensor partition_fragment_B(Tensor B);
+}
+```
+
+打印的 layout 信息如下：
+
+```text
+MMA Atom Layout:
+ALayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+BLayout: ((_4,_8),_2):((_16,_1),_8)
+CLayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+```
+
+对应的代码如下：
+
+```cpp
+using MMA = MMA_Traits<SM80_16x8x8_F32F16F16F32_TN>;
+print("ALayout: "), print(typename MMA::ALayout{}), print("\n");
+print("BLayout: "), print(typename MMA::BLayout{}), print("\n");
+print("CLayout: "), print(typename MMA::CLayout{}), print("\n");
+
+MMA_Atom<SM80_16x8x8_F32F16F16F32_TN> mma;
+print_latex(mma);
+```
+
+### 2.5. Operation repeat 以及 Atom repeat ###
+
 TBD
 
-## 资料 ##
+<https://zhuanlan.zhihu.com/p/699255051>
+
+### 2.6. UniversalFMA ###
+
+> 可以参考 **Thakkar_BLISRetreat2023.pdf** 第 26 页。
+
+UniversalFMA 是一个标量 FMA 操作的 MMAOperation 实现，定义如下：
+
+```cpp
+template <class D, class A = D, class B = A, class C = D>
+struct UniversalFMA {
+  using DRegisters = D[1];
+  using ARegisters = A[1];
+  using BRegisters = B[1];
+  using CRegisters = C[1];
+
+  CUTE_HOST_DEVICE static constexpr void
+  fma(D& d, A const& a, B const& b, C const& c) {
+    // Forward to an ADL/cute free function for these types
+    using cute::fma;
+    fma(d, a, b, c); // 这里的实现就是d = a * b + c;
+  }
+};
+```
+
+```cpp
+template <class D, class A, class B, class C>
+struct MMA_Traits<UniversalFMA<D,A,B,C>> {
+  using ValTypeD = D;
+  using ValTypeA = A;
+  using ValTypeB = B;
+  using ValTypeC = C;
+
+  // Logical shape of the MMA
+  using Shape_MNK = Shape<_1,_1,_1>;
+
+  // Logical thread id (tid) -> tidx
+  using ThrID   = Layout<_1>; // 只有一个thread参与
+
+  // (Logical thread id (tid), Logical value id (vid)) -> coord
+
+  // (tid,vid) -> (m,k)
+  using ALayout = Layout<Shape<_1,_1>>;
+  // (tid,vid) -> (n,k)
+  using BLayout = Layout<Shape<_1,_1>>;
+  // (tid,vid) -> (m,n)
+  using CLayout = Layout<Shape<_1,_1>>;
+};
+```
+
+参考官方示例函数**gemm_nt**<https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu#L478>，从中提取部分代码如下：
+
+```cpp
+using TA      = float;
+using TB      = float;
+using TC      = float;
+TiledMMA mmaC = make_tiled_mma(UniversalFMA<TC, TA, TB>{}, Layout<Shape<_16, _16, _1>>{});  // 16x16x1 TiledMMA
+std::cout << "\nTiledMMA Layouts (UniversalFMA 16 16 1):" << std::endl;
+print("ALayout: "), print(typename decltype(mmaC)::ALayout{}), print("\n");
+print("BLayout: "), print(typename decltype(mmaC)::BLayout{}), print("\n");
+print("CLayout: "), print(typename decltype(mmaC)::CLayout{}), print("\n");
+
+std::cout << "\nMMA Atom Layout:" << std::endl;
+print_latex(mmaC);
+```
+
+![UniversalFMA 16x16x1 TiledMMA](/assets/images/cuda/20250226/cute_tiled_mma/abc_layout_UniversalFMA_16_16_1.jpeg)
+
+打印结果如下：
+
+```text
+ALayout: (_1,_1):(_0,_0)
+BLayout: (_1,_1):(_0,_0)
+CLayout: (_1,_1):(_0,_0)
+```
+
+## A. 资料 ##
+
+### A.1. TiledCopy 资料 ###
 
 * [CuTe Tiled Copy](https://leimao.github.io/blog/CuTe-Tiled-Copy/)：Mao Lei 博客介绍 CUTLASS-Cute Tiled Copy 文章
 * [cute 之 Copy抽象](https://zhuanlan.zhihu.com/p/666232173)：知乎 reed 博客
 * [cute/tutorial/tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例代码
+
+### A.2. MMA Atom 资料 ###
+
+* [0t_mma_atom.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0t_mma_atom.md)：官方文档，MMA Atom 文档
+* [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：知乎 reed 博客
+* [Thakkar_BLISRetreat2023.pdf](https://www.cs.utexas.edu/users/flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
+* [MMA Atoms and TiledMMA](https://deepwiki.com/NVIDIA/cutlass/2.3-mma-atoms-and-tiledmma)
+
+### A.3. 参考代码 ###
+
+* [sm80_mma_multistage.hpp](https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/gemm/collective/sm80_mma_multistage.hpp)：官方示例代码
+* [sgemm_sm80.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu)：官方示例代码
+
+### A.3. 工具 ###
+
+* [TeXPage](https://www.texpage.com/)
+* [Aspose.TeX viewer](https://products.aspose.app/tex/viewer)
