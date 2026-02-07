@@ -91,6 +91,32 @@ void copy_if(TiledCopy const& copy, PrdTensor const& pred, Tensor const& src, Te
 
 ![SM80_16x8x8_F32F16F16F32_TN](/assets/images/cuda/20250226/cute_tiled_mma/abc_layout_SM80_16x8x8_F32F16F16F32_TN.png)
 
+**SM80_16x8x8_F32F16F16F32_TN** 对应的 layout 信息如下：
+
+```text
+MMA Atom Layout:
+ALayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+BLayout: ((_4,_8),_2):((_16,_1),_8)
+CLayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+```
+
+对应的代码如下：
+
+```cpp
+using MMA = MMA_Traits<SM80_16x8x8_F32F16F16F32_TN>;
+print("ALayout: "), print(typename MMA::ALayout{}), print("\n");
+print("BLayout: "), print(typename MMA::BLayout{}), print("\n");
+print("CLayout: "), print(typename MMA::CLayout{}), print("\n");
+
+MMA_Atom<SM80_16x8x8_F32F16F16F32_TN> mma;
+print_latex(mma);
+
+/* 或者如下写法
+TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{});
+print_latex(tiled_mma);
+*/
+```
+
 * **TODO: SM80_16x8x8_F32F16F16F32_TN 一条指令处理几个数据？**
 * **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
 
@@ -145,9 +171,9 @@ struct TiledMMA : MMA_Atom {
 
 ### 2.4. ThrMMA ###
 
-TiledMMA根据具体的线程id分解得到 ThrMMA 结构，提供 partition 函数接口，以及 partition_fragment 函数接口。
+TiledMMA 根据具体的线程 id 分解得到 ThrMMA 结构，提供 partition 函数接口，以及 partition_fragment 函数接口。
 
-如Tensor C为BLK_M x BLK_N，则partition_C可以得到线程级别的任务，维度为（MMA, MMA_M, MMA_N）, MMA表达了TileMMA一次能计算的单元，MMA_M, MMA_N表达了M方向和N方向需要分块数量。
+如 Tensor C 为 BLK_M x BLK_N，则 partition_C 可以得到线程级别的任务，维度为 (MMA, MMA_M, MMA_N), MMA 表达了 TileMMA 一次能计算的单元，MMA_M, MMA_N 表达了 M 方向和 N 方向需要分块数量。
 
 partition_fragment 类函数是按照 partition 类函数返回的 Tensor 形状生成的对应的寄存器表示。
 
@@ -161,27 +187,6 @@ struct ThrMMA : TiledMMA {
   Tensor partition_fragment_A(Tensor A);
   Tensor partition_fragment_B(Tensor B);
 }
-```
-
-打印的 layout 信息如下：
-
-```text
-MMA Atom Layout:
-ALayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
-BLayout: ((_4,_8),_2):((_16,_1),_8)
-CLayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
-```
-
-对应的代码如下：
-
-```cpp
-using MMA = MMA_Traits<SM80_16x8x8_F32F16F16F32_TN>;
-print("ALayout: "), print(typename MMA::ALayout{}), print("\n");
-print("BLayout: "), print(typename MMA::BLayout{}), print("\n");
-print("CLayout: "), print(typename MMA::CLayout{}), print("\n");
-
-MMA_Atom<SM80_16x8x8_F32F16F16F32_TN> mma;
-print_latex(mma);
 ```
 
 ### 2.5. Operation repeat 以及 Atom repeat ###
