@@ -94,9 +94,7 @@ void copy_if(TiledCopy const& copy, PrdTensor const& pred, Tensor const& src, Te
 * **TODO: SM80_16x8x8_F32F16F16F32_TN 一条指令处理几个数据？**
 * **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
 
-CUDA PTX 文档也给出了指令 m16n8k8 的布局信息：
-
-[9.7.14.5.7. Matrix Fragments for mma.m16n8k8](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-1688)
+CUDA PTX 文档也给出了指令 m16n8k8 的布局信息：[9.7.14.5.7. Matrix Fragments for mma.m16n8k8](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-1688)。
 
 ### 2.2. MMA_Traits ###
 
@@ -240,7 +238,7 @@ struct MMA_Traits<UniversalFMA<D,A,B,C>> {
 };
 ```
 
-参考官方示例函数**gemm_nt**<https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu#L478>，从中提取部分代码如下：
+参考官方示例函数**gemm_nt**：<https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu#L478>，从中提取部分代码如下：
 
 ```cpp
 using TA      = float;
