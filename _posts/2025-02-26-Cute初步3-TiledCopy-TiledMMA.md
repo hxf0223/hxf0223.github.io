@@ -147,7 +147,7 @@ using CLayout =      // (Logical thread id (tid), Logical value id (vid)) -> Fla
 
 ### 2.3. TiledMMA ###
 
-TiledMMA 的模版参数表达了 TiledMMA 在 MMA_Atom 上的扩展逻辑：AtomLayoutMNK表示 M、N、K 方向上分别重复几次 Atom，这种重复会要求更多的执行线程。get_slice、get_thread_slice 函数功过给定线程 id 则获取线程对应到 ThrMMA 结构。
+TiledMMA 的模版参数表达了 TiledMMA 在 MMA_Atom 上的扩展逻辑：AtomLayoutMNK 表示 M、N、K 方向上分别重复几次 Atom，这种重复会要求更多的执行线程。get_slice、get_thread_slice 函数功过给定线程 id 则获取线程对应到 ThrMMA 结构。
 
 ```cpp
 template <class MMA_Atom,
@@ -169,6 +169,18 @@ struct TiledMMA : MMA_Atom {
 };
 ```
 
+三个模板参数的含义：
+
+| 参数名         | 类型                    | 说明                                              |
+| -------------- | ----------------------- | ------------------------------------------------- |
+| MMA_Atom       | 底层指令                | 定义单条 MMA 指令涉及的线程和值的布局             |
+| AtomLayoutMNK  | Layout<Shape<_2,_2,_1>> | 在 M/N/K 方向上重复多少个 atom（分配更多线程）    |
+| PermutationMNK | Layout<Shape<_1,_2,_1>> | 每个线程在 M/N/K 方向上处理更多的值（不增加线程） |
+
+> 3.4 之前版本还有 ValLayoutMNK 参数，从 3.4 版本开始 去掉该模板参数。PermutationMNK 可以替代 ValLayoutMNK 的功能。即 AtomLayoutMNK 定义 Thread 扩展，PermutationMNK 定义 Value 级别的扩展，即执行多次 Atom，**使用 PermutationMNK 导致线程需要占用更多的寄存器**。
+
+> PermutationMNK 的展开讲述见下面章节。
+
 ### 2.4. ThrMMA ###
 
 TiledMMA 根据具体的线程 id 分解得到 ThrMMA 结构，提供 partition 函数接口，以及 partition_fragment 函数接口。
@@ -189,11 +201,59 @@ struct ThrMMA : TiledMMA {
 }
 ```
 
-### 2.5. Operation repeat 以及 Atom repeat ###
+### 2.5. Permutation：置换 ###
 
-TBD
+Permutation 是一个 Tiler，由三个独立的分量组成，分别作用于 M、N、K 维度。它在 TV-layout 分配之前，对逻辑坐标进行重新映射。以 SM80_8x8x4_F64F64F64F64_TN 为例，其 layout 如下：
 
-<https://zhuanlan.zhihu.com/p/699255051>
+![SM80_8x8x4_F64F64F64F64_TN](/assets/images/cuda/20250226/cute_tiled_mma/abc_SM80_8x8x4_F64F64F64F64_TN.webp)
+
+```text
+ALayout: ((_4,_8),_1):((_8,_1),_0)
+BLayout: ((_4,_8),_1):((_8,_1),_0)
+CLayout: ((_4,_8),_2):((_16,_1),_8)
+```
+
+代码如下：
+
+```cpp
+TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{});
+/* TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{}, Layout<Shape<_1, _1, _1>>{}, Tile<_8, _8, _4>{}); */
+
+print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
+print("BLayout: "), print(typename decltype(tiled_mma)::BLayout{}), print("\n");
+print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");
+
+std::cout << "\nMMA Atom Layout:" << std::endl;
+print_latex(tiled_mma);
+```
+
+使用 permuteation 参数将线程处理的单元 size 修改为 8x16x8，即 N、K 方向扩大为两倍，M 方向不变：
+
+![Permutation 8x16x8](/assets/images/cuda/20250226/cute_tiled_mma/abc_SM80_8x8x4_F64F64F64F64_TN_permute_8_16_8.webp)
+
+```text
+ALayout: ((_4,_8),_1):((_8,_1),_0)
+BLayout: ((_4,_8),_1):((_8,_1),_0)
+CLayout: ((_4,_8),_2):((_16,_1),_8)
+```
+
+代码如下：
+
+```cpp
+TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{},
+                                        Layout<Shape<_1, _1, _1>>{},  // AtomLayout
+                                        Tile<_8, _16, _8>{});         // Tiler
+
+print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
+print("BLayout: "), print(typename decltype(tiled_mma)::BLayout{}), print("\n");
+print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");
+
+std::cout << "\nMMA Atom Layout:" << std::endl;
+print_latex(tiled_mma);
+```
+
+* [[QST] What is PermutationMNK in TiledMMA in CUTLASS 3.4 changes?](https://github.com/NVIDIA/cutlass/discussions/1345#discussioncomment-8485429)
+* [02_layout_algebra.md -- Logical Divide 2-D Example](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md#logical-divide-2-d-example)
 
 ### 2.6. UniversalFMA ###
 
@@ -281,6 +341,7 @@ CLayout: (_1,_1):(_0,_0)
 
 * [0t_mma_atom.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0t_mma_atom.md)：官方文档，MMA Atom 文档
 * [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：知乎 reed 博客
+* [CuTe Tiled MMA](https://leimao.github.io/blog/CuTe-Tiled-MMA/)：Mao Lei 博客介绍 CUTLASS-Cute Tiled MMA 文章
 * [Thakkar_BLISRetreat2023.pdf](https://www.cs.utexas.edu/users/flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
 * [MMA Atoms and TiledMMA](https://deepwiki.com/NVIDIA/cutlass/2.3-mma-atoms-and-tiledmma)
 
