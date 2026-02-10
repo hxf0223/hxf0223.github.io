@@ -89,24 +89,31 @@ void copy_if(TiledCopy const& copy, PrdTensor const& pred, Tensor const& src, Te
 > BLAS 中约定 normal 矩阵为列优先。T(transpose) 表示使用转置矩阵，即 row-major 存储。
 > 下图原图见 Thakkar_BLISRetreat2023.pdf 第 30 页。
 
+**SM80_16x8x8_F32F16F16F32_TN** 对应的 inverse TV-Layout 如下：
+
 ![SM80_16x8x8_F32F16F16F32_TN](/assets/images/cuda/20250226/cute_tiled_mma/abc_layout_SM80_16x8x8_F32F16F16F32_TN.png)
 
-**SM80_16x8x8_F32F16F16F32_TN** 对应的 layout 信息如下：
+> inverse TV-Layout 表示 **element coordinate -> thread index**的映射关系。
+
+**SM80_16x8x8_F32F16F16F32_TN** 对应的 MMA_Atom 信息如下：
 
 ```text
-MMA Atom Layout:
-ALayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
-BLayout: ((_4,_8),_2):((_16,_1),_8)
-CLayout: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+MMA_Atom
+  ThrID:      _32:_1
+  Shape_MNK:  (_16,_8,_8)
+  LayoutA_TV: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+  LayoutB_TV: ((_4,_8),_2):((_16,_1),_8)
+  LayoutC_TV: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
 ```
 
 对应的代码如下：
 
 ```cpp
-using MMA = MMA_Traits<SM80_16x8x8_F32F16F16F32_TN>;
-print("ALayout: "), print(typename MMA::ALayout{}), print("\n");
-print("BLayout: "), print(typename MMA::BLayout{}), print("\n");
-print("CLayout: "), print(typename MMA::CLayout{}), print("\n");
+print(MMA_Atom<SM80_16x8x8_F32F16F16F32_TN>{});
+// using MMA = MMA_Traits<SM80_16x8x8_F32F16F16F32_TN>;
+// print("ALayout: "), print(typename MMA::ALayout{}), print("\n");
+// print("BLayout: "), print(typename MMA::BLayout{}), print("\n");
+// print("CLayout: "), print(typename MMA::CLayout{}), print("\n");
 
 MMA_Atom<SM80_16x8x8_F32F16F16F32_TN> mma;
 print_latex(mma);
@@ -164,7 +171,7 @@ template <class BTensor>
 static constexpr auto make_fragment_B(BTensor&& btensor);
 ```
 
-**调用FMA指令**
+**调用 FMA 指令**
 
 提供 call 接口，调用 MMAOperation 指令：
 
@@ -275,14 +282,20 @@ struct ThrMMA : TiledMMA {
 
 ### 2.6. Permutation：置换 ###
 
-Permutation 是一个 Tiler，由三个独立的分量组成，分别作用于 M、N、K 维度。它在 TV-layout 分配之前，对逻辑坐标进行重新映射。以 SM80_8x8x4_F64F64F64F64_TN 为例，其 layout 如下：
+Permutation 是一个 Tiler，由三个独立的分量组成，分别作用于 M、N、K 维度。它在 TV-layout 分配之前，对逻辑坐标进行重新映射。以 SM80_8x8x4_F64F64F64F64_TN 为例，其 inverse TV-Layout 如下：
 
 ![SM80_8x8x4_F64F64F64F64_TN](/assets/images/cuda/20250226/cute_tiled_mma/abc_SM80_8x8x4_F64F64F64F64_TN.webp)
 
 ```text
-ALayout: ((_4,_8),_1):((_8,_1),_0)
-BLayout: ((_4,_8),_1):((_8,_1),_0)
-CLayout: ((_4,_8),_2):((_16,_1),_8)
+TiledMMA
+  ThrLayoutVMNK:  (_32,_1,_1,_1):(_1,_0,_0,_0)
+  PermutationMNK: (_,_,_)
+MMA_Atom
+  ThrID:      _32:_1
+  Shape_MNK:  (_8,_8,_4)
+  LayoutA_TV: ((_4,_8),_1):((_8,_1),_0)
+  LayoutB_TV: ((_4,_8),_1):((_8,_1),_0)
+  LayoutC_TV: ((_4,_8),_2):((_16,_1),_8)
 ```
 
 代码如下：
@@ -291,9 +304,10 @@ CLayout: ((_4,_8),_2):((_16,_1),_8)
 TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{});
 /* TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{}, Layout<Shape<_1, _1, _1>>{}, Tile<_8, _8, _4>{}); */
 
-print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
+print(tiled_mma), print("\n");
+/*print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
 print("BLayout: "), print(typename decltype(tiled_mma)::BLayout{}), print("\n");
-print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");
+print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");*/
 
 std::cout << "\nMMA Atom Layout:" << std::endl;
 print_latex(tiled_mma);
@@ -304,9 +318,15 @@ print_latex(tiled_mma);
 ![Permutation 8x16x8](/assets/images/cuda/20250226/cute_tiled_mma/abc_SM80_8x8x4_F64F64F64F64_TN_permute_8_16_8.webp)
 
 ```text
-ALayout: ((_4,_8),_1):((_8,_1),_0)
-BLayout: ((_4,_8),_1):((_8,_1),_0)
-CLayout: ((_4,_8),_2):((_16,_1),_8)
+TiledMMA
+  ThrLayoutVMNK:  (_32,_1,_1,_1):(_1,_0,_0,_0)
+  PermutationMNK: (_8,_16,_8)
+MMA_Atom
+  ThrID:      _32:_1
+  Shape_MNK:  (_8,_8,_4)
+  LayoutA_TV: ((_4,_8),_1):((_8,_1),_0)
+  LayoutB_TV: ((_4,_8),_1):((_8,_1),_0)
+  LayoutC_TV: ((_4,_8),_2):((_16,_1),_8)
 ```
 
 代码如下：
@@ -316,9 +336,10 @@ TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{},
                                         Layout<Shape<_1, _1, _1>>{},  // AtomLayout
                                         Tile<_8, _16, _8>{});         // Tiler
 
-print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
+print(tiled_mma), print("\n");
+/*print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
 print("BLayout: "), print(typename decltype(tiled_mma)::BLayout{}), print("\n");
-print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");
+print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");*/
 
 std::cout << "\nMMA Atom Layout:" << std::endl;
 print_latex(tiled_mma);
@@ -431,22 +452,31 @@ using TB      = float;
 using TC      = float;
 TiledMMA mmaC = make_tiled_mma(UniversalFMA<TC, TA, TB>{}, Layout<Shape<_16, _16, _1>>{});  // 16x16x1 TiledMMA
 std::cout << "\nTiledMMA Layouts (UniversalFMA 16 16 1):" << std::endl;
-print("ALayout: "), print(typename decltype(mmaC)::ALayout{}), print("\n");
+print(mmaC), print("\n");
+/*print("ALayout: "), print(typename decltype(mmaC)::ALayout{}), print("\n");
 print("BLayout: "), print(typename decltype(mmaC)::BLayout{}), print("\n");
-print("CLayout: "), print(typename decltype(mmaC)::CLayout{}), print("\n");
+print("CLayout: "), print(typename decltype(mmaC)::CLayout{}), print("\n");*/
 
 std::cout << "\nMMA Atom Layout:" << std::endl;
 print_latex(mmaC);
 ```
 
+Inverse TV-Layout 如下：
+
 ![UniversalFMA 16x16x1 TiledMMA](/assets/images/cuda/20250226/cute_tiled_mma/abc_layout_UniversalFMA_16_16_1.jpeg)
 
-打印结果如下：
+MMA_Atom 信息如下：
 
 ```text
-ALayout: (_1,_1):(_0,_0)
-BLayout: (_1,_1):(_0,_0)
-CLayout: (_1,_1):(_0,_0)
+TiledMMA
+  ThrLayoutVMNK:  (_1,_16,_16,_1):(_0,_1,_16,_0)
+  PermutationMNK: (_,_,_)
+MMA_Atom
+  ThrID:      _1:_0
+  Shape_MNK:  (_1,_1,_1)
+  LayoutA_TV: (_1,_1):(_0,_0)
+  LayoutB_TV: (_1,_1):(_0,_0)
+  LayoutC_TV: (_1,_1):(_0,_0)
 ```
 
 ## A. 资料 ##
