@@ -145,7 +145,43 @@ using BLayout =      // (Logical thread id (tid), Logical value id (vid)) -> Fla
 using CLayout =      // (Logical thread id (tid), Logical value id (vid)) -> Flat MN-coord
 ```
 
-### 2.3. TiledMMA ###
+### 2.3. MMA_Atom ###
+
+MMA_Atom 封装了 MMAOperation 和 MMA_Traits。
+
+**创建寄存器 fragment**
+
+提供了创建寄存器 fragment 的接口 make_fragment_A|B|C：
+
+```cpp
+template <class CTensor>
+static constexpr auto make_fragment_C(CTensor&& ctensor);
+
+template <class ATensor>
+static constexpr auto make_fragment_A(ATensor&& atensor);
+
+template <class BTensor>
+static constexpr auto make_fragment_B(BTensor&& btensor);
+```
+
+**调用FMA指令**
+
+提供 call 接口，调用 MMAOperation 指令：
+
+```cpp
+template <class TD, class DLayout,
+            class TA, class ALayout,
+            class TB, class BLayout,
+            class TC, class CLayout>
+constexpr void call(Tensor<TD, DLayout>& D,
+       Tensor<TA, ALayout> const& A,
+       Tensor<TB, BLayout> const& B,
+       Tensor<TC, CLayout> const& C) const;
+```
+
+* TODO: 调用之前进行一个 unpack 操作？
+
+### 2.4. TiledMMA ###
 
 TiledMMA 的模版参数表达了 TiledMMA 在 MMA_Atom 上的扩展逻辑：AtomLayoutMNK 表示 M、N、K 方向上分别重复几次 Atom，这种重复会要求更多的执行线程。get_slice、get_thread_slice 函数功过给定线程 id 则获取线程对应到 ThrMMA 结构。
 
@@ -177,11 +213,47 @@ struct TiledMMA : MMA_Atom {
 | AtomLayoutMNK  | Layout<Shape<_2,_2,_1>> | 在 M/N/K 方向上重复多少个 atom（分配更多线程）    |
 | PermutationMNK | Layout<Shape<_1,_2,_1>> | 每个线程在 M/N/K 方向上处理更多的值（不增加线程） |
 
+> AtomLayoutMNK 决定如何将 MMA_Atom 复制到更多的线程上执行，且将 MMA_ATOM 处理的线程扩展为 size(AtomLayoutMNK) 倍数。PermutationMNK 决定每个线程如何处理更多的值（即哪些逻辑坐标位置的值）。
+
 > 3.4 之前版本还有 ValLayoutMNK 参数，从 3.4 版本开始 去掉该模板参数。PermutationMNK 可以替代 ValLayoutMNK 的功能。即 AtomLayoutMNK 定义 Thread 扩展，PermutationMNK 定义 Value 级别的扩展，即执行多次 Atom，**使用 PermutationMNK 导致线程需要占用更多的寄存器**。
 
 > PermutationMNK 的展开讲述见下面章节。
 
-### 2.4. ThrMMA ###
+#### 2.4.1. 四层 Layout 以及获取线程 fragment ####
+
+根据给定的 MMA_Atom、以及 AtomLayoutMNK 参数，生成一个四层 Layout 结构：
+
+```cpp
+using ThrLayoutVMNK = decltype(tiled_product(AtomThrID{}, AtomLayoutMNK{}));
+ThrLayoutVMNK thr_layout_vmnk_;
+```
+
+* Mode 0 (V): Threads within a single atom
+* Mode 1 (M): Atom tiles in M dimension
+* Mode 2 (N): Atom tiles in N dimension
+* Mode 3 (K): Atom tiles in K dimension
+
+以 thrfrg_A 为例：
+
+```cpp
+// Tile a tensor or a layout from shape
+  //   (M,K,...)
+  // to shape
+  //   ((ThrV,(ThrM,ThrK)),(FrgV,(RestM,RestK,...)))
+  // where
+  //   ThrV: The threads local to an MMA. layout<0>(ThrLayoutVMNK): ThrV -> thread_idx
+  //   ThrM: The threads tiled in M.      layout<1>(ThrLayoutVMNK): ThrM -> thread_idx
+  //   ThrK: The threads tiled in K.      layout<3>(ThrLayoutVMNK): ThrK -> thread_idx
+  //   FrgV:  The values local to an MMA.
+  //   RestM: The values tiled in M.
+  //   RestK: The values tiled in K.
+template <class ATensor>
+constexpr auto thrfrg_A(ATensor&& atensor) const;
+```
+
+即得到的线程切分后的 subtile 布局为 **((ThrV,(ThrM,ThrK)),(FrgV,(RestM,RestK,...)))**。
+
+### 2.5. ThrMMA ###
 
 TiledMMA 根据具体的线程 id 分解得到 ThrMMA 结构，提供 partition 函数接口，以及 partition_fragment 函数接口。
 
@@ -201,7 +273,7 @@ struct ThrMMA : TiledMMA {
 }
 ```
 
-### 2.5. Permutation：置换 ###
+### 2.6. Permutation：置换 ###
 
 Permutation 是一个 Tiler，由三个独立的分量组成，分别作用于 M、N、K 维度。它在 TV-layout 分配之前，对逻辑坐标进行重新映射。以 SM80_8x8x4_F64F64F64F64_TN 为例，其 layout 如下：
 
@@ -227,7 +299,7 @@ std::cout << "\nMMA Atom Layout:" << std::endl;
 print_latex(tiled_mma);
 ```
 
-使用 permuteation 参数将线程处理的单元 size 修改为 8x16x8，即 N、K 方向扩大为两倍，M 方向不变：
+使用 permutation 参数将线程处理的单元 size 修改为 8x16x8，即 N、K 方向扩大为两倍，M 方向不变：
 
 ![Permutation 8x16x8](/assets/images/cuda/20250226/cute_tiled_mma/abc_SM80_8x8x4_F64F64F64F64_TN_permute_8_16_8.webp)
 
@@ -252,10 +324,57 @@ std::cout << "\nMMA Atom Layout:" << std::endl;
 print_latex(tiled_mma);
 ```
 
+> 如何理解？ This doesn't actually affect the partitioning of input/output tensors because, by convention, only a single atom is ever partitioned out. It will affect the output of `tile_size` and `get_layoutC_MN` and `get_layoutC_TV` etc, which could affect any `TiledCopy` that rely on those partitioning patterns by being built on this `TiledMMA`. Regardless, you'll find the resulting tensors from `partition_C` etc to be exactly the same since the atom partitioning is exactly the same.
+
+#### 2.6.1. 映射重排 ####
+
+上面的例子中，使用的 PermutationMNK：Tile<_8, _16, _8>{}，**T0**划分的逻辑坐标不连续。使用**scatter permutation**，可以得到连续的逻辑坐标划分，如下代码将对 N-coord 进行重排：
+
+```cpp
+TiledMMA tiled_mma =
+      make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{},
+                     Layout<Shape<_1, _1, _1>>{},  // AtomLayout
+                     Tile<_8,                      // Permutation on M, equivalent to 8:1, identity
+                          Layout<Shape<_2, _4, _2>, Stride<_1, _4, _2>>,  // Permutation on N, size 16
+                          _8>{});  // Permutation on K, equivalent to 8:1, identity
+    print_latex(tiled_mma);
+```
+
+这将对 N 模式重排如下（影响 B、C）：
+
+* 前 2 个元素保持原位
+* 接下来 4 组（每组 2 个元素）被发送到 n 坐标 4
+* 再接下来 2 组（每组 8 个元素）被发送到 n 坐标 2
+
+对应的 layout 如下：
+
+```text
+(2,(4,2)):(1,(4,2))
+       0    1    2    3    4    5    6    7
+    +----+----+----+----+----+----+----+----+
+ 0  |  0 |  4 |  8 | 12 |  2 |  6 | 10 | 14 |
+    +----+----+----+----+----+----+----+----+
+ 1  |  1 |  5 |  9 | 13 |  3 |  7 | 11 | 15 |
+    +----+----+----+----+----+----+----+----+
+```
+
+```cpp
+auto shape  = make_shape(2, make_shape(4, 2));
+auto stride = make_stride(1, make_stride(4, 2));
+print_layout(make_layout(shape, stride)), print("\n");
+```
+
+> 映射重排以获得简洁的内存布局，从而提高内存访问效率，避免 bank conflicts。
+
+#### 2.6.2. 参考资料 ####
+
+![Scatter Permutation 8x16x8](/assets/images/cuda/20250226/cute_tiled_mma/scatter_permute_SM80_8x8x4_F64F64F64F64_TN.webp)
+
 * [[QST] What is PermutationMNK in TiledMMA in CUTLASS 3.4 changes?](https://github.com/NVIDIA/cutlass/discussions/1345#discussioncomment-8485429)
 * [02_layout_algebra.md -- Logical Divide 2-D Example](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md#logical-divide-2-d-example)
+* [0t_mma_atom -- TiledMMAs](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0t_mma_atom.html#tiledmmas)
 
-### 2.6. UniversalFMA ###
+### 2.7. UniversalFMA ###
 
 > 可以参考 **Thakkar_BLISRetreat2023.pdf** 第 26 页。
 
@@ -333,15 +452,15 @@ CLayout: (_1,_1):(_0,_0)
 
 ### A.1. TiledCopy 资料 ###
 
-* [CuTe Tiled Copy](https://leimao.github.io/blog/CuTe-Tiled-Copy/)：Mao Lei 博客介绍 CUTLASS-Cute Tiled Copy 文章
-* [cute 之 Copy抽象](https://zhuanlan.zhihu.com/p/666232173)：知乎 reed 博客
+* [CuTe Tiled Copy](https://leimao.github.io/blog/CuTe-Tiled-Copy/)：Mao Lei 博客
+* [cute 之 Copy抽象](https://zhuanlan.zhihu.com/p/666232173)：reed 知乎文章
 * [cute/tutorial/tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例代码
 
 ### A.2. MMA Atom 资料 ###
 
 * [0t_mma_atom.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0t_mma_atom.md)：官方文档，MMA Atom 文档
-* [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：知乎 reed 博客
-* [CuTe Tiled MMA](https://leimao.github.io/blog/CuTe-Tiled-MMA/)：Mao Lei 博客介绍 CUTLASS-Cute Tiled MMA 文章
+* [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：reed 知乎文章
+* [CuTe Tiled MMA](https://leimao.github.io/blog/CuTe-Tiled-MMA/)：Mao Lei 博客，如何配置 TiledMMA
 * [Thakkar_BLISRetreat2023.pdf](https://www.cs.utexas.edu/users/flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
 * [MMA Atoms and TiledMMA](https://deepwiki.com/NVIDIA/cutlass/2.3-mma-atoms-and-tiledmma)
 
