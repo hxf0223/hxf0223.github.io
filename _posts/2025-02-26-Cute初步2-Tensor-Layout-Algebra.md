@@ -185,6 +185,7 @@ auto result = composition(a, tiler);
 * [CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)。来自Yifan Yang (杨轶凡) 博客
 * [CuTe Layout 的范畴论基础](https://shenh10.github.io/papercache/papers/mlsys/gpu/2025/09/01/categorical-foundations-for-cute-layouts.html)
 * [CuTe 02 - Layout 运算](https://wangyu.me/posts/cuda/cute-layout-algebra/)
+* [Cute概念速通](https://zhen8838.github.io/2026/02/03/cute-concepts/)：待阅读
 
 三方学习测试代码：
 
@@ -195,5 +196,9 @@ auto result = composition(a, tiler);
 * [A Generalized Micro-kernel Abstraction for GPU Linear Algebra](https://www.cs.utexas.edu/~flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)：NVIDIA PPT
 * [Algebra -- 2.12 Inverses and composition](https://www.ucl.ac.uk/~ucahmto/0005_2021/Ch2.S12.html)：数学理论：composition
 * [Categorical Foundations for CuTe Layouts](https://research.colfax-intl.com/categorical-foundations-for-cute-layouts/)
-* [Layout Algebra](https://github.com/CoffeeVampir3/Layout-Algebra)：三方实现的C++ Layout Algebra库
+* [Layout Algebra](https://github.com/CoffeeVampir3/Layout-Algebra)：三方实现的C++ Layout Algebra 库
+* [On CuTe layouts](https://hyhieu.github.io/blog/on_cute_layouts)
+
+## 工具 ##
+
 * [将 SVG 合并到 SVG](https://products.aspose.app/svg/zh/merger/svg-to-svg)：工具：合并svg图片

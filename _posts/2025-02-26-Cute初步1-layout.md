@@ -323,6 +323,20 @@ Cute 使用余字典序（colexicographical order）对输入坐标转换为 nat
 
 其转换方法为：**对整数做从左到右的逐级取模和除法**：
 
+以二维 layout (M，N) 为例，从 1-D 转换到 2-D 的方法如下：
+
+```text
+coord = (index % M, (index / M) % N)
+```
+
+以三维 layout (M, (N, K)) 为例，从 1-D 转换到 h-D 的方法如下：
+
+```text
+coord = (index % M, ((index / M) % N, (index / (M*N)) % K))
+```
+
+三维 index -> coord 具体示例：
+
 ```text
 i = 7 为例：
   第一维大小 = 3:   7 % 3 = 1,  7 / 3 = 2
