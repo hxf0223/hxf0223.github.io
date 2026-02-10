@@ -337,7 +337,8 @@ TiledMMA tiled_mma =
                      Tile<_8,                      // Permutation on M, equivalent to 8:1, identity
                           Layout<Shape<_2, _4, _2>, Stride<_1, _4, _2>>,  // Permutation on N, size 16
                           _8>{});  // Permutation on K, equivalent to 8:1, identity
-    print_latex(tiled_mma);
+
+print_latex(tiled_mma);
 ```
 
 这将对 N 模式重排如下（影响 B、C）：
