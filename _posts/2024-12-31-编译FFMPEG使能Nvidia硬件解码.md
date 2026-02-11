@@ -1,8 +1,8 @@
 ---
-title: 编译FFMPEG使能Nvidia硬件解码
+title: 编译FFMPEG使能 NVIDIA 硬件解码
 date: 2024-12-31 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [Linux]
-tags: [Linux, FFmpeg, Nvidia]
+tags: [Linux, FFmpeg, NVIDIA]
 
 # 以下默认false
 math: true
@@ -12,10 +12,10 @@ mermaid: true
 
 ## 1. 依赖于 NVIDIA
 
-* Nvidia 显卡驱动(.run文件安装)
+* NVIDIA 显卡驱动(.run文件安装)
 * CUDA Toolkit(.run文件安装)
 
-安装Nvidia驱动(run文件)
+安装 NVIDIA 驱动(run文件)
 
 ```bash
 # 禁用 nouveau 开源驱动
