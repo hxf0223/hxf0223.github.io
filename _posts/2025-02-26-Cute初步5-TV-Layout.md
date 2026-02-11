@@ -29,6 +29,7 @@ MMA_Atom
 
 MMAOperation 以及 MMA_Traits 定义如下：
 
+{% raw %}
 ```cpp
 // MMA 16x8x16 TN
 struct SM80_16x8x16_F16F16F16F16_TN
@@ -78,6 +79,7 @@ struct MMA_Traits<SM80_16x8x16_F16F16F16F16_TN>
   using CLayout = SM80_16x8_Row;
 };
 ```
+{% endraw %}
 
 打印的 inverse TV-Layout 如下：
 
