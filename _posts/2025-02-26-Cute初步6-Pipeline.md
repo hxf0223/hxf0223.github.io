@@ -1,5 +1,5 @@
 ---
-title: CUTLASS-Cute 初步(5)：Pipeline
+title: CUTLASS-Cute 初步(6)：Pipeline
 date: 2025-02-26 +1100
 categories: [CUDA]
 tags: [CUDA]
