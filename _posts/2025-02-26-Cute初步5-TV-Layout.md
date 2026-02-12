@@ -10,13 +10,21 @@ mermaid: true
 # pin: true
 ---
 
-TV-Layout 描述的是线程在 CTA 中的分布，以及每个线程处理的数据布局。TV-Layout 的第一个 mode 定义线程在 CTA 中的分布，第二个 mode 定义每个线程处理的数据布局。
+TV-Layout 描述 CTA 中线程的 layout，以及每个线程可以访问到哪些数据。TV-Layout 的第一个 mode 定义线程在 CTA 中的分布，第二个 mode 定义每个线程处理的数据布局。见下面例子中的**LayoutA_TV**。
 
-**Inverse TV-Layout** 描述的是数据的逻辑坐标 coord 到线程ID的映射关系。比如 CopyOperation、MMAOperation 中，使用 print_latex、print_svg 打印的 layout，实际上是 Inverse TV-Layout。
+**Inverse TV-Layout** 描述的是数据的逻辑坐标 coord 到线程ID的映射关系。比如给定 layout 的逻辑坐标 (m, n)，经过 inverse TV-Layout 得到 (threadID, valueID)，即：
+
+* threadID，表示该逻辑坐标 (m, n) 属于 warp 中的哪个线程处理
+* valueID，表示该线程处理的第几个数据，即线程内数据的偏移，比如 reg[2]
+* (M, K) -> (T, V) 分为两个步骤：
+  * 逻辑坐标(m, n) 计算得到一维坐标 Index = Thread_ID + (Value_ID * Thread_Group_Size)
+  * 转换为人可理解的二维坐标 (threadID, valueID)，比如 threadID = Index % Thread_Group_Size，valueID = Index / Thread_Group_Size
+
+在 CopyOperation、MMAOperation 中，使用 print_latex、print_svg 打印的 layout，实际上是 Inverse TV-Layout。
 
 ## 1. TV-Layout 例子 ##
 
-以 cute::SM80_16x8x16_F16F16F16F16_TN 为例，其 TV-Layout 如下：
+以 **cute::SM80_16x8x16_F16F16F16F16_TN** 为例，其 TV-Layout 如下：
 
 ```text
 MMA_Atom
@@ -26,6 +34,9 @@ MMA_Atom
   LayoutB_TV: ((_4,_8),(_2,_2)):((_16,_1),(_8,_64))
   LayoutC_TV: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
 ```
+
+* 线程布局方式为 4x8。
+* 一个 16x8x16(K维度)的矩阵，A = MxK = 16x16(T)，B = KxN = 16x8(N)。warp 中的每个线程需要从 A 中拿到 2x2x2=8 个值（16x16/32=8），从 B 拿到 2x2=4 个值（16x8/32=4）。
 
 MMAOperation 以及 MMA_Traits 定义如下：
 
@@ -107,4 +118,5 @@ Tensor  v = tv(threadIdx.x, _);                                  // (4)
 ## 资料 ##
 
 * [CuTe Thread-Value Layout](https://leimao.github.io/blog/CuTe-Thread-Value-Layout/)：Mao Lei 的博客文章
-* [Cute概念速通](https://zhen8838.github.io/2026/02/03/cute-concepts/)：待阅读
+* [CuTe Inverse Layout](https://leimao.github.io/blog/CuTe-Inverse-Layout/)：Mao Lei 的博客文章
+* [Cute概念速通](https://zhen8838.github.io/2026/02/03/cute-concepts/)：**待阅读**
