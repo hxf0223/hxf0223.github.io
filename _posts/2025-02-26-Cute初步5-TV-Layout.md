@@ -119,4 +119,5 @@ Tensor  v = tv(threadIdx.x, _);                                  // (4)
 
 * [CuTe Thread-Value Layout](https://leimao.github.io/blog/CuTe-Thread-Value-Layout/)：Mao Lei 的博客文章
 * [CuTe Inverse Layout](https://leimao.github.io/blog/CuTe-Inverse-Layout/)：Mao Lei 的博客文章
+* [Tensor Core MMA Swizzle Layout](https://yang-yifan.github.io/blogs/mma_swizzle/mma_swizzle.html)
 * [Cute概念速通](https://zhen8838.github.io/2026/02/03/cute-concepts/)：**待阅读**
