@@ -1,0 +1,198 @@
+<!DOCTYPE html> <html lang="zh-CN"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> 编译FFMPEG使能 NVIDIA 硬件解码 | Roderick Huang </title> <meta name="author" content="Roderick Huang"> <meta name="description" content="Roderick Huang 的个人博客，记录工作与技术。 "> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <link rel="manifest" href="/manifest.json"> <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff"> <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a1a2e"> <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+</script> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <link rel="stylesheet" href="/assets/css/bootstrap.min.css?v=a4b3f509e79c54a512b890d73235ef04"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="/assets/css/academicons.min.css?v=f0b7046b84e425c55f3463ac249818f5"> <link defer rel="stylesheet" href="/assets/css/scholar-icons.css?v=62b2ac103a88034e6882a5be5f3e2772"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link defer href="/assets/css/bootstrap-toc.min.css?v=6f5af0bb9aab25d79b2448143cbeaa88" rel="stylesheet"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%E2%9A%9B%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=d41d8cd98f00b204e9800998ecf8427e"> <link rel="canonical" href="https://hxf0223.github.io/blog/2024/%E7%BC%96%E8%AF%91FFMPEG%E4%BD%BF%E8%83%BDNvidia%E7%A1%AC%E4%BB%B6%E8%A7%A3%E7%A0%81/"> <script src="/assets/js/theme.js?v=5fea5159b787642c1bbc1f334d60f883"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Roderick</span> Huang </a> <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse text-right" id="navbarNav"> <ul class="navbar-nav ml-auto flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item"> <button id="search-toggle" title="Search" onclick="openSearchModal()"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" title="Change theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="row"> <div class="col-sm-9"> <div class="post"> <header class="post-header"> <h1 class="post-title">编译FFMPEG使能 NVIDIA 硬件解码</h1> <p class="post-meta"> Created on December 31, 2024 </p> <p class="post-tags"> <a href="/blog/2024"> <i class="fa-solid fa-calendar fa-sm"></i> 2024 </a>   ·   <a href="/blog/tag/linux"> <i class="fa-solid fa-hashtag fa-sm"></i> Linux</a>   <a href="/blog/tag/ffmpeg"> <i class="fa-solid fa-hashtag fa-sm"></i> FFmpeg</a>   <a href="/blog/tag/nvidia"> <i class="fa-solid fa-hashtag fa-sm"></i> NVIDIA</a>   ·   <a href="/blog/category/linux"> <i class="fa-solid fa-tag fa-sm"></i> Linux</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <h2 id="1-依赖于-nvidia">1. 依赖于 NVIDIA</h2> <ul> <li>NVIDIA 显卡驱动(.run文件安装)</li> <li>CUDA Toolkit(.run文件安装)</li> </ul> <p>安装 NVIDIA 驱动(run文件)</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 禁用 nouveau 开源驱动</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> /etc/modprobe.d/blacklist-nouveau.conf <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">
+blacklist nouveau
+options nouveau modeset=0
+</span><span class="no">EOF
+
+</span><span class="c"># Update initramfs</span>
+update-initramfs <span class="nt">-u</span>
+
+<span class="c"># 需要重启生效</span>
+reboot
+
+<span class="c"># Install compilation tools and Xorg dependencies</span>
+apt <span class="nb">install</span> <span class="nt">-y</span> make gcc linux-headers-<span class="si">$(</span><span class="nb">uname</span> <span class="nt">-r</span><span class="si">)</span> pkg-config xserver-xorg xorg-dev
+
+<span class="c"># Install Vulkan and GLVND development libraries</span>
+apt <span class="nb">install</span> <span class="nt">-y</span> libvulkan1 libglvnd-dev
+
+systemctl stop gdm.service
+
+./NVIDIA-Linux-x86_64-xxx.run
+</code></pre></div></div> <p>安装<code class="language-plaintext highlighter-rouge">CUDA</code>：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># https://developer.nvidia.com/cuda-toolkit-archive</span>
+wget https://developer.download.nvidia.com/compute/cuda/12.6.3/local_installers/cuda-repo-debian12-12-6-local_12.6.3-560.35.05-1_amd64.deb
+<span class="nb">sudo </span>dpkg <span class="nt">-i</span> cuda-repo-debian12-12-6-local_12.6.3-560.35.05-1_amd64.deb
+<span class="nb">sudo cp</span> /var/cuda-repo-debian12-12-6-local/cuda-<span class="k">*</span><span class="nt">-keyring</span>.gpg /usr/share/keyrings/
+<span class="nb">sudo </span>add-apt-repository contrib
+<span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nt">-y</span> <span class="nb">install </span>cuda-toolkit-12-6
+</code></pre></div></div> <p>查看硬件编解码实时状态:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>watch <span class="nt">-n</span> 1 nvidia-smi <span class="nt">-i</span> 0 <span class="nt">-q</span> <span class="nt">-d</span> UTILIZATION
+</code></pre></div></div> <p>资料:</p> <ul> <li><a href="https://www.cnblogs.com/merrynuts/p/18187734" rel="external nofollow noopener" target="_blank">Debian 12安装Nvidia显卡驱动</a></li> <li><a href="https://www.nvidia.com/en-us/drivers/details/226764/" rel="external nofollow noopener" target="_blank">download – nvidia 525.183.01 driver for linux</a></li> <li><a href="https://developer.nvidia.com/cuda-downloads?target_os=Linux&amp;target_arch=x86_64&amp;Distribution=Debian&amp;target_version=12&amp;target_type=deb_local" rel="external nofollow noopener" target="_blank">CUDA Toolkit 12.6 Update 3 Downloads</a></li> </ul> <h2 id="2-ffmpeg-编译依赖库安装">2. FFMPEG 编译依赖库安装</h2> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nt">-y</span> <span class="nb">install </span>autoconf automake build-essential libass-dev libfreetype6-dev libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
+
+<span class="nb">sudo </span>apt-get <span class="nt">-y</span> <span class="nb">install </span>yasm nasm
+<span class="nb">sudo </span>apt-get <span class="nt">-y</span> <span class="nb">install </span>libx264-dev libx265-dev libvpx-dev libdav1d-dev <span class="c"># video</span>
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>libfdk-aac-dev libmp3lame-dev libopus-dev libopus-dev <span class="c"># audio</span>
+</code></pre></div></div> <h2 id="3-编译-ffmpeg">3. 编译 FFMPEG</h2> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/FFmpeg/nv-codec-headers.git
+<span class="nb">cd </span>nv-codec-headers
+make
+<span class="nb">sudo </span>make <span class="nb">install </span><span class="nv">PREFIX</span><span class="o">=</span>/usr <span class="c"># 如果安装到其他目录，需要将路径天骄到PKG_CONFIG_PATH</span>
+</code></pre></div></div> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./configure <span class="nt">--extra-cflags</span><span class="o">=</span><span class="s2">"-I/usr/local/cuda/include"</span> <span class="nt">--extra-ldflags</span><span class="o">=</span><span class="s2">"-L/usr/local/cuda/lib64"</span> <span class="nt">--extra-libs</span><span class="o">=</span><span class="nt">-lpthread</span> <span class="nt">--extra-libs</span><span class="o">=</span><span class="nt">-lm</span> <span class="nt">--enable-shared</span>  <span class="nt">--enable-gpl</span> <span class="nt">--enable-libfreetype</span> <span class="nt">--enable-libmp3lame</span> <span class="nt">--enable-libopus</span> <span class="nt">--enable-libvorbis</span> <span class="nt">--enable-libx264</span> <span class="nt">--enable-libx265</span> <span class="nt">--enable-nonfree</span> <span class="nt">--enable-cuda</span> <span class="nt">--enable-cuvid</span> <span class="nt">--enable-nvenc</span> <span class="nt">--enable-ffnvcodec</span> <span class="nt">--enable-cuvid</span> <span class="c"># --enable-libfdk_aac --enable-libnpp</span>
+
+make <span class="nt">-j</span><span class="si">$(</span><span class="nb">nproc</span><span class="si">)</span>
+<span class="nb">sudo </span>make <span class="nb">install</span>
+</code></pre></div></div> <h2 id="4-测试">4. 测试</h2> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># https://github.com/omen23/ffmpeg-ffnvcodec-explanation</span>
+ffmpeg <span class="nt">-hide_banner</span> <span class="nt">-encoders</span>  | <span class="nb">grep </span>nvenc
+ffmpeg <span class="nt">-hide_banner</span> <span class="nt">-decoders</span> | <span class="nb">grep </span>cuvid
+ffmpeg <span class="nt">-hide_banner</span> <span class="nt">-hwaccels</span>
+
+<span class="c"># https://d2axc7bbtmotmv.cloudfront.net/chrome_test/Temple.mp4</span>
+ffmpeg <span class="nt">-c</span>:v h264_cuvid <span class="nt">-i</span> input output.mkv <span class="c"># 使用 nvidia cuvid 解码</span>
+
+<span class="c"># 拉流，使用cuda硬件解码</span>
+ffmpeg <span class="nt">-hwaccel</span> cuda <span class="nt">-i</span> https://d2axc7bbtmotmv.cloudfront.net/chrome_test/Temple.mp4 out.mp4 out.mp4
+
+<span class="c"># 拉流，使用nvdec硬件解码</span>
+ffmpeg <span class="nt">-c</span>:v h264_cuvid <span class="nt">-i</span> https://d2axc7bbtmotmv.cloudfront.net/chrome_test/Temple.mp4 out.mp4 out.mp4
+
+<span class="c"># 使用nvenc硬件编码</span>
+ffmpeg <span class="nt">-i</span> input.mp4 <span class="nt">-c</span>:v h264_nvenc output.mp4
+</code></pre></div></div> <h2 id="5-参考">5. 参考</h2> <ul> <li><a href="https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC" rel="external nofollow noopener" target="_blank">FFMPEG – HWAccel Intro – CUDA (NVENC/NVDEC)</a></li> <li><a href="https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu" rel="external nofollow noopener" target="_blank">FFMPEG – Compile FFmpeg for Ubuntu, Debian, or Mint</a></li> <li><a href="https://blog.csdn.net/weixin_43147845/article/details/136812735" rel="external nofollow noopener" target="_blank">ffmpeg NVIDIA编解码一：ffmpeg编译安装</a></li> <li><a href="https://blog.csdn.net/weixin_43147845/article/details/136834858" rel="external nofollow noopener" target="_blank">ffmpeg NVIDIA编解码三：英伟达硬编码</a></li> <li><a href="https://blog.csdn.net/quantum7/article/details/82713833" rel="external nofollow noopener" target="_blank">LINUX下，ffmpeg增加NVIDIA硬件编解码的步骤及解决办法</a></li> </ul> <h2 id="6-附加">6. 附加</h2> <p><code class="language-plaintext highlighter-rouge">VAAPI</code>相关的一些可能的设置选项:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>xserver-xorg-video-nvidia
+
+<span class="c"># export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libEGL.so</span>
+
+<span class="nb">export </span><span class="nv">VDPAU_DRIVER</span><span class="o">=</span>nvidia
+<span class="nb">export </span><span class="nv">LIBVA_DRIVER_NAME</span><span class="o">=</span>nvidia <span class="c"># vdpau</span>
+<span class="nb">export </span><span class="nv">LIBVA_DRIVERS_PATH</span><span class="o">=</span>/usr/lib/x86_64-linux-gnu/dri <span class="c"># nvidia_drv_video.so</span>
+<span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:/usr/local/lib
+<span class="nb">export </span><span class="nv">DRI_PRIME</span><span class="o">=</span>1
+
+<span class="nb">export </span><span class="nv">VK_DRIVER_FILES</span><span class="o">=</span>/usr/lib/x86_64-linux-gnu/libvulkan.so
+<span class="nb">export </span><span class="nv">VK_ICD_FILENAMES</span><span class="o">=</span>/usr/share/vulkan/icd.d/nvidia_icd.json
+<span class="nv">VK_ADD_DRIVER_FILES</span><span class="o">=</span>/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json
+
+<span class="nv">LIBVA_DRI3_DISABLE</span><span class="o">=</span>1
+</code></pre></div></div> <p><code class="language-plaintext highlighter-rouge">Nvidia</code>相关的一些可能的环境变量:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">__NV_PRIME_RENDER_OFFLOAD</span><span class="o">=</span>1
+<span class="nb">export </span><span class="nv">__GLX_VENDOR_LIBRARY_NAME</span><span class="o">=</span>nvidia
+
+<span class="nb">export </span><span class="nv">__NV_PRIME_RENDER_OFFLOAD</span><span class="o">=</span>1
+<span class="nb">export </span><span class="nv">__VK_LAYER_NV_optimus</span><span class="o">=</span>NVIDIA_only
+
+<span class="nb">export </span><span class="nv">__GLX_VENDOR_LIBRARY_NAME</span><span class="o">=</span>nvidia
+<span class="nb">export </span><span class="nv">__EGL_VENDOR_LIBRARY_NAME</span><span class="o">=</span>nvidia
+</code></pre></div></div> <p>一些工具软件:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>libvulkan1 libvulkan-dev vulkan-tools
+
+<span class="c"># https://gitlab.freedesktop.org/vdpau/libvdpau</span>
+<span class="c"># https://github.com/KhronosGroup/Vulkan-Tools</span>
+
+vdpauinfo
+vainfo
+vulkaninfo <span class="nt">--summary</span>
+</code></pre></div></div> <h2 id="7-附加2-chromium-一些资料">7. 附加2 Chromium 一些资料</h2> <ul> <li><a href="https://source.chromium.org/chromium/chromium/src" rel="external nofollow noopener" target="_blank">Chromium sources</a></li> </ul> <h3 id="71-安装chromium">7.1 安装Chromium</h3> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>software-properties-common apt-transport-https ca-certificates curl <span class="nt">-y</span>
+curl <span class="nt">-fSsL</span> https://dl.google.com/linux/linux_signing_key.pub | <span class="nb">sudo </span>gpg <span class="nt">--dearmor</span> | <span class="nb">sudo tee</span> /usr/share/keyrings/google-chrome.gpg <span class="o">&gt;&gt;</span> /dev/null
+<span class="nb">echo </span>deb <span class="o">[</span><span class="nb">arch</span><span class="o">=</span>amd64 signed-by<span class="o">=</span>/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/google-chrome.list
+apt <span class="nb">install </span>google-chrome-stable
+</code></pre></div></div> <h3 id="72-一些启动命令尝试">7.2 一些启动命令尝试</h3> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># export GOOGLE_API_KEY="no"</span>
+<span class="c"># export GOOGLE_DEFAULT_CLIENT_ID="no"</span>
+<span class="c"># export GOOGLE_DEFAULT_CLIENT_SECRET="no"</span>
+<span class="c"># export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json</span>
+<span class="c"># FFmpegVideoDecoder InitializeMediaLibrary GpuVideoDecoder</span>
+
+<span class="c"># headless</span>
+./chrome <span class="nt">--ignore-gpu-blocklist</span> <span class="nt">--disable-gpu-driver-bug-workarounds</span> <span class="nt">--enable-features</span><span class="o">=</span>AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoDecodeLinuxGL,VaapiIgnoreDriverChecks,VaapiOnNvidiaGPUs,AcceleratedVideoEncoder,UseOzonePlatform,UseMultiPlaneFormatForHardwareVideo,PlatformHEVCDecoderSupport <span class="nt">--ozone-platform-hint</span><span class="o">=</span>auto <span class="nt">--enable-gpu</span> <span class="nt">--enable-logging</span><span class="o">=</span>stderr <span class="nt">--vmodule</span><span class="o">=</span><span class="k">*</span>/media/<span class="k">*</span> <span class="nt">--v</span><span class="o">=</span>0 <span class="nt">--use-gl</span><span class="o">=</span>angle <span class="nt">--use-angle</span><span class="o">=</span>vulkan <span class="nt">--headless</span><span class="o">=</span>new <span class="nt">--remote-debugging-address</span><span class="o">=</span>0.0.0.0 <span class="nt">--remote-debugging-port</span><span class="o">=</span>9221 <span class="nt">--allow-chrome-scheme-url</span>
+
+<span class="c"># headful</span>
+./chrome <span class="nt">--ignore-gpu-blocklist</span> <span class="nt">--disable-gpu-driver-bug-workarounds</span> <span class="nt">--enable-features</span><span class="o">=</span>AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoDecodeLinuxGL,VaapiIgnoreDriverChecks,VaapiOnNvidiaGPUs,AcceleratedVideoEncoder,UseOzonePlatform,UseMultiPlaneFormatForHardwareVideo,PlatformHEVCDecoderSupport <span class="nt">--ozone-platform-hint</span><span class="o">=</span>auto <span class="nt">--enable-gpu</span> <span class="nt">--enable-logging</span><span class="o">=</span>stderr <span class="nt">--vmodule</span><span class="o">=</span><span class="k">*</span>/media/<span class="k">*</span> <span class="nt">--v</span><span class="o">=</span>0 <span class="nt">--use-gl</span><span class="o">=</span>angle <span class="nt">--use-angle</span><span class="o">=</span>vulkan
+
+<span class="c"># --disable-features=UseSkiaRenderer,UseChromeOSDirectVideoDecoder</span>
+<span class="c"># --disable-gpu-compositing  --in-process-gpu</span>
+</code></pre></div></div> <ul> <li><a href="https://github.com/chromium/chromium/blob/main/docs/gpu/vaapi.md" rel="external nofollow noopener" target="_blank">Chromium docs – VA-API</a></li> <li><a href="https://issues.chromium.org/issues/40285654" rel="external nofollow noopener" target="_blank">Disable VA-API on NVIDIA GPUs for ChromeOS and Linux</a></li> <li><a href="https://bbs.archlinux.org/viewtopic.php?pid=1945132#p1945132" rel="external nofollow noopener" target="_blank">Hardware-accelerated video decode on chromium w/ NVIDIA+VDPAU</a></li> <li><a href="https://discussion.fedoraproject.org/t/hardware-accelarated-video-decoding-in-chromium/69907/11?replies_to_post_number=9" rel="external nofollow noopener" target="_blank">Hardware accelarated video decoding in chromium</a></li> <li><a href="https://mirzabilal.com/how-to-enable-hardware-acceleration-on-chrome-chromium-puppeteer-on-aws-in-headless-mode" rel="external nofollow noopener" target="_blank">How To Enable Hardware Acceleration on Chrome, Chromium &amp; Puppeteer on AWS in Headless mode</a></li> <li><a href="https://wdv4758h.github.io/notes/blog/vdpau.html" rel="external nofollow noopener" target="_blank">blog – vdpau</a></li> </ul> <h3 id="73-定制化-chromiumffmpeg">7.3 定制化 Chromium/FFmpeg</h3> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># media/ffmpeg/scripts/build_ffmpeg.py</span>
+<span class="c"># media/ffmpeg/scripts/robo_lib/config.py  /etc/lsb-release -&gt; /etc/os-release</span>
+<span class="c"># third_party/ffmpeg/configure</span>
+<span class="c"># media/ffmpeg/scripts/generate_gn.py</span>
+<span class="c"># third_party/ffmpeg/chromium/config/Chrome/linux/x64/config_components.h</span>
+<span class="c"># third_party/ffmpeg/ffmpeg_generated.gni</span>
+
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/third_party/llvm-build/Release+Asserts/bin:<span class="nv">$PATH</span>
+./media/ffmpeg/scripts/build_ffmpeg.py linux x64 <span class="nt">--branding</span> Chrome
+./third_party/ffmpeg/chromium/scripts/copy_config.sh
+python3 ./media/ffmpeg/scripts/generate_gn.py
+</code></pre></div></div> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># build_ffmpeg.py
+</span><span class="n">configure_flags</span><span class="p">[</span><span class="sh">'</span><span class="s">Chrome</span><span class="sh">'</span><span class="p">].</span><span class="nf">extend</span><span class="p">([</span>
+        <span class="sh">'</span><span class="s">--enable-decoder=aac,h264</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-demuxer=aac</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-parser=aac,h264</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-ffnvcodec</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-cuvid</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-nvdec</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-nvenc</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-vdpau</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-hwaccel=h264_vdpau</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--enable-hwaccel=h264_nvdec</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--extra-cflags=-isystem/usr/include</span><span class="sh">'</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">--extra-cxxflags=-isystem/usr/include</span><span class="sh">'</span>
+    <span class="p">])</span>
+</code></pre></div></div> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># gn args out/release</span>
+
+is_debug <span class="o">=</span> <span class="nb">false
+</span>is_component_build <span class="o">=</span> <span class="nb">false
+</span>target_cpu <span class="o">=</span> <span class="s2">"x64"</span>
+enable_nacl <span class="o">=</span> <span class="nb">false
+</span>symbol_level <span class="o">=</span> 0
+is_official_build <span class="o">=</span> <span class="nb">true
+</span>chrome_pgo_phase <span class="o">=</span> 0
+ffmpeg_branding <span class="o">=</span> <span class="s2">"Chrome"</span>
+proprietary_codecs <span class="o">=</span> <span class="nb">true</span>
+<span class="c"># enable_linux_installer = true</span>
+
+autoninja <span class="nt">-j4</span> <span class="nt">-C</span> out/release <span class="nt">-v</span> chrome
+</code></pre></div></div> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># gn args out/debug</span>
+
+<span class="nv">google_api_key</span><span class="o">=</span><span class="s2">"AIzaSyDxKL42zsPjbke5O8_rPVpVrLrJ8aeE9rQ"</span>
+<span class="nv">google_default_client_id</span><span class="o">=</span><span class="s2">"595013732528-llk8trb03f0ldpqq6nprjp1s79596646.apps.googleusercontent.com"</span>
+<span class="nv">google_default_client_secret</span><span class="o">=</span><span class="s2">"5ntt6GbbkjnTVXx-MSxbmx5e"</span>
+
+is_debug <span class="o">=</span> <span class="nb">true
+</span>is_component_build <span class="o">=</span> <span class="nb">true
+</span>target_cpu <span class="o">=</span> <span class="s2">"x64"</span>
+enable_nacl <span class="o">=</span> <span class="nb">false
+</span>symbol_level <span class="o">=</span> 2
+is_official_build <span class="o">=</span> <span class="nb">false
+</span>chrome_pgo_phase <span class="o">=</span> 0
+ffmpeg_branding <span class="o">=</span> <span class="s2">"Chrome"</span>
+proprietary_codecs <span class="o">=</span> <span class="nb">true
+</span><span class="nv">disable_fieldtrial_testing_config</span><span class="o">=</span><span class="nb">true
+</span><span class="nv">media_use_ffmpeg</span><span class="o">=</span><span class="nb">true
+</span><span class="nv">exclude_unwind_tables</span><span class="o">=</span><span class="nb">false
+
+</span><span class="nv">enable_ffmpeg_video_decoders</span><span class="o">=</span><span class="nb">true
+</span><span class="nv">enable_widevine</span><span class="o">=</span><span class="nb">false
+
+</span><span class="nv">rtc_use_h264</span><span class="o">=</span><span class="nb">true
+
+</span><span class="nv">blink_symbol_level</span><span class="o">=</span>0
+<span class="nv">v8_symbol_level</span><span class="o">=</span>0
+
+
+enable_stack_trace_line_numbers <span class="o">=</span> <span class="nb">true
+</span><span class="nv">enable_backup_ref_ptr_support</span><span class="o">=</span><span class="nb">false
+</span><span class="nv">enable_dangling_raw_ptr_checks</span><span class="o">=</span><span class="nb">false
+</span><span class="nv">enable_dangling_raw_ptr_feature_flag</span><span class="o">=</span><span class="nb">false</span>
+<span class="c">#use_partition_alloc_as_malloc=false</span>
+<span class="c">#use_allocator_shim=false</span>
+<span class="c">#use_partition_alloc=false</span>
+<span class="nv">use_qt</span><span class="o">=</span><span class="nb">false</span>
+</code></pre></div></div> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># run following if</span>
+<span class="c"># use_sysroot=false</span>
+<span class="c"># sudo ./build/install-build-deps.sh</span>
+<span class="c"># sudo apt install qtbase5-dev</span>
+</code></pre></div></div> <ul> <li><a href="https://blog.csdn.net/hongszh/article/details/126167387" rel="external nofollow noopener" target="_blank">重新配置chrome中ffmpeg插件</a></li> <li><a href="https://chromium.googlesource.com/chromium/src/+/HEAD/docs/linux/debugging.md" rel="external nofollow noopener" target="_blank">chromium – debugging</a></li> <li><a href="https://chromium.googlesource.com/chromium/src/+/0e94f26e8/docs/linux_debugging.md" rel="external nofollow noopener" target="_blank">Tips for debugging on Linux</a></li> <li><a href="https://www.chromium.org/chromium-os/developer-library/guides/debugging/stack-traces/#typography-conventions" rel="external nofollow noopener" target="_blank">How to get a stack trace at runtime</a></li> <li><a href="https://blog.lazym.io/2020/06/09/Some-tricks-about-debugging-Chromium/" rel="external nofollow noopener" target="_blank">Some tricks about debugging Chromium</a></li> <li><a href="https://yplam.com/Pub/Chromium/chromium-build-debug/" rel="external nofollow noopener" target="_blank">Chromium 编译与调试笔记</a></li> </ul> </div> </article> <br> <hr> <br> <ul class="list-disc pl-8"></ul> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2026/al-folio-local-deploy-ubuntu2404/">al-folio 本地部署记录（Ubuntu 24.04）</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2026/C++-Traits/">C++ Traits</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/">道格拉斯-普克算法(Douglas–Peucker algorithm)</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93/">CMake支持库收集</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/QGC%E9%A3%9E%E8%A1%8C%E5%89%8D%E6%A3%80%E6%9F%A5/">QGC代码架构解析：飞行前检查（起飞条件）</a> </li> </div> </div> <div class="col-sm-3"> <nav id="toc-sidebar" class="sticky-top"></nav> </div> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Roderick Huang. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <script src="/assets/js/bootstrap.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=a0db7e5d5c70cc3252b3138b0c91dcaf" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/js/zoom.js?v=85ddb88934d28b74e78031fd54cf8308"></script> <script defer src="/assets/js/bootstrap-toc.min.js?v=c82ff4de8b0955d6ff14f5b05eed7eb6"></script> <script src="/assets/js/no_defer.js?v=2781658a0a2b13ed609542042a859126"></script> <script defer src="/assets/js/common.js?v=c15de51d4bb57887caa2c21988d97279"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=d9f17b6adc2311cbabd747f4538bb15f"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/js/mathjax-setup.js?v=a5bb4e6a542c546dd929b24b8b236dfd"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script defer src="/assets/js/progress-bar.js?v=2f30e0e6801ea8f5036fa66e1ab0a71a" type="text/javascript"></script> <script src="/assets/js/vanilla-back-to-top.min.js?v=f40d453793ff4f64e238e420181a1d17"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/js/search/ninja-keys.min.js?v=a3446f084dcaecc5f75aa1757d087dcf"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/js/search-setup.js?v=6c304f7b1992d4b60f7a07956e52f04a"></script> <script src="/assets/js/search-data.js"></script> <script src="/assets/js/shortcut-key.js?v=ccc841c459bfc0e64c1c2b5acd10df02"></script> </body> </html>
