@@ -446,6 +446,12 @@ nav[data-toggle="toc"] {
 
 #toc-sidebar {
   z-index: 1;
+
+  // Always expand sub-items (override bootstrap-toc default collapse behavior)
+  // Note: #toc-sidebar IS the nav[data-toggle='toc'], so target .nav-link + ul directly
+  .nav-link + ul {
+    display: block;
+  }
 }
 
 .echarts {

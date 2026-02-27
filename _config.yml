@@ -61,7 +61,7 @@ posts_in_search: true
 bib_search: true
 
 # Dimensions
-max_width: 930px
+max_width: 1400px
 
 # -----------------------------------------------------------------------------
 # Open Graph & Schema.org
@@ -233,6 +233,12 @@ plugins:
 
 # Sitemap settings
 defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      toc:
+        sidebar: right
   - scope:
       path: "assets"
     values:

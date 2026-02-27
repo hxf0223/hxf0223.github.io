@@ -4,6 +4,8 @@ title: al-folio 本地部署记录（Ubuntu 24.04）
 date: 2026-02-27 10:00:00 +0800
 categories: [工具, 博客]
 tags: [jekyll, al-folio, ubuntu, ruby, rbenv]
+toc:
+  sidebar: right
 ---
 
 本文记录在 Ubuntu 24.04 上从零开始本地部署 [al-folio](https://github.com/alshedivat/al-folio) Jekyll 主题的完整流程，以及遇到的问题和解决方案。
