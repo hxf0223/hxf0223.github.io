@@ -14,3 +14,5 @@ _data/citations.yml
 # Ignore Jekyll Liquid-templated JSON/JS files
 manifest.json
 sw.js
+# Ignore upstream files that conflict with prettier
+CUSTOMIZE.md
