@@ -4,7 +4,7 @@ layout: none
 {
   "name": "{{ site.first_name }} {{ site.last_name }}",
   "short_name": "{{ site.last_name }}",
-  "description": "{{ site.description }}",
+  "description": "{{ site.description | strip }}",
   "start_url": "{{ '/' | relative_url }}",
   "display": "standalone",
   "background_color": "#ffffff",
