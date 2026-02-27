@@ -11,19 +11,18 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. `perf` 介绍 ##
+## 1. `perf` 介绍
 
 `perf`及子命令可以测量/记录系统性能，可以记录的性能数据项繁多。包括`CPU/PMU`等硬件数据，以及`software counter`/`tracepoint`等系统内核采集的数据。可以关注的几类：
 
-* `CPU` / `PMU` (Performance Monitoring Unit)数据。包括: `dTLB`, `iTLB`, `cache` 计数以及`miss`计数；`branch`及`branch miss`计数。
-* `memory` 延时、阻塞；
-* `bus`延时、阻塞；
-* `front end`/`back end`阻塞；
-* `virtual memory`相关: `TLB`相关。
-* `pipeline`相关。
+- `CPU` / `PMU` (Performance Monitoring Unit)数据。包括: `dTLB`, `iTLB`, `cache` 计数以及`miss`计数；`branch`及`branch miss`计数。
+- `memory` 延时、阻塞；
+- `bus`延时、阻塞；
+- `front end`/`back end`阻塞；
+- `virtual memory`相关: `TLB`相关。
+- `pipeline`相关。
 
 查看`perf`命令及子命令帮助信息：
 
@@ -92,7 +91,7 @@ $ perf stat -h
     # ......
 ```
 
-## 2. Events ##
+## 2. Events
 
 `perf` 记录的性能数据项，称为`events`。主要分为软件 `Events` 和硬件 `Events`。
 
@@ -163,7 +162,7 @@ cpu:
   # ......
 ```
 
-## 3. 使用 `perf stat` 记录性能数据，并输出到终端 ##
+## 3. 使用 `perf stat` 记录性能数据，并输出到终端
 
 使用 `perf stat` 命令，可以运行被测试程序，并在程序结束之后，统计各不同`Events`的计数，并打印出来。也可以使用`-p`参数，指定运行程序的进程号。
 
@@ -199,9 +198,9 @@ perf  stat -r 6 -e  cache-misses ls -lh ~/
          0.0015583 +- 0.0000369 seconds time elapsed  ( +-  2.37% )
 ```
 
-## 4. 记录性能数据到文件，以及分析：`perf record`, `perf report`, `perf annotate` ##
+## 4. 记录性能数据到文件，以及分析：`perf record`, `perf report`, `perf annotate`
 
-### 4.1 `perf record` 记录性能数据到文件 ###
+### 4.1 `perf record` 记录性能数据到文件
 
 使用 `perf record` 命令，运行被测试程序，并记录测量数据到`perf.data`数据文件。
 
@@ -218,7 +217,7 @@ $ ls -lh perf.data
 -rw------- 1 <groupname> <username> 284M Oct 31 21:25 perf.data
 ```
 
-### 4.2 `perf report` 查看性能数据 ###
+### 4.2 `perf report` 查看性能数据
 
 使用 `perf report` 命令，查看`perf.data`数据文件。使用如下命令，直接打开`perf.data`文件：
 
@@ -226,7 +225,7 @@ $ ls -lh perf.data
 perf report
 ```
 
-### 4.3 `perf annotate` 显示源码级别的性能数据 ###
+### 4.3 `perf annotate` 显示源码级别的性能数据
 
 ```bash
 perf annotate -i perf.data
@@ -234,10 +233,8 @@ perf annotate -i perf.data
 
 如何编译使用`-ggdb`，则可以显示源码级别的性能数据。
 
-## 参考资料 ##
+## 参考资料
 
-* [PerfTool pdf](/assets/pdf/perf/perf_docs_20241030/PerfTool_01182021.pdf)
-* [Blog of Aleksandar Milenkovic (PerfTool pdf作者)](https://alexmilenkovich.github.io/)
-* [edu: The Laboratory for Advanced Computer Architectures and Systems](https://lacasa.uah.edu/index.php/tools-tutorials)
-
-
+- [PerfTool pdf](/assets/pdf/perf/perf_docs_20241030/PerfTool_01182021.pdf)
+- [Blog of Aleksandar Milenkovic (PerfTool pdf作者)](https://alexmilenkovich.github.io/)
+- [edu: The Laboratory for Advanced Computer Architectures and Systems](https://lacasa.uah.edu/index.php/tools-tutorials)

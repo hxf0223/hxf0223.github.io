@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 下载安装包及环境变量设置

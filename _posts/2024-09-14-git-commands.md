@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ```bash
@@ -42,7 +41,7 @@ rm -rf .git/modules/3rd/xz-v5.8.1
 git rm -f 3rd/xz-v5.8.1
 ```
 
-## 删除git记录中的大文件及blob ##
+## 删除git记录中的大文件及blob
 
 ```bash
 # 执行命令之前，保证仓库没有待提交的更改
@@ -71,8 +70,6 @@ git gc --prune=now
 git count-objects -v
 ```
 
-### gitlab无法强行推送问题解决 ###
+### gitlab无法强行推送问题解决
 
 需要`owner`设置如下：仓库的`Settings` -> `Repository` -> `Protected branches` 改成`unprotected`。
-
-

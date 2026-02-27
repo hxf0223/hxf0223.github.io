@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 在收到飞机发来的心跳包后，消息发送给`MultiVehicleManager`，在`MultiVehicleManager`中，检查组件ID是否是`MAV_COMP_ID_AUTOPILOT1`，以及`vehicleType`不是`GCS`等之后，会创建一个`Vehicle`对象，并进入初始化流程。
@@ -40,7 +39,7 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
 };
 ```
 
-## 1. 请求的实现，以及模拟同步请求 ##
+## 1. 请求的实现，以及模拟同步请求
 
 请求飞机信息，使用`MAV_CMD_REQUEST_MESSAGE`命令字，请求对应的消息ID（即子命令，比如请求飞机版本信息`MAVLINK_MSG_ID_AUTOPILOT_VERSION`），以及子命令的参数。另外，使用命令`MAV_CMD_SET_MESSAGE_INTERVAL`让飞机定期周期响应子命令消息。
 
@@ -55,7 +54,7 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
    |----------------------------------------→  (请求：以1Hz发送BATTERY_STATUS)
    |
    |                               | 处理请求
-   | 2. 接收 COMMAND_ACK  
+   | 2. 接收 COMMAND_ACK
    |←----------------------------------------  (确认已接受)
    |
    | 3. 等待 BATTERY_STATUS
@@ -67,15 +66,15 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
    | ← 接收 BATTERY_STATUS #4      |
 ```
 
-## 2. 请求飞机版本信息(`MAVLINK_MSG_ID_AUTOPILOT_VERSION`) ##
+## 2. 请求飞机版本信息(`MAVLINK_MSG_ID_AUTOPILOT_VERSION`)
 
 主要获取飞机的编号、固件的`vender_id`、`product_id`，固件版本信息，以及`capabilities`（64位bitmask），`capabilities`相关枚举定义在`MAVLink`协议的`MAV_PROTOCOL_CAPABILITY`中。
 
-## 3. 请求飞机标准模式(`MAVLINK_MSG_ID_AVAILABLE_MODES`) ##
+## 3. 请求飞机标准模式(`MAVLINK_MSG_ID_AVAILABLE_MODES`)
 
 主要获取飞机支持的标准模式。获取的模式列表用于设置给`FirmwarePlugin`，并在`Vehicle`中使用。
 
-## 4. 请求组件元数据（META）信息 ##
+## 4. 请求组件元数据（META）信息
 
 由于这一步请求处理多个类型`META`数据文件，整个处理放在单独的模块（源码文件）`ComponentInformationManager`中，且也使用状态机来实现：请求`General`元数据、`Param`元数据、`Events`元数据、`Actuator`元数据。`General`是指组件的信息（主要是飞控自身），而`Events`，`Actuator`不一定每个组件都有。
 
@@ -97,7 +96,7 @@ static constexpr const StateMachine::StateFn _rgStates[] = {
     └─ 健康检查失败 (Health & Arming Checks)
 ```
 
-### 4.1. META数据使用流程 ###
+### 4.1. META数据使用流程
 
 请求到的`META`数据文件，主要用于创建`FactMetaData`对象，进而创建`Fact`对象。以请求参数的`META`数据文件为例，流程如下所示：
 
@@ -150,12 +149,12 @@ CompInfoParam::setJson(const QString& metadataJsonFileName)
     // 3️⃣ 解析 JSON 文件
     QJsonDocument jsonDoc = // 从文件读取
     QJsonArray rgParameters = jsonDoc["QGC_PARAMETERS"].toArray();
-    
+
     // 4️⃣ 为每个参数创建 FactMetaData 对象
     for (QJsonValue parameterValue : rgParameters) {
-        FactMetaData* newMetaData = 
+        FactMetaData* newMetaData =
             FactMetaData::createFromJsonObject(parameterValue.toObject(), ...);
-        
+
         // 5️⃣ 存储到 map 中
         _nameToMetaDataMap[newMetaData->name()] = newMetaData;
     }
@@ -166,7 +165,7 @@ FactMetaData* meta = _compInfoParam->factMetaDataForName("PARAM_NAME");
 // 使用 meta 来验证、转换参数值
 ```
 
-### 4.2. 对应的 MAVLink 服务 ###
+### 4.2. 对应的 MAVLink 服务
 
 请求`META`数据使用微服务[Component Metadata Protocol (WIP)](https://mavlink.io/en/services/component_information.html)，命令字：`MAVLINK_MSG_ID_COMPONENT_METADATA`。针对各个`META`数据类型，提供了枚举定义`COMP_METADATA_TYPE`。
 
@@ -181,31 +180,31 @@ sequenceDiagram;
     Client-->>Client: Start ACK receive timeout
       Server->>Client: CMD_ACK
       Server->>Client: COMPONENT_METADATA( uri, file_crc)
-    Note over Server, Client: Client check file at uri has changed (using CRC in file_crc). 
-    Note over Server, Client: Client download file at uri using MAVFTP and parse. 
-    Note over Server, Client: Client download other metadata types referenced in general metadata<br> (from device or Internet). 
+    Note over Server, Client: Client check file at uri has changed (using CRC in file_crc).
+    Note over Server, Client: Client download file at uri using MAVFTP and parse.
+    Note over Server, Client: Client download other metadata types referenced in general metadata<br> (from device or Internet).
 ```
 
-## 5. 请求系统参数列表 ##
+## 5. 请求系统参数列表
 
 这个步骤请求飞机的所有参数，使用`MAVLink`的微服务`Parameter Protocol`，在`QGC`的`ParameterManager`模块中实现，见上一篇`QGC代码架构解析：MAVLink参数服务及QGC参数管理模块`。
 
 请求参数，依赖于上一步骤，即请求的参数`META`数据文件，用于创建参数对应的`FactMetaData`对象。
 
-## 6. 请求任务列表（航点列表） ##
+## 6. 请求任务列表（航点列表）
 
 这个步骤使用`Mission Protocol`，直接调用`PlanManager::loadFromVehicle`下载飞机航点信息，进行初始化同步。具体参考下一篇`QGC代码架构解析：MAVLink Mission Protocol，以及 QGC 航点管理`。
 
 由于`MAVLink v2`中，`Mission Protocol`不仅仅包含航点，还包含地理围栏(`GeoFence`)、降落点(`Rally Points`)等信息。所有这些部分都实现在`PlanManager`以及其继承子类中。
 
-## 7. 请求地理围栏列表 ##
+## 7. 请求地理围栏列表
 
 参考6。
 
-## 8. 请求降落点列表 ##
+## 8. 请求降落点列表
 
 参考6。
 
-## 9. 初始化完成 ##
+## 9. 初始化完成
 
 完成初始化，发送`signal`，通知`QML`界面。

@@ -11,17 +11,14 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 滤波器资料 ##
+## 滤波器资料
 
-* [Digital Signal Processing](https://exstrom.com/journal/sigproc/dsigproc.html)
-* [github -- related sources](https://github.com/adis300/filter-c)
+- [Digital Signal Processing](https://exstrom.com/journal/sigproc/dsigproc.html)
+- [github -- related sources](https://github.com/adis300/filter-c)
 
-## 功率密度谱 (PSD) 资料 ##
+## 功率密度谱 (PSD) 资料
 
-* [功率密度谱(Power Spectral Density)笔记](https://shenjianzhang.github.io/matched-filter/2020/11/26/Power-Spectral-Density.html)
-* [white noise filtering](https://dsp.stackexchange.com/questions/17657/white-noise-filtering)
-
-
+- [功率密度谱(Power Spectral Density)笔记](https://shenjianzhang.github.io/matched-filter/2020/11/26/Power-Spectral-Density.html)
+- [white noise filtering](https://dsp.stackexchange.com/questions/17657/white-noise-filtering)

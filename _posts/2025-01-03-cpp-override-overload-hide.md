@@ -11,27 +11,26 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ![C++面向对象三个概念——重载、覆盖和隐藏](/assets/images/cpp/20250103/01-cpp-overload-override-hide.png)
 
 ## 1. overload 重载
 
-* 同名函数，参数个数或类型不同；
-* 相同作用域，即同一个类。
+- 同名函数，参数个数或类型不同；
+- 相同作用域，即同一个类。
 
 ## 2. override 覆盖
 
-* 不在一个作用域，即父类与子类；
-* 子类函数与基类函数同名，参数个数和类型相同；
-* 基类使用`virtual`关键字，子类使用`override`关键字。
+- 不在一个作用域，即父类与子类；
+- 子类函数与基类函数同名，参数个数和类型相同；
+- 基类使用`virtual`关键字，子类使用`override`关键字。
 
 例外的一个点是`协变`：基类返回基类指针，子类返回子类指针。此时也是`override`。
 
 ```cpp
 #include <iostream>
- 
+
 class Base {
 public:
     virtual Base* clone() const {
@@ -39,7 +38,7 @@ public:
         return new Base(*this);
     }
 };
- 
+
 class Derived : public Base {
 public:
     // 使用协变返回类型，返回类型是 Base 的派生类型 Derived*
@@ -93,5 +92,4 @@ int main() {
 
 ## 4. 引用
 
-* [c++三大概念要分清--重载，隐藏（重定义），覆盖（重写）](https://www.cnblogs.com/linuxAndMcu/p/10292417.html)
-
+- [c++三大概念要分清--重载，隐藏（重定义），覆盖（重写）](https://www.cnblogs.com/linuxAndMcu/p/10292417.html)

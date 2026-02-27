@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ```cmake
@@ -81,14 +80,14 @@ include(CPackIFW)
 cpack.exe ./CPackConfig.cmake
 ```
 
-## 参考 ##
+## 参考
 
-* [Revisiting the Qt Installer Framework with CMake](https://www.ics.com/blog/revisiting-qt-installer-framework-cmake)
-* [cmake-qt-packaging-example](https://github.com/miurahr/cmake-qt-packaging-example/blob/master/Packaging.cmake)
-* [基于 CMake 的打包](https://sirlis.cn/posts/c-cmake-development/#4-%E5%9F%BA%E4%BA%8E-cmake-%E7%9A%84%E6%89%93%E5%8C%85)
-* [AwesomeWorld-Cmake](https://github.com/christopro/AwesomeWorld-Cmake/blob/main/AwesomeWorld/CMakeLists.txt)
-* [How to use CMake/CPack to create beautiful GUI-installers](https://cfd.university/learn/automating-cfd-solver-and-library-compilation-using-cmake/how-to-use-cmake-cpack-to-create-beautiful-gui-installers/)
-* [gist](https://gist.github.com/TheBloke/b933a4a98e0ea7352b8f5c4574575d45)
-* [gist -- Configuring Qt 6.x and CMake for windows 10](https://gist.github.com/brucelevis/a49b0d74bddc44a1364faa830fb171a8)
-* [cpack_setup_nsis.cmake](https://github.com/brainexcerpts/Maya-plugin-CPack-template/blob/master/deployment/cpack_setup_nsis.cmake)
-* [CMake | CPack使用NSIS打包安装程序](https://blog.bug-maker.com/archives/511.html)
+- [Revisiting the Qt Installer Framework with CMake](https://www.ics.com/blog/revisiting-qt-installer-framework-cmake)
+- [cmake-qt-packaging-example](https://github.com/miurahr/cmake-qt-packaging-example/blob/master/Packaging.cmake)
+- [基于 CMake 的打包](https://sirlis.cn/posts/c-cmake-development/#4-%E5%9F%BA%E4%BA%8E-cmake-%E7%9A%84%E6%89%93%E5%8C%85)
+- [AwesomeWorld-Cmake](https://github.com/christopro/AwesomeWorld-Cmake/blob/main/AwesomeWorld/CMakeLists.txt)
+- [How to use CMake/CPack to create beautiful GUI-installers](https://cfd.university/learn/automating-cfd-solver-and-library-compilation-using-cmake/how-to-use-cmake-cpack-to-create-beautiful-gui-installers/)
+- [gist](https://gist.github.com/TheBloke/b933a4a98e0ea7352b8f5c4574575d45)
+- [gist -- Configuring Qt 6.x and CMake for windows 10](https://gist.github.com/brucelevis/a49b0d74bddc44a1364faa830fb171a8)
+- [cpack_setup_nsis.cmake](https://github.com/brainexcerpts/Maya-plugin-CPack-template/blob/master/deployment/cpack_setup_nsis.cmake)
+- [CMake | CPack使用NSIS打包安装程序](https://blog.bug-maker.com/archives/511.html)

@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 通过结合使用`epoll`和`inotify` 实现监控功能的同时，以超时的方式实现轮询，适合线程退出。
@@ -91,4 +90,3 @@ close(inotifyId);
 - [linux 文件监控之 inotify](https://www.cnblogs.com/jssyjam/p/15490634.html)
 - [inotify(7) — Linux manual page](https://man7.org/linux/man-pages/man7/inotify.7.html)
 - [Monitor file system activity with inotify](https://developer.ibm.com/tutorials/l-ubuntu-inotify/)
-

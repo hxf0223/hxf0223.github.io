@@ -11,12 +11,11 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## Reference
 
-* [VTK examples](https://github.com/Kitware/vtk-examples/blob/c1c8af1e70708e65d6fa4bf69fab814f03c99dc2/src/Cxx/GeometricObjects/Hexahedron.cxx)
+- [VTK examples](https://github.com/Kitware/vtk-examples/blob/c1c8af1e70708e65d6fa4bf69fab814f03c99dc2/src/Cxx/GeometricObjects/Hexahedron.cxx)
 
 ## 添加 field (dataset) 数据
 
@@ -41,9 +40,9 @@ for (const auto& pair : dataset) {
 }
 ```
 
-* 根据`dataset`的属性`field`是`scalar`数据还是`tensor`数据，设置`SetNumberOfComponents`的参数；
-* 根据`dataset`的属性`field`是`scalar`数据还是`tensor`数据，选择`InsertNectValue`或者`InsertNextTuple`；
-* 根据`dataset`的属性`location type`属性是`vetex`还是`element`，`grid`选取`GetPointData`或者`GetCellData`；
+- 根据`dataset`的属性`field`是`scalar`数据还是`tensor`数据，设置`SetNumberOfComponents`的参数；
+- 根据`dataset`的属性`field`是`scalar`数据还是`tensor`数据，选择`InsertNectValue`或者`InsertNextTuple`；
+- 根据`dataset`的属性`location type`属性是`vetex`还是`element`，`grid`选取`GetPointData`或者`GetCellData`；
 
 ### 第二步，添加VTK `field`数据到`mapper`
 
@@ -68,7 +67,7 @@ renderer->AddActor(actor);
 renderer->AddActor2D(scalarBar);
 ```
 
-* 根据`dataset`的属性`location type`属性是`vetex`还是`element`，`mapper`调用`SetScalarModeToUsePointData`或者`SetScalarModeToUseCellData`；
+- 根据`dataset`的属性`location type`属性是`vetex`还是`element`，`mapper`调用`SetScalarModeToUsePointData`或者`SetScalarModeToUseCellData`；
 
 ## 颜色转换的另一种方式
 

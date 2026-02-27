@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. 线程安全 ##
+## 1. 线程安全
 
 根据[cppreference](https://en.cppreference.com/w/cpp/memory/shared_ptr)的描述，`std::shared_ptr`线程安全如下（机器翻译）：
 
@@ -32,7 +31,7 @@ All member functions (including copy constructor and copy assignment) can be cal
 2. 多线程访问`std::shared_ptr`指向的同一个内存对象时，访问`const`成员函数是线程安全的。
 3. 其余情况，需要使用同步。
 
-## 2. 性能考量 ##
+## 2. 性能考量
 
 1. 使用`std::make_shared`，`std::make_shared`将被指向对象的内存分配与`控制块`的内存分配合并为一次分配；
 2. `std::make_shared`的性能接近`new`；但`std::shared_ptr<T>(new T)`耗时较明显；
@@ -46,8 +45,8 @@ All member functions (including copy constructor and copy assignment) can be cal
 
 ![shared_ptr_layout_make_shared](/assets/images/cpp/2024-05-16-shared_ptr/make_shared_alloc.png)
 
-## 3. 更多资料 ##
+## 3. 更多资料
 
-* [合集 - C++系列(18) C++: weak_ptr到底有什么用？](https://www.cnblogs.com/qiangz/p/17843039.html)
-* [合集 - C++系列(18) C++ 高效使用智能指针的8个建议](https://www.cnblogs.com/qiangz/p/17904768.html)
-* [合集 - C++系列(18) C++: 16个基础的C++代码性能优化实例](https://www.cnblogs.com/qiangz/p/18270166)
+- [合集 - C++系列(18) C++: weak_ptr到底有什么用？](https://www.cnblogs.com/qiangz/p/17843039.html)
+- [合集 - C++系列(18) C++ 高效使用智能指针的8个建议](https://www.cnblogs.com/qiangz/p/17904768.html)
+- [合集 - C++系列(18) C++: 16个基础的C++代码性能优化实例](https://www.cnblogs.com/qiangz/p/18270166)

@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ```cpp
@@ -48,4 +47,3 @@ private:
     mutable std::mutex mutex_;
 };
 ```
-

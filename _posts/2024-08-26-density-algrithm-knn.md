@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 0. DBSCAN 算法及 K-D 树介绍 ##
+## 0. DBSCAN 算法及 K-D 树介绍
 
 `DBSCAN`算法相关概念：
 
@@ -30,18 +29,18 @@ toc:
 
 Kdtree 算法的构建时间复杂度为 O(nlogn)，搜索时间复杂度最好为 O($\log_2 N$)，最坏为 O($N^{1-1/k}$)。
 
-* [基于k-d 树的查询算法实现与二维可视化](https://dsa.cs.tsinghua.edu.cn/~deng/cg/project/2021s/2021s-k.pdf)
-* [KD-Tree详解: 从原理到编程实现](https://blog.csdn.net/qq_42688495/article/details/124049811)
+- [基于k-d 树的查询算法实现与二维可视化](https://dsa.cs.tsinghua.edu.cn/~deng/cg/project/2021s/2021s-k.pdf)
+- [KD-Tree详解: 从原理到编程实现](https://blog.csdn.net/qq_42688495/article/details/124049811)
 
-## 1. 背景 ##
+## 1. 背景
 
 采集到的二维点云数据(samples)，生成`K-D`搜索树，使用广度优先搜索，聚合成`block`数据。后续的识别/分类算法，在`block`数据基础上进行。
 
 由于使用点云处理库`PCL`比较庞大，以及其依的`FLANN`基于`C++14`，使用`C++17/20`导致在自定义点云数据结构时，编译有些`STL`算法库被废弃，编译出错。故使用 [nanoflann](https://github.com/jlblancoc/nanoflann)。
 
-## 2. 基于 nano-flann 的聚类算法实现 ##
+## 2. 基于 nano-flann 的聚类算法实现
 
-### 2.1 自定义点云数据结构 ###
+### 2.1 自定义点云数据结构
 
 ```c++
 #pragma once
@@ -83,7 +82,7 @@ struct PointCloud {
 };
 ```
 
-### 2.2 基于 K-D 树构建广度优先搜索算法 ###
+### 2.2 基于 K-D 树构建广度优先搜索算法
 
 ```c++
 #pragma once
@@ -189,7 +188,7 @@ class BFSDensitySampleSearch {
 }  // namespace rias::test
 ```
 
-### 2.3 测试代码 ###
+### 2.3 测试代码
 
 ```c++
 {
@@ -210,7 +209,7 @@ class BFSDensitySampleSearch {
 }
 ```
 
-### 2.4 测试 ###
+### 2.4 测试
 
 ```bash
 [2024-08-26 21:47:35.648] [warning] [dataxy_loader.cc:146] under flow 870 samples in dataset
@@ -228,7 +227,7 @@ TODO: 测试小数据集下的性能对比。
 - [数据结构-k-d树](https://yanglei253.github.io/2020/07/11/dataStructure/dataStructure-kdtree/)
 - [nanoflann库使用笔记](https://zxl19.github.io/nanoflann-note/)
 
-## 3. 基于templated的聚类算法实现(线性搜索 O2时间复杂度) ##
+## 3. 基于templated的聚类算法实现(线性搜索 O2时间复杂度)
 
 ```c++
 template <typename ElemType, typename LinerFuncType, typename AdjFuncType>
@@ -285,10 +284,8 @@ class BFSLinerMerge {
 };
 ```
 
-## 4. 聚类算法资料收集 ##
+## 4. 聚类算法资料收集
 
 - [几种常用的基于密度的聚类算法](https://www.cnblogs.com/alterwl/p/density-based-clustering.html)
 - [DBSCAN密度聚类算法](https://www.cnblogs.com/pinard/p/6208966.html)
 - [K紧邻法(KNN)原理小结](https://www.cnblogs.com/pinard/p/6061661.html)
-
-

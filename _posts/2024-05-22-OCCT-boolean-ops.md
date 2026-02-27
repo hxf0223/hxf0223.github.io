@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 - [OpenCASCADE 布尔运算简介](https://www.cnblogs.com/opencascade/p/OCCT_BO_Intro.html)
@@ -46,4 +45,3 @@ init -> calc vertex/vertex interferences -> calc vertex/edge interferences -> up
 构建好分割边后,后续的布尔运算就可以基于这些分割后的子形状进行计算,得到最终的结果形状。
 
 ### 2.2 截面边
-

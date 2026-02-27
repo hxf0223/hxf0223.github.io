@@ -9,16 +9,16 @@ tags: [CUDA, Nsight Compute]
 math: true
 mermaid: true
 # pin: true
+
 toc:
   sidebar: right
-
 ---
 
-* [github -- 测试代码](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive_cute.cu)
+- [github -- 测试代码](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive_cute.cu)
 
 编译时，加上 `-lineinfo` 参数，Nsight Compute 分析时，可以看到具体的 C++/cu 代码。
 
-## 1. 查看 Warp State Statistics ##
+## 1. 查看 Warp State Statistics
 
 Warp State Statistics 表征从执行/issue当前指令到执行/issue下一条指令之间的周期数。导致指令周期长的原因有多种，比如等待内存访问、指令流水线Stall等（一个方法是需要更多 warp 来掩盖指令延迟）。见官方文档<https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#sections-and-rules> 并搜索 Warp State Statistics。
 
@@ -26,7 +26,7 @@ Warp State Statistics 表征从执行/issue当前指令到执行/issue下一条�
 
 ![nsight_warp_state_statistics](/assets/images/cuda/20250226/nsight_compute/Warp_State_Statistics.png)
 
-## 2. Bank Conflicts 分析 ##
+## 2. Bank Conflicts 分析
 
 在 Memory Workload Analysis 这一节中，性能指标 Shared Load 这一行中，有如下几列，其含义如下表：
 
@@ -52,4 +52,4 @@ Warp State Statistics 表征从执行/issue当前指令到执行/issue下一条�
 
 相关资料：
 
-* [Requests, Wavefronts, Sectors Metrics: Understanding and Optimizing Memory-Bound Kernels with Nsight Compute](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s32089/)。视频资料。
+- [Requests, Wavefronts, Sectors Metrics: Understanding and Optimizing Memory-Bound Kernels with Nsight Compute](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s32089/)。视频资料。

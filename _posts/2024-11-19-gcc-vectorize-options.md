@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. alias选项 ##
+## 1. alias选项
 
 `strict aliasing`是编译器优化中依赖的一个假设，即不同类型的指针，指向不同的内存区域。基于该假设，`gcc`编译器可以进行一些优化。`gcc`优化`-O2`默认开启该选项(`-fstrict-aliasing`)。
 
@@ -36,12 +35,12 @@ add_compile_options(-Wstrict-aliasing) # -Werror -Wall
 
 参考: [Casting does not work as expected when optimization is turned on](https://gcc.gnu.org/bugs/#casting_and_optimization)
 
-## 2. vectorize选项 ##
+## 2. vectorize选项
 
-* `-ftree-vectorize`: 整个代码中，可能的向量化优化。
-* `-ftree-loop-vectorize`: 循环中的向量化优化。
-* `-fopt-info-vec-missed`: 显示没有向量化的循环。
-* `-fopt-info-vec-optimized`: 显示已向量化的循环。
+- `-ftree-vectorize`: 整个代码中，可能的向量化优化。
+- `-ftree-loop-vectorize`: 循环中的向量化优化。
+- `-fopt-info-vec-missed`: 显示没有向量化的循环。
+- `-fopt-info-vec-optimized`: 显示已向量化的循环。
 
 另外，在本地，想要充分优化，设置:
 
@@ -52,23 +51,23 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
 
 编写代码过程中，影响向量化的因素有:
 
-* exception: 异常处理会影响向量化。尽可能使用`noexcept`或`const`。
+- exception: 异常处理会影响向量化。尽可能使用`noexcept`或`const`。
 
-## 3. 调试--看IR ##
+## 3. 调试--看IR
 
 ```cmake
 add_compile_options(-fdump-tree-dse) #查看 dead store elimination 之后的 IR
 ```
 
-## 4. vectorize 更多资料 ##
+## 4. vectorize 更多资料
 
 入门资料:
 
-* [Intel -- Vectorization codebook](https://easyperf.net/blog/2017/11/10/Tips_for_writing_vectorizable_code)
-* [step by step -- Crunching Numbers with AVX and AVX2](https://www.codeproject.com/Articles/874396/Crunching-Numbers-with-AVX-and-AVX)
+- [Intel -- Vectorization codebook](https://easyperf.net/blog/2017/11/10/Tips_for_writing_vectorizable_code)
+- [step by step -- Crunching Numbers with AVX and AVX2](https://www.codeproject.com/Articles/874396/Crunching-Numbers-with-AVX-and-AVX)
 
 更多资料:
 
-* [Vectorization part1. Intro.](https://easyperf.net/blog/2017/10/24/Vectorization_part1)
-* [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
-* [Automatic Vectorization](https://www.codingame.com/playgrounds/283/sse-avx-vectorization/autovectorization)
+- [Vectorization part1. Intro.](https://easyperf.net/blog/2017/10/24/Vectorization_part1)
+- [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
+- [Automatic Vectorization](https://www.codingame.com/playgrounds/283/sse-avx-vectorization/autovectorization)

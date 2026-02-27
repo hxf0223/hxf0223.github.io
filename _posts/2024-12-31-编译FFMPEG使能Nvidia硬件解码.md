@@ -11,13 +11,12 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. 依赖于 NVIDIA
 
-* NVIDIA 显卡驱动(.run文件安装)
-* CUDA Toolkit(.run文件安装)
+- NVIDIA 显卡驱动(.run文件安装)
+- CUDA Toolkit(.run文件安装)
 
 安装 NVIDIA 驱动(run文件)
 
@@ -65,9 +64,9 @@ watch -n 1 nvidia-smi -i 0 -q -d UTILIZATION
 
 资料:
 
-* [Debian 12安装Nvidia显卡驱动](https://www.cnblogs.com/merrynuts/p/18187734)
-* [download -- nvidia 525.183.01 driver for linux](https://www.nvidia.com/en-us/drivers/details/226764/)
-* [CUDA Toolkit 12.6 Update 3 Downloads](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Debian&target_version=12&target_type=deb_local)
+- [Debian 12安装Nvidia显卡驱动](https://www.cnblogs.com/merrynuts/p/18187734)
+- [download -- nvidia 525.183.01 driver for linux](https://www.nvidia.com/en-us/drivers/details/226764/)
+- [CUDA Toolkit 12.6 Update 3 Downloads](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Debian&target_version=12&target_type=deb_local)
 
 ## 2. FFMPEG 编译依赖库安装
 
@@ -89,7 +88,7 @@ sudo make install PREFIX=/usr # 如果安装到其他目录，需要将路径天
 ```
 
 ```bash
-./configure --extra-cflags="-I/usr/local/cuda/include" --extra-ldflags="-L/usr/local/cuda/lib64" --extra-libs=-lpthread --extra-libs=-lm --enable-shared  --enable-gpl --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libx264 --enable-libx265 --enable-nonfree --enable-cuda --enable-cuvid --enable-nvenc --enable-ffnvcodec --enable-cuvid # --enable-libfdk_aac --enable-libnpp 
+./configure --extra-cflags="-I/usr/local/cuda/include" --extra-ldflags="-L/usr/local/cuda/lib64" --extra-libs=-lpthread --extra-libs=-lm --enable-shared  --enable-gpl --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libx264 --enable-libx265 --enable-nonfree --enable-cuda --enable-cuvid --enable-nvenc --enable-ffnvcodec --enable-cuvid # --enable-libfdk_aac --enable-libnpp
 
 make -j$(nproc)
 sudo make install
@@ -118,11 +117,11 @@ ffmpeg -i input.mp4 -c:v h264_nvenc output.mp4
 
 ## 5. 参考
 
-* [FFMPEG -- HWAccel Intro -- CUDA (NVENC/NVDEC)](https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC)
-* [FFMPEG -- Compile FFmpeg for Ubuntu, Debian, or Mint](https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu)
-* [ffmpeg NVIDIA编解码一：ffmpeg编译安装](https://blog.csdn.net/weixin_43147845/article/details/136812735)
-* [ffmpeg NVIDIA编解码三：英伟达硬编码](https://blog.csdn.net/weixin_43147845/article/details/136834858)
-* [LINUX下，ffmpeg增加NVIDIA硬件编解码的步骤及解决办法](https://blog.csdn.net/quantum7/article/details/82713833)
+- [FFMPEG -- HWAccel Intro -- CUDA (NVENC/NVDEC)](https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC)
+- [FFMPEG -- Compile FFmpeg for Ubuntu, Debian, or Mint](https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu)
+- [ffmpeg NVIDIA编解码一：ffmpeg编译安装](https://blog.csdn.net/weixin_43147845/article/details/136812735)
+- [ffmpeg NVIDIA编解码三：英伟达硬编码](https://blog.csdn.net/weixin_43147845/article/details/136834858)
+- [LINUX下，ffmpeg增加NVIDIA硬件编解码的步骤及解决办法](https://blog.csdn.net/quantum7/article/details/82713833)
 
 ## 6. 附加
 
@@ -149,10 +148,10 @@ LIBVA_DRI3_DISABLE=1
 `Nvidia`相关的一些可能的环境变量:
 
 ```bash
-export __NV_PRIME_RENDER_OFFLOAD=1 
+export __NV_PRIME_RENDER_OFFLOAD=1
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
 
-export __NV_PRIME_RENDER_OFFLOAD=1 
+export __NV_PRIME_RENDER_OFFLOAD=1
 export __VK_LAYER_NV_optimus=NVIDIA_only
 
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
@@ -169,12 +168,12 @@ sudo apt install libvulkan1 libvulkan-dev vulkan-tools
 
 vdpauinfo
 vainfo
-vulkaninfo --summary 
+vulkaninfo --summary
 ```
 
 ## 7. 附加2 Chromium 一些资料
 
-* [Chromium sources](https://source.chromium.org/chromium/chromium/src)
+- [Chromium sources](https://source.chromium.org/chromium/chromium/src)
 
 ### 7.1 安装Chromium
 
@@ -195,7 +194,7 @@ apt install google-chrome-stable
 # FFmpegVideoDecoder InitializeMediaLibrary GpuVideoDecoder
 
 # headless
-./chrome --ignore-gpu-blocklist --disable-gpu-driver-bug-workarounds --enable-features=AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoDecodeLinuxGL,VaapiIgnoreDriverChecks,VaapiOnNvidiaGPUs,AcceleratedVideoEncoder,UseOzonePlatform,UseMultiPlaneFormatForHardwareVideo,PlatformHEVCDecoderSupport --ozone-platform-hint=auto --enable-gpu --enable-logging=stderr --vmodule=*/media/* --v=0 --use-gl=angle --use-angle=vulkan --headless=new --remote-debugging-address=0.0.0.0 --remote-debugging-port=9221 --allow-chrome-scheme-url 
+./chrome --ignore-gpu-blocklist --disable-gpu-driver-bug-workarounds --enable-features=AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoDecodeLinuxGL,VaapiIgnoreDriverChecks,VaapiOnNvidiaGPUs,AcceleratedVideoEncoder,UseOzonePlatform,UseMultiPlaneFormatForHardwareVideo,PlatformHEVCDecoderSupport --ozone-platform-hint=auto --enable-gpu --enable-logging=stderr --vmodule=*/media/* --v=0 --use-gl=angle --use-angle=vulkan --headless=new --remote-debugging-address=0.0.0.0 --remote-debugging-port=9221 --allow-chrome-scheme-url
 
 # headful
 ./chrome --ignore-gpu-blocklist --disable-gpu-driver-bug-workarounds --enable-features=AcceleratedVideoDecodeLinuxZeroCopyGL,AcceleratedVideoDecodeLinuxGL,VaapiIgnoreDriverChecks,VaapiOnNvidiaGPUs,AcceleratedVideoEncoder,UseOzonePlatform,UseMultiPlaneFormatForHardwareVideo,PlatformHEVCDecoderSupport --ozone-platform-hint=auto --enable-gpu --enable-logging=stderr --vmodule=*/media/* --v=0 --use-gl=angle --use-angle=vulkan
@@ -204,12 +203,12 @@ apt install google-chrome-stable
 # --disable-gpu-compositing  --in-process-gpu
 ```
 
-* [Chromium docs -- VA-API](https://github.com/chromium/chromium/blob/main/docs/gpu/vaapi.md)
-* [Disable VA-API on NVIDIA GPUs for ChromeOS and Linux](https://issues.chromium.org/issues/40285654)
-* [Hardware-accelerated video decode on chromium w/ NVIDIA+VDPAU](https://bbs.archlinux.org/viewtopic.php?pid=1945132#p1945132)
-* [Hardware accelarated video decoding in chromium](https://discussion.fedoraproject.org/t/hardware-accelarated-video-decoding-in-chromium/69907/11?replies_to_post_number=9)
-* [How To Enable Hardware Acceleration on Chrome, Chromium & Puppeteer on AWS in Headless mode](https://mirzabilal.com/how-to-enable-hardware-acceleration-on-chrome-chromium-puppeteer-on-aws-in-headless-mode)
-* [blog -- vdpau](https://wdv4758h.github.io/notes/blog/vdpau.html)
+- [Chromium docs -- VA-API](https://github.com/chromium/chromium/blob/main/docs/gpu/vaapi.md)
+- [Disable VA-API on NVIDIA GPUs for ChromeOS and Linux](https://issues.chromium.org/issues/40285654)
+- [Hardware-accelerated video decode on chromium w/ NVIDIA+VDPAU](https://bbs.archlinux.org/viewtopic.php?pid=1945132#p1945132)
+- [Hardware accelarated video decoding in chromium](https://discussion.fedoraproject.org/t/hardware-accelarated-video-decoding-in-chromium/69907/11?replies_to_post_number=9)
+- [How To Enable Hardware Acceleration on Chrome, Chromium & Puppeteer on AWS in Headless mode](https://mirzabilal.com/how-to-enable-hardware-acceleration-on-chrome-chromium-puppeteer-on-aws-in-headless-mode)
+- [blog -- vdpau](https://wdv4758h.github.io/notes/blog/vdpau.html)
 
 ### 7.3 定制化 Chromium/FFmpeg
 
@@ -255,7 +254,7 @@ enable_nacl = false
 symbol_level = 0
 is_official_build = true
 chrome_pgo_phase = 0
-ffmpeg_branding = "Chrome" 
+ffmpeg_branding = "Chrome"
 proprietary_codecs = true
 # enable_linux_installer = true
 
@@ -308,9 +307,9 @@ use_qt=false
 # sudo apt install qtbase5-dev
 ```
 
-* [重新配置chrome中ffmpeg插件](https://blog.csdn.net/hongszh/article/details/126167387)
-* [chromium -- debugging](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/linux/debugging.md)
-* [Tips for debugging on Linux](https://chromium.googlesource.com/chromium/src/+/0e94f26e8/docs/linux_debugging.md)
-* [How to get a stack trace at runtime](https://www.chromium.org/chromium-os/developer-library/guides/debugging/stack-traces/#typography-conventions)
-* [Some tricks about debugging Chromium](https://blog.lazym.io/2020/06/09/Some-tricks-about-debugging-Chromium/)
-* [Chromium 编译与调试笔记](https://yplam.com/Pub/Chromium/chromium-build-debug/)
+- [重新配置chrome中ffmpeg插件](https://blog.csdn.net/hongszh/article/details/126167387)
+- [chromium -- debugging](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/linux/debugging.md)
+- [Tips for debugging on Linux](https://chromium.googlesource.com/chromium/src/+/0e94f26e8/docs/linux_debugging.md)
+- [How to get a stack trace at runtime](https://www.chromium.org/chromium-os/developer-library/guides/debugging/stack-traces/#typography-conventions)
+- [Some tricks about debugging Chromium](https://blog.lazym.io/2020/06/09/Some-tricks-about-debugging-Chromium/)
+- [Chromium 编译与调试笔记](https://yplam.com/Pub/Chromium/chromium-build-debug/)

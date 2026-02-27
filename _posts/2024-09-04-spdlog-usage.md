@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. 使用时的编译选项 ##
+## 1. 使用时的编译选项
 
 ```cmake
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -25,7 +24,7 @@ else()
 endif()
 ```
 
-## 2. 日志级别，日志格式 ##
+## 2. 日志级别，日志格式
 
 ```c++
 #include <spdlog/spdlog.h>
@@ -38,15 +37,15 @@ endif()
 #endif
 
 // back to default format
-// spdlog::set_pattern("%+"); 
+// spdlog::set_pattern("%+");
 
 // alignment: 左对齐, 右对齐
 spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
 ```
 
-## 3. 使用技巧 ##
+## 3. 使用技巧
 
-### 3.1 打印 std::vector ###
+### 3.1 打印 std::vector
 
 ```c++
 #include "spdlog/spdlog.h"
@@ -55,4 +54,3 @@ spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
 logger->info ("vector: {}", fmt::join(vec, ", "));
 SPDLOG_INFO("vector: {}", vec);
 ```
-

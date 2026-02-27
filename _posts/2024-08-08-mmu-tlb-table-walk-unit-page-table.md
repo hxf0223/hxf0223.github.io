@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. `MMU` 结构以及工作过程 ##
+## 1. `MMU` 结构以及工作过程
 
 大多数使用`MMU`的机器采用内存`分页机制`，虚拟地址空间以`页(Page)`为单位，相应的，物理地址空间也被划分为`页帧(Frame)`。`页帧`必须与`页`保持相同的大小，通常为4KB，对于大页，页帧可以是2MB或1GB。大页一般用于服务器，用于系统分配大量数据，减少缺页中断的发生。
 
@@ -37,11 +36,11 @@ CPU发出的`VA`由两部分组成：`VPN(Virtual Page Number)` + `offseet`。�
 
 ![VPN to PFN](/assets/images/cpu/mmu_20240808/vpn_to_pfn.webp)
 
-### 1.1 从`VA`到`PA`，MMU处理流程图 ###
+### 1.1 从`VA`到`PA`，MMU处理流程图
 
 ![MMU VA to PA Process](/assets/images/cpu/mmu_20240808/mmu_va_to_pa_procesure.png)
 
-## 2. 页表结构 ##
+## 2. 页表结构
 
 现代CPU一般采用四级页表结构。以32位地址空间的二级页表为例，CPU发出的虚拟地址被拆分分为：页目录(Page Directory)、页表(Page Table)、页内偏移(Page Offset)三级（以4k为例，即12位）。
 
@@ -49,7 +48,7 @@ CPU发出的`VA`由两部分组成：`VPN(Virtual Page Number)` + `offseet`。�
 
 ![Page Table Structure](/assets/images/cpu/mmu_20240808/页表目录索引_页表索引_地址偏移.webp)
 
-### 2.1 MMU查找过程 ###
+### 2.1 MMU查找过程
 
 MMU先根据一级页表的物理地址和一级页表Index去一级页表中找PTE，PTE中的地址不再是最终的物理地址，而是二级页表的物理地址。
 
@@ -61,7 +60,7 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 
 使用二级页表的好处是如果一级页表中的某一个PTE没有命中，那这一PTE对应的整个二级页表就不存在。
 
-### 2.2 进程页表与 Address Space ID ###
+### 2.2 进程页表与 Address Space ID
 
 `操作系统`会为`每个进程`分配一个`页表`，该`页表`使用`物理地址`存储。当`进程`使用类似`malloc`等需要`映射代码或数据`的操作时，`操作系统`会在随后马上`修改页表`以加入新的 `物理内存`。
 
@@ -69,7 +68,7 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 
 `MMU`在查找`TLB`时， 只会查找`TLB`中具有`相同ASID值`的`TLB行`。且在切换进程时，`TLB`中被设置了`ASID`的`TLB行`不会被清理掉，当下次切换回来的时候还在。所以`ASID`的出现使得切换进程时不需要清理`TLB`中的所有数据，可以大大减少`切换开销`。
 
-## 3. `页表项(PTE)` 与 `TLB` 中的标志位 ##
+## 3. `页表项(PTE)` 与 `TLB` 中的标志位
 
 在进程的虚拟内存空间中，每一个虚拟内存页在页表中都有一个`PTE`与之对应，在32位系统中，每个`PTE`占用4个字节大小，其中保存了虚拟内存页背后映射的物理内存页的起始地址，以及进程访问物理内存的一些权限标识位。
 
@@ -86,7 +85,7 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 - `PCD(2)`：`Page Cache Disable`，表示`PTE`指向的物理内存页面中的内容，是否可以被缓存到`Cache`中。在`SOC`异构处理器共享同一块物理内存时，可以使用`PCD`创建禁止`Cache`的`PTE`。
 - `PWT(3)`: `Page Write-Through`，表示`PTE`指向的`CPU Cache`中的内容，是直接写入物理内存(Write-Through)，还是在`Cache-line`被中的内容被替换时写入物理内存(Write-Back)。
 
-## 4. 缺页处理过程 ##
+## 4. 缺页处理过程
 
 - 处理器要对虚拟地址`VA`进行访问。
 - `MMU`的`TLB`没有命中，通过`TWU`遍历主存页表中的PTEA（PTE地址）。
@@ -98,11 +97,10 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 
 ![Page Fault Process](/assets/images/cpu/mmu_20240808/page_fault.png)
 
-## 参考 ##
+## 参考
 
 - [知乎 -- 图解MMU](https://zhuanlan.zhihu.com/p/487386274)
 - [简书 -- ARM体系架构——MMU](https://www.jianshu.com/p/ef1e93e9d65b)
 - [一步一图带你构建 Linux 页表体系 —— 详解虚拟内存如何与物理内存进行映射](https://www.cnblogs.com/binlovetech/p/17571929.html)
 - [CPU入门扫盲篇之MMU内存管理单元------万字长文带你搞定MMU&TLB&TWU](https://blog.csdn.net/weixin_65286359/article/details/135577694)
 - [一步一图带你深入理解Linux物理内存](https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&mid=2247486879&idx=1&sn=0bcc59a306d59e5199a11d1ca5313743&chksm=ce77cbd8f90042ce06f5086b1c976d1d2daa57bc5b768bac15f10ee3dc85874bbeddcd649d88&scene=178&cur_album_id=2559805446807928833#rd)
-

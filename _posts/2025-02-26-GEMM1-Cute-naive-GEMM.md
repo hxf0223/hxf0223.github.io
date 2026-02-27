@@ -9,32 +9,32 @@ tags: [CUDA]
 math: true
 mermaid: true
 # pin: true
+
 toc:
   sidebar: right
-
 ---
 
 ![tile_gemm](/assets/images/cuda/20250226/gemm_tile_naive_cute/gemm_naive_tile.jpg)
 
-## 1. navie tile GEMM ##
+## 1. navie tile GEMM
 
-* 代码文件：[navie tile GEMM](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive.cu)
+- 代码文件：[navie tile GEMM](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive.cu)
 
 基于分块矩阵乘法的简单实现，按照 Thread Block 将矩阵划分为多个tile进行计算，在 Thread Block内，再次将 tile 划分为多个子块，由每个线程负责计算子块。
 
 使用 Shared Memory 来缓存 tile 数据，减少全局内存访问次数。每个线程负责从全局内存中复制 tile 内的一小块内存到 Shared Memory。
 
-* 循环展开`#pragma unroll`优化加载和计算部分的循环，提高指令级并行性（消耗更多寄存器资源），本代码测试整体运行时间提升`15%`左右。
+- 循环展开`#pragma unroll`优化加载和计算部分的循环，提高指令级并行性（消耗更多寄存器资源），本代码测试整体运行时间提升`15%`左右。
 
-## 2. CuTe 版本 naive tile GEMM ##
+## 2. CuTe 版本 naive tile GEMM
 
-* 代码文件：[CuTe naive tile GEMM](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive_cute.cu)
+- 代码文件：[CuTe naive tile GEMM](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/gemm_tile_naive_cute.cu)
 
 使用 CuTe 库重写的分块矩阵乘法，使用 slice-k 方法，即分块（tile）沿着 K 维度累加所有结果子矩阵。
 
 > 使用 NVIDIA CuTe 库重写的分块矩阵乘法实现，采用 `cute::gemm` 期望的标准布局。
 
-### 2.1. 矩阵布局约定 ###
+### 2.1. 矩阵布局约定
 
 采用 **BLAS/Fortran 风格的列主序 (Column-major)**：
 
@@ -44,7 +44,7 @@ toc:
 | B      | (N, K) | (1, N) | 列主序，存储 B^T  |
 | C      | (M, N) | (1, M) | 列主序，M方向连续 |
 
-> 矩阵参数，以及划分参数：M=1024，N=1024，K=1024*8，BM=64，BN=64，BK=16，TM=8，TN=8。
+> 矩阵参数，以及划分参数：M=1024，N=1024，K=1024\*8，BM=64，BN=64，BK=16，TM=8，TN=8。
 > **关键点**：B 矩阵以 (N, K) 形式存储，实际上是原始 B(K, N) 的转置。这是 `cute::gemm` 的标准输入格式。
 
 创建的矩阵 A、B、C 的 tensor 视图如下：
@@ -65,7 +65,7 @@ dim3 gridDim(N / BN, M / BM);   // (16, 16)
 dim3 blockDim(BN / TN, BM / TM);// (8, 8)
 ```
 
-### 2.2. CuTe 实现：分块分割、线程分区、拷贝及计算 ###
+### 2.2. CuTe 实现：分块分割、线程分区、拷贝及计算
 
 以矩阵 A 为例，矩阵 A 在 M 纬度上，每个 Thread Block 负责处理 BM 行（复制 + GEMM）；在 K 维度上，Thread Block 负责处理 BK 列。Thread Block 以二维的方式划分，需要的 Thread Block 数量为 (M/BM, N/BN)，即划分的 tile 数量；每个 Thread Block 内的线程数量为 (BM/TM, BN/TN)，即同样以二维的方式将 tile 再次划分给 Thread Block 内的线程。
 
@@ -85,7 +85,7 @@ Tensor sA = make_tensor(make_smem_ptr(smemA), make_shape(Int<BM>{}, Int<BK>{}), 
 Tensor sB = make_tensor(make_smem_ptr(smemB), make_shape(Int<BN>{}, Int<BK>{}), make_stride(Int<1>{}, Int<BN>{}));
 ```
 
-### 2.2.1. 分块操作 ###
+### 2.2.1. 分块操作
 
 ```cpp
 // 创建全局内存 tensor 视图
@@ -100,11 +100,11 @@ Tensor gC = local_tile(mC, make_tile(Int<BM>{}, Int<BN>{}), make_coord(blockIdx.
 
 分块之后，每个 Thread Block 分到的 tile shape 如下：
 
-* gA(64, 16, 512)：其中，1024*8 / 16 = 512，即这是一个 tile group
-* gB(64, 16, 512)：其中，1024*8 / 16 = 512，即这是一个 tile group
-* gC(64, 64)
+- gA(64, 16, 512)：其中，1024\*8 / 16 = 512，即这是一个 tile group
+- gB(64, 16, 512)：其中，1024\*8 / 16 = 512，即这是一个 tile group
+- gC(64, 64)
 
-### 2.2.2. 线程分区 ###
+### 2.2.2. 线程分区
 
 **分区复制 GMEM -> SMEM**：
 
@@ -133,10 +133,10 @@ Tensor tBsB = local_partition(sB, tB_copy, tid);  // 每个线程负责的sB部�
 
 得到的线程分区 tensor layout 如下：
 
-* tAgA(1, 16)：shape: (_1,_16,512), stride: (_0,1024,16384)
-* tAsA(1, 16)：shape: (_1,_16), stride: (_0,64)
-* tBgB(1, 16)：shape: (_1,_16,512), stride: (_0,1024,16384)
-* tBsB(1, 16)：shape: (_1,_16), stride: (_0,64)
+- tAgA(1, 16)：shape: (\_1,\_16,512), stride: (\_0,1024,16384)
+- tAsA(1, 16)：shape: (\_1,\_16), stride: (\_0,64)
+- tBgB(1, 16)：shape: (\_1,\_16,512), stride: (\_0,1024,16384)
+- tBsB(1, 16)：shape: (\_1,\_16), stride: (\_0,64)
 
 **计算分区**：
 
@@ -161,7 +161,7 @@ tCsB shape: (_8,_16), stride: (_8,_64)
 tCgC shape: (_8,_8), stride: (_8,8192)
 ```
 
-### 2.2.3. slice-k GEMM ###
+### 2.2.3. slice-k GEMM
 
 ```cpp
 // 遍历K维度
@@ -185,7 +185,7 @@ for (int k = 0; k < num_tile_k; k++) {
 
 > 当矩阵是列主序时（比如矩阵 A、B 是 K-major），如果 Thread Block 内的线程任务划分也按照 K-major 进行，这样得到的访问矩阵内的元素的编号也是连续的，即**访存合并**。
 
-### 2.2.4. Bank Conflict 计算 ###
+### 2.2.4. Bank Conflict 计算
 
 依据 outter-partition 划分的方式：
 
@@ -203,9 +203,9 @@ tC_row = tid % 8  (M 维度方向)
 tC_col = tid / 8  (N 维度方向)
 ```
 
-#### 2.2.4.1. tCsA 访问方式及 bank conflict 分析 ####
+#### 2.2.4.1. tCsA 访问方式及 bank conflict 分析
 
-Step<_1, X> 表示使用 M 维度参与分区。
+Step<\_1, X> 表示使用 M 维度参与分区。
 
 线程的 tCsA 起始行号为：
 
@@ -237,9 +237,9 @@ stride=8，可以理解为每个线程占据 8 个float 类型数据，则 4 个
 
 即一个 warp 产生 4 个 4-way bank conflict。
 
-#### 2.2.4.2. tCsB 访问方式及 bank conflict 分析 ####
+#### 2.2.4.2. tCsB 访问方式及 bank conflict 分析
 
-Step<X, _1> 表示使用 N 维度参与分区。
+Step<X, \_1> 表示使用 N 维度参与分区。
 
 每个线程的 tCsB 起始行号为：
 
@@ -248,7 +248,7 @@ $$
 $$
 
 线程访问 sB 的地址计算公式：
-  
+
 $$
 \begin{aligned}
 & \text{addr}_{sB}[n, k] = (\text{row_offset}_{B} + n) + k \times 64 \\
@@ -265,28 +265,28 @@ $$
 
 > 一个 warp 内，从第 8 个线程开始，访问编号跳转了 64 个 float。
 
-#### 2.2.4.3. 总结 ####
+#### 2.2.4.3. 总结
 
 发现，在当前情况下（sA 与 sB 布局相同，且划分大小相同），他们之前不一样的地方，来自于划分时，选择的维度不同：
 
-* 首先，线程被划分为两个维度，且使用这两个维度分别去划分 sA 与 sB。
-* 其次，由于使用了这两个维度进行划分，导致 M 维度是使用取余，N 维度是使用整除。这才是导致访问模式不同的根本原因。
+- 首先，线程被划分为两个维度，且使用这两个维度分别去划分 sA 与 sB。
+- 其次，由于使用了这两个维度进行划分，导致 M 维度是使用取余，N 维度是使用整除。这才是导致访问模式不同的根本原因。
 
 性能影响：
 
-* tCsA 访问产生 bank conflict，影响性能。
-* tCsB 访问产生 broadcast，带宽利用率低。
+- tCsA 访问产生 bank conflict，影响性能。
+- tCsB 访问产生 broadcast，带宽利用率低。
 
-## 2.3 Stride 理解 ##
+## 2.3 Stride 理解
 
 `make_stride(s0, s1)` 定义了沿各维度移动时的内存跳跃距离：
 
-* `stride(1, M)` → 第0维步长=1（连续），第1维步长=M → **列主序**
-* `stride(M, 1)` → 第0维步长=M，第1维步长=1（连续） → **行主序**
+- `stride(1, M)` → 第0维步长=1（连续），第1维步长=M → **列主序**
+- `stride(M, 1)` → 第0维步长=M，第1维步长=1（连续） → **行主序**
 
 > **简单记忆**：Stride 为 1 的维度在内存中连续。
 
-## 2.4 CuTe 命名约定 ##
+## 2.4 CuTe 命名约定
 
 CuTe 官方推荐的变量命名规则，便于理解代码中各 tensor 的用途和存储位置。
 
@@ -310,10 +310,10 @@ CuTe 官方推荐的变量命名规则，便于理解代码中各 tensor 的用�
 
 **组合命名规则** `tXyZ`：
 
-* `t` = thread 级别
-* `X` = 用于什么操作（A=复制A, B=复制B, C=计算C）
-* `y` = 存储位置（g=global, s=shared, r=register）
-* `Z` = 哪个矩阵（A, B, C）
+- `t` = thread 级别
+- `X` = 用于什么操作（A=复制A, B=复制B, C=计算C）
+- `y` = 存储位置（g=global, s=shared, r=register）
+- `Z` = 哪个矩阵（A, B, C）
 
 **示例**：
 
@@ -332,12 +332,12 @@ Tensor tCrC = ...;   // thread partition (for C compute) of register C
 > 复制时：64个线程平均分配 `BM×BK` 元素 → `tAsA`
 > 计算时：每个线程取 `TM×BK` 子矩阵 → `tCsA`
 
-## 资料 ##
+## 资料
 
-* [Matrix Multiplication Background User's Guide](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)。如何计算 GEMM 的性能指标
-* [CuTe dense matrix-matrix multiply tutorial](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0x_gemm_tutorial.html)。CuTe GEMM 官方 Document。
-* [cute 之 简单GEMM实现](https://zhuanlan.zhihu.com/p/667521327)：reed 知乎文章
-* [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：reed 知乎文章
-* [CuTe Local Partition](https://leimao.github.io/blog/CuTe-Local-Partition/)：Mao Lei博客
-* [CUDA Matrix Multiplication Optimization](https://leimao.github.io/article/CUDA-Matrix-Multiplication-Optimization/)：Mao Lei博客，GEMM优化步骤全解析
-* [Colfax Research Cute Tutorial](https://research.colfax-intl.com/category/papers/tutorials/)：Colfax Research Cute Tutorial
+- [Matrix Multiplication Background User's Guide](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)。如何计算 GEMM 的性能指标
+- [CuTe dense matrix-matrix multiply tutorial](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0x_gemm_tutorial.html)。CuTe GEMM 官方 Document。
+- [cute 之 简单GEMM实现](https://zhuanlan.zhihu.com/p/667521327)：reed 知乎文章
+- [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：reed 知乎文章
+- [CuTe Local Partition](https://leimao.github.io/blog/CuTe-Local-Partition/)：Mao Lei博客
+- [CUDA Matrix Multiplication Optimization](https://leimao.github.io/article/CUDA-Matrix-Multiplication-Optimization/)：Mao Lei博客，GEMM优化步骤全解析
+- [Colfax Research Cute Tutorial](https://research.colfax-intl.com/category/papers/tutorials/)：Colfax Research Cute Tutorial

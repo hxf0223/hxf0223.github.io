@@ -11,18 +11,17 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. Virtual Memory Statistics -- `vmstat` ##
+## 1. Virtual Memory Statistics -- `vmstat`
 
 `vmstat` 检测`cpu`、`系统内存(包括 slab)`、`进程`、`块设备IO`等使用情况：
 
-* `CPU`相关：`用户时间` / `系统时间` / `空闲时间`占比。每秒`中断数量` / `上下文切换数量`。活动进程数量 / 阻塞进程数量，`fork`进程数量。
-* 内存相关：`active`/`inactive`内存，`buff`/`cache`内存，`swap`使用及每秒交换量。
-* IO：每秒读写的块数量。
+- `CPU`相关：`用户时间` / `系统时间` / `空闲时间`占比。每秒`中断数量` / `上下文切换数量`。活动进程数量 / 阻塞进程数量，`fork`进程数量。
+- 内存相关：`active`/`inactive`内存，`buff`/`cache`内存，`swap`使用及每秒交换量。
+- IO：每秒读写的块数量。
 
-### 1.1. 基本用法 ###
+### 1.1. 基本用法
 
 ```bash
 $ vmstat -S M # 内存以兆为单位显示
@@ -61,7 +60,7 @@ wa -- 等待IO时间百分比。
 st -- 被信号中断的进程时间百分比。
 gu -- 被引起的页错误的进程时间百分比。
 
-### 1.2 查看统计信息 -- 内存及CPU相关 ###
+### 1.2 查看统计信息 -- 内存及CPU相关
 
 ```bash
 $ vmstat -s -S M
@@ -96,7 +95,7 @@ $ vmstat -s -S M
          3331 forks
 ```
 
-### 1.3 其他选项用法 ###
+### 1.3 其他选项用法
 
 ```bash
 vmstat -a # 显示 active/inactive 内存
@@ -110,7 +109,7 @@ vmstat 2 # 每两秒输出一次统计信息
 vmstat 1 5 -t # 每隔一秒输出一次统计信息，持续5秒，并显示时间戳
 ```
 
-## 2. top 命令 ##
+## 2. top 命令
 
 ```bash
 $ top
@@ -126,12 +125,12 @@ MiB Swap:   4096.0 total,   4096.0 free,      0.0 used.  14541.0 avail Mem
 ```
 
 1. 第一行
-   * 启动时间，持续时间： `11:16:35 up  1:53`
-   * 系统1分钟、5分钟、15分钟的CPU负载值：`load average: 3.15, 0.77, 0.26`
+   - 启动时间，持续时间： `11:16:35 up  1:53`
+   - 系统1分钟、5分钟、15分钟的CPU负载值：`load average: 3.15, 0.77, 0.26`
 2. 第三行
-   * CPU占用：`us` 用户进程占比；`sy` 内核CPU占比；`wa`(IO wait) 等待IO的CPU时间占比；`hi` 硬件中断CPU时间占比；`si` 软件中断CPU时间占比；`st` 虚拟机偷取(steal)CPU时间占比。
+   - CPU占用：`us` 用户进程占比；`sy` 内核CPU占比；`wa`(IO wait) 等待IO的CPU时间占比；`hi` 硬件中断CPU时间占比；`si` 软件中断CPU时间占比；`st` 虚拟机偷取(steal)CPU时间占比。
 
-### 2.1 查看进程下所有线程信息 ###
+### 2.1 查看进程下所有线程信息
 
 ```bash
 $ top -Hp <PID>
@@ -139,15 +138,13 @@ $ top -Hp <PID>
 # ......
 ```
 
-## 3. uptime 命令 ##
+## 3. uptime 命令
 
 ```bash
 $ uptime
  11:16:35 up  1:53,  5 users,  load average: 3.15, 0.77, 0.26
 ```
 
-## 更多资料 ##
+## 更多资料
 
-* [Velocity2015_LinuxPerfTools pdf](https://www.brendangregg.com/Slides/Velocity2015_LinuxPerfTools.pdf)
-
-
+- [Velocity2015_LinuxPerfTools pdf](https://www.brendangregg.com/Slides/Velocity2015_LinuxPerfTools.pdf)

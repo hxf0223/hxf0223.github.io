@@ -11,11 +11,10 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-* [linux-insides 中文翻译](https://docs.hust.openatom.club/linux-insides-zh)
-* [system-design-primer](https://github.com/donnemartin/system-design-primer)
+- [linux-insides 中文翻译](https://docs.hust.openatom.club/linux-insides-zh)
+- [system-design-primer](https://github.com/donnemartin/system-design-primer)
 
 ![23种设计模式彩图](/assets/images/cpp/23-design-patten.png)
 

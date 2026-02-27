@@ -11,14 +11,13 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ![process_stack](/assets/images/os/malloc_20240827/wfl3VM8icKWzunj.png)
 
-## 1. 虚拟内存分配 ##
+## 1. 虚拟内存分配
 
-### 1.1 mmap ###
+### 1.1 mmap
 
 `mmap`用于建立`文件映射`，或者`匿名映射`。
 
@@ -28,20 +27,20 @@ toc:
 
 `mmap`文件知识点:
 
-* 通常情况下(除了`MAP_POPULATE`)，`mmap`创建时，只是在用户空间分配一段地址空间(`VMA`)，只有访问地址空间时，才会分配物理地址空间(`Page fault`中断分配内存)，并更新映射到`VMA`，建立映射关系。
-* `mmap`映射的物理内存，可以跨进程共享，但需要进程之间加锁访问(写操作)。如果多个进程写同一个`mmap`映射的物理内存，会触发`Copy On Write(COW)`，内核重新分配一个新的物理内存，并复制原有物理内存的内容。
-* 通过`msync()`将内存写回硬盘，`munmap()`释放内存。
+- 通常情况下(除了`MAP_POPULATE`)，`mmap`创建时，只是在用户空间分配一段地址空间(`VMA`)，只有访问地址空间时，才会分配物理地址空间(`Page fault`中断分配内存)，并更新映射到`VMA`，建立映射关系。
+- `mmap`映射的物理内存，可以跨进程共享，但需要进程之间加锁访问(写操作)。如果多个进程写同一个`mmap`映射的物理内存，会触发`Copy On Write(COW)`，内核重新分配一个新的物理内存，并复制原有物理内存的内容。
+- 通过`msync()`将内存写回硬盘，`munmap()`释放内存。
 
 `MAP_POPULATE`标志位: 建立页表，这将使得内核进行一些预读(实测没有性能提升)。使用方式：
 
-* 使用`open` + 选项`O_RDONLY | O_DIRECT`打开文件;
-* 以及使用`mmap` + `MAP_POPULATE`选项，在打开文件时建立页表。
+- 使用`open` + 选项`O_RDONLY | O_DIRECT`打开文件;
+- 以及使用`mmap` + `MAP_POPULATE`选项，在打开文件时建立页表。
 
 `MAP_LOCKED`标志位: 锁定映射内存，阻止被换出。类似于`mlock()`。
 
 更多`I/O`相关: [about IO performance](https://www.cnblogs.com/stdpain/p/17646856.html)
 
-### 1.2 malloc / free ###
+### 1.2 malloc / free
 
 在现代操作系统中，`malloc`的作用是分配虚拟内存空间，并不实际分配物理内存。当分配的虚拟内存空间第一次被访问时，才会真正的分配物理内存（OS的写时分配行为）。
 
@@ -54,35 +53,35 @@ toc:
 ![malloc-brk](/assets/images/os/malloc_20240827/malloc_brk.png)
 ![malloc-mmap](/assets/images/os/malloc_20240827/malloc_mmap1.png)
 
-### 1.3 new / delete ###
+### 1.3 new / delete
 
 `new` / `delete`操作时，在调用`malloc`/`free`基础上，对`non-trival`对象，调用其构造/析构函数；对于`trival`对象，不需要调用构造/析构函数，直接分配/释放内存。
 
-## 2. 用户态 malloc ##
+## 2. 用户态 malloc
 
-* 用户态内存分配：intel TBB malloc, tcmalloc，Vulkan Memory Allocator等。（ 经测试，microsoft mimalloc适配性不是很好，使用过程中会出错；intel TBB malloc overhead似乎比较大）
-* 内存池。（见下面资料链接）
-* 对象池。
+- 用户态内存分配：intel TBB malloc, tcmalloc，Vulkan Memory Allocator等。（ 经测试，microsoft mimalloc适配性不是很好，使用过程中会出错；intel TBB malloc overhead似乎比较大）
+- 内存池。（见下面资料链接）
+- 对象池。
 
-### 2.1 参考资料 ###
+### 2.1 参考资料
 
-* [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
-* [Vulkan Memory Allocator -- docs](https://gpuopen-librariesandsdks.github.io/VulkanMemoryAllocator/html/quick_start.html)
-* [游戏架构设计：内存管理](https://www.cnblogs.com/KillerAery/p/10765893.html)
-* [游戏架构设计：高性能并行编程](https://www.cnblogs.com/KillerAery/p/16333348.html)
+- [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
+- [Vulkan Memory Allocator -- docs](https://gpuopen-librariesandsdks.github.io/VulkanMemoryAllocator/html/quick_start.html)
+- [游戏架构设计：内存管理](https://www.cnblogs.com/KillerAery/p/10765893.html)
+- [游戏架构设计：高性能并行编程](https://www.cnblogs.com/KillerAery/p/16333348.html)
 
-### 2.2 内存池仓库 ###
+### 2.2 内存池仓库
 
-* [github -- memory](https://github.com/foonathan/memory)
-* [github -- poolSTL](https://github.com/alugowski/poolSTL)
+- [github -- memory](https://github.com/foonathan/memory)
+- [github -- poolSTL](https://github.com/alugowski/poolSTL)
 
-## 3. Linux Huge page ##
+## 3. Linux Huge page
 
 设置`Huge Page`，减少内存访问需要的的缺页中断，提高内存访问效率。以及减少`TLB`未命中导致的性能下降 -- 未命中`TLB`则需要逐级查询`page table`。
 
 `Linux`使用`Huge Page`有两种方式：
 
-### 3.1 Transparent Huge Page ###
+### 3.1 Transparent Huge Page
 
 主流`Linux kernel`发布版本都是默认支持`THP`的（`TRANSPARENT_HUGEPAGE`）。但是在用户态使能，需要开启设置`khugepaged`: [kernel -- Transparent Hugepage Support](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html)
 
@@ -101,8 +100,8 @@ echo "always" >! /sys/kernel/mm/transparent_hugepage/enabled
 
 选项:
 
-* `always`: 开启`THP`，内核尝试将连续的内存页合并成一个`THP`页。用户层不需要任何操作。
-* `madvise`: 开启`THP`，内核尝试将连续的内存页合并成一个`THP`页。用户层可以使用`madvise()`系统调用，将内存标记为`THP`。
+- `always`: 开启`THP`，内核尝试将连续的内存页合并成一个`THP`页。用户层不需要任何操作。
+- `madvise`: 开启`THP`，内核尝试将连续的内存页合并成一个`THP`页。用户层可以使用`madvise()`系统调用，将内存标记为`THP`。
 
 对`x86-64`系统，`THP`页大小为`2MB`。查看`Huge Page`的页大小:
 
@@ -115,11 +114,11 @@ cat /sys/kernel/mm/transparent_hugepage/hpage_pmd_size
 ```c++
 #include <iostream>
 #include <sys/mman.h>
- 
+
 // ... definition of is_huge() and is_thp() ...
- 
+
 constexpr size_t HPAGE_SIZE = 2 * 1024 * 1024;
- 
+
 int main() {
   auto size = 4 * HPAGE_SIZE;
   void *mem = aligned_alloc(HPAGE_SIZE, size);
@@ -140,7 +139,7 @@ int main() {
 g++ --std=c++17 thp.cpp -o thp
 ```
 
-### 3.2 HugeTLB ###
+### 3.2 HugeTLB
 
 可以通过仅仅链接`libhugetlbfs`，即可使用大页内存:
 
@@ -174,6 +173,5 @@ void *addr = mmap(0, 10*1024*1024, (PROT_READ | PROT_WRITE),
 
 参考:
 
-* [Linux HugeTLB: What is the advantage of the filesystem approach?](https://unix.stackexchange.com/questions/753039/linux-hugetlb-what-is-the-advantage-of-the-filesystem-approach)
-* [Allocating Huge Pages on Linux](https://www.lukas-barth.net/blog/linux-allocating-huge-pages/)
-
+- [Linux HugeTLB: What is the advantage of the filesystem approach?](https://unix.stackexchange.com/questions/753039/linux-hugetlb-what-is-the-advantage-of-the-filesystem-approach)
+- [Allocating Huge Pages on Linux](https://www.lukas-barth.net/blog/linux-allocating-huge-pages/)

@@ -11,14 +11,13 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## Ubuntu 24.04 分区建议 ##
+## Ubuntu 24.04 分区建议
 
 ![Ubuntu 24.04 分区建议](/assets/images/linux/20240511/ubuntu_partition.jpg)
 
-## 更换 kernel 6.18 ##
+## 更换 kernel 6.18
 
 ```bash
 # 查看已经有的 kernel 版本
@@ -60,4 +59,4 @@ dpkg -l | grep -E "linux-(headers|image|modules-extra)+" | grep -v 6.12.3 | awk 
 
 参考链接：
 
-* [Ubuntu Linux 内核版本升级指南：mainline](https://soulteary.com/2025/02/06/ubuntu-linux-kernel-upgrade-guide-with-mainline.html)
+- [Ubuntu Linux 内核版本升级指南：mainline](https://soulteary.com/2025/02/06/ubuntu-linux-kernel-upgrade-guide-with-mainline.html)

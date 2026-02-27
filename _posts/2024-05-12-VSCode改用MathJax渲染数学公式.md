@@ -11,12 +11,11 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 首先安装`Markdown Preview Enhanced`插件，并做如下配置：
 
-* Ctrl+Shift+P → Markdown Preview Enhanced: Open Config Script (Global)
+- Ctrl+Shift+P → Markdown Preview Enhanced: Open Config Script (Global)
 
 将如下内容添加到配置文件`config.js`中：
 
@@ -31,4 +30,3 @@ toc:
   }
 }
 ```
-

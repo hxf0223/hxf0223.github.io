@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. 使能 core dump
@@ -92,4 +91,3 @@ gdb program core（gdb + 可执行文件 +core文件）
 ## 5. 参考
 
 - [coredump文件生成，以及GDB工具使用](https://www.cnblogs.com/muxisuibi/p/17878055.html)
-

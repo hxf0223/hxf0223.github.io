@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 为什么要使用 std::enable_shared_from_this
@@ -140,4 +139,3 @@ std::atomic<std::shared_ptr<int>> atomic_shared;
 
 - [C++：深入理解 std::enable_shared_from_this 与 shared_from_this](https://haust-kevin.github.io/2025/03/16/2025-03-understanding-of-shared-from-this/)
 - [从现代C++实现的百行线程池来了解一下线程池相关技术](https://zhuanlan.zhihu.com/p/673962006)
-

@@ -11,29 +11,28 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 概念：
 
-* `FirmwarePlugin`：固件插件，表示某种飞控固件（如`APM`、`PX4`等）。
-* `AutoPilotPlugin`：表示某种飞控固件实现的不同飞机类型，比如`固定翼`、`旋翼`等。
+- `FirmwarePlugin`：固件插件，表示某种飞控固件（如`APM`、`PX4`等）。
+- `AutoPilotPlugin`：表示某种飞控固件实现的不同飞机类型，比如`固定翼`、`旋翼`等。
 
-## 1. FirmwarePlugin 与 AutoPilotPlugin 的关系 ##
+## 1. FirmwarePlugin 与 AutoPilotPlugin 的关系
 
 从逻辑关系看（主要从分类角度），`AutoPilotPlugin`需要从`FirmwarePlugin`创建，例如`APM`的固件，创建`APM`相关的`AutoPilotPlugin`。
 
 从实现看，`FirmwarePlugin`最多也有三层继承，以`APM`固件为例：
 
-* `FirmwarePlugin`（基类）
-  * `APMFirmwarePlugin`（表示`APM`固件）
-    * `ArduPlaneFirmwarePlugin`（表示`APM`的固定翼飞机）
-    * `ArduCopterFirmwarePlugin`（表示`APM`的多旋翼飞机）
-    * `ArduRoverFirmwarePlugin`（表示`APM`的地面车）
+- `FirmwarePlugin`（基类）
+  - `APMFirmwarePlugin`（表示`APM`固件）
+    - `ArduPlaneFirmwarePlugin`（表示`APM`的固定翼飞机）
+    - `ArduCopterFirmwarePlugin`（表示`APM`的多旋翼飞机）
+    - `ArduRoverFirmwarePlugin`（表示`APM`的地面车）
 
 是在`APMFirmwarePlugin`这一层创建`AutoPilotPlugin`，即针对`APM`固件，实际只有一种`AutoPilotPlugin`实现。
 
-### 1.1. `FirmwarePlugin` 实例的创建 ###
+### 1.1. `FirmwarePlugin` 实例的创建
 
 `MAVLink`协议心跳包中，包含了`固件类型`和`飞行器类型`两个字段：
 
@@ -55,7 +54,7 @@ typedef struct __mavlink_heartbeat_t {
 _firmwarePlugin = FirmwarePluginManager::instance()->firmwarePluginForAutopilot(_firmwareType, _vehicleType);
 ```
 
-## 2. FirmwarePlugin 的职责 ##
+## 2. FirmwarePlugin 的职责
 
 获取对应的`AutoPilotPlugin`：
 
@@ -82,7 +81,7 @@ virtual void startMission(Vehicle *vehicle) const;
 QString offlineEditingParamFile(Vehicle *vehicle) const override { return QStringLiteral(":/FirmwarePlugin/APM/Plane.OfflineEditing.params"); }
 ```
 
-## 3. AutoPilotPlugin 的职责 ##
+## 3. AutoPilotPlugin 的职责
 
 `FirmwarePlugin`实现通信协议及逻辑，而`AutoPilotPlugin`实现界面呈现。
 

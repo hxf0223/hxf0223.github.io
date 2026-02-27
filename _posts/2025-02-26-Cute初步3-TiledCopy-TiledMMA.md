@@ -9,24 +9,24 @@ tags: [CUDA]
 math: true
 mermaid: true
 # pin: true
+
 toc:
   sidebar: right
-
 ---
 
-* [tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例
+- [tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例
 
-## 1. Cute TiledCopy ##
+## 1. Cute TiledCopy
 
 层次化的 copy 抽象，将 Copy_Atom 分为几个可组合的层次：
 
-* CopyOperation：NVidia在不同的硬件架构、不同的存储层次之间数据搬运提供了不同的指令，如 ldmatrix 和 LDS 等，还有针对Ampere架构的 cp.async 等。
-* Copy_Traits：和 MMA_Traits 类似，提供了 CopyOperation 类型没有提供，但是其使用者 Copy_Atom 却需要的起到桥梁作用的信息；
-* Copy_Atom：封装了基本的拷贝指令，针对 SRC-DST 的一次搬运；
+- CopyOperation：NVidia在不同的硬件架构、不同的存储层次之间数据搬运提供了不同的指令，如 ldmatrix 和 LDS 等，还有针对Ampere架构的 cp.async 等。
+- Copy_Traits：和 MMA_Traits 类似，提供了 CopyOperation 类型没有提供，但是其使用者 Copy_Atom 却需要的起到桥梁作用的信息；
+- Copy_Atom：封装了基本的拷贝指令，针对 SRC-DST 的一次搬运；
 
 TiledCopy 则根据提供的 LayoutCopy_TV 执行 Copy_Atom，可能需要重复多次的 atom 搬运操作。
 
-### 1.1. Copy_Atom ###
+### 1.1. Copy_Atom
 
 Copy_Atom 封装基本的拷贝指令，所以叫 Atom，即针对 SRC-DST 的一次搬运。适配不同的硬件指令集，比如通用拷贝/向量化 UniversalCopy<...>，cp.async（Ampere架构）。
 
@@ -38,22 +38,22 @@ Copy_Atom 封装基本的拷贝指令，所以叫 Atom，即针对 SRC-DST 的�
 
 部分代码实现文件列表：
 
-* [cute/atom/copy_atom.hpp -- Copy_Atom](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_atom.hpp#L54)
-* [cute/atom/copy_traits.hpp -- copy_unpack](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_traits.hpp#L113)
-* [cute/atom/copy_traits.hpp -- Copy_Traits](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_traits.hpp#L66)
-* [cute/arch/copy_sm90.hpp](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/arch/copy_sm90.hpp)：针对 SM90 架构的 Copy_Traits 实现
+- [cute/atom/copy_atom.hpp -- Copy_Atom](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_atom.hpp#L54)
+- [cute/atom/copy_traits.hpp -- copy_unpack](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_traits.hpp#L113)
+- [cute/atom/copy_traits.hpp -- Copy_Traits](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_traits.hpp#L66)
+- [cute/arch/copy_sm90.hpp](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/arch/copy_sm90.hpp)：针对 SM90 架构的 Copy_Traits 实现
 
-### 1.2. TiledCopy ###
+### 1.2. TiledCopy
 
 TiledCopy 封装 Copy_Atom，根据 LayoutCopy_TV 执行 Copy_Atom，可能需要重复多次的 atom 搬运操作。其 template 参数有：
 
-* LayoutCopy_TV：定义 Thread Layout，以及 Value Layout；
-* ShapeTiler_MN：切分器的 shape；
-* Copy_Atom：定义复制指令；
+- LayoutCopy_TV：定义 Thread Layout，以及 Value Layout；
+- ShapeTiler_MN：切分器的 shape；
+- Copy_Atom：定义复制指令；
 
 ThrCopy 完成实际的生成线程对应的 tensor（软件工程功能划分需要，剥离出来的功能模块）。
 
-### 1.3. make_tiled_copy ###
+### 1.3. make_tiled_copy
 
 提供工厂函数，提供 thr_layout、val_layout、CopyOperation 参数生成 TiledCopy 实例。其中，thr_layout、val_layout 分别定义线程划分 layout 和每个线程拷贝数据的 layout。
 
@@ -61,7 +61,7 @@ ThrCopy 完成实际的生成线程对应的 tensor（软件工程功能划分�
 make_tiled_copy(copy_atom, thr_layout, val_layout)
 ```
 
-### 1.4. copy 执行 ###
+### 1.4. copy 执行
 
 copy 函数是拷贝的实际执行函数，完成线程指令的执行：
 
@@ -70,25 +70,25 @@ void copy(TiledCopy const& copy, Tensor const& src, Tensor& dst);
 void copy_if(TiledCopy const& copy, PrdTensor const& pred, Tensor const& src, Tensor& dst);
 ```
 
-### 1.5. 可视化工具 ###
+### 1.5. 可视化工具
 
-* [cutlass-viz](https://github.com/flashinfer-ai/cutlass-viz)
-* [cute_render](https://github.com/hxf0223/cute_render)
-* [cute-viz](https://github.com/NTT123/cute-viz)
+- [cutlass-viz](https://github.com/flashinfer-ai/cutlass-viz)
+- [cute_render](https://github.com/hxf0223/cute_render)
+- [cute-viz](https://github.com/NTT123/cute-viz)
 
-## 2. MMAAtom 以及 TiledMMA ##
+## 2. MMAAtom 以及 TiledMMA
 
 分块 MMA 抽象，将 MMA_Atom 分为几个可组合的层次：
 
-* MMAOperation：封装 D=A*B + C 的指令封装，以使用不同的数据类型以及 PTX 指令，包括使用 CUDA Core / Tensor Core。如 UniversalFMA<>、SM80_16x8x8_F32F16F16F32_TN。
-* MMA_Traits：和 Copy_Traits 类似，提供了 MMAOperation 类型没有提供，但是其使用者 MMA_Atom 却需要的起到桥梁作用的信息。如数据类型信息，TV layout 信息。
-* MMA_Atom：将 MMAOperation 和 MMA_Traits 结合，并提供 fragment 划分接口。
-* TiledMMA：根据 LayoutTile_TV 切分的线程布局，重复使用 MMA_Atom 完成分块矩阵乘加计算。
-* ThrMMA：完成实际的生成线程对应的 tensor。
+- MMAOperation：封装 D=A\*B + C 的指令封装，以使用不同的数据类型以及 PTX 指令，包括使用 CUDA Core / Tensor Core。如 UniversalFMA<>、SM80_16x8x8_F32F16F16F32_TN。
+- MMA_Traits：和 Copy_Traits 类似，提供了 MMAOperation 类型没有提供，但是其使用者 MMA_Atom 却需要的起到桥梁作用的信息。如数据类型信息，TV layout 信息。
+- MMA_Atom：将 MMAOperation 和 MMA_Traits 结合，并提供 fragment 划分接口。
+- TiledMMA：根据 LayoutTile_TV 切分的线程布局，重复使用 MMA_Atom 完成分块矩阵乘加计算。
+- ThrMMA：完成实际的生成线程对应的 tensor。
 
-### 2.1. MMAOperation ###
+### 2.1. MMAOperation
 
-以**SM80_16x8x8_F32F16F16F32_TN**为例，封装了 SM80 架构下，16x8x8 大小的矩阵乘加指令 **D=A * B + C**，数据类型为 A:F16、B:F16、C:F32、D:F32。A 矩阵 row-major，B 矩阵 column-major。
+以**SM80_16x8x8_F32F16F16F32_TN**为例，封装了 SM80 架构下，16x8x8 大小的矩阵乘加指令 **D=A \* B + C**，数据类型为 A:F16、B:F16、C:F32、D:F32。A 矩阵 row-major，B 矩阵 column-major。
 
 > BLAS 中约定 normal 矩阵为列优先。T(transpose) 表示使用转置矩阵，即 row-major 存储。
 > 下图原图见 Thakkar_BLISRetreat2023.pdf 第 30 页。
@@ -128,12 +128,12 @@ print_latex(tiled_mma);
 */
 ```
 
-* **TODO: SM80_16x8x8_F32F16F16F32_TN 一条指令处理几个数据？**
-* **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
+- **TODO: SM80_16x8x8_F32F16F16F32_TN 一条指令处理几个数据？**
+- **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
 
 CUDA PTX 文档也给出了指令 m16n8k8 的布局信息：[9.7.14.5.7. Matrix Fragments for mma.m16n8k8](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-1688)。
 
-### 2.2. MMA_Traits ###
+### 2.2. MMA_Traits
 
 MMA_Traits 提供数据类型信息，以及 TV layout 信息，比如需要根据 MMAOperation 中定义的指令，补充 A/B/C 的 layout 信息。需要提供的信息如下：
 
@@ -156,7 +156,7 @@ using BLayout =      // (Logical thread id (tid), Logical value id (vid)) -> Fla
 using CLayout =      // (Logical thread id (tid), Logical value id (vid)) -> Flat MN-coord
 ```
 
-### 2.3. MMA_Atom ###
+### 2.3. MMA_Atom
 
 MMA_Atom 封装了 MMAOperation 和 MMA_Traits。
 
@@ -190,9 +190,9 @@ constexpr void call(Tensor<TD, DLayout>& D,
        Tensor<TC, CLayout> const& C) const;
 ```
 
-* TODO: 调用之前进行一个 unpack 操作？
+- TODO: 调用之前进行一个 unpack 操作？
 
-### 2.4. TiledMMA ###
+### 2.4. TiledMMA
 
 TiledMMA 的模版参数表达了 TiledMMA 在 MMA_Atom 上的扩展逻辑：AtomLayoutMNK 表示 M、N、K 方向上分别重复几次 Atom，这种重复会要求更多的执行线程。get_slice、get_thread_slice 函数功过给定线程 id 则获取线程对应到 ThrMMA 结构。
 
@@ -205,7 +205,7 @@ struct TiledMMA : MMA_Atom {
     auto thr_vmnk = thr_layout_vmnk_.get_flat_coord(thr_idx);
     return ThrMMA<TiledMMA, decltype(thr_vmnk)>{*this, thr_vmnk};
   }
-  
+
   auto get_thread_slice(ThrIdx const& thr_idx) const {
     return get_slice(thr_idx);
   }
@@ -230,7 +230,7 @@ struct TiledMMA : MMA_Atom {
 
 > PermutationMNK 的展开讲述见下面章节。
 
-#### 2.4.1. 四层 Layout 以及获取线程 fragment ####
+#### 2.4.1. 四层 Layout 以及获取线程 fragment
 
 根据给定的 MMA_Atom、以及 AtomLayoutMNK 参数，生成一个四层 Layout 结构：
 
@@ -239,10 +239,10 @@ using ThrLayoutVMNK = decltype(tiled_product(AtomThrID{}, AtomLayoutMNK{}));
 ThrLayoutVMNK thr_layout_vmnk_;
 ```
 
-* Mode 0 (V): Threads within a single atom
-* Mode 1 (M): Atom tiles in M dimension
-* Mode 2 (N): Atom tiles in N dimension
-* Mode 3 (K): Atom tiles in K dimension
+- Mode 0 (V): Threads within a single atom
+- Mode 1 (M): Atom tiles in M dimension
+- Mode 2 (N): Atom tiles in N dimension
+- Mode 3 (K): Atom tiles in K dimension
 
 以 thrfrg_A 为例：
 
@@ -264,7 +264,7 @@ constexpr auto thrfrg_A(ATensor&& atensor) const;
 
 即得到的线程切分后的 subtile 布局为 **((ThrV,(ThrM,ThrK)),(FrgV,(RestM,RestK,...)))**。
 
-### 2.5. ThrMMA ###
+### 2.5. ThrMMA
 
 TiledMMA 根据具体的线程 id 分解得到 ThrMMA 结构，提供 partition 函数接口，以及 partition_fragment 函数接口。
 
@@ -284,7 +284,7 @@ struct ThrMMA : TiledMMA {
 }
 ```
 
-### 2.6. Permutation：置换 ###
+### 2.6. Permutation：置换
 
 Permutation 是一个 Tiler，由三个独立的分量组成，分别作用于 M、N、K 维度。它在 TV-layout 分配之前，对逻辑坐标进行重新映射。以 SM80_8x8x4_F64F64F64F64_TN 为例，其 inverse TV-Layout 如下：
 
@@ -351,9 +351,9 @@ print_latex(tiled_mma);
 
 > 如何理解？ This doesn't actually affect the partitioning of input/output tensors because, by convention, only a single atom is ever partitioned out. It will affect the output of `tile_size` and `get_layoutC_MN` and `get_layoutC_TV` etc, which could affect any `TiledCopy` that rely on those partitioning patterns by being built on this `TiledMMA`. Regardless, you'll find the resulting tensors from `partition_C` etc to be exactly the same since the atom partitioning is exactly the same.
 
-#### 2.6.1. 映射重排 ####
+#### 2.6.1. 映射重排
 
-上面的例子中，使用的 PermutationMNK：Tile<_8, _16, _8>{}，**T0**划分的逻辑坐标不连续。使用**scatter permutation**，可以得到连续的逻辑坐标划分，如下代码将对 N-coord 进行重排：
+上面的例子中，使用的 PermutationMNK：Tile<\_8, \_16, \_8>{}，**T0**划分的逻辑坐标不连续。使用**scatter permutation**，可以得到连续的逻辑坐标划分，如下代码将对 N-coord 进行重排：
 
 ```cpp
 TiledMMA tiled_mma =
@@ -368,9 +368,9 @@ print_latex(tiled_mma);
 
 这将对 N 模式重排如下（影响 B、C）：
 
-* 前 2 个元素保持原位
-* 接下来 4 组（每组 2 个元素）被发送到 n 坐标 4
-* 再接下来 2 组（每组 8 个元素）被发送到 n 坐标 2
+- 前 2 个元素保持原位
+- 接下来 4 组（每组 2 个元素）被发送到 n 坐标 4
+- 再接下来 2 组（每组 8 个元素）被发送到 n 坐标 2
 
 对应的 layout 如下：
 
@@ -394,13 +394,13 @@ print_layout(make_layout(shape, stride)), print("\n");
 
 > 映射重排以获得简洁的内存布局，从而提高内存访问效率，避免 bank conflicts。
 
-#### 2.6.2. 参考资料 ####
+#### 2.6.2. 参考资料
 
-* [[QST] What is PermutationMNK in TiledMMA in CUTLASS 3.4 changes?](https://github.com/NVIDIA/cutlass/discussions/1345#discussioncomment-8485429)
-* [02_layout_algebra.md -- Logical Divide 2-D Example](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md#logical-divide-2-d-example)
-* [0t_mma_atom -- TiledMMAs](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0t_mma_atom.html#tiledmmas)
+- [[QST] What is PermutationMNK in TiledMMA in CUTLASS 3.4 changes?](https://github.com/NVIDIA/cutlass/discussions/1345#discussioncomment-8485429)
+- [02_layout_algebra.md -- Logical Divide 2-D Example](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md#logical-divide-2-d-example)
+- [0t_mma_atom -- TiledMMAs](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0t_mma_atom.html#tiledmmas)
 
-### 2.7. UniversalFMA ###
+### 2.7. UniversalFMA
 
 > 可以参考 **Thakkar_BLISRetreat2023.pdf** 第 26 页。
 
@@ -483,28 +483,28 @@ MMA_Atom
   LayoutC_TV: (_1,_1):(_0,_0)
 ```
 
-## A. 资料 ##
+## A. 资料
 
-### A.1. TiledCopy 资料 ###
+### A.1. TiledCopy 资料
 
-* [CuTe Tiled Copy](https://leimao.github.io/blog/CuTe-Tiled-Copy/)：Mao Lei 博客
-* [cute 之 Copy抽象](https://zhuanlan.zhihu.com/p/666232173)：reed 知乎文章
-* [cute/tutorial/tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例代码
+- [CuTe Tiled Copy](https://leimao.github.io/blog/CuTe-Tiled-Copy/)：Mao Lei 博客
+- [cute 之 Copy抽象](https://zhuanlan.zhihu.com/p/666232173)：reed 知乎文章
+- [cute/tutorial/tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例代码
 
-### A.2. MMA Atom 资料 ###
+### A.2. MMA Atom 资料
 
-* [0t_mma_atom.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0t_mma_atom.md)：官方文档，MMA Atom 文档
-* [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：reed 知乎文章
-* [CuTe Tiled MMA](https://leimao.github.io/blog/CuTe-Tiled-MMA/)：Mao Lei 博客，如何配置 TiledMMA
-* [Thakkar_BLISRetreat2023.pdf](https://www.cs.utexas.edu/users/flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
-* [MMA Atoms and TiledMMA](https://deepwiki.com/NVIDIA/cutlass/2.3-mma-atoms-and-tiledmma)
+- [0t_mma_atom.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0t_mma_atom.md)：官方文档，MMA Atom 文档
+- [cute 之 MMA抽象](https://zhuanlan.zhihu.com/p/663092747)：reed 知乎文章
+- [CuTe Tiled MMA](https://leimao.github.io/blog/CuTe-Tiled-MMA/)：Mao Lei 博客，如何配置 TiledMMA
+- [Thakkar_BLISRetreat2023.pdf](https://www.cs.utexas.edu/users/flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)
+- [MMA Atoms and TiledMMA](https://deepwiki.com/NVIDIA/cutlass/2.3-mma-atoms-and-tiledmma)
 
-### A.3. 参考代码 ###
+### A.3. 参考代码
 
-* [sm80_mma_multistage.hpp](https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/gemm/collective/sm80_mma_multistage.hpp)：官方示例代码
-* [sgemm_sm80.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu)：官方示例代码
+- [sm80_mma_multistage.hpp](https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/gemm/collective/sm80_mma_multistage.hpp)：官方示例代码
+- [sgemm_sm80.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu)：官方示例代码
 
-### A.3. 工具 ###
+### A.3. 工具
 
-* [TeXPage](https://www.texpage.com/)
-* [Aspose.TeX viewer](https://products.aspose.app/tex/viewer)
+- [TeXPage](https://www.texpage.com/)
+- [Aspose.TeX viewer](https://products.aspose.app/tex/viewer)

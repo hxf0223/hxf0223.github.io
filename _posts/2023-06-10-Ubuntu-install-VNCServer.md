@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. 安装
@@ -42,7 +41,7 @@ tail -f ~/.vnc/log_name.log
 编辑配置文件 `.vnc/xstartup`
 
 ```bash
-#!/bin/sh                                                                       
+#!/bin/sh
 
 unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
@@ -53,7 +52,7 @@ export XDG_MENU_PREFIX="gnome-flashback-"
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 xsetroot -solid grey
 vncconfig -iconic &
-#gnome-terminal &    
-#nautilus &   
+#gnome-terminal &
+#nautilus &
 gnome-session --session=gnome-flashback-metacity --disable-acceleration-check &
 ```

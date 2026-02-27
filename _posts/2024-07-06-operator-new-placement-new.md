@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. new 操作符(new operator)
@@ -41,14 +40,14 @@ void *rawMemory = operator new(sizeof(string));
 ```cpp
 #include <cstddef>
 #include <iostream>
- 
+
 // class-specific allocation functions
 struct X {
   static void* operator new(std::size_t count) {
     std::cout << "custom new for size " << count << '\n';
     return ::operator new(count);
   }
- 
+
   static void* operator new[](std::size_t count) {
     std::cout << "custom new[] for size " << count << '\n';
     return ::operator new[](count);
@@ -86,4 +85,3 @@ tptr->~T(); // 显式调用析构函数
 - [operator new, operator new[]](https://en.cppreference.com/w/cpp/memory/new/operator_new)
 - [operator delete, operator delete[]](https://en.cppreference.com/w/cpp/memory/new/operator_delete)
 - [new expression -- Placement new](https://en.cppreference.com/w/cpp/language/new)
-

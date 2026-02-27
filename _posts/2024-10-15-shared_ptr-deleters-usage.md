@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. 使用函数 ##
+## 1. 使用函数
 
 ```c++
 #include <iostream>
@@ -28,7 +27,7 @@ void deleter(Sample* ptr) {
 std::shared_ptr<Sample> sp(new Sample, deleter);
 ```
 
-## 2. 使用仿函数 ##
+## 2. 使用仿函数
 
 ```c++
 #include <iostream>
@@ -44,7 +43,7 @@ struct Deleter {
 std::shared_ptr<Sample> sp(new Sample, Deleter{});
 ```
 
-## 3. 使用 lambda 表达式 ##
+## 3. 使用 lambda 表达式
 
 ```c++
 #include <iostream>
@@ -56,7 +55,7 @@ std::shared_ptr<Sample> sp(new Sample, [](Sample* ptr) {
 });
 ```
 
-## 4. 使用 std::default_delete ##
+## 4. 使用 std::default_delete
 
 ```c++
 #include <iostream>
@@ -64,4 +63,3 @@ std::shared_ptr<Sample> sp(new Sample, [](Sample* ptr) {
 
 std::shared_ptr<Sample> sp(new Sample, std::default_delete<Sample>{});
 ```
-

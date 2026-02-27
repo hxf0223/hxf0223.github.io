@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 例如编写`CMake`查找模块，名称为 [Findgperftools.cmake](https://github.com/ceph/ceph/blob/main/cmake/modules/Findgperftools.cmake)，内容如下：
@@ -115,4 +114,3 @@ endif()
 
 - [使用find_package引入外部依赖包](https://brightxiaohan.github.io/CMakeTutorial/FindPackage/)
 - [CMakeLists.txt](https://github.com/heavyai/heavydb/blob/72c90bc290b79dd30240da41c103a00720f6b050/CMakeLists.txt#L968)
-

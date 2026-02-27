@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. 安装 gperftools
@@ -84,9 +83,8 @@ gprof 不支持多线程应用，多线程下只能采集主线程性能数据�
 ## 参考
 
 1. [gperftools](https://github.com/gperftools/gperftools)
-2. [gperftools文档 --  CPU profiler](https://gperftools.github.io/gperftools/cpuprofile.html)
+2. [gperftools文档 -- CPU profiler](https://gperftools.github.io/gperftools/cpuprofile.html)
 3. [使用 gperftools 分析程序性能](https://luyuhuang.tech/2022/04/10/gperftools.html)
 4. [Profiler -- 链接选项](https://github.com/cat538/cat538.github.io/blob/6689abc6d7785a8be3d7a71a3cd76eea207e1d72/docs/cpp/profiler.md)
 5. [Linux下使用gperftools](https://blog.wangluyuan.cc/2019/03/23/Linux%E4%B8%8B%E4%BD%BF%E7%94%A8gperftools/)
 6. [gperftools 的安装与使用](https://xiang1120.github.io/2023/08/19/gperftools%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/)
-

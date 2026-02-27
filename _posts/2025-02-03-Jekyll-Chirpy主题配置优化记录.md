@@ -7,7 +7,6 @@ tags: [jekyll, 网站]
 description: 记录 Jekyll Chirpy 主题从部署错误修复到功能优化的完整过程，包括 GitHub Actions 配置、数学公式渲染、目录展开等改进。
 toc:
   sidebar: right
-
 ---
 
 ## 概述
@@ -44,7 +43,7 @@ Error: Can't find stylesheet to import.
 - name: Setup Node.js
   uses: actions/setup-node@v4
   with:
-    node-version: '20'
+    node-version: "20"
 
 - name: Install dependencies
   run: npm install
@@ -61,7 +60,7 @@ Error: Can't find stylesheet to import.
 
 ```yaml
 - name: Install dependencies
-  run: npm install  # 改为 npm install
+  run: npm install # 改为 npm install
 ```
 
 **提交记录**：`251cdcb - fix: use npm install instead of npm ci`
@@ -105,12 +104,7 @@ katex: https://cdn.jsdelivr.net
 
 ```html
 {% raw %}{% if page.math %}
-  <link
-    rel="stylesheet"
-    href="{{ site.data.origin[origin].katex.css | relative_url }}"
-    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
-    crossorigin="anonymous"
-  />
+<link rel="stylesheet" href="{{ site.data.origin[origin].katex.css | relative_url }}" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
 {% endif %}{% endraw %}
 ```
 
@@ -120,20 +114,10 @@ katex: https://cdn.jsdelivr.net
 
 ```html
 {% raw %}{% if page.math %}
-  <!-- KaTeX -->
-  <script
-    defer
-    src="{{ site.data.origin[origin].katex.js | relative_url }}"
-    integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"
-    crossorigin="anonymous"
-  ></script>
-  <script
-    defer
-    src="{{ site.data.origin[origin].katex['auto-render'] | relative_url }}"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"
-    crossorigin="anonymous"
-  ></script>
-  <script defer src="{{ '/assets/js/data/katex.js' | relative_url }}"></script>
+<!-- KaTeX -->
+<script defer src="{{ site.data.origin[origin].katex.js | relative_url }}" integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY" crossorigin="anonymous"></script>
+<script defer src="{{ site.data.origin[origin].katex['auto-render'] | relative_url }}" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
+<script defer src="{{ '/assets/js/data/katex.js' | relative_url }}"></script>
 {% endif %}{% endraw %}
 ```
 
@@ -142,37 +126,35 @@ katex: https://cdn.jsdelivr.net
 新建 `assets/js/data/katex.js` 处理 kramdown 生成的 MathJax 格式标签：
 
 ```javascript
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
   // Convert kramdown's MathJax format to KaTeX format
   document.querySelectorAll("script[type='math/tex']").forEach(function (el) {
     const texText = el.textContent;
-    const span = document.createElement('span');
+    const span = document.createElement("span");
     katex.render(texText, span, {
       throwOnError: false,
-      displayMode: false
+      displayMode: false,
     });
     el.parentNode.replaceChild(span, el);
   });
 
-  document
-    .querySelectorAll("script[type='math/tex; mode=display']")
-    .forEach(function (el) {
-      const texText = el.textContent;
-      const div = document.createElement('div');
-      katex.render(texText, div, {
-        throwOnError: false,
-        displayMode: true
-      });
-      el.parentNode.replaceChild(div, el);
+  document.querySelectorAll("script[type='math/tex; mode=display']").forEach(function (el) {
+    const texText = el.textContent;
+    const div = document.createElement("div");
+    katex.render(texText, div, {
+      throwOnError: false,
+      displayMode: true,
     });
+    el.parentNode.replaceChild(div, el);
+  });
 
   // Auto-render for regular KaTeX delimiters
   renderMathInElement(document.body, {
     delimiters: [
-      { left: '$$', right: '$$', display: true },
-      { left: '$', right: '$', display: false }
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false },
     ],
-    throwOnError: false
+    throwOnError: false,
   });
 });
 ```
@@ -184,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
 ```yaml
 defaults:
   - scope:
-      path: ''
+      path: ""
       type: posts
     values:
       math: true
@@ -230,16 +212,16 @@ static options = {
 
 ```javascript
 // 找到 tocbot 配置部分，添加 collapseDepth:6
-P(Mn,"options",{
-  tocSelector:"#toc",
-  contentSelector:".content",
-  ignoreSelector:"[data-toc-skip]",
-  headingSelector:"h2, h3, h4",
-  orderedList:!1,
-  scrollSmooth:!1,
-  collapseDepth:6,  // 添加此行
-  headingsOffset:32
-})
+P(Mn, "options", {
+  tocSelector: "#toc",
+  contentSelector: ".content",
+  ignoreSelector: "[data-toc-skip]",
+  headingSelector: "h2, h3, h4",
+  orderedList: !1,
+  scrollSmooth: !1,
+  collapseDepth: 6, // 添加此行
+  headingsOffset: 32,
+});
 ```
 
 **提交记录**：`812ebd7 - enable unroll all sub-directories in dir list`
@@ -323,13 +305,10 @@ jektex:
 修改 `_includes/head.html`，根据引擎类型加载 CSS：
 
 ```html
-{% raw %}{% if page.math %}
-  {% assign math_engine = site.math.engine | default: 'mathjax' %}
-  {% if math_engine == 'katex' %}
-    <!-- KaTeX CSS for server-side rendering -->
-    <link rel="stylesheet" href="{{ site.data.origin[type].katex.css | relative_url }}">
-  {% endif %}
-{% endif %}{% endraw %}
+{% raw %}{% if page.math %} {% assign math_engine = site.math.engine | default: 'mathjax' %} {% if math_engine == 'katex' %}
+<!-- KaTeX CSS for server-side rendering -->
+<link rel="stylesheet" href="{{ site.data.origin[type].katex.css | relative_url }}" />
+{% endif %} {% endif %}{% endraw %}
 ```
 
 #### 5. 条件加载 JavaScript
@@ -337,16 +316,12 @@ jektex:
 修改 `_includes/js-selector.html`，只在使用 MathJax 时加载 JS：
 
 ```html
-{% raw %}{% if page.math %}
-  {% assign math_engine = site.math.engine | default: 'mathjax' %}
-  {% if math_engine == 'mathjax' %}
-    <!-- MathJax -->
-    <script src="{{ '/assets/js/data/mathjax.js' | relative_url }}"></script>
-    <script async src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="{{ site.data.origin[type].mathjax.js | relative_url }}"></script>
-  {% endif %}
-  {%- comment -%} KaTeX is rendered server-side via jektex plugin, only CSS needed {%- endcomment -%}
-{% endif %}{% endraw %}
+{% raw %}{% if page.math %} {% assign math_engine = site.math.engine | default: 'mathjax' %} {% if math_engine == 'mathjax' %}
+<!-- MathJax -->
+<script src="{{ '/assets/js/data/mathjax.js' | relative_url }}"></script>
+<script async src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="{{ site.data.origin[type].mathjax.js | relative_url }}"></script>
+{% endif %} {%- comment -%} KaTeX is rendered server-side via jektex plugin, only CSS needed {%- endcomment -%} {% endif %}{% endraw %}
 ```
 
 #### 6. 添加 KaTeX 样式
@@ -388,7 +363,7 @@ math:
   engine: katex
 
 jektex:
-  ignore: ["*.xml"]  # 处理 markdown 文件，忽略 feed.xml
+  ignore: ["*.xml"] # 处理 markdown 文件，忽略 feed.xml
 ```
 
 然后运行：

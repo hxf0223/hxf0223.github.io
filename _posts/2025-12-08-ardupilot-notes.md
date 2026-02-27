@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. ArduPilot SITL 编译 ##
+## 1. ArduPilot SITL 编译
 
 ```bash
 # 编译及开发环境准备
@@ -25,7 +24,7 @@ toc:
 # 生成 build/sitl/bin/arduplane
 ```
 
-### 1.1. 初步运行 ###
+### 1.1. 初步运行
 
 使用自定义`python`脚本运行 SITL[github -- ap-swarm-launcher](https://github.com/hxf0223/ap-swarm-launcher)：
 
@@ -36,6 +35,6 @@ uv run ap-sitl-swarm --model plane -n 2 --data-dir ~/tmp/arduplane --no-multicas
 
 更多资料：
 
-* [Using SITL with AirSim](https://ardupilot.org/dev/docs/sitl-with-airsim.html)
-* [search: ardupilot airsim](https://github.com/search?q=ardupilot+airsim&type=repositories)
-* [Ardupilot -- Simulation](https://ardupilot.org/dev/docs/simulation-2.html)
+- [Using SITL with AirSim](https://ardupilot.org/dev/docs/sitl-with-airsim.html)
+- [search: ardupilot airsim](https://github.com/search?q=ardupilot+airsim&type=repositories)
+- [Ardupilot -- Simulation](https://ardupilot.org/dev/docs/simulation-2.html)

@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 复制自：[github笔记 -- GHScan大神 -- Memory_Model](https://github.com/GHScan/TechNotes/blob/master/2017/Memory_Model.md)
@@ -31,10 +30,10 @@ toc:
 
 ### 本文将回答的问题
 
-- x86为什么允许Store-Load乱序，而不是其他？*见TSO的优点*
-- std::memory_order_seq_cst非常慢、会严重损害性能？*见WO*
-- std::memory_order_acquire和std::memory_order_consume的区别？后者换作std::memory_order_relaxed会怎样？*见Dependent Loads*
-- std::memory_order_acq_rel和std::memory_order_seq_cst的区别？*见Store Atomicity和IRIW*
+- x86为什么允许Store-Load乱序，而不是其他？_见TSO的优点_
+- std::memory*order_seq_cst非常慢、会严重损害性能？*见WO\_
+- std::memory*order_acquire和std::memory_order_consume的区别？后者换作std::memory_order_relaxed会怎样？*见Dependent Loads\_
+- std::memory*order_acq_rel和std::memory_order_seq_cst的区别？*见Store Atomicity和IRIW\_
 
 ## 基础知识
 
@@ -47,9 +46,8 @@ SMP是通过一个共享的地址空间进行通信和协调的多处理器系�
 
 ### 现代处理器中的关键技术
 
-$$^{[2]}$$
-    - `流水线(Pipeline)`：每个指令的执行需要多个步骤，线代CPU通过流水线的方式允许同时执行多个指令，从而提高功能单元的利用率和系统总吞吐。支持流水线的CPU的`IPC(Instructions Per Cycle)` 可以达到1，哪怕每条指令实际上需要多个时钟周期才能完成。
-  
+$$^{[2]}$$ - `流水线(Pipeline)`：每个指令的执行需要多个步骤，线代CPU通过流水线的方式允许同时执行多个指令，从而提高功能单元的利用率和系统总吞吐。支持流水线的CPU的`IPC(Instructions Per Cycle)` 可以达到1，哪怕每条指令实际上需要多个时钟周期才能完成。
+
     - `动态分支预测(Dynamic Branch Prediction)`：带流水线的CPU需要每个时钟发射1条指令，但只有分支指令执行结束后才能确定下条指令是什么，这就导致`流水线停顿(Pipeline Stall)`。为避免分支指令导致的流水线停顿，一种对策是分支预测，即在发射分支指令之后，马上预测下条指令的地址并发射，如果分支指令执行结束后发现预测错误，则撤销之前的操作取正确的指令重新发射。这里预测失败导致的撤销开销，叫`分支预测惩罚(Mispredict Penalty)`，由于现代系统的分支预测正确率很高，摊还后的惩罚开销往往可以接受。动态分支预测是基于分支指令历史进行的，现代CPU的预测正确率在大部分场合可以高达95%以上；相对的，静态分支预测是基于固定分支选择策略、源码中的Hint，或根据编译器的得到的Profile信息来完成的。
 
     - `动态多发射(超标量，Superscalar)`：为更好的利用富裕的功能单元，CPU希望IPC能够超过1，这就要求每个时钟发射多条指令。支持超标量的处理器，需要处理同时发射的多条指令间的数据依赖关系，这个复杂性限制了动态发射窗口的大小。与之相对的是静态多发射，即由编译器或程序员往一个`发射包(Issue Packet)`中填充多条无关指令，然后同时发射和执行，典型的例子是`超长指令字(Very Long Instruction Word)`体系结构。
@@ -67,20 +65,17 @@ $$^{[2]}$$
 
 $$^{[2,4]}$$
 
-多处理器系统中(这里讨论的处理器，也包括DMA设备)，为减少存储器访问延迟，会为每个处理器添加本地的Cache(比如Core i7-6700K每个Core各有32KB的`Instruction Cache`和32KB的`Data Cache`)，引入本地Cache会导致数据多副本问题：某处理器更新了存储器中的一个块，同一个块可能在其他处理器的Cache中还有过期副本。多处理器需要专门的硬件来实现Cache Coherence Protocol。*本文仅仅讨论`Write-Back` & `Write-Invalide` & `Snooping-Based`的Cache，对`Write-Through`/`Write-Broadcast`/`Directory-Based`的Cache的讨论类似*
+多处理器系统中(这里讨论的处理器，也包括DMA设备)，为减少存储器访问延迟，会为每个处理器添加本地的Cache(比如Core i7-6700K每个Core各有32KB的`Instruction Cache`和32KB的`Data Cache`)，引入本地Cache会导致数据多副本问题：某处理器更新了存储器中的一个块，同一个块可能在其他处理器的Cache中还有过期副本。多处理器需要专门的硬件来实现Cache Coherence Protocol。_本文仅仅讨论`Write-Back` & `Write-Invalide` & `Snooping-Based`的Cache，对`Write-Through`/`Write-Broadcast`/`Directory-Based`的Cache的讨论类似_
 
 #### Cache Coherence Protocol
 
 - **MSI协议**：每个Cache Line上有几个标记位用来标志其处于Modified/Shared/Invalid中的某个状态，当处理器读写该Cache Line时，会根据其状态进行状态迁移并发送相应的协议消息以保持多副本数据的一致性
-  
-  - *Shared状态*：处理器读操作引起的Read Miss会令该Cache Line以Shared状态从存储器读入本地Cache中；如果之前该Cache Line以Modified状态被某处理器持有，那监听到这个Read Miss的处理器用它持有的该Cache Line最新的副本响应源处理器，并更新存储器
-  
-  - *Modified状态*：处理器写操作引起的Write Miss会令Cache Line以Modified状态从存储器读入本地Cache中；如果之前该Cache Line被一个或多个处理器以Shared状态持有，则写操作处理器将向他们发送`Invalidate Message`令它们持有的Cache Line失效；如果之前该Cache Line被某处理器以Modified状态持有，则写操作处理器向它发送`Read-Invalidate Message`，目标处理器收到消息后将其持有的Cache Line标记为Invalid并回应以最新的数据副本同时更新存储器
-  
-  - *Invalid状态*：收到Invalidate或Read-Invalidate Message的处理器会将对应的Cache Line置为Invalid状态
+  - _Shared状态_：处理器读操作引起的Read Miss会令该Cache Line以Shared状态从存储器读入本地Cache中；如果之前该Cache Line以Modified状态被某处理器持有，那监听到这个Read Miss的处理器用它持有的该Cache Line最新的副本响应源处理器，并更新存储器
+  - _Modified状态_：处理器写操作引起的Write Miss会令Cache Line以Modified状态从存储器读入本地Cache中；如果之前该Cache Line被一个或多个处理器以Shared状态持有，则写操作处理器将向他们发送`Invalidate Message`令它们持有的Cache Line失效；如果之前该Cache Line被某处理器以Modified状态持有，则写操作处理器向它发送`Read-Invalidate Message`，目标处理器收到消息后将其持有的Cache Line标记为Invalid并回应以最新的数据副本同时更新存储器
+  - _Invalid状态_：收到Invalidate或Read-Invalidate Message的处理器会将对应的Cache Line置为Invalid状态
 
 - **MESI协议**：在MSI协议的基础上，从Shared状态中分离出`Exclusive状态`来避免独占Cache Line的处理器第一次写Cache Line时发出的Coherence Message，从而减少总线流量
-  
+
   > 即，相比Shared到Modified状态的迁移，第一次写独占Cache Line时进行的是Exclusive到Modified的迁移，不必发送Invalidate Message了
 
 #### Write Buffer 与 Invalidate Queue
@@ -114,9 +109,9 @@ $$^{[2,4]}$$
 
   ```c++
   a = g;          //----------->    load %r1, 0($mem1)
-  b += a;         //  rewrite       add %r2, %r2, %r1 
-  a = g;          //                 
-  c += a;         //                add %r3, %r3, %r1 
+  b += a;         //  rewrite       add %r2, %r2, %r1
+  a = g;          //
+  c += a;         //                add %r3, %r3, %r1
   ```
 
 - **指令调度(Instruction Scheduling)**：下例重排的后一条指令不必等待前一条的结果减少了停顿
@@ -124,10 +119,10 @@ $$^{[2,4]}$$
   ```asm
   load %r0, 0($mem0)  //                load %r0, 0($mem0)
   mul %r1, %r1, %r0   //----------->    load %r2, 0($mem2)
-  store 0($mem1), %r1 //  rewrite       mul %r1, %r1, %r0 
-  load %r2, 0($mem2)  //                mul %r3, %r3, %r2 
-  mul %r3, %r3, %r2   //                store 0($mem1), %r1 
-  store 0($mem3), %r3 //                store 0($mem3), %r3 
+  store 0($mem1), %r1 //  rewrite       mul %r1, %r1, %r0
+  load %r2, 0($mem2)  //                mul %r3, %r3, %r2
+  mul %r3, %r3, %r2   //                store 0($mem1), %r1
+  store 0($mem3), %r3 //                store 0($mem3), %r3
   ```
 
 ## Memory Model
@@ -209,7 +204,7 @@ $$^{[3]}$$
 { flag0 == 0, flag1 == 0 }
 //  thread 0                thread 1                thread 2
 //-----------------------------------------------------------------
-    store 0($flag0), $1      
+    store 0($flag0), $1
                             loop:
                             load %r0, 0($flag0)
                             beq %r0, $0, loop
@@ -231,7 +226,7 @@ $$^{[3]}$$
 ```asm
 //  thread 0            thread 1            thread 2             thread 3
 //---------------------------------------------------------------------------------
-    store 0($data1), 1  store 0($data2), 1       
+    store 0($data1), 1  store 0($data2), 1
                                             load %r1, 0($data1)  load %r3, 0($data2)
                                             BARRIER              BARRIER
                                             load %r2, 0($data2)  load %r4, 0($data1)
@@ -271,13 +266,13 @@ $$^{[4]}$$
 
 #### Memory Ordering的实现
 
-- **Load-Load Order**：当前一条Load指令因为操作数未就绪*(RAW Hazard)*或Cache Miss而必须等待时，乱序执行的CPU可能先执行后一条Load指令以掩盖停顿。*如果Memory Model不允许这种乱序或程序员在两次Load之间插入了一条Barrier指令，那第一条Load执行完毕后，如果发现有Invalidate Message令后面要Load的Cache Line失效，就应该通过清空ROB撤销乱序执行的Load和后续指令然后重新执行*
+- **Load-Load Order**：当前一条Load指令因为操作数未就绪*(RAW Hazard)*或Cache Miss而必须等待时，乱序执行的CPU可能先执行后一条Load指令以掩盖停顿。_如果Memory Model不允许这种乱序或程序员在两次Load之间插入了一条Barrier指令，那第一条Load执行完毕后，如果发现有Invalidate Message令后面要Load的Cache Line失效，就应该通过清空ROB撤销乱序执行的Load和后续指令然后重新执行_
 
-- **Load-Store Order**：同上，当前一条Load因为各种原因等待时，后一条Store指令可能被先执行。*如果Memory Model或Barrier指令限制这种乱序，在推断执行的CPU中往往不用做任何事，因为Store指令是在提交阶段才更新存储器*
+- **Load-Store Order**：同上，当前一条Load因为各种原因等待时，后一条Store指令可能被先执行。_如果Memory Model或Barrier指令限制这种乱序，在推断执行的CPU中往往不用做任何事，因为Store指令是在提交阶段才更新存储器_
 
-- **Store-Load Order**：当CPU和Cache间有写缓冲(Write Buffer)时，写操作会被放入写缓冲而不是更新Cache，这可能导致Load指令执行过后，写操作仍然对其他处理器不可见。*如果Memory Model或Barrier指令限制这种乱序，这要求在执行读操作之前，先Flush整个写缓冲，令结果写到Cache中，这里的开销非常大。由于开销非常大，现代处理器都允许这种乱序，且只有Full Barrier限制这种乱序*
+- **Store-Load Order**：当CPU和Cache间有写缓冲(Write Buffer)时，写操作会被放入写缓冲而不是更新Cache，这可能导致Load指令执行过后，写操作仍然对其他处理器不可见。_如果Memory Model或Barrier指令限制这种乱序，这要求在执行读操作之前，先Flush整个写缓冲，令结果写到Cache中，这里的开销非常大。由于开销非常大，现代处理器都允许这种乱序，且只有Full Barrier限制这种乱序_
 
-- **Store-Store Order**：当CPU和Cache间有一个Non-FIFO或Coalescing的写缓冲时，如果前一个写操作导致Cache Miss或和其他写操作合并(因为写同一条Cache Line)，后一条结果可能先写入Cache。*如果Memory Model或Barrier指令限制这种乱序，则要求采用FIFO的写缓冲，或在遇到Barrier指令时Flush整个写缓冲*
+- **Store-Store Order**：当CPU和Cache间有一个Non-FIFO或Coalescing的写缓冲时，如果前一个写操作导致Cache Miss或和其他写操作合并(因为写同一条Cache Line)，后一条结果可能先写入Cache。_如果Memory Model或Barrier指令限制这种乱序，则要求采用FIFO的写缓冲，或在遇到Barrier指令时Flush整个写缓冲_
 
 - **Dependent Loads Order**$$^{[4,5]}$$：即使处理器在语句"obj->field = new_value"和"g_obj = obj;"间插入Barrier指令，强制Flush写缓冲区，另一个处理器的相关读操作"obj = g_obj; value = obj->field"在取得新对象指针的同时仍然可能看到旧的字段值，因为新的字段值还在处理器的Invalidate Queue里面，要稍后才能处理。
 
@@ -325,7 +320,7 @@ Cache Coherence是多处理器的本地Cache导致多个数据副本在Cache和�
 
 当两个线程同时访问一个地址，其中至少一个是写操作时，我们说发生了`Data-Race`。有一类良好组织`Data-Race Free`程序，运行在`Sequential Consistency`和`Relaxed Consistency`的Memory Model上都能得到一样的结果，这类程序的行为可以仅仅通过程序顺序(Programm Order)去推断，我们说这类程序叫`SC for DRF programs(Sequential Consistency for Data-Race Free programs)`。
 
-*也就是说，SC for DRF的程序能用Sequential Consistency的Memory Model去推断正确性，却同时具备Relaxed Memory Model的性能(这往往意味着程序不依赖Atomic Store)*
+_也就是说，SC for DRF的程序能用Sequential Consistency的Memory Model去推断正确性，却同时具备Relaxed Memory Model的性能(这往往意味着程序不依赖Atomic Store)_
 
 #### 基于存储器分类的Memory Model
 
@@ -333,15 +328,15 @@ Cache Coherence是多处理器的本地Cache导致多个数据副本在Cache和�
 
 - **私有数据(Private Data)**：简称p_data，只被固定线程访问的数据。没有Data-Race、不需要Cache Coherence；其上的操作可以进行任何乱序，包括跨越s_data和sync_var的读写。
 
-  *p_data对应的Cache Line一般常驻在特定处理器的本地Cache中，除非操作系统为负载均衡执行Migration。编译器能够识别局部变量但却无法很好识别thread local的堆数据；部分处理器如ARM允许将存储器标记为非共享的$$^{[7]}$$，从而禁用Cache Coherence并执行各种优化*
+  _p_data对应的Cache Line一般常驻在特定处理器的本地Cache中，除非操作系统为负载均衡执行Migration。编译器能够识别局部变量但却无法很好识别thread local的堆数据；部分处理器如ARM允许将存储器标记为非共享的$$^{[7]}$$，从而禁用Cache Coherence并执行各种优化_
 
 - **共享数据(Shared Data)**：简称s_data，允许多个线程访问，但任意时刻只被一个Owner持有。没有Data-Race，需要Cache Coherence；其上的读写可以进行任何乱序，但不能跨过sync_var。
 
-  *只读的s_data会存在于多个处理器的本地Cache中，读写的s_data会随着Onwer的变化在多个处理器的本地Cache中迁移。在多处理器和高级语言中默认的存储器就是s_data*
+  _只读的s_data会存在于多个处理器的本地Cache中，读写的s_data会随着Onwer的变化在多个处理器的本地Cache中迁移。在多处理器和高级语言中默认的存储器就是s_data_
 
 - **同步变量(Synchronization Variable)**：简称sync_var，允许多个线程同时访问。有Data-Race，需要Cache Coherence；sync_var的读写之间不能进行乱序。
 
-  *sync_var会被同时用于读写，在`高争用(High Contention)`的情况下对应的Cache Line会频繁出现在多个本地Cache中，然后因为特定处理器的写操作而失效。编译器通过高级语言提供的atomic或volatile声明识别出sync_var，进而生成Barrier指令来限制sync_var之间或sync_var与s_data之间的乱序，ARM也提供了Strongly-Ordered的声明以禁用sync_var之间的乱序*
+  _sync_var会被同时用于读写，在`高争用(High Contention)`的情况下对应的Cache Line会频繁出现在多个本地Cache中，然后因为特定处理器的写操作而失效。编译器通过高级语言提供的atomic或volatile声明识别出sync_var，进而生成Barrier指令来限制sync_var之间或sync_var与s_data之间的乱序，ARM也提供了Strongly-Ordered的声明以禁用sync_var之间的乱序_
 
 **编程模式**：
 
@@ -537,7 +532,7 @@ $$^{[13]}$$
 
 C++中的volatile/std::atomic有以下用法，分别对应不同的Memory Model，编译器可以沿用实现这些Memory Model时的手段支持这些用法：
 
-- **volatile**：只应用于单线程，等同Linux Kernel中的编译器Barrier。*(MSVC中为向后兼容赋予了volatile等同Java的volatile的职责，即读是Acquire写是Release)*
+- **volatile**：只应用于单线程，等同Linux Kernel中的编译器Barrier。_(MSVC中为向后兼容赋予了volatile等同Java的volatile的职责，即读是Acquire写是Release)_
 
 - **std::memory_order_relaxed + Read-Modify-Write**：原子操作，保持变量自身读写的相对顺序
 
@@ -779,4 +774,3 @@ struct Singleton2 {
 - \[20\] [Memory Consistency and Event Ordering in Scalable Shared-Memory](https://eecs.vanderbilt.edu/courses/eece343/papers/p15-gharachorloo.pdf)
 - \[21\] [x86-TSO: A Rigorous and Usable Programmer’s Model for x86 Multiprocessors](https://www.cl.cam.ac.uk/~pes20/weakmemory/cacm.pdf)
 - \[22\] [Time, Clocks and the Ordering of Events in a Distributed System](https://research.microsoft.com/en-us/um/people/lamport/pubs/time-clocks.pdf)
-

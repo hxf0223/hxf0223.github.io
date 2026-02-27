@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## Demo code
@@ -77,4 +76,4 @@ int main()
 
 ## References
 
-* [几何体数据结构学习（6）BVH树](https://zhuanlan.zhihu.com/p/430469154)
+- [几何体数据结构学习（6）BVH树](https://zhuanlan.zhihu.com/p/430469154)

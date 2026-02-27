@@ -9,9 +9,9 @@ tags: [NVIDIA, Jetson, Orin]
 math: true
 mermaid: true
 # pin: true
+
 toc:
   sidebar: right
-
 ---
 
 使用 Nvidia Jetson SDK Manager 安装 Jetson Orin AGX 系列设备的系统镜像。截止目前最新版为 6.2.2，系统镜像为 Ubuntu 22.04（SDK Manager 7.2 将升级到 Ubuntu 24.03）。安装完成之后，安装如下软件包：
@@ -38,8 +38,8 @@ sudo apt install nvidia-jetpack
  # python jetsonInfo.py
 ```
 
-## 参考资料 ##
+## 参考资料
 
-* [NVIDIA Jetson Linux 36.4](https://developer.nvidia.cn/embedded/jetson-linux-r3640)：官方资料页面，包含组件以及驱动源码下载列表
-* [Nvidia Jetson AGX Orin开发板配置与使用](https://zhaoxuhui.top/blog/2024/03/27/notes-on-nvidia-jetson-agx-orin-installation.html)：安装更多软件包，比如 SLAM，深度学习框架等。
-* [Nvidia Jetson AGX Orin系统刷写](https://yanjingang.com/blog/?p=9092)
+- [NVIDIA Jetson Linux 36.4](https://developer.nvidia.cn/embedded/jetson-linux-r3640)：官方资料页面，包含组件以及驱动源码下载列表
+- [Nvidia Jetson AGX Orin开发板配置与使用](https://zhaoxuhui.top/blog/2024/03/27/notes-on-nvidia-jetson-agx-orin-installation.html)：安装更多软件包，比如 SLAM，深度学习框架等。
+- [Nvidia Jetson AGX Orin系统刷写](https://yanjingang.com/blog/?p=9092)

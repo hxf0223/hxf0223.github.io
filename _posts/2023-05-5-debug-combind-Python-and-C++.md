@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 vscode启动python与C++混合调试时，gdb需要管理员权限。

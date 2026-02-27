@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## Shell 特殊参数解释
@@ -68,7 +67,7 @@ echo "第二个参数$2"
 
 ```bash
 $ ./test.sh 1 2
- 
+
 #shell中将会输出：
 脚本./test.sh
 第一个参数1

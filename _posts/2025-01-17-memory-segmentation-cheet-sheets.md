@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ![Memory Segmentation Cheet Sheets](/assets/images/cpp/20150117/memory-segmentation-cheat-sheet.png)

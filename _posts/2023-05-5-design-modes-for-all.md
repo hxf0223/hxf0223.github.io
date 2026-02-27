@@ -11,17 +11,16 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 - [写给大家看的设计模式](https://juejin.cn/post/6844903491601694727)
 - [图解TensorFlow源码](https://www.cnblogs.com/yao62995/p/5773578.html)
 
-## 1. 抽象工厂模式 ##
+## 1. 抽象工厂模式
 
 1. 被创建抽象类 Iuser；
 2. 抽象工厂类 IFactory，定义创建接口 `IUser* createUser()`。
-当需要新增被创建类型时，需要新增被创建类型及对应工厂类型；
+   当需要新增被创建类型时，需要新增被创建类型及对应工厂类型；
 
 ```cpp
 // 代表数据库中User表中的一条记录
@@ -113,7 +112,7 @@ TEST_CASE("design mode: abstract factory") {
 }
 ```
 
-### 1.1 简化的抽象工厂模式 ###
+### 1.1 简化的抽象工厂模式
 
 ```cpp
 struct HotDrinkFactory {
@@ -140,11 +139,11 @@ public:
 };
 ```
 
-## 2. Builder模式 ##
+## 2. Builder模式
 
 ```cpp
 class PersonAddressBuilder : public PersonBuilderBase {
-	typedef PersonAddressBuilder self; 
+	typedef PersonAddressBuilder self;
 public:
 	explicit PersonAddressBuilder(Person& person) : PersonBuilderBase{ person } {}
 	self& at(std::string street_address) {
@@ -166,13 +165,13 @@ Person p = Person::create()
           .earning(10e6);
 ```
 
-### 3. 享元模式 (flyweight) ###
+### 3. 享元模式 (flyweight)
 
 享元(flyweight)模式，是一种结构型设计模式，用于减少内存使用。典型由三个部分组成：
 
-* flyweight -- 享元：存储共享的状态，不随时间变化的存储对象，可以被共享。
-* 享元工厂：创建并管理享元。
-* 客户端：使用享元工厂获取享元并操作。
+- flyweight -- 享元：存储共享的状态，不随时间变化的存储对象，可以被共享。
+- 享元工厂：创建并管理享元。
+- 客户端：使用享元工厂获取享元并操作。
 
 ```cpp
 #include <iostream>
@@ -192,10 +191,10 @@ public:
   ConcreteCharacter(char symbol) : symbol_(symbol) {}
 
   void display(int width, int height, int pointSize) override {
-    std::cout << "Character: " << symbol_ 
-              << ", Width: " << width 
-              << ", Height: " << height 
-              << ", Point Size: " << pointSize 
+    std::cout << "Character: " << symbol_
+              << ", Width: " << width
+              << ", Height: " << height
+              << ", Point Size: " << pointSize
               << std::endl;
   }
 
@@ -233,7 +232,7 @@ int main() {
 }
 ```
 
-### 3.1 Boost.Flyweight ###
+### 3.1 Boost.Flyweight
 
 `Boost.Flyweight`可以用来创建和管理共享对象。
 

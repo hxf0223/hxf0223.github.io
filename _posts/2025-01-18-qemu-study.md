@@ -11,9 +11,8 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-* [qemu&kvm学习笔记](https://seamaner.github.io/2024/07/31/qemu%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/)
-* [qemu笔记](https://github.com/liwb27/qemu_note/tree/master)
-* [Qemu KVM(Kernel Virtual Machine)学习笔记](https://github.com/yifengyou/learn-kvm)
+- [qemu&kvm学习笔记](https://seamaner.github.io/2024/07/31/qemu%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/)
+- [qemu笔记](https://github.com/liwb27/qemu_note/tree/master)
+- [Qemu KVM(Kernel Virtual Machine)学习笔记](https://github.com/yifengyou/learn-kvm)

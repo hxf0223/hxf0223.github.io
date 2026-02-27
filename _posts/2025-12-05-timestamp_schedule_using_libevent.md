@@ -11,25 +11,23 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-
-## 1. 介绍 ##
+## 1. 介绍
 
 `libevent`底层使用不同的事件通知机制：linux 使用`epoll`，Windows使用`IOCP`。它提供了一个统一的接口来处理网络事件和定时事件。
 
 使用`libevent`的几个基本操作步骤：
 
-### 1.1. 创建 `event_base` 对象，作为事件循环的核心 ###
+### 1.1. 创建 `event_base` 对象，作为事件循环的核心
 
 ```cpp
 struct event_base *base = event_base_new();
 ```
 
-* `event_base`只能在一个线程中使用。
+- `event_base`只能在一个线程中使用。
 
-### 1.2. 创建事件处理器 ###
+### 1.2. 创建事件处理器
 
 ```cpp
 struct event *ev = event_new(base, fd, EV_READ | EV_PERSIST, my_read_callback, NULL);
@@ -39,13 +37,13 @@ struct event *ev = event_new(base, fd, EV_READ | EV_PERSIST, my_read_callback, N
 
 回调函数在同一个线程中执行。
 
-### 1.3. 添加事件到事件循环中 ###
+### 1.3. 添加事件到事件循环中
 
 ```cpp
 event_add(ev, NULL);
 ```
 
-### 1.4. 启动事件循环 ###
+### 1.4. 启动事件循环
 
 ```cpp
 event_base_dispatch(base);
@@ -59,14 +57,14 @@ const auto got_exit = event_base_got_exit(base);
 return got_break == 0 && got_exit == 0;
 ```
 
-### 1.5. 清理资源 ###
+### 1.5. 清理资源
 
 ```cpp
 event_free(ev);
 event_base_free(base);
 ```
 
-## 2. 使用 libevent 实现时间戳调度 ##
+## 2. 使用 libevent 实现时间戳调度
 
 创建`event_base`对象：
 
@@ -131,7 +129,7 @@ while (true) {
 }
 ```
 
-## 3. libevent事件循环 ##
+## 3. libevent事件循环
 
 ```cpp
 int event_base_loop(struct event_base *base, int flags) {
@@ -174,5 +172,4 @@ int event_base_loop(struct event_base *base, int flags) {
 }
 ```
 
-* [Event Base 与 Event Loop](https://quant67.com/post/libevent/01-core/event-base-loop.html)
-
+- [Event Base 与 Event Loop](https://quant67.com/post/libevent/01-core/event-base-loop.html)

@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 判断操作系统 ##
+## 判断操作系统
 
 ```cmake
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
@@ -28,7 +27,7 @@ MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 ```
 
-## 判断编译器 ##
+## 判断编译器
 
 ```cmake
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

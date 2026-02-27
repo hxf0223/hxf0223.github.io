@@ -11,15 +11,13 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. static_cast ##
+## 1. static_cast
 
-
-* 编译时类型检查
-* 只允许安全的、有意义的类型转换
-* 会进行必要的类型转换计算
+- 编译时类型检查
+- 只允许安全的、有意义的类型转换
+- 会进行必要的类型转换计算
 
 `static_cast`不能用于在不同类型的指针之间互相转换，也不能用于整型和指针之间的互相转换。
 
@@ -39,11 +37,11 @@ void* ptr = malloc(sizeof(int));
 int* intPtr = static_cast<int*>(ptr);
 ```
 
-## 2. reinterpret_cast ##
+## 2. reinterpret_cast
 
-* 几乎不进行类型检查
-* 直接重新解释内存中的位模式
-* 非常危险，需要程序员确保安全性
+- 几乎不进行类型检查
+- 直接重新解释内存中的位模式
+- 非常危险，需要程序员确保安全性
 
 示例：
 
@@ -59,7 +57,7 @@ char* charPtr = reinterpret_cast<char*>(ptr);
 void (*funcPtr)() = reinterpret_cast<void(*)()>(some_address);
 ```
 
-## 3. 对比 ##
+## 3. 对比
 
 | 特性     | static_cast        | reinterpret_cast   |
 | -------- | ------------------ | ------------------ |
@@ -69,6 +67,6 @@ void (*funcPtr)() = reinterpret_cast<void(*)()>(some_address);
 | 可移植性 | 好                 | 依赖平台           |
 | 示例场景 | 数值转换、继承关系 | 指针转换、底层操作 |
 
-## 4. ref ##
+## 4. ref
 
-* [reinterpret_cast 和 static_cast](https://www.cnblogs.com/whcjob/p/17892691.html)
+- [reinterpret_cast 和 static_cast](https://www.cnblogs.com/whcjob/p/17892691.html)

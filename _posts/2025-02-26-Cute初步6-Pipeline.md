@@ -9,11 +9,11 @@ tags: [CUDA]
 math: true
 mermaid: true
 # pin: true
+
 toc:
   sidebar: right
-
 ---
 
-* [GEMM Pipeline](https://github.com/KuangjuX/Notes/blob/main/System/HPC/CUDA/Pipeline.md)
+- [GEMM Pipeline](https://github.com/KuangjuX/Notes/blob/main/System/HPC/CUDA/Pipeline.md)
 
 ![pipeline](/assets/images/cuda/20250226/pipeline/Pipeline-illustration.webp)

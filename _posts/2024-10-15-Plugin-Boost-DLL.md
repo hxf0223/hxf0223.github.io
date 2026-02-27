@@ -11,9 +11,7 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
-
 
 1. 使用 `BOOST_DLL_ALIAS` 定义插件接口。
 2. 使用 `import_alias` 导入插件接口。
@@ -21,9 +19,9 @@ toc:
 
 Demo Code: [test_plugin_dll](https://gitee.com/occt/test_plugin_dll)
 
-## 1. 实现插件接口 ##
+## 1. 实现插件接口
 
-### 1.1 DSO/DLL原型定义 ###
+### 1.1 DSO/DLL原型定义
 
 ```c++
 class DIInterface {
@@ -41,7 +39,7 @@ class DIInterface {
 };
 ```
 
-### 1.2 接口定义及实现 ###
+### 1.2 接口定义及实现
 
 ```c++
 std::shared_ptr<test::plugin::DIInterface> diLoader(const std::string& infoFile) {
@@ -54,7 +52,7 @@ BOOST_DLL_ALIAS(diLoader,  // 被封装成插件接口的函数名
     diLoaderAlias); // 别名，可用于创建插件实例
 ```
 
-## 2. 插件加载 ##
+## 2. 插件加载
 
 ```c++
 // static const char* kDILoaderFnName = "diLoaderAlias";
@@ -73,7 +71,7 @@ try {
 }
 ```
 
-## 3. 插件卸载 ##
+## 3. 插件卸载
 
 在卸载`DSO/DLL`之后，由于类的成员函数代码内存被释放，故其`vtable`所指向的内存（即成员方法）变成非法地址，在调用其成员方法函数，以及析构函数时，会导致程序崩溃。
 
@@ -82,7 +80,7 @@ try {
 1. 调用`unload`接口，释放资源，比如释放`QWidget`;
 2. 释放外部持有的`shared_ptr`;
 
-## 4. 技巧：将`boost::dll::shared_library`生命周期与Plugin实例对象生命周期绑定 ##
+## 4. 技巧：将`boost::dll::shared_library`生命周期与Plugin实例对象生命周期绑定
 
 定义如下`deletor`：
 
@@ -109,8 +107,8 @@ std::shared_ptr<test::plugin::DIInterface> diLoader(const std::string& infoFile,
 }
 ```
 
-## 5. 资料 ##
+## 5. 资料
 
-* [Boost DLL -- Plugin](https://www.boost.org/doc/libs/1_86_0/doc/html/boost_dll/tutorial.html)
-* [跨平台的 plugin 開發函式庫：Boost DLL - 進階](https://viml.nchc.org.tw/archive_blog_614/)
-* [Boost Plugin Loader](https://gitee.com/vaughnHuang/boost_plugin_loader)
+- [Boost DLL -- Plugin](https://www.boost.org/doc/libs/1_86_0/doc/html/boost_dll/tutorial.html)
+- [跨平台的 plugin 開發函式庫：Boost DLL - 進階](https://viml.nchc.org.tw/archive_blog_614/)
+- [Boost Plugin Loader](https://gitee.com/vaughnHuang/boost_plugin_loader)

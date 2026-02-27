@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ```bash
@@ -25,5 +24,4 @@ info sharedlibrary
 
 参考
 
-* [16 Examining the Symbol Table](https://sourceware.org/gdb/onlinedocs/gdb/Symbols.html)
-
+- [16 Examining the Symbol Table](https://sourceware.org/gdb/onlinedocs/gdb/Symbols.html)

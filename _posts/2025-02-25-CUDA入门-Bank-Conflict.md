@@ -9,16 +9,16 @@ tags: [CUDA]
 math: true
 mermaid: true
 # pin: true
+
 toc:
   sidebar: right
-
 ---
 
 使用到的测试代码：[bank_conflict.cu](https://github.com/HPC02/cuda_perf/blob/master/src/bank_conflict/bank_conflict/bank_conflict.cu)
 
-## 1. Bank Conflicts (Shared Memory) ##
+## 1. Bank Conflicts (Shared Memory)
 
-### 1.1. Bank 划分 ###
+### 1.1. Bank 划分
 
 针对`Shared Memory`的访问，`CUDA`使用`bank`机制，将`shared memory`的访问（读/写）映射到不同的`bank`，以实现并行访问。`bank`以4字节为单位，共32个`bank`。这样，一个时钟周期内，可以并行访问32个不同的`bank`，即访问`128字节`的数据。映射公式`bank index = (address /4) % 32`。
 
@@ -46,7 +46,7 @@ __shared__ float s[64];
 
 ![shared-memory-bank-map](/assets/images/cuda/20250223/bank-map.drawio.svg)
 
-### 1.2. Bank Conflicts ###
+### 1.2. Bank Conflicts
 
 在一次`transaction`的时候，如果，当`warp`中的不同线程访问到同一个`bank`中的不同地址时，就会产生`Bank Conflicts`，导致访问串行化：需要分成多次`transaction`。有`N`个线程访问同一个`bank`，称为`N-way Bank Conflicts`。
 
@@ -55,22 +55,23 @@ __shared__ float s[64];
 
 如下情况，会产生`Bank Conflicts`：
 
-* 一次`transaction`中，`warp`中的多个线程，访问同一个`bank`中的不同地址；
-* 一次`transaction`中，`warp`中的多个线程，访问`shared memory`的下一个128字节，被映射到同一个`bank`。此时也是属于上一种情况：同一个`bank`中的不同地址。
+- 一次`transaction`中，`warp`中的多个线程，访问同一个`bank`中的不同地址；
+- 一次`transaction`中，`warp`中的多个线程，访问`shared memory`的下一个128字节，被映射到同一个`bank`。此时也是属于上一种情况：同一个`bank`中的不同地址。
 
 如下情况，`Bank Conflicts`不会产生：
 
-* `warp`中的线程，访问地址唯一对应到`bank`簇的每个`bank`，不论是顺序，还是错位；
-* `warp`中的多个线程，访问同一个`bank`中的相同地址--使用`boardcast`分发相同地址数据到多个线程；
-* `warp`中的线程，单个线程一次访问多个`bank`，但其他线程不访问这些`bank`。此时，生成多次`transaction`。
+- `warp`中的线程，访问地址唯一对应到`bank`簇的每个`bank`，不论是顺序，还是错位；
+- `warp`中的多个线程，访问同一个`bank`中的相同地址--使用`boardcast`分发相同地址数据到多个线程；
+- `warp`中的线程，单个线程一次访问多个`bank`，但其他线程不访问这些`bank`。此时，生成多次`transaction`。
 
-## 2. Bank Conflicts 示例 ##
+## 2. Bank Conflicts 示例
 
 > 以下示例来自博客[Notes About Nvidia GPU Shared Memory Banks](https://feldmann.nyc/blog/smem-microbenchmarks)。
 
 如下示例，产生32路`Bank Conflicts`：
 
 {% raw %}
+
 ```cpp
 const int num_iters = 10000;  // 全局常量
 
@@ -92,17 +93,19 @@ __global__ void all_conflicts() {
 // Gride size: 1（即只有一个Block）
 // Block size: dim3(32, 8)（即有8个warp，每个warp 32个线程）
 ```
+
 {% endraw %}
 
 ![bank-conflict-example](/assets/images/cuda/20250223/all-conflicts.svg)
 
-由于是 32-way Bank Conflicts，则每个 warp 产生的 bank conflicts 次数是 10000 * 31，所有 warp 总共是 8 * 10000 * 31 = 2,480,000 次。与 Nsight Compute 测量结果吻合。
+由于是 32-way Bank Conflicts，则每个 warp 产生的 bank conflicts 次数是 10000 _ 31，所有 warp 总共是 8 _ 10000 \* 31 = 2,480,000 次。与 Nsight Compute 测量结果吻合。
 
 ![ncu_32_way_bank_conflicts](/assets/images/cuda/20250225/cuda_basic_bank_conflicts/ncu_bank_conflicts_demo1.png)
 
-### 2.1. conflict free 代码参考 ###
+### 2.1. conflict free 代码参考
 
 {% raw %}
+
 ```cpp
 __global__ void conflict_free_kernel() {
   __shared__ float s[8][32];
@@ -122,13 +125,15 @@ __global__ void conflict_free_kernel() {
 // Gride size: 1（即只有一个Block）
 // Block size: dim3(32, 8)（即有8个warp，每个warp 32个线程）
 ```
+
 {% endraw %}
 
-## 3. 矢量读写指令 ##
+## 3. 矢量读写指令
 
 使用矢量指令`ld.shared.v4`可以读取4个连续的32位数据。如下代码，一个线程读取`s[4*i]`, `s[4*i+1]`, `s[4*i+2]`, `s[4*i+3]`（分为四个`transaction`）。会产生四路`Bank Conflicts`：
 
 {% raw %}
+
 ```cpp
 __global__ void vectorized_loads() {
     __shared__ float sh[8][128];
@@ -147,6 +152,7 @@ __global__ void vectorized_loads() {
     }
 }
 ```
+
 {% endraw %}
 
 ![vectorized-loads](/assets/images/cuda/20250223/v4loads.svg)
@@ -156,12 +162,12 @@ __global__ void vectorized_loads() {
 
 要想避免`Bank Conflicts`，可以错开（`interleave`）冲突的线程访问的顺序，比如：
 
-* 线程0：s[0] -> s[1] -> s[2] -> s[3]
-* 线程8：s[33] -> s[34] -> s[35] -> s[32]
+- 线程0：s[0] -> s[1] -> s[2] -> s[3]
+- 线程8：s[33] -> s[34] -> s[35] -> s[32]
 
-## 3. 避免 Bank Conflicts 的方法 ##
+## 3. 避免 Bank Conflicts 的方法
 
-### 3.1. Padding ###
+### 3.1. Padding
 
 `warp`内多个线程访问同一`bank`会引发冲突，导致串行化访问。 通过在二维共享内存数组的列数上 `+1 padding`，可打破`映射冲突`：从第二行开始，`Shared Memory`中的数据到`bank`的映射偏移一个`bank`，且每行累积。示意图：
 
@@ -183,12 +189,12 @@ matrixTest[y * col + x] = sData[x][y];
 
 | 场景       | 冲突原因         | Padding方案    |
 | ---------- | ---------------- | -------------- |
-| 列访问     | 行步长=32*4      | 列+1           |
-| 步长访问   | 步长是32*k       | 改变数组维度   |
+| 列访问     | 行步长=32\*4     | 列+1           |
+| 步长访问   | 步长是32\*k      | 改变数组维度   |
 | 结构体数组 | 字段偏移相同     | 结构体+padding |
 | 斜向访问   | 特定步长产生周期 | 适当增加维度   |
 
-### 3.2. Swizzle ###
+### 3.2. Swizzle
 
 `Swizzle`是通过重新排列线程访问顺序，来避免`Bank Conflicts`。假设有32×32的二维数组，原本按列访问产生冲突：
 
@@ -245,11 +251,11 @@ int swizzled = (x + (y >> 4)) % 32;
 
 `Swizzle`更多资料：
 
-* [CUTLASS CuTe GEMM细节分析（三）——Swizzle<B, M, S>模板参数的取值](https://zhuanlan.zhihu.com/p/713713957)
-* [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)：Swizzle可以提升L2 cache命中率
-* [issue -- Swizzling the shared memory](https://github.com/triton-lang/triton/issues/2675)
+- [CUTLASS CuTe GEMM细节分析（三）——Swizzle<B, M, S>模板参数的取值](https://zhuanlan.zhihu.com/p/713713957)
+- [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)：Swizzle可以提升L2 cache命中率
+- [issue -- Swizzling the shared memory](https://github.com/triton-lang/triton/issues/2675)
 
-## 学习资料 ##
+## 学习资料
 
 - [CCUDA 编程手册系列第五章: 性能指南](https://developer.nvidia.com/zh-cn/blog/cuda-performance-guide-cn/)
 - [NVIDIA -- Performance Optimization: Paulius Micikevicius Programming Guidelines and GPU Architecture Reasons Behind Them](https://www.cs.emory.edu/~cheung/Courses/355/Syllabus/94-CUDA/DOCS/S3466-Programming-Guidelines-GPU-Architecture.pdf)

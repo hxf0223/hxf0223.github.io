@@ -11,18 +11,17 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. `perf stat` 基本使用 ##
+## 1. `perf stat` 基本使用
 
 `perf stat` 基本功能 -- 统计：
 
-* `cycles` 数, `IPC (instructions per cycle)`。`IPC` >= 1 表示指令执行效率高
-* 分支切换次数(`branchs`), 分支预测失败次数(`branch-misses`)，以及失败比例
-* 上下文切换次数(`context switches`)，以及每秒切换次数
-* CPU迁移次数(`migrations`)，以及每秒迁移次数
-* 缺页次数(`page faults`)，以及每秒缺页次数
+- `cycles` 数, `IPC (instructions per cycle)`。`IPC` >= 1 表示指令执行效率高
+- 分支切换次数(`branchs`), 分支预测失败次数(`branch-misses`)，以及失败比例
+- 上下文切换次数(`context switches`)，以及每秒切换次数
+- CPU迁移次数(`migrations`)，以及每秒迁移次数
+- 缺页次数(`page faults`)，以及每秒缺页次数
 
 ```bash
 $ sudo perf stat -p 8460
@@ -41,10 +40,8 @@ $ sudo perf stat -p 8460
      221.220644606 seconds time elapsed
 ```
 
-## 参考资料 ##
+## 参考资料
 
-* [redhat -- Red Hat Enterprise Linux 8 监控和管理系统状态和性能](/assets/pdf/perf/perf_doc_20241028/Red_Hat_Enterprise_Linux-8-Monitoring_and_managing_system_status_and_performance-zh-CN.pdf)
-* [redhat -- 监控和管理系统状态和性能(网页版)](https://docs.redhat.com/zh_hans/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/index)
-* [调试技术之perf实战笔记](https://saiyn.github.io/homepage/2017/11/26/perf/)
-
-
+- [redhat -- Red Hat Enterprise Linux 8 监控和管理系统状态和性能](/assets/pdf/perf/perf_doc_20241028/Red_Hat_Enterprise_Linux-8-Monitoring_and_managing_system_status_and_performance-zh-CN.pdf)
+- [redhat -- 监控和管理系统状态和性能(网页版)](https://docs.redhat.com/zh_hans/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/index)
+- [调试技术之perf实战笔记](https://saiyn.github.io/homepage/2017/11/26/perf/)

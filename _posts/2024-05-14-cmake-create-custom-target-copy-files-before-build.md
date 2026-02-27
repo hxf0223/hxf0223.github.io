@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 创建自定义目标
@@ -32,5 +31,3 @@ add_custom_target(TargetCopy3rdPartyLibs ALL
 ```cmake
 set_target_properties(${target_app} PROPERTIES DEPENDS Copy3rdPartyLibs)
 ```
-
-

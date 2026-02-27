@@ -11,21 +11,20 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. C++ 学习资源 ##
+## 1. C++ 学习资源
 
-* [Fluent C++](https://www.fluentcpp.com/)
-* [Modern C++](https://www.modernescpp.com/)
-* [foonathan::​blog()](https://www.foonathan.net/)
-* [C++ Stories](https://www.cppstories.com/)
-* [Sutter’s Mill](https://herbsutter.com/)
-* [这些资源帮助你深入学习C++](https://lesleylai.info/zh/delve_into_cpp)
+- [Fluent C++](https://www.fluentcpp.com/)
+- [Modern C++](https://www.modernescpp.com/)
+- [foonathan::​blog()](https://www.foonathan.net/)
+- [C++ Stories](https://www.cppstories.com/)
+- [Sutter’s Mill](https://herbsutter.com/)
+- [这些资源帮助你深入学习C++](https://lesleylai.info/zh/delve_into_cpp)
 
-## 2. C++ 代码片段 ##
+## 2. C++ 代码片段
 
-### 2.1. 获取数组长度 ###
+### 2.1. 获取数组长度
 
 ```cpp
 #include <type_traits>
@@ -39,7 +38,7 @@ const size_t len = std::extent<decltype(sd.arr)>::value;
 std::vector<int32_t> vec(sd.arr, sd.arr + len);
 ```
 
-### 2.2. CHECK ###
+### 2.2. CHECK
 
 ```cpp
 #include <iostream>
@@ -57,7 +56,7 @@ std::vector<int32_t> vec(sd.arr, sd.arr + len);
 #endif
 ```
 
-### 2.3. 获取线程 ID ###
+### 2.3. 获取线程 ID
 
 通过 `pthread_self` 及 `std::this_thread::getid` 函数获取的线程 ID，跟使用 `top`, `htop` 命令呈现的线程 ID 不对应。
 通过如下代码获取跟 `top`, `htop` 命令一致的 TID：
@@ -74,7 +73,7 @@ const char* thd_name = "demo_thread";
 prctl(PR_SET_NAME, reinterpret_cast<unsigned long>(thd_name ), 0, 0, 0);
 ```
 
-### 2.4. 获取本地IP地址列表 ###
+### 2.4. 获取本地IP地址列表
 
 ```cpp
 #include <arpa/inet.h>
@@ -123,9 +122,9 @@ std::vector<std::string> get_local_ip_v2() {
 }
 ```
 
-## 3. 其他 ##
+## 3. 其他
 
-### 3.1 doxygen 注释 ###
+### 3.1 doxygen 注释
 
 ```text
 // Doxygen documentation generator set
@@ -180,7 +179,7 @@ std::vector<std::string> get_local_ip_v2() {
     // 日期格式与模板
     "doxdocgen.generic.dateFormat": "YYYY-MM-DD",
     "doxdocgen.generic.dateTemplate": "@date {date}",
-    
+
     // 根据自动生成的注释模板（目前主要体现在函数注释上）
     "doxdocgen.generic.order": [
         "brief",
@@ -202,5 +201,5 @@ std::vector<std::string> get_local_ip_v2() {
     //declarations or definitions anymore.
 ```
 
-* [VSCode用Doxygen自定义代码注释配置](https://timye-development.readthedocs.io/en/latest/VSCode/VSCode%E7%94%A8Doxygen%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A%E9%85%8D%E7%BD%AE.html)
-* [doxygen注释规范](https://shona3n.github.io/2022/tool/doxygen-comment/)
+- [VSCode用Doxygen自定义代码注释配置](https://timye-development.readthedocs.io/en/latest/VSCode/VSCode%E7%94%A8Doxygen%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A%E9%85%8D%E7%BD%AE.html)
+- [doxygen注释规范](https://shona3n.github.io/2022/tool/doxygen-comment/)

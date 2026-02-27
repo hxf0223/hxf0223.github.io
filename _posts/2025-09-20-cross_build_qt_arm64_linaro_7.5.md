@@ -11,15 +11,14 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. 下载 ##
+## 1. 下载
 
 交叉编译器下载地址目录：[aarch64-linux-gnu](https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/)
 
-* [gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnus](https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz)
-* [sysroot-glibc-linaro-2.25-2019.12-aarch64-linux-gnu](https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/sysroot-glibc-linaro-2.25-2019.12-aarch64-linux-gnu.tar.xz)
+- [gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnus](https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz)
+- [sysroot-glibc-linaro-2.25-2019.12-aarch64-linux-gnu](https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/sysroot-glibc-linaro-2.25-2019.12-aarch64-linux-gnu.tar.xz)
 
 下载之后，将编译器及`sysroot`解压到`/opt`目录下：
 
@@ -30,7 +29,7 @@ toc:
 
 `Qt 5.15.2`下载目录：[Qt 5.15.2](https://download.qt.io/archive/qt/5.15/5.15.2/single/) 。选择下载` qt-everywhere-src-5.15.2.tar.xz`。
 
-## 2. 修改Qt源码 ##
+## 2. 修改Qt源码
 
 修改头文件：`qtbase/src/corelib/global/qglobal.h`，`include`添加：
 
@@ -62,7 +61,7 @@ QMAKE_NM                = /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu
 QMAKE_STRIP             = /opt/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-strip
 ```
 
-## 3. 编译 Qt 源码 ##
+## 3. 编译 Qt 源码
 
 如下为编译一个比较精简的`Qt`库，去掉了很多模块。
 
@@ -92,6 +91,6 @@ make -j8
 sudo make install
 ```
 
-## 4. 资料 ##
+## 4. 资料
 
-* [qt5.15.2 交叉编译 arm64](https://august295.github.io/posts/qt5.15.2%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91arm64/)
+- [qt5.15.2 交叉编译 arm64](https://august295.github.io/posts/qt5.15.2%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91arm64/)

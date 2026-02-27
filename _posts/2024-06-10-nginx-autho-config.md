@@ -11,11 +11,10 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ```bash
-# nginx 解决 403 错误问题 
+# nginx 解决 403 错误问题
 sudo setenforce Permissive
 sudo setsebool -P httpd_can_network_connect on
 sudo chcon -Rt httpd_sys_content_t /usr/share/nginx/html/
@@ -40,5 +39,3 @@ sudo semanage port -a -t http_port_t  -p tcp 8090
 ## 学习资料
 
 - [nginx 安装配置及使用 启动权限拒绝问题](https://www.cnblogs.com/carl-/p/15599437.html)
-
-

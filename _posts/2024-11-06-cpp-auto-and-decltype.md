@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. auto 占位符
@@ -20,13 +19,13 @@ toc:
 
 `auto`推导的原则为：保持原有变量的类型(如`cv`限定)，大致分两种情况:
 
-* `auto`: `auto`含义是`创建了一个新的变量`:
-  * 表达式为`T`或者`T&`或者`const T&` -- `auto`推导为`T` -- 即新变量的类型去除`cv`限定 (如果原有表达式有`cv`限定);
-  * 表达式为`T* const`或者`T*` -- `auto`推导为`T*` -- 新变量去除`cv`限定;
-  * 表达式为`const T*`或者`const T* const` -- `auto`推导为`const T*`，即保持指针指向的内存区域的`const`属性。
-* `auto&`: `auto&`含义是`alias`，故`auto&`推导的结果是原有类型的的引用，不能少任何一个限定符，如:
-  * `const T* const`推导为`const T* const &`；
-  * `const T`推导为`const T&`；
+- `auto`: `auto`含义是`创建了一个新的变量`:
+  - 表达式为`T`或者`T&`或者`const T&` -- `auto`推导为`T` -- 即新变量的类型去除`cv`限定 (如果原有表达式有`cv`限定);
+  - 表达式为`T* const`或者`T*` -- `auto`推导为`T*` -- 新变量去除`cv`限定;
+  - 表达式为`const T*`或者`const T* const` -- `auto`推导为`const T*`，即保持指针指向的内存区域的`const`属性。
+- `auto&`: `auto&`含义是`alias`，故`auto&`推导的结果是原有类型的的引用，不能少任何一个限定符，如:
+  - `const T* const`推导为`const T* const &`；
+  - `const T`推导为`const T&`；
 
 ![auto_deference](/assets/images/cpp/cpp_auto_deference.png)
 
@@ -87,7 +86,6 @@ auto add(T t, U u) -> decltype(t + u) {
 
 ## 3. 参考
 
-* [C++11特性：decltype关键字](https://www.cnblogs.com/QG-whz/p/4952980.html)
-* [c++11-17 模板核心知识（九）—— 理解decltype与decltype(auto)](https://zhuanlan.zhihu.com/p/338822626)
-* [decltype specifier](https://en.cppreference.com/w/cpp/language/decltype)
-
+- [C++11特性：decltype关键字](https://www.cnblogs.com/QG-whz/p/4952980.html)
+- [c++11-17 模板核心知识（九）—— 理解decltype与decltype(auto)](https://zhuanlan.zhihu.com/p/338822626)
+- [decltype specifier](https://en.cppreference.com/w/cpp/language/decltype)

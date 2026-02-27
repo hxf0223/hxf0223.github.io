@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. `std::variant` （变体）
@@ -28,16 +27,16 @@ int main() {
     std::variant<int, double, std::string> v1 = 42;
     std::variant<int, double, std::string> v2 = 3.14;
     std::variant<int, double, std::string> v3 = "hello";
-    
+
     // 访问存储的值（不安全，需确保类型正确）
     std::cout << std::get<int>(v1) << std::endl;
-    
+
     // 安全地访问存储的值
     auto pval = std::get_if<int>(&v1);
     if (pval) {
         std::cout << *pval << std::endl;
     }
-    
+
     return 0;
 }
 ```
@@ -97,6 +96,7 @@ auto generic_lambda = [](auto x) {
     // do something with x
 };
 ```
+
 这种灵活性在处理 `std::variant` 时尤为有用，因为你可能需要根据多种可能的类型来编写逻辑。
 
 ### 3.2 使用 `if constexpr` 和类型萃取
@@ -244,4 +244,3 @@ int main() {
 - [【C++ 17 新功能 std::visit 】深入解析 C++17 中的 std::visit：从原理到实践](https://blog.csdn.net/qq_21438461/article/details/132659408)
 - [std::variant 与 std::visit](https://wanghenshui.github.io/2018/08/15/variant-visit)
 - [Visiting a std::variant with the Overload Pattern](https://www.modernescpp.com/index.php/visiting-a-std-variant-with-the-overload-pattern/)
-

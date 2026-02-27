@@ -11,10 +11,9 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. export 导出一个库 ##
+## 1. export 导出一个库
 
 `export`命令用于导出一个库，导出的库可以被其他项目使用。如下`cmake`命令生成库`gcFactSystem`，并导出库以及库的头文件（使用`PUBLIC`）。
 
@@ -48,7 +47,7 @@ set_target_properties(gcFactSystem PROPERTIES
 target_link_libraries(${target_name} PRIVATE gcFactSystem)
 ```
 
-## 2. install 安装库 ##
+## 2. install 安装库
 
 ```cmake
 # 引入要用到的 CMake 模块
@@ -96,7 +95,7 @@ install(FILES
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 ```
 
-### 2.1. config.cmake 的生成及安装 ###
+### 2.1. config.cmake 的生成及安装
 
 生成`config.cmake`文件：
 
@@ -120,7 +119,7 @@ install(FILES
 )
 ```
 
-### 2.2. 头文件的安装 ###
+### 2.2. 头文件的安装
 
 设置需要导出的头文件路径：
 
@@ -143,6 +142,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 ```
 
-## 3. 参考 ##
+## 3. 参考
 
-* [CMake ——库的安装与导出](https://www.rayalto.org/2024/03/12/cmake-install-and-export/)
+- [CMake ——库的安装与导出](https://www.rayalto.org/2024/03/12/cmake-install-and-export/)

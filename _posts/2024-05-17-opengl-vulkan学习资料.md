@@ -11,25 +11,24 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 - [opengl-tutorial (cn)](https://www.opengl-tutorial.org/cn/)
 - [LearnOpenGL-CN](https://learnopengl-cn.readthedocs.io/zh/latest/)
 
-## 官方教程 ##
+## 官方教程
 
 - [OpenGL Tutorials](https://www.opengl.org/sdk/docs/tutorials/)
 - [TyphoonLabs' OpenGL Shading Language tutorials](https://www.opengl.org/sdk/docs/tutorials/TyphoonLabs/)
 - [TyphoonLabs' OpenGL Shader Designer IDE](https://www.opengl.org/sdk/tools/ShaderDesigner/)
 
-## 有关3D计算机图形学的基础知识 ##
+## 有关3D计算机图形学的基础知识
 
 - [Learning Modern 3D Graphics Programming](https://paroj.github.io/gltut/)
 - [github -- Ray Tracing in One Weekend Book Series](https://github.com/RayTracing/raytracing.github.io)
 - [Physically Based Rendering:From Theory To Implementation](https://www.pbr-book.org/)
 
-## Vulkan 学习资源 ##
+## Vulkan 学习资源
 
 `SDK`以及资源：
 

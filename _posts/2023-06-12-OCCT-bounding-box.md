@@ -11,7 +11,6 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## bounding box 方式检测
@@ -39,5 +38,5 @@ Standard_Real minDistance = distShapeShape.Value();
 bool isInterfering = (minDistance <= Precision::Confusion());
 ```
 
-* `BRepExtrema_DistShapeShape` 比 `bounding box` 方式费时；
-* 如果`bouding box`方式检测出来出现`干涉（interference, overlap）`，则可以使用`distance`检测方式确认；
+- `BRepExtrema_DistShapeShape` 比 `bounding box` 方式费时；
+- 如果`bouding box`方式检测出来出现`干涉（interference, overlap）`，则可以使用`distance`检测方式确认；

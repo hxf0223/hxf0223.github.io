@@ -11,19 +11,18 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
 ## 1. 在字符中添加空格
 
 有四种宽度的空格可以使用，如下表格：
 
-| 语法   | 显示    |
-| ------ | ------- |
-| \,     | a b     |
-| \;     | a  b    |
-| \quad  | a   b   |
-| \qquad | a     b |
+| 语法   | 显示 |
+| ------ | ---- |
+| \,     | a b  |
+| \;     | a b  |
+| \quad  | a b  |
+| \qquad | a b  |
 
 一个示例如下：
 

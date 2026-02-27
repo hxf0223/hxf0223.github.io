@@ -11,42 +11,41 @@ mermaid: true
 # pin: true
 toc:
   sidebar: right
-
 ---
 
-## 1. TBB 简介 ##
+## 1. TBB 简介
 
 `Intel TBB`主要功能模块：
 
-* 并行算法
-* 任务调度
-* 并行容器
-* 同步原语
-* 内存分配器
+- 并行算法
+- 任务调度
+- 并行容器
+- 同步原语
+- 内存分配器
 
 ![TBB模块](/assets/images/intel_tbb/20240823/20150327164225068.png)
 
-### 1.1. 并行算法 ###
+### 1.1. 并行算法
 
-* parallel_for
-* parallel_reduce
-* parallel_scan
-* parallel_do
-* parallel_sort
-* parallel_invoke
-* pipeline, parallel_pipeline
+- parallel_for
+- parallel_reduce
+- parallel_scan
+- parallel_do
+- parallel_sort
+- parallel_invoke
+- pipeline, parallel_pipeline
 
-### 1.2. 并行容器 ###
+### 1.2. 并行容器
 
-* `concurrent_vector`
-* `concurrent_hash_map`
-* `concurrent_queue`
+- `concurrent_vector`
+- `concurrent_hash_map`
+- `concurrent_queue`
 
-### 1.3. 编译及链接 ###
+### 1.3. 编译及链接
 
 参考之前文档`Intel TBB malloc 使用 (windows)`(2024-08-13)。
 
-## 2. 并行计算 ##
+## 2. 并行计算
 
 头文件包含：
 
@@ -56,7 +55,7 @@ toc:
 #include <tbb/tbb.h>
 ```
 
-### 2.1 sort ###
+### 2.1 sort
 
 ```c++
 std::vector<dataxy_info_t> data_xy_info;
@@ -73,14 +72,14 @@ tbb::parallel_sort(data_xy_info.begin(), data_xy_info.end(),
 [2024-08-28 12:44:42.610] [info] 11. Sorted 1503894 samples in 206.20 ms (std sort)
 ```
 
-### 2.2 parallel_for_each ###
+### 2.2 parallel_for_each
 
 ```c++
 // void parse_dataxy_info(dataxy_info_t& info);
 tbb::parallel_for_each(data_xy_info.begin(), data_xy_info.end(), parse_dataxy_info);
 ```
 
-### 2.3 基于分块的 parallel_for ###
+### 2.3 基于分块的 parallel_for
 
 NOTE: 如果需要使用到任务共享写变量，需要添加锁，或者使用原子变量。`TBB`不保证线程安全。
 
@@ -112,11 +111,11 @@ NOTE: 如果需要使用到任务共享写变量，需要添加锁，或者使�
 }
 ```
 
-## 3. 任务调度及线程池 ##
+## 3. 任务调度及线程池
 
 针对具体并行任务，设定并行度，使用`task_arena`。需要设置全局并行度的，使用`global_control`。
 
-### 3.1 task_arena ###
+### 3.1 task_arena
 
 ```cpp
 #include <oneapi/tbb/info.h>
@@ -133,7 +132,7 @@ arena.execute([] {
 });
 ```
 
-### 3.2 global_control ###
+### 3.2 global_control
 
 ```cpp
 #include <oneapi/tbb/info.h>
@@ -151,26 +150,26 @@ oneapi::tbb::parallel_for( /* ... */ [] {
 });
 ```
 
-### 3.3 设置并行线程 Stack Size ###
+### 3.3 设置并行线程 Stack Size
 
 ```cpp
 #include <oneapi/tbb/global_control.h>
 oneapi::tbb::global_control global_limit(tbb::global_control::thread_stack_size, 16 * 1024 * 1024);
 ```
 
-* [Migrating from tbb::task_scheduler_init](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-0/migrating-from-tbb-task-scheduler-init.html)
+- [Migrating from tbb::task_scheduler_init](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-0/migrating-from-tbb-task-scheduler-init.html)
 
-## 资料 ##
+## 资料
 
-* [TBB并发库代码学习](https://woodpenker.github.io/2022/01/16/TBB%E5%B9%B6%E5%8F%91%E5%BA%93%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/)
-* [Intel Thread Building Blocks (TBB)](https://yuhao0102.github.io/2022/03/07/Intel_TBB/)
-* [Pro TBB](https://reubensun.com/program/Pro-TBB/)
-* [Migrating from tbb::task_scheduler_init](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/Migration_Guide/Task_Scheduler_Init.html)
-* [Intel Community](https://community.intel.com/)
+- [TBB并发库代码学习](https://woodpenker.github.io/2022/01/16/TBB%E5%B9%B6%E5%8F%91%E5%BA%93%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/)
+- [Intel Thread Building Blocks (TBB)](https://yuhao0102.github.io/2022/03/07/Intel_TBB/)
+- [Pro TBB](https://reubensun.com/program/Pro-TBB/)
+- [Migrating from tbb::task_scheduler_init](https://oneapi-src.github.io/oneTBB/main/tbb_userguide/Migration_Guide/Task_Scheduler_Init.html)
+- [Intel Community](https://community.intel.com/)
 
-## 官方文档 ##
+## 官方文档
 
-* [ntel® oneAPI Threading Building Blocks Developer Guide and API Reference](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-2/onetbb-developer-guide.html)
-* [Pro TBB](https://link.springer.com/book/10.1007/978-1-4842-4398-5)
-* [Today's TBB pdf](/assets/pdf/perf/Today’s-TBB.pdf)
-  * [Source Code](https://github.com/Apress/pro-TBB)
+- [ntel® oneAPI Threading Building Blocks Developer Guide and API Reference](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-2/onetbb-developer-guide.html)
+- [Pro TBB](https://link.springer.com/book/10.1007/978-1-4842-4398-5)
+- [Today's TBB pdf](/assets/pdf/perf/Today’s-TBB.pdf)
+  - [Source Code](https://github.com/Apress/pro-TBB)
