@@ -216,6 +216,47 @@ echo "   unset GEM_HOME && bundle exec jekyll serve --port 4000"
 
 ---
 
+## 部署到 GitHub Pages 后的 Prettier 检查
+
+将代码推送到 GitHub 后，Actions 会自动运行 Prettier 格式检查。若出现以下错误，说明文件格式不符合规范：
+
+```text
+Checking formatting...
+[warn] _config.yml
+[warn] _posts/xxx.md
+[warn] Code style issues found in N files. Run Prettier with --write to fix.
+```
+
+### 安装 npm（如未安装）
+
+```bash
+sudo apt-get install -y npm
+```
+
+### 安装 Prettier 及 Liquid 插件
+
+```bash
+cd ~/work/hxf0223.github.io
+npm install --save-dev prettier @shopify/prettier-plugin-liquid
+```
+
+### 修复格式问题
+
+```bash
+npx prettier . --write
+```
+
+### 验证全部通过
+
+```bash
+npx prettier . --check
+# => All matched files use Prettier code style!
+```
+
+> **建议：** 每次 `git push` 之前先运行 `npx prettier . --write`，可避免 CI 格式检查失败。
+
+---
+
 ## 参考资料
 
 - [Running local al-folio](https://george-gca.github.io/blog/2022/running-local-al-folio/)
