@@ -8,7 +8,7 @@ layout: none
   "start_url": "{{ '/' | relative_url }}",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#1a1a2e",
   "icons": [
     {
       "src": "{{ '/assets/img/pwa-icon-192.png' | relative_url }}",
