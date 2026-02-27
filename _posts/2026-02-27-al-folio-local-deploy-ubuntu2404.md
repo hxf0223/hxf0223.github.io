@@ -27,6 +27,7 @@ sudo apt-get install -y libyaml-dev libssl-dev libreadline-dev zlib1g-dev libffi
 ```
 
 > **说明：**
+>
 > - `libyaml-dev`：编译 Ruby 3.3.x 时必须，缺少会导致 `psych` 扩展编译失败。
 > - `imagemagick`：提供 `convert` 命令，用于生成响应式 WebP 图片。
 > - `nodejs`：为 Terser JS 压缩插件提供运行时。
@@ -121,9 +122,11 @@ Bundle complete! 27 Gemfile dependencies, 100 gems now installed.
 ## 第六步：启动本地服务
 
 > **每次打开新终端前**，如果 `~/.bashrc` 中的 `GEM_HOME` 尚未完全失效（旧终端），需先执行：
+>
 > ```bash
 > unset GEM_HOME
 > ```
+>
 > 新登录的终端（`.bashrc` 已修复后）无需此步骤。
 
 ### 常规启动（含文件监听，推荐开发时使用）
@@ -170,14 +173,14 @@ unset GEM_HOME && JEKYLL_ENV=production bundle exec jekyll build
 
 ## 常见问题汇总
 
-| 错误信息 | 原因 | 解决方案 |
-| ---------- | ------ | ---------- |
-| `psych: Could not be configured. BUILD FAILED` | 缺少 `libyaml-dev` | `sudo apt-get install libyaml-dev` |
-| `linked to incompatible libruby-3.2.so` | `GEM_HOME` 指向旧版本 gems | 注释 `~/.bashrc` 中的 `GEM_HOME`，执行 `unset GEM_HOME` |
-| `bundler (= 4.0.4) required by user-specified dependency` | Ruby 版本太旧（3.1.x），Bundler 4.x 需要 Ruby >= 3.3 | 升级到 Ruby 3.3.5 |
-| `sh: convert: not found` | ImageMagick 未安装 | `sudo apt-get install imagemagick` |
-| `No such file or directory - jupyter` | jupyter 未安装 | `sudo apt-get install jupyter-core jupyter-nbconvert` |
-| `Could not find a JavaScript runtime` | Node.js 未安装 | `sudo apt-get install nodejs` |
+| 错误信息                                                  | 原因                                                 | 解决方案                                                |
+| --------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------- |
+| `psych: Could not be configured. BUILD FAILED`            | 缺少 `libyaml-dev`                                   | `sudo apt-get install libyaml-dev`                      |
+| `linked to incompatible libruby-3.2.so`                   | `GEM_HOME` 指向旧版本 gems                           | 注释 `~/.bashrc` 中的 `GEM_HOME`，执行 `unset GEM_HOME` |
+| `bundler (= 4.0.4) required by user-specified dependency` | Ruby 版本太旧（3.1.x），Bundler 4.x 需要 Ruby >= 3.3 | 升级到 Ruby 3.3.5                                       |
+| `sh: convert: not found`                                  | ImageMagick 未安装                                   | `sudo apt-get install imagemagick`                      |
+| `No such file or directory - jupyter`                     | jupyter 未安装                                       | `sudo apt-get install jupyter-core jupyter-nbconvert`   |
+| `Could not find a JavaScript runtime`                     | Node.js 未安装                                       | `sudo apt-get install nodejs`                           |
 
 ---
 
