@@ -38,6 +38,17 @@ sudo apt install nvidia-jetpack
  # python jetsonInfo.py
 ```
 
+## 软件包更新
+
+### 1. Ubuntu 22.04 更新安装 CMake 3.28
+
+```bash
+wget https://github.com/Kitware/CMake/releases/download/v3.28.5/cmake-3.28.5-linux-aarch64.sh
+
+chmod +x cmake-3.28.5-linux-aarch64.sh
+sudo ./cmake-3.28.5-linux-aarch64.sh --prefix=/usr/local --skip-license
+```
+
 ## 参考资料
 
 - [NVIDIA Jetson Linux 36.4](https://developer.nvidia.cn/embedded/jetson-linux-r3640)：官方资料页面，包含组件以及驱动源码下载列表
