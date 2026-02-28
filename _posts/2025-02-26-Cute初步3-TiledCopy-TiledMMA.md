@@ -128,7 +128,7 @@ print_latex(tiled_mma);
 */
 ```
 
-> 📌 **SM80_16x8x8_F32F16F16F32_TN** 使用一个 warp（32 个线程）处理 MNK 规模为 16 \* 8 \* 8 的一个 sub-tile。一个线程处理 A 中的 2 \* 2 个数据，即LayoutA_TV 中的第二个 mode (_2, _2)，则线程数位 $ThrNum_{A} = 16 \times 8 \div 4 = 32$。同理可以知道，每个线程处理 B、C 中多少个数据，以及需要的线程数。
+> 📌 **SM80_16x8x8_F32F16F16F32_TN** 使用一个 warp（32 个线程）处理 MNK 规模为 16 \* 8 \* 8 的一个 sub-tile。一个线程处理 A 中的 2 \* 2 个数据，即LayoutA*TV 中的第二个 mode (\_2, \_2)，则线程数位 $ThrNum*{A} = 16 \times 8 \div 4 = 32$。同理可以知道，每个线程处理 B、C 中多少个数据，以及需要的线程数。
 
 - **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
 
@@ -264,6 +264,10 @@ constexpr auto thrfrg_A(ATensor&& atensor) const;
 ```
 
 即得到的线程切分后的 subtile 布局为 **((ThrV,(ThrM,ThrK)),(FrgV,(RestM,RestK,...)))**。
+
+#### 2.4.2. TiledMMA 流程示意
+
+![TiledMMA流程示意](/assets/images/cuda/20250226/cute_tiled_mma/Write-canonical-loops-for-all-GPU_TiledMMA.jpeg)
 
 ### 2.5. ThrMMA
 
@@ -485,6 +489,9 @@ MMA_Atom
 ```
 
 ## A. 资料
+
+- [A Generalized Micro-kernel Abstraction for GPU Linear Algebra](/assets/pdf/cuda/Thakkar_BLISRetreat2023.pdf)：BLIS Retreat 2023 上的论文，介绍了 CUTLASS-Cute 中 TiledCopy 和 TiledMMA 的设计细节。**待阅读**
+- [Introduction to CUDA Performance Optimization](/assets/pdf/cuda/CUDA-Programming-and-Optimization.pdf)：CUDA Programming and Optimization 课程的 PPT，介绍了 CUDA 优化相关的知识，其中第 28-30 页介绍了 CUTLASS-Cute 中 TiledMMA 的设计细节。**待阅读**
 
 ### A.1. TiledCopy 资料
 
