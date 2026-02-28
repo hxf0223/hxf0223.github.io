@@ -15,7 +15,7 @@
 <span class="n">aligned_value</span> <span class="n">aligned_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">CACHE_ALIGNED</span><span class="p">;</span>
 
 <span class="c1">// sizeof(aligned_value) == 128</span>
-</code></pre></div></div> <h3 id="13-现代cpu上mesi的局限">1.3. 现代<code class="language-plaintext highlighter-rouge">CPU</code>上<code class="language-plaintext highlighter-rouge">MESI</code>的局限</h3> <p>由于<code class="language-plaintext highlighter-rouge">MESI</code>同步协议导致处理器之间同步的代价很高，现代处理器再每个<code class="language-plaintext highlighter-rouge">core</code>里面增加两个异步队列: <code class="language-plaintext highlighter-rouge">store buffer</code>和<code class="language-plaintext highlighter-rouge">invalidate queue</code>来减少<code class="language-plaintext highlighter-rouge">CPU</code>的空闲等待。这两个异步队列，导致<code class="language-plaintext highlighter-rouge">MESI</code>协议失效。</p> <ul> <li> <code class="language-plaintext highlighter-rouge">store buffer</code>: <code class="language-plaintext highlighter-rouge">CPU</code>将<code class="language-plaintext highlighter-rouge">write/store</code>操作数据放入<code class="language-plaintext highlighter-rouge">store buffer</code>，<code class="language-plaintext highlighter-rouge">cache</code>负责<code class="language-plaintext highlighter-rouge">flush</code>操作。</li> <li> <code class="language-plaintext highlighter-rouge">invalidate queue</code>: <code class="language-plaintext highlighter-rouge">cache</code>收到<code class="language-plaintext highlighter-rouge">Invalidate</code>消息，不是马上执行，而是放入<code class="language-plaintext highlighter-rouge">invalidate queue</code>，等待<code class="language-plaintext highlighter-rouge">CPU</code>空闲时，再执行。</li> </ul> <p>其原因是：针对发起方<code class="language-plaintext highlighter-rouge">CPU</code>，其认为自己的<code class="language-plaintext highlighter-rouge">store</code> / <code class="language-plaintext highlighter-rouge">invalidate</code>操作已经完成，但是由于数据/消息是放在<code class="language-plaintext highlighter-rouge">store buffer</code> / <code class="language-plaintext highlighter-rouge">invalidate queue</code>中，所以可能还没来得及被其他<code class="language-plaintext highlighter-rouge">CPU</code>看到，导致数据不一致。</p> <p>其中的一个解决办法是：发起方的<code class="language-plaintext highlighter-rouge">store buffer</code>被清空，接收方的<code class="language-plaintext highlighter-rouge">invalieate queue</code>被处理掉。在此之后，<code class="language-plaintext highlighter-rouge">MESI</code>协议可以正常工作。</p> <h3 id="14-补充cpu指令流水线">1.4. 补充：CPU指令流水线</h3> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Fetch         &lt;-- ✅ 顺序取指，从指令缓存中取出下一条指令
+</code></pre></div></div> <h3 id="13-现代cpu上mesi的局限">1.3. 现代<code class="language-plaintext highlighter-rouge">CPU</code>上<code class="language-plaintext highlighter-rouge">MESI</code>的局限</h3> <p>由于<code class="language-plaintext highlighter-rouge">MESI</code>同步协议导致处理器之间同步的代价很高，现代处理器再每个<code class="language-plaintext highlighter-rouge">core</code>里面增加两个异步队列: <code class="language-plaintext highlighter-rouge">store buffer</code>和<code class="language-plaintext highlighter-rouge">invalidate queue</code>来减少<code class="language-plaintext highlighter-rouge">CPU</code>的空闲等待。这两个异步队列，导致<code class="language-plaintext highlighter-rouge">MESI</code>协议失效。</p> <ul> <li> <code class="language-plaintext highlighter-rouge">store buffer</code>: <code class="language-plaintext highlighter-rouge">CPU</code>将<code class="language-plaintext highlighter-rouge">write/store</code>操作数据放入<code class="language-plaintext highlighter-rouge">store buffer</code>，<code class="language-plaintext highlighter-rouge">cache</code>负责<code class="language-plaintext highlighter-rouge">flush</code>操作。</li> <li> <code class="language-plaintext highlighter-rouge">invalidate queue</code>: <code class="language-plaintext highlighter-rouge">cache</code>收到<code class="language-plaintext highlighter-rouge">Invalidate</code>消息，不是马上执行，而是放入<code class="language-plaintext highlighter-rouge">invalidate queue</code>，等待<code class="language-plaintext highlighter-rouge">CPU</code>空闲时，再执行。</li> </ul> <blockquote> <p><strong>注意</strong>: <code class="language-plaintext highlighter-rouge">Store Buffer</code> / <code class="language-plaintext highlighter-rouge">Load Buffer</code> 在硬件中并不是简单的 FIFO 队列，而是具有调度逻辑的结构（类似 CAM — Content Addressable Memory），支持乱序发射、乱序完成。Intel 官方手册称之为 “Memory Ordering Buffer”，ARM 架构称之为 “Load-Store Queue (LSQ)”。但即使内部结构支持乱序，<strong>x86 TSO 模型仍然保证 Store Buffer 按程序顺序提交到 cache（FIFO 语义）</strong>，这是 x86 强内存模型的关键。</p> </blockquote> <p>其原因是：针对发起方<code class="language-plaintext highlighter-rouge">CPU</code>，其认为自己的<code class="language-plaintext highlighter-rouge">store</code> / <code class="language-plaintext highlighter-rouge">invalidate</code>操作已经完成，但是由于数据/消息是放在<code class="language-plaintext highlighter-rouge">store buffer</code> / <code class="language-plaintext highlighter-rouge">invalidate queue</code>中，所以可能还没来得及被其他<code class="language-plaintext highlighter-rouge">CPU</code>看到，导致数据不一致。</p> <p>其中的一个解决办法是：发起方的<code class="language-plaintext highlighter-rouge">store buffer</code>被清空，接收方的<code class="language-plaintext highlighter-rouge">invalidate queue</code>被处理掉。在此之后，<code class="language-plaintext highlighter-rouge">MESI</code>协议可以正常工作。</p> <h3 id="14-补充cpu指令流水线">1.4. 补充：CPU指令流水线</h3> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Fetch         &lt;-- ✅ 顺序取指，从指令缓存中取出下一条指令
 2. Decode        &lt;-- 顺序解码，分析操作数和目的寄存器
 3. Rename        &lt;-- 寄存器重命名
 4. Dispatch      &lt;-- 投递到调度窗口，等待执行条件满足
@@ -28,102 +28,126 @@
 </code></pre></div></div> <p>禁止编译器及<code class="language-plaintext highlighter-rouge">CPU</code>重排：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">X</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">asm</span> <span class="nf">volatile</span><span class="p">(</span><span class="s">"mfence"</span> <span class="o">:::</span> <span class="s">"memory"</span><span class="p">);</span> <span class="c1">// Prevent compiler and CPU reordering</span>
 <span class="n">r1</span> <span class="o">=</span> <span class="n">Y</span><span class="p">;</span>
-</code></pre></div></div> <p>详细知识参考：</p> <ul> <li><a href="https://wingsxdu.com/posts/note/cpu-cache-and-memory-barriers/" rel="external nofollow noopener" target="_blank">CPU 缓存一致性与内存屏障</a></li> <li><a href="https://wudaijun.com/2019/04/cache-coherence-and-memory-consistency/" rel="external nofollow noopener" target="_blank">Cache一致性和内存一致性</a></li> <li><a href="https://preshing.com/20130922/acquire-and-release-fences/" rel="external nofollow noopener" target="_blank">Acquire and Release Fences</a></li> <li><a href="https://medium.com/fcamels-notes/%E5%BE%9E%E7%A1%AC%E9%AB%94%E8%A7%80%E9%BB%9E%E4%BA%86%E8%A7%A3-memry-barrier-%E7%9A%84%E5%AF%A6%E4%BD%9C%E5%92%8C%E6%95%88%E6%9E%9C-416ff0a64fc1" rel="external nofollow noopener" target="_blank">從硬體觀點了解 memory barrier 的實作和效果</a></li> <li><a href="https://www.cnblogs.com/yiwanfengweng/articles/18657841" rel="external nofollow noopener" target="_blank">CPU架构和MESI缓存一致性-&gt;内存模型一致性-&gt;内存屏障和原子操作-&gt;内存序-&gt;C++内存序</a></li> </ul> <h2 id="3-c11-内存一致性模型定义">3. C++11 内存一致性模型定义</h2> <table> <thead> <tr> <th>内存序</th> <th>插入屏障</th> <th>特点</th> </tr> </thead> <tbody> <tr> <td>relaxed</td> <td>❌ 无</td> <td>只保证原子性，不保证顺序</td> </tr> <tr> <td>acquire</td> <td>✅ 读屏障</td> <td>LFENCE 指令等待之前的 load 指令执行完成，所以后续 load 指令不能在 LFENCE 之前执行</td> </tr> <tr> <td>release</td> <td>✅ 写屏障</td> <td>SFENCE 之前的 store 指令在 SFENCE 之前完成，并且保证其可见性早于在 SFENCE 之后的 store 指令</td> </tr> <tr> <td>acquire-release</td> <td>✅</td> <td>两者都有 双向有序</td> </tr> <tr> <td>seq_cst</td> <td>✅ 全屏障</td> <td>全局顺序一致性</td> </tr> </tbody> </table> <blockquote> <p>参见：<a href="https://www.felixcloutier.com/x86/sfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/sfence</a>，以及<a href="https://www.felixcloutier.com/x86/lfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/lfence</a>。</p> </blockquote> <h3 id="31-releaseacquire-如何实现局部同步">3.1. release/acquire 如何实现局部同步</h3> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">release_store</span><span class="p">(</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;*</span> <span class="n">ptr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// 1. 先刷新 Store Buffer（之前的所有store）</span>
-    <span class="n">drain_store_buffer</span><span class="p">();</span>
+</code></pre></div></div> <p>详细知识参考：</p> <ul> <li><a href="https://wingsxdu.com/posts/note/cpu-cache-and-memory-barriers/" rel="external nofollow noopener" target="_blank">CPU 缓存一致性与内存屏障</a></li> <li><a href="https://wudaijun.com/2019/04/cache-coherence-and-memory-consistency/" rel="external nofollow noopener" target="_blank">Cache一致性和内存一致性</a></li> <li><a href="https://preshing.com/20130922/acquire-and-release-fences/" rel="external nofollow noopener" target="_blank">Acquire and Release Fences</a></li> <li><a href="https://medium.com/fcamels-notes/%E5%BE%9E%E7%A1%AC%E9%AB%94%E8%A7%80%E9%BB%9E%E4%BA%86%E8%A7%A3-memry-barrier-%E7%9A%84%E5%AF%A6%E4%BD%9C%E5%92%8C%E6%95%88%E6%9E%9C-416ff0a64fc1" rel="external nofollow noopener" target="_blank">從硬體觀點了解 memory barrier 的實作和效果</a></li> <li><a href="https://www.cnblogs.com/yiwanfengweng/articles/18657841" rel="external nofollow noopener" target="_blank">CPU架构和MESI缓存一致性-&gt;内存模型一致性-&gt;内存屏障和原子操作-&gt;内存序-&gt;C++内存序</a></li> </ul> <h2 id="3-c11-内存一致性模型定义">3. C++11 内存一致性模型定义</h2> <table> <thead> <tr> <th>内存序</th> <th>语义</th> <th>x86-64 实现</th> <th>ARM64 实现</th> </tr> </thead> <tbody> <tr> <td>relaxed</td> <td>只保证原子性，不保证顺序</td> <td>普通 MOV</td> <td>普通 LDR/STR</td> </tr> <tr> <td>acquire (load)</td> <td> <strong>此操作之后</strong>的读写不能重排到此操作<strong>之前</strong> </td> <td>普通 MOV + 编译器屏障</td> <td>LDAR</td> </tr> <tr> <td>release (store)</td> <td> <strong>此操作之前</strong>的读写不能重排到此操作<strong>之后</strong> </td> <td>普通 MOV + 编译器屏障</td> <td>STLR</td> </tr> <tr> <td>acq_rel (RMW)</td> <td>同时具有 acquire 和 release 语义</td> <td>LOCK 前缀指令（隐含全屏障）</td> <td>LDAXR/STLXR</td> </tr> <tr> <td>seq_cst</td> <td>全局唯一顺序一致性，所有线程看到相同的 seq_cst 操作顺序</td> <td>store: XCHG 或 MOV+MFENCE; load: MOV</td> <td>LDAR/STLR (+ 额外屏障)</td> </tr> </tbody> </table> <p><strong>关键认知：C++ 内存序是语言层面的抽象，其硬件实现因架构而异。</strong></p> <ul> <li>在 <code class="language-plaintext highlighter-rouge">x86 TSO</code> （Total Store Order）模型下，硬件已经保证了 <code class="language-plaintext highlighter-rouge">LoadLoad</code>、<code class="language-plaintext highlighter-rouge">LoadStore</code>、<code class="language-plaintext highlighter-rouge">StoreStore</code> 顺序，只允许 <code class="language-plaintext highlighter-rouge">StoreLoad</code> 重排。因此 <code class="language-plaintext highlighter-rouge">acquire</code> 和 <code class="language-plaintext highlighter-rouge">release</code> 在 <code class="language-plaintext highlighter-rouge">x86</code> 上不需要任何硬件屏障指令，只需编译器屏障（<code class="language-plaintext highlighter-rouge">asm volatile("" ::: "memory")</code>）来阻止编译器重排。</li> <li>在 <code class="language-plaintext highlighter-rouge">ARM</code> 弱内存模型下，所有四种重排都可能发生，因此需要显式的硬件指令（<code class="language-plaintext highlighter-rouge">LDAR</code>/<code class="language-plaintext highlighter-rouge">STLR</code>/<code class="language-plaintext highlighter-rouge">DMB</code>）。</li> <li> <code class="language-plaintext highlighter-rouge">seq_cst</code> 在 <code class="language-plaintext highlighter-rouge">x86</code> 上需要额外处理 <code class="language-plaintext highlighter-rouge">StoreLoad</code> 重排——编译器在 <code class="language-plaintext highlighter-rouge">store</code> 端使用 <code class="language-plaintext highlighter-rouge">XCHG</code>（隐含 LOCK）或 <code class="language-plaintext highlighter-rouge">MOV + MFENCE</code>，<code class="language-plaintext highlighter-rouge">load</code> 端使用普通 <code class="language-plaintext highlighter-rouge">MOV</code>。</li> </ul> <blockquote> <p>参见：<a href="https://www.felixcloutier.com/x86/sfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/sfence</a>，<a href="https://www.felixcloutier.com/x86/lfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/lfence</a>，<a href="https://www.felixcloutier.com/x86/mfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/mfence</a>。</p> </blockquote> <h3 id="31-releaseacquire-如何实现局部同步">3.1. release/acquire 如何实现局部同步</h3> <p><code class="language-plaintext highlighter-rouge">release/acquire</code> 提供的是<strong>成对的、局部的</strong>同步关系：当线程 B 的 <code class="language-plaintext highlighter-rouge">acquire load</code> 读到线程 A 的 <code class="language-plaintext highlighter-rouge">release store</code> 写入的值时，线程 A 在 <code class="language-plaintext highlighter-rouge">release store</code> 之前的所有写入，对线程 B 在 <code class="language-plaintext highlighter-rouge">acquire load</code> 之后的所有读取都可见。</p> <p><strong>概念层面：</strong></p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Thread A (producer):                 Thread B (consumer):
 
-    <span class="c1">// 2. 执行本次 store</span>
-    <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>  <span class="c1">// 这个写入也会进入store buffer</span>
+  data = 42;                           while (!(p = flag.load(acquire)));
+  str = "Hello";                       // 以下读取能看到 Thread A 在 release 之前的所有写入
+  flag.store(true, release);  ──→      assert(data == 42);   // ✅ 保证成立
+     ↑                                 assert(*p == "Hello"); // ✅ 保证成立
+     |
+     └── release 保证：之前的写入（data, str）
+         不会被重排到此 store 之后
+</code></pre></div></div> <p><strong>x86-64 编译器实际生成的汇编（GCC/Clang）：</strong></p> <pre><code class="language-asm">;; release store (x86-64)
+;; std::atomic&lt;int&gt; x; x.store(val, std::memory_order_release);
+mov DWORD PTR [rdi], esi          ; 普通 MOV 指令！
+                                   ; x86 TSO 已保证 StoreStore 顺序
+                                   ; 编译器只需确保不重排（编译器屏障）
 
-    <span class="c1">// 3. 发出刷新本次store的指令（架构相关）</span>
-    <span class="c1">// x86: 自动（TSO模型）</span>
-    <span class="c1">// ARM: DMB ISHST (Store-Store barrier)</span>
-<span class="p">}</span>
+;; acquire load (x86-64)
+;; int r = x.load(std::memory_order_acquire);
+mov eax, DWORD PTR [rdi]          ; 普通 MOV 指令！
+                                   ; x86 TSO 已保证 LoadLoad、LoadStore 顺序
+</code></pre> <pre><code class="language-asm">;; release store (ARM64)
+;; x.store(val, std::memory_order_release);
+stlr w1, [x0]                     ; Store-Release 指令
+                                   ; 硬件保证：之前的读写不会重排到此 store 之后
 
-<span class="kt">int</span> <span class="nf">acquire_load</span><span class="p">(</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;*</span> <span class="n">ptr</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// 1. 执行 load</span>
-    <span class="kt">int</span> <span class="n">val</span> <span class="o">=</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+;; acquire load (ARM64)
+;; int r = x.load(std::memory_order_acquire);
+ldar w0, [x0]                     ; Load-Acquire 指令
+                                   ; 硬件保证：之后的读写不会重排到此 load 之前
+</code></pre> <p><strong>从硬件角度理解 release/acquire 的作用：</strong></p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Release Store 的效果：
+  ┌──────────────────────────────┐
+  │  之前的所有 store 已经进入   │
+  │  Store Buffer（x86: FIFO    │
+  │  保证顺序提交到 cache）     │
+  ├──────────────────────────────┤
+  │  Release Store 本身          │ ← 保证在之前的 store 之后可见
+  └──────────────────────────────┘
+  x86: Store Buffer 是 FIFO，天然保证 StoreStore 顺序
+  ARM: STLR 指令包含隐式屏障，阻止重排
 
-    <span class="c1">// 2. 处理 Invalidate Queue 中所有待处理的失效消息</span>
-    <span class="n">drain_invalidate_queue</span><span class="p">();</span>
+Acquire Load 的效果：
+  ┌──────────────────────────────┐
+  │  Acquire Load 本身           │ ← 此时可能触发 cache miss，
+  │                              │   从其他 CPU 的 cache 获取最新值
+  ├──────────────────────────────┤
+  │  之后的 load/store           │ ← 保证在 acquire load 之后执行
+  │  能看到 release 之前的写入   │
+  └──────────────────────────────┘
+  x86: 硬件已保证 LoadLoad/LoadStore 顺序，Invalidate Queue 中的
+       失效消息在 load 前被处理（x86 不真正延迟处理 invalidation）
+  ARM: LDAR 指令包含隐式屏障，且强制处理 Invalidate Queue
+</code></pre></div></div> <h3 id="32-memory_order_seq_cst-如何实现全局同步">3.2. memory_order_seq_cst 如何实现全局同步</h3> <p><code class="language-plaintext highlighter-rouge">seq_cst</code> 比 <code class="language-plaintext highlighter-rouge">release/acquire</code> 更强：它提供一个<strong>全局唯一的操作顺序</strong>（single total order），所有线程看到的 <code class="language-plaintext highlighter-rouge">seq_cst</code> 操作顺序完全一致。</p> <p><strong>x86-64 编译器实际生成的汇编（GCC/Clang）：</strong></p> <pre><code class="language-asm">;; seq_cst store (x86-64)
+;; x.store(val, std::memory_order_seq_cst);
+xchg DWORD PTR [rdi], esi         ; XCHG 隐含 LOCK 前缀
+                                   ; 效果：
+                                   ;   1. 排空 Store Buffer（之前的 store 全部提交）
+                                   ;   2. 原子地写入新值
+                                   ;   3. 等待本次写入被其他 CPU 的 cache 确认（ACK）
+                                   ;   4. 隐含全屏障（相当于 MFENCE）
 
-    <span class="c1">// 3. 防止后续的 load/store 被重排到此之前</span>
-    <span class="c1">// x86: 自动（不会重排 load-load, load-store）</span>
-    <span class="c1">// ARM: DMB ISHLD (Load-Load/Store barrier)</span>
+;; 或者等价写法：
+mov DWORD PTR [rdi], esi           ; 普通 store
+mfence                             ; 排空 Store Buffer + 阻止 StoreLoad 重排
 
-    <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div> <h3 id="32-memory_order_seq_cst-如何实现全局同步">3.2. memory_order_seq_cst 如何实现全局同步</h3> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// x86-64 的实现示例</span>
-<span class="kt">void</span> <span class="nf">seq_cst_store</span><span class="p">(</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;*</span> <span class="n">ptr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// 1. 完全刷新 Store Buffer（所有待写入的数据）</span>
-    <span class="n">__asm__</span> <span class="k">volatile</span><span class="p">(</span><span class="s">"mfence"</span> <span class="o">:</span> <span class="o">::</span> <span class="s">"memory"</span><span class="p">);</span>
+;; seq_cst load (x86-64)
+;; int r = x.load(std::memory_order_seq_cst);
+mov eax, DWORD PTR [rdi]           ; 普通 MOV 指令！
+                                   ; ⚠️ 注意：x86 上 seq_cst load 不需要 MFENCE
+                                   ; 因为屏障已经放在 store 端，而 x86 TSO 保证
+                                   ; load 不会越过之前的 load（LoadLoad 有序）
+</code></pre> <pre><code class="language-asm">;; seq_cst store (ARM64)
+;; x.store(val, std::memory_order_seq_cst);
+stlr w1, [x0]                     ; Store-Release（与 release 相同指令）
+                                   ; ARMv8 中 STLR+LDAR 组合天然提供 seq_cst 语义
 
-    <span class="c1">// 2. 使用带 LOCK 前缀的指令 或 XCHG</span>
-    <span class="c1">// LOCK 前缀会：</span>
-    <span class="c1">//   - 锁定缓存行（或总线）</span>
-    <span class="c1">//   - 立即刷新该地址的 store buffer</span>
-    <span class="c1">//   - 强制其他CPU立即处理 invalidate queue</span>
-    <span class="n">__asm__</span> <span class="k">volatile</span><span class="p">(</span>
-        <span class="s">"lock; xchgl %0, %1"</span>
-        <span class="o">:</span> <span class="s">"=r"</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-        <span class="o">:</span> <span class="s">"m"</span><span class="p">(</span><span class="o">*</span><span class="n">ptr</span><span class="p">),</span> <span class="s">"0"</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-        <span class="o">:</span> <span class="s">"memory"</span>
-    <span class="p">);</span>
-
-    <span class="c1">// 或者</span>
-    <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
-    <span class="n">__asm__</span> <span class="k">volatile</span><span class="p">(</span><span class="s">"mfence"</span> <span class="o">:::</span> <span class="s">"memory"</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="nf">seq_cst_load</span><span class="p">(</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;*</span> <span class="n">ptr</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// 1. 先屏障</span>
-    <span class="n">__asm__</span> <span class="k">volatile</span><span class="p">(</span><span class="s">"mfence"</span> <span class="o">:::</span>  <span class="s">"memory"</span><span class="p">);</span>
-
-    <span class="c1">// 2. Load 操作</span>
-    <span class="kt">int</span> <span class="n">val</span> <span class="o">=</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
-
-    <span class="c1">// 3. 强制处理 invalidate queue</span>
-    <span class="c1">// x86 的 mfence 会等待所有失效消息被处理</span>
-    <span class="n">__asm__</span> <span class="k">volatile</span><span class="p">(</span><span class="s">"mfence"</span> <span class="o">:::</span>  <span class="s">"memory"</span><span class="p">);</span>
-
-    <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div> <p>关键差异：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>普通的 Store Buffer 刷新（Release）：
+;; seq_cst load (ARM64)
+;; int r = x.load(std::memory_order_seq_cst);
+ldar w0, [x0]                     ; Load-Acquire（与 acquire 相同指令）
+</code></pre> <p><strong>为什么 x86 的 seq_cst 把屏障放在 store 端而不是 load 端？</strong></p> <p>在 <code class="language-plaintext highlighter-rouge">x86 TSO</code> 下，唯一允许的重排是 <code class="language-plaintext highlighter-rouge">StoreLoad</code>（后面的 load 可能在前面的 store 提交到 cache 之前就执行了）。因此只需要在 <code class="language-plaintext highlighter-rouge">store</code> 之后 / <code class="language-plaintext highlighter-rouge">load</code> 之前插入屏障。编译器选择在 <code class="language-plaintext highlighter-rouge">store</code> 端处理，使用 <code class="language-plaintext highlighter-rouge">XCHG</code>（隐含 LOCK）或 <code class="language-plaintext highlighter-rouge">MOV + MFENCE</code>，这样 <code class="language-plaintext highlighter-rouge">load</code> 端可以保持为普通 <code class="language-plaintext highlighter-rouge">MOV</code> 指令，<strong>性能更好</strong>（因为 load 通常比 store 更频繁）。</p> <p>关键差异：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Release Store（局部同步，成对使用）：
 -----------------------------------------
-CPU 0: [Store Buffer] → L1 Cache
-                         ↓
-                    发送 Invalidate
-                         ↓
-CPU 1:              [Invalidate Queue] (异步处理)
+CPU 0: store data=42          ; 进入 Store Buffer
+       store flag=true        ; release store，也进入 Store Buffer
+                              ; x86 FIFO 保证 data 先于 flag 提交
+                                    ↓ cache coherence (MESI)
+CPU 1: load flag (acquire)    ; 如果读到 true，
+       load data              ; 则保证读到 42
 
 
-Seq_cst 的强制同步：
+Seq_cst Store（全局同步，强制唯一顺序）：
 -----------------------------------------
-CPU 0: mfence/dmb ish
+CPU 0: XCHG [x], 1            ; 隐含 LOCK 前缀
          ↓
-       等待所有 Store Buffer 完全刷新
+       1. 排空 Store Buffer（之前所有 store 提交到 cache）
+       2. 锁定 cache line，原子写入
+       3. 通过 MESI 发送 Invalidate 消息
+       4. 等待所有 CPU 的 Invalidate ACK
          ↓
-       等待所有 Invalidate 被确认
+       此时所有 CPU 都知道 x 已经被修改
          ↓
-       执行 store (with LOCK 或类似机制)
-         ↓
-       强制发送 Invalidate + 等待ACK
-         ↓
-CPU 1:  必须立即处理 Invalidate Queue
-         ↓
-       在下一个 mfence 时必须等待处理完成
-</code></pre></div></div> <p><code class="language-plaintext highlighter-rouge">MESI</code>协议层：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CPU0:  seq_cst_store(x, 1)
-      |
-      +--&gt; mfence (确保之前所有操作完成)
-      +--&gt; store x=1
-      +--&gt; mfence (确保之后所有操作在此之后)
-      +--&gt; 触发缓存一致性协议，广播到所有CPU
+CPU 1,2,3: 后续的 seq_cst load
+           必须看到一致的全局顺序
+</code></pre></div></div> <h3 id="33-releaseacquire-与-seq_cst-的本质区别iriw-问题">3.3. release/acquire 与 seq_cst 的本质区别：IRIW 问题</h3> <p><code class="language-plaintext highlighter-rouge">release/acquire</code> 只提供<strong>成对的局部同步</strong>，不保证全局顺序。经典的 <strong>IRIW（Independent Reads of Independent Writes）</strong> 问题展示了这一区别：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">{</span><span class="mi">0</span><span class="p">},</span> <span class="n">y</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
 
-CPU1, CPU2, CPU3:
-      +--&gt; 接收到缓存失效消息
-      +--&gt; 后续的seq_cst_load必须等待屏障完成
-      +--&gt; 从内存/共享缓存读取最新值
-</code></pre></div></div> <h3 id="33-示例代码">3.3. 示例代码</h3> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp">
+<span class="c1">// Thread 1: 只写 x</span>
+<span class="kt">void</span> <span class="nf">thread1</span><span class="p">()</span> <span class="p">{</span> <span class="n">x</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory_order</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="c1">// Thread 2: 只写 y</span>
+<span class="kt">void</span> <span class="nf">thread2</span><span class="p">()</span> <span class="p">{</span> <span class="n">y</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory_order</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="c1">// Thread 3: 先读 x，再读 y</span>
+<span class="kt">void</span> <span class="nf">thread3</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 1</span>
+    <span class="kt">int</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">y</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 0</span>
+<span class="p">}</span>
+
+<span class="c1">// Thread 4: 先读 y，再读 x</span>
+<span class="kt">void</span> <span class="nf">thread4</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">r3</span> <span class="o">=</span> <span class="n">y</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 1</span>
+    <span class="kt">int</span> <span class="n">r4</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 0</span>
+<span class="p">}</span>
+</code></pre></div></div> <table> <thead> <tr> <th>memory_order</th> <th>r1=1, r2=0, r3=1, r4=0 是否可能？</th> <th>原因</th> </tr> </thead> <tbody> <tr> <td><code class="language-plaintext highlighter-rouge">acquire/release</code></td> <td>✅ <strong>可能</strong> </td> <td>没有全局顺序要求；Thread 3 和 Thread 4 可能各自看到不同的写入顺序</td> </tr> <tr> <td><code class="language-plaintext highlighter-rouge">seq_cst</code></td> <td>❌ <strong>不可能</strong> </td> <td>全局唯一顺序：如果 Thread 3 看到 x=1 在 y=1 之前，Thread 4 也必须看到相同的顺序</td> </tr> </tbody> </table> <p><strong>这就是 seq_cst 的额外开销所换来的保证：所有线程对所有 seq_cst 操作看到完全相同的执行顺序。</strong></p> <h3 id="34-示例代码">3.4. 示例代码</h3> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp">
 #include</span> <span class="cpf">&lt;atomic&gt;</span><span class="cp">
 #include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp">
 #include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
@@ -150,6 +174,112 @@ CPU1, CPU2, CPU3:
   <span class="n">t1</span><span class="p">.</span><span class="n">join</span><span class="p">();</span> <span class="n">t2</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
+</code></pre></div></div> <h2 id="4-原子操作的硬件实现">4. 原子操作的硬件实现</h2> <p>上面讨论的 <code class="language-plaintext highlighter-rouge">memory order</code> 解决的是<strong>可见性和顺序</strong>问题。而原子操作本身要解决的是<strong>不可分割性（atomicity）</strong> 问题——确保一个操作在观察者看来要么完全完成，要么完全没有发生。</p> <h3 id="41-原子性的基础自然对齐的-loadstore">4.1. 原子性的基础：自然对齐的 load/store</h3> <p>在大多数现代 CPU 上，<strong>自然对齐的基本类型（≤ 机器字长）的 load 和 store 天然就是原子的</strong>：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x86-64:
+  - 对齐的 1/2/4/8 字节 load/store 是原子的
+  - 即使是普通的 MOV 指令，只要地址对齐，就是原子操作
+  - 这就是为什么 relaxed load/store 在 x86 上就是普通 MOV
+
+ARM64:
+  - 对齐的 1/2/4/8 字节 LDR/STR 是原子的
+</code></pre></div></div> <p>因此，<code class="language-plaintext highlighter-rouge">std::atomic&lt;int&gt;</code> 的 <code class="language-plaintext highlighter-rouge">load()</code> 和 <code class="language-plaintext highlighter-rouge">store()</code> 本质上不需要特殊的硬件支持来保证原子性——对齐的 MOV/LDR/STR 天然就是原子的。<code class="language-plaintext highlighter-rouge">std::atomic</code> 在这里主要提供的是<strong>编译器屏障</strong>和<strong>内存序语义</strong>。</p> <h4 id="stdatomic即使-relaxed与普通变量的区别"> <code class="language-plaintext highlighter-rouge">std::atomic</code>（即使 relaxed）与普通变量的区别</h4> <p>即使使用最弱的 <code class="language-plaintext highlighter-rouge">memory_order_relaxed</code>，<code class="language-plaintext highlighter-rouge">std::atomic</code> 仍然比普通变量多做了关键的几件事：</p> <table> <thead> <tr> <th>特性</th> <th>普通变量</th> <th> <code class="language-plaintext highlighter-rouge">atomic</code>（relaxed）</th> </tr> </thead> <tbody> <tr> <td>操作原子性</td> <td>不保证（可能被拆分为多条指令）</td> <td>保证不可分割</td> </tr> <tr> <td>编译器优化</td> <td>可合并、删除、重排</td> <td>禁止合并/删除（每次操作都会发出指令）</td> </tr> <tr> <td>cache coherence</td> <td>可能一直停留在寄存器中</td> <td>触发 MESI 的 invalidate，保证跨核可见性</td> </tr> <tr> <td>顺序保证</td> <td>无</td> <td>不保证顺序（relaxed），但保证最终可见</td> </tr> </tbody> </table> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 普通变量：编译器可能优化掉前一条</span>
+<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">43</span><span class="p">;</span>   <span class="c1">// 编译器可能直接只保留 x = 43</span>
+
+<span class="c1">// atomic：每条 store 都必须执行</span>
+<span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">;</span>
+<span class="n">x</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>  <span class="c1">// 不会被优化掉</span>
+<span class="n">x</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">43</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>  <span class="c1">// 也不会被优化掉</span>
+</code></pre></div></div> <blockquote> <p>关键理解：<code class="language-plaintext highlighter-rouge">atomic</code> 的”原子性”和”内存序”是<strong>两个独立的概念</strong>。<code class="language-plaintext highlighter-rouge">relaxed</code> 只放弃了顺序保证，但原子性、编译器屏障（禁止优化）、cache coherence 触发一个都不少。</p> </blockquote> <h3 id="42-read-modify-write-rmw-操作">4.2. Read-Modify-Write (RMW) 操作</h3> <p>真正需要特殊硬件支持的是 <strong>RMW 操作</strong>：<code class="language-plaintext highlighter-rouge">fetch_add</code>、<code class="language-plaintext highlighter-rouge">compare_exchange</code>、<code class="language-plaintext highlighter-rouge">exchange</code> 等。这些操作需要在”读取-计算-写入”这个过程中保证没有其他 CPU 插入修改。</p> <h4 id="x86-实现lock-前缀">x86 实现：LOCK 前缀</h4> <pre><code class="language-asm">;; std::atomic&lt;int&gt; x; x.fetch_add(1, relaxed);
+lock add DWORD PTR [rdi], 1        ; LOCK 前缀保证原子 Read-Modify-Write
+
+;; x.compare_exchange_strong(expected, desired);
+lock cmpxchg DWORD PTR [rdi], esi  ; LOCK + CMPXCHG = 原子 CAS
+
+;; x.exchange(val);
+xchg DWORD PTR [rdi], esi          ; XCHG 隐含 LOCK（不需要显式写）
+</code></pre> <blockquote> <p>以 <code class="language-plaintext highlighter-rouge">lock cmpxchg</code> 为例，它在硬件中不是拆成多条独立微指令，而是作为一组<strong>融合微操作（fused micro-op）</strong> 执行：CPU 在执行期间锁定资源，保证”比较-交换”整个过程不可被打断。具体流程：(1) 发出 LOCK# 信号或锁住 cache line → (2) 通过 MESI 抢占独占权限 → (3) 等待其他核 invalidation ACK → (4) 比较并条件写入 → (5) 完成后更新 MESI 状态为 Modified。</p> </blockquote> <p><code class="language-plaintext highlighter-rouge">LOCK</code> 前缀的硬件实现（现代 x86）：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──────────────────────────────────────────────────┐
+│ 1. 检查目标地址是否在 L1 Cache 中                 │
+│    ├─ 是 → Cache Line Locking（锁定 cache line） │
+│    │       - 将 cache line 设为 Modified 状态      │
+│    │       - 在操作期间拒绝其他 CPU 的访问请求     │
+│    │       - 操作完成后释放                        │
+│    └─ 否 → Bus Locking（锁定总线，较慢）          │
+│            - 发出 LOCK# 信号                      │
+│            - 阻止其他 CPU 访问内存                 │
+│            - 现代 CPU 极少走到这条路径              │
+├──────────────────────────────────────────────────┤
+│ 2. 额外效果：                                     │
+│    - LOCK 前缀指令隐含全内存屏障（等同 MFENCE）    │
+│    - 排空 Store Buffer                            │
+│    - 即使使用 memory_order_relaxed，               │
+│      x86 上的 RMW 也有 MFENCE 效果                │
+└──────────────────────────────────────────────────┘
+</code></pre></div></div> <blockquote> <p><strong>重要</strong>: x86 上 <code class="language-plaintext highlighter-rouge">LOCK</code> 前缀指令始终隐含全屏障。这意味着 <code class="language-plaintext highlighter-rouge">x.fetch_add(1, relaxed)</code> 在 x86 上的性能和 <code class="language-plaintext highlighter-rouge">x.fetch_add(1, seq_cst)</code> 几乎相同——都会生成 <code class="language-plaintext highlighter-rouge">lock add</code>。relaxed 的性能优势主要体现在 ARM 等弱内存模型架构上。</p> </blockquote> <h4 id="arm-实现llsc-或-lse-原子指令">ARM 实现：LL/SC 或 LSE 原子指令</h4> <pre><code class="language-asm">;; fetch_add (ARM64, 传统 LL/SC 方式)
+.retry:
+    ldxr  w1, [x0]               ; Load-Exclusive：加载值并标记为"独占"
+    add   w2, w1, #1              ; 计算新值
+    stxr  w3, w2, [x0]           ; Store-Exclusive：仅当独占标记仍有效时写入
+    cbnz  w3, .retry             ; 如果 stxr 失败（其他 CPU 写了同一 cache line），重试
+
+;; fetch_add (ARM64, ARMv8.1 LSE 原子指令)
+    ldadd w1, w0, [x0]           ; 硬件原子 load-add，无需重试循环
+</code></pre> <p>LL/SC（Load-Linked / Store-Conditional）机制：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌───────────────┐              ┌───────────────┐
+│    CPU 0      │              │    CPU 1      │
+│               │              │               │
+│ LDXR [addr]   │              │               │
+│  ↓ 标记 addr  │              │               │
+│  为 exclusive │              │               │
+│               │              │ STR [addr]    │
+│               │              │  ↓ 清除 CPU0  │
+│               │              │  的 exclusive │
+│               │              │  标记         │
+│ STXR [addr]   │              │               │
+│  ↓ 发现标记   │              │               │
+│  已被清除     │              │               │
+│  → 返回失败   │              │               │
+│  → 跳回 LDXR  │              │               │
+│  重试         │              │               │
+└───────────────┘              └───────────────┘
+</code></pre></div></div> <h3 id="43-三种内存序对-rmw-的影响以-fetch_add-为例">4.3. 三种内存序对 RMW 的影响（以 fetch_add 为例）</h3> <pre><code class="language-asm">;; x86-64: 三种内存序生成的汇编完全相同！
+;; x.fetch_add(1, relaxed / acq_rel / seq_cst)
+lock add DWORD PTR [rdi], 1       ; 都是 lock add（LOCK 隐含全屏障）
+
+;; ARM64: 不同内存序生成不同汇编
+;; relaxed:
+    ldxr  w1, [x0]
+    add   w2, w1, #1
+    stxr  w3, w2, [x0]           ; 普通 LL/SC
+
+;; acquire-release:
+    ldaxr w1, [x0]               ; Load-Acquire-Exclusive
+    add   w2, w1, #1
+    stlxr w3, w2, [x0]           ; Store-Release-Exclusive
+
+;; seq_cst:
+    ldaxr w1, [x0]               ; Load-Acquire-Exclusive
+    add   w2, w1, #1
+    stlxr w3, w2, [x0]           ; Store-Release-Exclusive
+    dmb   ish                    ; 额外的全屏障（某些实现）
+</code></pre> <h3 id="44-总结对比">4.4. 总结对比</h3> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──────────────┬─────────────────┬─────────────────────────┬────────────────────┐
+│   操作类型    │   保证什么       │  x86-64 实现             │  ARM64 实现         │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ relaxed      │ 原子性           │ MOV                     │ LDR/STR            │
+│ load/store   │                 │                         │                    │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ acquire      │ 原子性 +         │ MOV（编译器屏障）        │ LDAR               │
+│ load         │ 后续操作不前移   │                         │                    │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ release      │ 原子性 +         │ MOV（编译器屏障）        │ STLR               │
+│ store        │ 之前操作不后移   │                         │                    │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ seq_cst      │ 原子性 +         │ store: XCHG/MOV+MFENCE │ LDAR/STLR          │
+│ load/store   │ 全局唯一顺序     │ load: MOV               │ (+ 可能额外 DMB)   │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ RMW          │ 原子性 +         │ LOCK 前缀指令            │ LDXR/STXR          │
+│ (any order)  │ 不可分割的       │ (始终隐含全屏障)         │ 或 LSE 原子指令     │
+│              │ 读-改-写         │                         │ (屏障取决于 order)  │
+└──────────────┴─────────────────┴─────────────────────────┴────────────────────┘
 </code></pre></div></div> <h2 id="参考资料">参考资料</h2> <ul> <li><a href="https://bi-an.github.io/blog/2025/08/01/concurrency/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="external nofollow noopener" target="_blank">内存模型</a></li> <li><a href="https://luyuhuang.tech/2022/06/25/cpp-memory-order.html" rel="external nofollow noopener" target="_blank">谈谈 C++ 中的内存顺序 (Memory Order)</a></li> <li><a href="https://liam.page/2021/12/11/memory-order-cpp-02/" rel="external nofollow noopener" target="_blank">程序员的自我修养（⑫）：C++ 的内存顺序·中</a></li> </ul> <h2 id="更多资料">更多资料</h2> <ul> <li><a href="https://simonhancrew.github.io/CppConcurencyInAction/" rel="external nofollow noopener" target="_blank">C++ Concurrency In Action 2ed 中文翻译</a></li> <li><a href="/assets/pdf/cpu/C++%20Concurrency%20in%20Action,%202nd%20Edition.pdf">C++ Concurrency in Action, 2nd Edition</a></li> <li><a href="https://weedge.github.io/perf-book-cn/zh/chapters/3-CPU-Microarchitecture/3-8_Modern_CPU_design_cn.html" rel="external nofollow noopener" target="_blank">现代CPU性能分析与优化 – 现代CPU设计</a></li> <li><a href="https://weedge.github.io/perf-book-cn/zh/" rel="external nofollow noopener" target="_blank">现代CPU性能分析与优化 – README</a></li> <li><a href="/assets/pdf/cpu/perf-book-cn.pdf">现代CPU性能分析与优化 – pdf</a></li> </ul> </div> </article> <br> <hr> <br> <ul class="list-disc pl-8"></ul> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2026/al-folio-customization-summary/">al-folio 模板定制修改总结</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2026/al-folio-local-deploy-ubuntu2404/">al-folio 本地部署记录（Ubuntu 24.04）</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2026/C++-Traits/">C++ Traits</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/">道格拉斯-普克算法(Douglas–Peucker algorithm)</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93/">CMake支持库收集</a> </li> </div> </div> <div class="col-sm-3"> <nav id="toc-sidebar" class="sticky-top"></nav> </div> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Roderick Huang. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <script src="/assets/js/bootstrap.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=a0db7e5d5c70cc3252b3138b0c91dcaf" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/js/zoom.js?v=85ddb88934d28b74e78031fd54cf8308"></script> <script defer src="/assets/js/bootstrap-toc.min.js?v=c82ff4de8b0955d6ff14f5b05eed7eb6"></script> <script src="/assets/js/no_defer.js?v=2781658a0a2b13ed609542042a859126"></script> <script defer src="/assets/js/common.js?v=c15de51d4bb57887caa2c21988d97279"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=d9f17b6adc2311cbabd747f4538bb15f"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/js/mathjax-setup.js?v=a5bb4e6a542c546dd929b24b8b236dfd"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script defer src="/assets/js/progress-bar.js?v=2f30e0e6801ea8f5036fa66e1ab0a71a" type="text/javascript"></script> <script src="/assets/js/vanilla-back-to-top.min.js?v=f40d453793ff4f64e238e420181a1d17"></script> <script>
     addBackToTop();
   </script> <script type="module" src="/assets/js/search/ninja-keys.min.js?v=a3446f084dcaecc5f75aa1757d087dcf"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/js/search-setup.js?v=6c304f7b1992d4b60f7a07956e52f04a"></script> <script src="/assets/js/search-data.js"></script> <script src="/assets/js/shortcut-key.js?v=ccc841c459bfc0e64c1c2b5acd10df02"></script> </body> </html>
