@@ -1,0 +1,32 @@
+{
+  // Prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  // Shopify Liquid
+  "files.associations": {
+    "*.html": "liquid"
+  },
+  "[markdown]": {
+    // Markdown Preview Enhanced
+    "editor.defaultFormatter": "shd101wyy.markdown-preview-enhanced"
+  },
+  "markdown-preview-enhanced.enableEmojiSyntax": true, // 插件 BUG: 禁用 Emoji 语法
+  // Formatter
+  "[html][liquid]": {
+    "editor.defaultFormatter": "Shopify.theme-check-vscode"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "mkhl.shfmt"
+  },
+  // Disable vscode built-in stylelint
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+  // Stylint extension settings
+  "stylelint.snippet": ["css", "scss"],
+  "stylelint.validate": ["css", "scss"],
+  // Run tasks in macOS
+  "terminal.integrated.profiles.osx": {
+    "zsh": { "path": "/bin/zsh", "args": ["-l", "-i"] }
+  }
+}
