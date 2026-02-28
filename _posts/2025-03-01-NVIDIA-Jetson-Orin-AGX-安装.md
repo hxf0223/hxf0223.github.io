@@ -49,6 +49,12 @@ chmod +x cmake-3.28.5-linux-aarch64.sh
 sudo ./cmake-3.28.5-linux-aarch64.sh --prefix=/usr/local --skip-license
 ```
 
+### 2. 安装 GTest
+
+```bash
+sudo apt install libgtest-dev libgmock-dev
+```
+
 ## 参考资料
 
 - [NVIDIA Jetson Linux 36.4](https://developer.nvidia.cn/embedded/jetson-linux-r3640)：官方资料页面，包含组件以及驱动源码下载列表
