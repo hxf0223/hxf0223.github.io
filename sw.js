@@ -14,7 +14,11 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then((cache) =>
+        cache.addAll(PRECACHE_URLS).catch((err) => {
+          console.warn('Precache failed (non-fatal):', err);
+        })
+      )
       .then(() => self.skipWaiting())
   );
 });
