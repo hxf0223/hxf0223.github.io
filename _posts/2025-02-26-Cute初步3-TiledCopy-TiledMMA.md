@@ -47,9 +47,9 @@ Copy_Atom 封装基本的拷贝指令，所以叫 Atom，即针对 SRC-DST 的�
 
 TiledCopy 封装 Copy_Atom，根据 LayoutCopy_TV 执行 Copy_Atom，可能需要重复多次的 atom 搬运操作。其 template 参数有：
 
-- LayoutCopy_TV：定义 Thread Layout，以及 Value Layout；
-- ShapeTiler_MN：切分器的 shape；
-- Copy_Atom：定义复制指令；
+- **LayoutCopy_TV**：定义 Thread Layout，以及 Value Layout；
+- **ShapeTiler_MN**：切分器的 shape；
+- **Copy_Atom**：定义复制指令；
 
 ThrCopy 完成实际的生成线程对应的 tensor（软件工程功能划分需要，剥离出来的功能模块）。
 
@@ -80,18 +80,18 @@ void copy_if(TiledCopy const& copy, PrdTensor const& pred, Tensor const& src, Te
 
 分块 MMA 抽象，将 MMA_Atom 分为几个可组合的层次：
 
-- MMAOperation：封装 D=A\*B + C 的指令封装，以使用不同的数据类型以及 PTX 指令，包括使用 CUDA Core / Tensor Core。如 UniversalFMA<>、SM80_16x8x8_F32F16F16F32_TN。
-- MMA_Traits：和 Copy_Traits 类似，提供了 MMAOperation 类型没有提供，但是其使用者 MMA_Atom 却需要的起到桥梁作用的信息。如数据类型信息，TV layout 信息。
-- MMA_Atom：将 MMAOperation 和 MMA_Traits 结合，并提供 fragment 划分接口。
-- TiledMMA：根据 LayoutTile_TV 切分的线程布局，重复使用 MMA_Atom 完成分块矩阵乘加计算。
-- ThrMMA：完成实际的生成线程对应的 tensor。
+- **MMAOperation**：是对 D=A\*B + C 的 PTX 指令封装，以使用不同的数据类型以及 PTX 指令，包括使用 CUDA Core / Tensor Core。如 UniversalFMA<>、SM80_16x8x8_F32F16F16F32_TN。
+- **MMA_Traits**：和 Copy_Traits 类似，提供了 MMAOperation 类型没有提供，但是其使用者 MMA_Atom 却需要的起到桥梁作用的信息。如数据类型信息，TV layout 信息。
+- **MMA_Atom**：将 MMAOperation 和 MMA_Traits 结合，并提供 fragment 划分接口。
+- **TiledMMA**：根据 LayoutTile_TV 切分的线程布局，重复使用 MMA_Atom 完成分块矩阵乘加计算。
+- **ThrMMA**：完成实际的生成线程对应的 tensor。
 
 ### 2.1. MMAOperation
 
 以**SM80_16x8x8_F32F16F16F32_TN**为例，封装了 SM80 架构下，16x8x8 大小的矩阵乘加指令 **D=A \* B + C**，数据类型为 A:F16、B:F16、C:F32、D:F32。A 矩阵 row-major，B 矩阵 column-major。
 
-> BLAS 中约定 normal 矩阵为列优先。T(transpose) 表示使用转置矩阵，即 row-major 存储。
-> 下图原图见 Thakkar_BLISRetreat2023.pdf 第 30 页。
+> 1. BLAS 中约定 normal 矩阵为列优先。T(transpose) 表示使用转置矩阵，即 row-major 存储。
+> 2. 下图原图见 Thakkar_BLISRetreat2023.pdf 第 30 页。
 
 **SM80_16x8x8_F32F16F16F32_TN** 对应的 inverse TV-Layout 如下：
 
@@ -128,7 +128,8 @@ print_latex(tiled_mma);
 */
 ```
 
-- **TODO: SM80_16x8x8_F32F16F16F32_TN 一条指令处理几个数据？**
+> 📌 **SM80_16x8x8_F32F16F16F32_TN** 使用一个 warp（32 个线程）处理 MNK 规模为 16 \* 8 \* 8 的一个 sub-tile。一个线程处理 A 中的 2 \* 2 个数据，即LayoutA_TV 中的第二个 mode (_2, _2)，则线程数位 $ThrNum_{A} = 16 \times 8 \div 4 = 32$。同理可以知道，每个线程处理 B、C 中多少个数据，以及需要的线程数。
+
 - **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
 
 CUDA PTX 文档也给出了指令 m16n8k8 的布局信息：[9.7.14.5.7. Matrix Fragments for mma.m16n8k8](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-1688)。
@@ -224,7 +225,7 @@ struct TiledMMA : MMA_Atom {
 | AtomLayoutMNK  | `Layout<Shape<_2,_2,_1>>` | 在 M/N/K 方向上重复多少个 atom（分配更多线程）    |
 | PermutationMNK | `Layout<Shape<_1,_2,_1>>` | 每个线程在 M/N/K 方向上处理更多的值（不增加线程） |
 
-> AtomLayoutMNK 决定如何将 MMA_Atom 复制到更多的线程上执行，且将 MMA_ATOM 处理的线程扩展为 size(AtomLayoutMNK) 倍数。PermutationMNK 决定每个线程如何处理更多的值（即哪些逻辑坐标位置的值）。
+> 📌 AtomLayoutMNK 决定如何将 MMA_Atom 复制到更多的线程上执行，且将 MMA_ATOM 处理的线程扩展为 size(AtomLayoutMNK) 倍数。PermutationMNK 决定每个线程如何处理更多的值（即哪些逻辑坐标位置的值）。
 
 > 3.4 之前版本还有 ValLayoutMNK 参数，从 3.4 版本开始 去掉该模板参数。PermutationMNK 可以替代 ValLayoutMNK 的功能。即 AtomLayoutMNK 定义 Thread 扩展，PermutationMNK 定义 Value 级别的扩展，即执行多次 Atom，**使用 PermutationMNK 导致线程需要占用更多的寄存器**。
 
