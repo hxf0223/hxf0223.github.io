@@ -367,3 +367,9 @@ Tensor tCsA = local_partition(sA, tC, threadIdx.x, Step<_1, X>{});  // (THR_M, B
 - [CuTe Local Partition](https://leimao.github.io/blog/CuTe-Local-Partition/)：Mao Lei博客
 - [CUDA Matrix Multiplication Optimization](https://leimao.github.io/article/CUDA-Matrix-Multiplication-Optimization/)：Mao Lei博客，GEMM优化步骤全解析
 - [Colfax Research Cute Tutorial](https://research.colfax-intl.com/category/papers/tutorials/)：Colfax Research Cute Tutorial
+
+### 参考代码
+
+- [sgemm_sm80](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu) 官方示例：使用 CuTe 实现的 naive tile GEMM
+- [Awesome-CUDA-and-HPC](https://github.com/coderonion/awesome-cuda-and-hpc) Awesome CUDA
+- [0x_gemm_tutorial](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0x_gemm_tutorial.md) 官方文档：CuTe GEMM 教程
