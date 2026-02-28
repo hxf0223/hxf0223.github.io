@@ -12,7 +12,7 @@ toc:
 
 ---
 
-## 1. 站点基本信息配置（_config.yml）
+## 1. 站点基本信息配置（\_config.yml）
 
 在 `_config.yml` 中修改了以下关键配置项：
 
@@ -29,7 +29,7 @@ description: >
 
 # 站点 URL
 url: https://hxf0223.github.io
-baseurl:  # 个人站点留空
+baseurl: # 个人站点留空
 
 # 博客设置
 blog_name: WorkLog
@@ -79,12 +79,13 @@ defaults:
 - 保留原始 `title`、`date`、`categories`、`tags` 字段
 
 分两轮处理：
+
 1. 第一轮处理 112 个非中文文件名的文件
 2. 第二轮使用 `git -c core.quotepath=false` 处理 43 个中文文件名的文件
 
 ---
 
-## 3. Tags/Categories 自动显示（_pages/blog.md）
+## 3. Tags/Categories 自动显示（\_pages/blog.md）
 
 ### 问题
 
@@ -152,12 +153,13 @@ al-folio 默认使用 `_config.yml` 中的 `display_tags` 和 `display_categorie
 
 ```javascript
 // install 事件：预缓存关键资源，添加容错处理
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
+    caches
+      .open(CACHE_NAME)
       .then((cache) =>
         cache.addAll(PRECACHE_URLS).catch((err) => {
-          console.warn('Precache failed (non-fatal):', err);
+          console.warn("Precache failed (non-fatal):", err);
         })
       )
       .then(() => self.skipWaiting())
@@ -165,15 +167,15 @@ self.addEventListener('install', (event) => {
 });
 
 // fetch 事件：必须过滤非 HTTP 协议请求
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  if (event.request.method !== 'GET' || !url.protocol.startsWith('http')) return;
+  if (event.request.method !== "GET" || !url.protocol.startsWith("http")) return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
       return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type === 'opaque') {
+        if (!response || response.status !== 200 || response.type === "opaque") {
           return response;
         }
         const toCache = response.clone();
@@ -193,28 +195,27 @@ self.addEventListener('fetch', (event) => {
 2. Edge/Chrome 浏览器扩展的请求（`chrome-extension://`）也会被 SW 的 fetch 事件拦截，`cache.put()` 不支持非 HTTP scheme，导致 `Uncaught TypeError`。必须用 `url.protocol.startsWith('http')` 过滤
 3. `cache.put()` 也需要 `.catch(() => {})` 兜底，防止其他异常场景
 
-### 4.3 修改 _includes/head.liquid
+### 4.3 修改 \_includes/head.liquid
 
 在 `<head>` 中添加 manifest 引用、theme-color、SW 注册脚本和 CSP：
 
 ```html
 <!-- PWA manifest & theme color -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a1a2e">
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a1a2e" />
 
 <!-- PWA Service Worker registration -->
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js');
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js");
     });
   }
 </script>
 
 <!-- CSP: 需要包含 worker-src 'self' -->
-<meta http-equiv="Content-Security-Policy"
-  content="... worker-src 'self';">
+<meta http-equiv="Content-Security-Policy" content="... worker-src 'self';" />
 ```
 
 > **注意：** CSP 必须包含 `worker-src 'self'`，否则某些浏览器版本会阻止 Service Worker 注册。
@@ -264,7 +265,7 @@ on:
   push:
     paths:
       - "**.js"
-      - "**.json"   # 新增
+      - "**.json" # 新增
       - "**.liquid"
 ```
 
@@ -274,25 +275,25 @@ on:
 
 ## 7. 其他小修改
 
-| 修改项 | 说明 |
-| ------ | ---- |
-| Category 大小写统一 | `RANSAC.md` 中 `categories: [algorithm]` 改为 `[Algorithm]`，避免 Jekyll 路径冲突 |
-| 禁用 external_sources | 注释掉 `_config.yml` 中的 `external_sources` 配置，移除示例外部文章 |
-| 默认 toc 设置 | 在 `_config.yml` 的 `defaults` 中为所有 posts 设置 `toc: sidebar: right` |
+| 修改项                | 说明                                                                              |
+| --------------------- | --------------------------------------------------------------------------------- |
+| Category 大小写统一   | `RANSAC.md` 中 `categories: [algorithm]` 改为 `[Algorithm]`，避免 Jekyll 路径冲突 |
+| 禁用 external_sources | 注释掉 `_config.yml` 中的 `external_sources` 配置，移除示例外部文章               |
+| 默认 toc 设置         | 在 `_config.yml` 的 `defaults` 中为所有 posts 设置 `toc: sidebar: right`          |
 
 ---
 
 ## 提交历史参考
 
-| 日期 | Commit | 说明 |
-| ---- | ------ | ---- |
-| 2026-02-27 | `9d5407b` | 更新个人信息和站点 URL |
-| 2026-02-27 | `86b0695` | 初始化仓库 fork 配置 |
-| 2026-02-27 | `59860f6` | 迁移博客文章 |
-| 2026-02-27 | `3d120b6` | 添加 PWA manifest |
-| 2026-02-27 | `5d5993f` | 添加 Service Worker 和 theme-color |
-| 2026-02-27 | `92c705e` | 修复 manifest.json 尾部换行导致 JSON 无效 |
-| 2026-02-28 | `4ad9c06` | 完成全部文章迁移（含中文文件名） |
-| 2026-02-28 | `c16ac46` | Tags/Categories 自动显示 |
+| 日期       | Commit    | 说明                                                       |
+| ---------- | --------- | ---------------------------------------------------------- |
+| 2026-02-27 | `9d5407b` | 更新个人信息和站点 URL                                     |
+| 2026-02-27 | `86b0695` | 初始化仓库 fork 配置                                       |
+| 2026-02-27 | `59860f6` | 迁移博客文章                                               |
+| 2026-02-27 | `3d120b6` | 添加 PWA manifest                                          |
+| 2026-02-27 | `5d5993f` | 添加 Service Worker 和 theme-color                         |
+| 2026-02-27 | `92c705e` | 修复 manifest.json 尾部换行导致 JSON 无效                  |
+| 2026-02-28 | `4ad9c06` | 完成全部文章迁移（含中文文件名）                           |
+| 2026-02-28 | `c16ac46` | Tags/Categories 自动显示                                   |
 | 2026-02-28 | `aed979b` | PWA 远程修复（SW 容错、manifest scope/id、CSP worker-src） |
-| 2026-02-28 | `804f9b0` | 修复 SW fetch 拦截 chrome-extension 协议的错误 |
+| 2026-02-28 | `804f9b0` | 修复 SW fetch 拦截 chrome-extension 协议的错误             |
