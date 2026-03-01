@@ -77,11 +77,11 @@ auto result = coalesce(layout);    // _12:_1
 
 有三种情况可以展平：
 
-- (s0, \_1) : (d0, d1) => s0 \* d0。忽略第二维的 stride。
-- (\_1, s1) : (d0, d1) => s1 \* d1。忽略第一维的 stride。
-- (s0, s1) : (d0, d1) => s0 + s1 _ d0。当 d1 == d0 _ s0 时，可以展平为一维。
+- (s0, \_1) \: (d0, d1) => s0 \* d0。忽略第二维的 stride。
+- (\_1, s1) \: (d0, d1) => s1 \* d1。忽略第一维的 stride。
+- (s0, s1) \: (d0, d1) => s0 + s1 \* d0。当 d1 == d0 \* s0 时，可以展平为一维。
 
-其他情况不能展平为一维 layout，比如 layout codomain 出现空洞，即不是连续映射的。不能展平的维度任然维持原有的 shape 和 stride 信息。
+其他情况不能展平为一维 layout，比如 layout codomain 出现空洞，即不是连续映射的。不能展平的维度维持原有的 shape 和 stride 信息。
 
 > 在 CuTe 中，以一个二维 layout 为例，可以使用layout(m, n) 索引的形式访问，也可以使用 layout(k) 的形式访问。使用一维索引 k 访问时，其应该等于使用 coalesce 展平后的 layout 进行访问。见<https://github.com/NVIDIA/cutlass/blob/main/test/unit/cute/core/coalesce.cpp>。
 
@@ -174,13 +174,101 @@ auto result = composition(a, tiler);
 
 ![extract_subtile_example](/assets/images/cuda/20250226/cute_tensor_al/composition_extract_subtile.png)
 
-参考:
+### 2.2.3. 1-D Index 以及 Composition 验证
+
+Layout A (6,2):(8,2)：
+
+```text
+       0    1
+    +----+----+
+ 0  |  0 |  2 |
+    +----+----+
+ 1  |  8 | 10 |
+    +----+----+
+ 2  | 16 | 18 |
+    +----+----+
+ 3  | 24 | 26 |
+    +----+----+
+ 4  | 32 | 34 |
+    +----+----+
+ 5  | 40 | 42 |
+    +----+----+
+```
+
+Layout B (4,3):(3,1):
+
+```text
+      0    1    2
+    +----+----+----+
+ 0  |  0 |  1 |  2 |
+    +----+----+----+
+ 1  |  3 |  4 |  5 |
+    +----+----+----+
+ 2  |  6 |  7 |  8 |
+    +----+----+----+
+ 3  |  9 | 10 | 11 |
+    +----+----+----+
+```
+
+Composed Layout C:
+
+```text
+      0    1    2
+    +----+----+----+
+ 0  |  0 |  1 |  2 |
+    +----+----+----+
+ 1  |  3 |  4 |  5 |
+    +----+----+----+
+ 2  |  6 |  7 |  8 |
+    +----+----+----+
+ 3  |  9 | 10 | 11 |
+    +----+----+----+
+```
+
+验证代码：
+
+```python
+import cutlass
+from cutlass import cute
+
+@cute.jit
+def compose_verify():
+    A = cute.make_layout((6, 2), stride=(8, 2))
+    B = cute.make_layout((4, 3), stride=(3, 1))
+    C = cute.composition(A, B)
+
+    flat = cute.coalesce(B)
+    for i in cutlass.range_constexpr(cute.size(flat)):
+        print(f"C({i}) = {C(i)}, \tflat({i}) = {flat(i)}, \tA(flat({i})) = {A(flat(i))}")
+
+
+compose_verify()
+```
+
+打印结果：
+
+```text
+C(0) = 0,       flat(0) = 0,    A(flat(0)) = 0
+C(1) = 24,      flat(1) = 3,    A(flat(1)) = 24
+C(2) = 2,       flat(2) = 6,    A(flat(2)) = 2
+C(3) = 26,      flat(3) = 9,    A(flat(3)) = 26
+C(4) = 8,       flat(4) = 1,    A(flat(4)) = 8
+C(5) = 32,      flat(5) = 4,    A(flat(5)) = 32
+C(6) = 10,      flat(6) = 7,    A(flat(6)) = 10
+C(7) = 34,      flat(7) = 10,   A(flat(7)) = 34
+C(8) = 16,      flat(8) = 2,    A(flat(8)) = 16
+C(9) = 40,      flat(9) = 5,    A(flat(9)) = 40
+C(10) = 18,     flat(10) = 8,   A(flat(10)) = 18
+C(11) = 42,     flat(11) = 11,  A(flat(11)) = 42
+```
+
+## A. 参考
 
 - [CuTe Layout and Tensor Tutorial](https://deepwiki.com/NVIDIA/cutlass/11.2-advanced-examples)：deepwiki algegra 使用示例解析
 - [CuTe Layout Algebra](https://deepwiki.com/NVIDIA/cutlass/2.1-layout-algebra#composition)：deepwiki algebra 解析
 - [cute_layout_algebra.ipynb](https://github.com/NVIDIA/cutlass/blob/main/examples/python/CuTeDSL/notebooks/cute_layout_algebra.ipynb)：官方 CuteDSL notebook
 
-### 学习参考资料
+### A.1. 学习参考资料
 
 - [CuTe Layout Algebra](https://github.com/NVIDIA/cutlass/blob/v4.0.0/media/docs/cpp/cute/02_layout_algebra.md)。官方文档
 - [deepwiki -- cutlass -- Layout Algebra](https://deepwiki.com/NVIDIA/cutlass/2.1-layout-algebra)
@@ -194,7 +282,7 @@ auto result = composition(a, tiler);
 
 - [github -- code for layout algebra](https://github.com/botbw/cutlass_learn/blob/main/layout_algebra.cu)
 
-## 其他资料
+### A.2. 其他资料
 
 - [A Generalized Micro-kernel Abstraction for GPU Linear Algebra](https://www.cs.utexas.edu/~flame/BLISRetreat2023/slides/Thakkar_BLISRetreat2023.pdf)：NVIDIA PPT
 - [Algebra -- 2.12 Inverses and composition](https://www.ucl.ac.uk/~ucahmto/0005_2021/Ch2.S12.html)：数学理论：composition
@@ -202,6 +290,6 @@ auto result = composition(a, tiler);
 - [Layout Algebra](https://github.com/CoffeeVampir3/Layout-Algebra)：三方实现的C++ Layout Algebra 库
 - [On CuTe layouts](https://hyhieu.github.io/blog/on_cute_layouts)
 
-## 工具
+### A.3. 工具
 
 - [将 SVG 合并到 SVG](https://products.aspose.app/svg/zh/merger/svg-to-svg)：工具：合并svg图片

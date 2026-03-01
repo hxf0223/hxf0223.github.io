@@ -252,19 +252,19 @@ const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(
 
 示例 d 的 layout 在行列方向上均存在嵌套 layout。两层 layout 分别为：
 
-- 内层 layout （红色框内）为: (2, 2):(2, 2)。
-- 外层 layout 为: (2, 4):(4, 1)。
+- 内层 layout （红色框内）为: (2, 2)\:(2, 2)。
+- 外层 layout 为: (2, 4)\:(4, 1)。
 
 合并之后，表示 4 行 8 列。其中，行方向为两个层次：(2, 2)，列方向为两个层次：(2, 4)。即：
 
-- ((sx1, sx2):(sy1, sy2))，得到综合 shape 为 ((2, 2), (2, 4))。
+- ((sx1, sx2)\:(sy1, sy2))，得到综合 shape 为 ((2, 2), (2, 4))。
   - sx1 表示内层 layout 行数，sx2 表示外层 layout 行数；
   - sy1 表示内层 layout 列数，sy2 表示外层 layout 列数。
 - 对应的，综合 stride 为 ((dx1, dx2), (dy1, dy2))，得到((1, 4), (2, 8))。
 
 ### 3.3. 坐标及数据访问 coordinate
 
-对一个 layout 为 ((2, 4), (3, 5)):((3, 6), (1, 24)) 的 tensor 进行数据访问时，其访问格式遵从上述的顺序，形式为：
+对一个 layout 为 ((2, 4), (3, 5))\:((3, 6), (1, 24)) 的 tensor 进行数据访问时，其访问格式遵从上述的顺序，形式为：
 
 ```cpp
 auto row_coord = make_coord(1, 3);
@@ -413,3 +413,4 @@ print_layout(s2xh4_col);
 - [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
 - [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)
 - [01_layout.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/01_layout.md)：CUTLASS/CuTe 官方文档
+- [CUTLASS: A CUDA C++ Template Library for Accelerating Deep Learning](https://www.youtube.com/watch?v=PWWOGrLZtZg&t=534s) ：YouTube 视频，介绍 CUTLASS/CuTe 的 Layout 和 Tensor 概念。
