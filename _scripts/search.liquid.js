@@ -64,7 +64,7 @@ ninja.data = [
         {% else %}
           title: "{{ title | truncatewords: 13 }}",
         {% endif %}
-        description: "{{ post.description | strip_html | strip_newlines | escape | strip }}",
+        description: "{{ post.description | default: post.content | strip_html | strip_newlines | escape | strip | truncatewords: 60 }}",
         section: "Posts",
         handler: () => {
           {% if post.redirect == blank %}
@@ -89,7 +89,7 @@ ninja.data = [
           {%- endif -%}
           id: "{{ collection.label }}-{{ title | slugify }}",
           title: '{{ title | escape | emojify | truncatewords: 13 }}',
-          description: "{{ item.description | strip_html | strip_newlines | escape | strip }}",
+          description: "{{ item.description | default: item.content | strip_html | strip_newlines | escape | strip | truncatewords: 60 }}",
           section: "{{ collection.label | capitalize }}",
           {%- unless item.inline -%}
             handler: () => {
