@@ -30,6 +30,11 @@
   --global-newsletter-bg-color: #{v.$white-color};
   --global-newsletter-text-color: #{v.$black-color};
 
+  --global-table-border-color: rgba(0, 0, 0, 0.15);
+  --global-table-header-bg: rgba(0, 0, 0, 0.06);
+  --global-table-stripe-bg: rgba(0, 0, 0, 0.03);
+  --global-table-hover-bg: rgba(0, 0, 0, 0.06);
+
   --global-tip-block: #42b983;
   --global-tip-block-bg: #e2f5ec;
   --global-tip-block-text: #215d42;
@@ -98,6 +103,11 @@ html[data-theme="dark"] {
   --global-back-to-top-text-color: #{v.$black-color};
   --global-newsletter-bg-color: #{v.$grey-color-light};
   --global-newsletter-text-color: #{v.$grey-color-dark};
+
+  --global-table-border-color: rgba(255, 255, 255, 0.15);
+  --global-table-header-bg: rgba(255, 255, 255, 0.08);
+  --global-table-stripe-bg: rgba(255, 255, 255, 0.04);
+  --global-table-hover-bg: rgba(255, 255, 255, 0.08);
 
   --global-tip-block: #42b983;
   --global-tip-block-bg: #215d42;

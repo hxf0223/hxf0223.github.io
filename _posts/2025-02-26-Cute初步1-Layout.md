@@ -407,10 +407,15 @@ print_layout(s2xh4_col);
 
 > LayoutLeft、colexicographical order、column-major 都是指同一种布局方式，即列主序。
 
-## 参考及资料
+## A. 参考及资料
 
 - [reed -- cute 之 Layout](https://zhuanlan.zhihu.com/p/661182311)
 - [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
 - [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)
 - [01_layout.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/01_layout.md)：CUTLASS/CuTe 官方文档
 - [CUTLASS: A CUDA C++ Template Library for Accelerating Deep Learning](https://www.youtube.com/watch?v=PWWOGrLZtZg&t=534s) ：YouTube 视频，介绍 CUTLASS/CuTe 的 Layout 和 Tensor 概念。
+
+### A.1. 更多学习资料
+
+- [AI Kernel Learning — Quick Start](https://github.com/Ammar-Alnagar/AI-Kernel-learning)
+- [Learn CUTLASS the hard way 系列](https://www.kapilsharma.dev/tags/cuda/)

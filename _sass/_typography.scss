@@ -24,14 +24,32 @@ hr {
 }
 
 table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  display: block;
+
   td,
   th {
     font-size: 1rem;
-    padding: 1px 1rem 1px 0;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--global-table-border-color);
+    text-align: left;
   }
 
   th {
     font-weight: bold;
+    background-color: var(--global-table-header-bg);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--global-table-stripe-bg);
+  }
+
+  tbody tr:hover {
+    background-color: var(--global-table-hover-bg);
   }
 }
 
