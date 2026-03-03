@@ -283,6 +283,129 @@ on:
 
 ---
 
+## 8. Markdown 表格样式增强
+
+### 问题
+
+al-folio 默认的表格样式没有边框，表格线不可见，可读性差。
+
+### 改动文件
+
+**`_sass/_themes.scss`** — 为亮色和暗色主题分别添加表格相关 CSS 变量：
+
+```scss
+/* 亮色主题 (:root) */
+--global-table-border-color: rgba(0, 0, 0, 0.15);
+--global-table-header-bg: rgba(0, 0, 0, 0.06);
+--global-table-stripe-bg: rgba(0, 0, 0, 0.03);
+--global-table-hover-bg: rgba(0, 0, 0, 0.06);
+
+/* 暗色主题 (html[data-theme="dark"]) */
+--global-table-border-color: rgba(255, 255, 255, 0.15);
+--global-table-header-bg: rgba(255, 255, 255, 0.08);
+--global-table-stripe-bg: rgba(255, 255, 255, 0.04);
+--global-table-hover-bg: rgba(255, 255, 255, 0.08);
+```
+
+**`_sass/_typography.scss`** — 重写 `table` 样式规则：
+
+```scss
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  display: block; /* 宽表格横向滚动 */
+
+  td,
+  th {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem; /* 原来是 1px 1rem 1px 0，无视觉边框 */
+    border: 1px solid var(--global-table-border-color);
+    text-align: left;
+  }
+
+  th {
+    font-weight: bold;
+    background-color: var(--global-table-header-bg);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--global-table-stripe-bg); /* 斑马纹 */
+  }
+
+  tbody tr:hover {
+    background-color: var(--global-table-hover-bg);
+  }
+}
+```
+
+---
+
+## 9. 图片宽度约束与点击放大
+
+### 问题
+
+1. Markdown 中的图片按原始尺寸显示，大图会超出内容区宽度
+2. 无法点击图片在页面内单独放大查看
+
+### 解决方案
+
+利用 al-folio 已内置的 `medium-zoom` 库（`_config.yml` 中 `enable_medium_zoom: true` 已默认开启），扩展其选择器覆盖所有 post 内图片。
+
+### 改动文件
+
+**`_sass/_typography.scss`** — 添加图片宽度约束：
+
+```scss
+/* Constrain images to content width and enable zoom cursor */
+.post-content img,
+#markdown-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5rem auto;
+  cursor: zoom-in;
+}
+```
+
+**`assets/js/zoom.js`** — 扩展 medium-zoom 初始化逻辑，自动为所有 post 内图片启用放大：
+
+```javascript
+// Initialize medium zoom.
+$(document).ready(function () {
+  const zoomOptions = { background: "#000000dd", margin: 24 };
+
+  // 原有：显式标记 data-zoomable 的图片
+  mediumZoom("[data-zoomable]", zoomOptions);
+
+  // 新增：自动处理 markdown 内容区所有裸图片（未在链接内）
+  document.querySelectorAll("#markdown-content img:not([data-zoomable])").forEach(function (img) {
+    if (!img.closest("a")) {
+      mediumZoom(img, zoomOptions);
+    }
+  });
+});
+```
+
+**背景色选择**：使用黑色 `#000000dd`（与原始 al-folio 演示效果一致），替代原来随主题变化的 `--global-bg-color`。
+
+### 冲突修复
+
+原始模板中 `_scripts/photoswipe-setup.js` 是一个带 Liquid front matter 的脚本，Jekyll 会将其编译输出到 `assets/js/photoswipe-setup.js`。之前错误地在 `assets/js/` 下也创建了同名文件，导致编译 warning：
+
+```
+Conflict: The following destination is shared by multiple files.
+  /home/hxf0223/work/hxf0223.github.io/_site/assets/js/photoswipe-setup.js
+   - _scripts/photoswipe-setup.js
+   - /home/hxf0223/work/hxf0223.github.io/assets/js/photoswipe-setup.js
+```
+
+**解决方式**：删除 `assets/js/photoswipe-setup.js`，保留原始的 `_scripts/photoswipe-setup.js` 不变。
+
+---
+
 ## 提交历史参考
 
 | 日期       | Commit    | 说明                                                       |

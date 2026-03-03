@@ -19,6 +19,16 @@ strong {
   color: var(--global-text-color);
 }
 
+/* Constrain images to content width and enable zoom cursor */
+.post-content img,
+#markdown-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5rem auto;
+  cursor: zoom-in;
+}
+
 hr {
   border-top: 1px solid var(--global-divider-color);
 }
