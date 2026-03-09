@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://hxf0223.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://hxf0223.github.io/" rel="alternate" type="text/html" hreflang="zh-CN"/><updated>2026-03-09T12:58:03+00:00</updated><id>https://hxf0223.github.io/feed.xml</id><title type="html">blank</title><subtitle>Roderick Huang 的个人博客，记录工作与技术。 </subtitle><entry><title type="html">al-folio 模板定制修改总结</title><link href="https://hxf0223.github.io/blog/2026/al-folio-customization-summary/" rel="alternate" type="text/html" title="al-folio 模板定制修改总结"/><published>2026-02-28T02:00:00+00:00</published><updated>2026-02-28T02:00:00+00:00</updated><id>https://hxf0223.github.io/blog/2026/al-folio-customization-summary</id><content type="html" xml:base="https://hxf0223.github.io/blog/2026/al-folio-customization-summary/"><![CDATA[<p>本文总结将 <a href="https://github.com/alshedivat/al-folio">al-folio</a> 模板 fork 到个人仓库后所做的全部定制修改，供后续维护参考。</p> <hr/> <h2 id="1-站点基本信息配置_configyml">1. 站点基本信息配置（_config.yml）</h2> <p>在 <code class="language-plaintext highlighter-rouge">_config.yml</code> 中修改了以下关键配置项：</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 个人信息</span>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://hxf0223.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://hxf0223.github.io/" rel="alternate" type="text/html" hreflang="zh-CN"/><updated>2026-03-09T14:44:49+00:00</updated><id>https://hxf0223.github.io/feed.xml</id><title type="html">blank</title><subtitle>Roderick Huang 的个人博客，记录工作与技术。 </subtitle><entry><title type="html">al-folio 模板定制修改总结</title><link href="https://hxf0223.github.io/blog/2026/al-folio-customization-summary/" rel="alternate" type="text/html" title="al-folio 模板定制修改总结"/><published>2026-02-28T02:00:00+00:00</published><updated>2026-02-28T02:00:00+00:00</updated><id>https://hxf0223.github.io/blog/2026/al-folio-customization-summary</id><content type="html" xml:base="https://hxf0223.github.io/blog/2026/al-folio-customization-summary/"><![CDATA[<p>本文总结将 <a href="https://github.com/alshedivat/al-folio">al-folio</a> 模板 fork 到个人仓库后所做的全部定制修改，供后续维护参考。</p> <hr/> <h2 id="1-站点基本信息配置_configyml">1. 站点基本信息配置（_config.yml）</h2> <p>在 <code class="language-plaintext highlighter-rouge">_config.yml</code> 中修改了以下关键配置项：</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 个人信息</span>
 <span class="na">first_name</span><span class="pi">:</span> <span class="s">Roderick</span>
 <span class="na">middle_name</span><span class="pi">:</span>
 <span class="na">last_name</span><span class="pi">:</span> <span class="s">Huang</span>
@@ -516,6 +516,233 @@ npm <span class="nb">install</span> <span class="nt">--save-dev</span> prettier 
         <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
+</code></pre></div></div> <h2 id="3-cute-中使用-traits-的例子">3. CuTe 中使用 Traits 的例子</h2> <p>以<strong>SM80_CP_ASYNC_CACHEALWAYS</strong>为例，其 Traits 定义如下：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// CuTe 风格的 Copy_Traits (简化示意)</span>
+<span class="c1">// 对应 cp.async 指令的 Traits</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">CopyInstr</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Copy_Traits</span><span class="p">;</span>
+
+<span class="c1">// 针对 SM80_CP_ASYNC_CACHEALWAYS&lt;cute::uint128_t&gt; 的特化</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Copy_Traits</span><span class="o">&lt;</span><span class="n">SM80_CP_ASYNC_CACHEALWAYS</span><span class="o">&lt;</span><span class="n">cute</span><span class="o">::</span><span class="n">uint128_t</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="c1">// ---- 关联类型 ----</span>
+
+    <span class="c1">// 指令操作的寄存器类型</span>
+    <span class="c1">//   源: 1个 gmem 指针 (uint128_t)</span>
+    <span class="c1">//   目标: 1个 smem 指针 (uint128_t)</span>
+    <span class="k">using</span> <span class="n">SRegisters</span> <span class="o">=</span> <span class="n">cute</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">uint128_t</span> <span class="k">const</span><span class="o">*&gt;</span><span class="p">;</span>  <span class="c1">// source (gmem ptr)</span>
+    <span class="k">using</span> <span class="n">DRegisters</span> <span class="o">=</span> <span class="n">cute</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">uint128_t</span><span class="o">*&gt;</span><span class="p">;</span>        <span class="c1">// dest (smem ptr)</span>
+
+    <span class="c1">// Layout 描述: 一个线程搬运多少数据、如何排布</span>
+    <span class="c1">// ThrID: 哪些线程参与</span>
+    <span class="c1">// ValLayoutSrc / ValLayoutDst: 值的布局</span>
+    <span class="k">using</span> <span class="n">ThrID</span>        <span class="o">=</span> <span class="n">Layout</span><span class="o">&lt;</span><span class="n">_1</span><span class="o">&gt;</span><span class="p">;</span>          <span class="c1">// 1个线程</span>
+    <span class="k">using</span> <span class="n">ValLayoutSrc</span> <span class="o">=</span> <span class="n">Layout</span><span class="o">&lt;</span><span class="n">_1</span><span class="o">&gt;</span><span class="p">;</span>          <span class="c1">// 搬运1个128-bit值</span>
+    <span class="k">using</span> <span class="n">ValLayoutDst</span> <span class="o">=</span> <span class="n">Layout</span><span class="o">&lt;</span><span class="n">_1</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="c1">// ---- 核心操作 ----</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TS</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">TD</span><span class="p">&gt;</span>
+    <span class="n">CUTE_HOST_DEVICE</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="n">TS</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span> <span class="n">TD</span><span class="o">&amp;</span> <span class="n">dst</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 调用 PTX 内联汇编</span>
+        <span class="c1">// cp.async.ca.shared.global [dst], [src], 16;</span>
+        <span class="n">cute</span><span class="o">::</span><span class="n">cp_async</span><span class="o">&lt;</span><span class="mi">16</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div> <p><strong>Copy_Atom 如何使用 Traits</strong></p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 简化版 Copy_Atom</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Traits</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Element</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Copy_Atom</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">TraitsType</span> <span class="o">=</span> <span class="n">Traits</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">ElementType</span> <span class="o">=</span> <span class="n">Element</span><span class="p">;</span>
+
+    <span class="c1">// 从 Traits 中提取信息</span>
+    <span class="k">using</span> <span class="n">SrcRegisters</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">Traits</span><span class="o">::</span><span class="n">SRegisters</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">DstRegisters</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">Traits</span><span class="o">::</span><span class="n">DRegisters</span><span class="p">;</span>
+
+    <span class="c1">// 执行拷贝 — 委托给 Traits</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">SrcEngine</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">SrcLayout</span><span class="p">,</span>
+              <span class="k">typename</span> <span class="nc">DstEngine</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">DstLayout</span><span class="p">&gt;</span>
+    <span class="n">CUTE_HOST_DEVICE</span>
+    <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="n">Tensor</span><span class="o">&lt;</span><span class="n">SrcEngine</span><span class="p">,</span> <span class="n">SrcLayout</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
+              <span class="n">Tensor</span><span class="o">&lt;</span><span class="n">DstEngine</span><span class="p">,</span> <span class="n">DstLayout</span><span class="o">&gt;</span>      <span class="o">&amp;</span> <span class="n">dst</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="c1">// 实际调用 Traits::copy</span>
+        <span class="n">Traits</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">dst</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// ===== 用户代码 =====</span>
+<span class="c1">// 选择 Traits → 决定用什么指令</span>
+<span class="k">using</span> <span class="n">CopyTraits</span> <span class="o">=</span> <span class="n">Copy_Traits</span><span class="o">&lt;</span><span class="n">SM80_CP_ASYNC_CACHEALWAYS</span><span class="o">&lt;</span><span class="n">uint128_t</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+<span class="c1">// 创建 Atom</span>
+<span class="k">using</span> <span class="n">CopyAtom</span> <span class="o">=</span> <span class="n">Copy_Atom</span><span class="o">&lt;</span><span class="n">CopyTraits</span><span class="p">,</span> <span class="n">cute</span><span class="o">::</span><span class="n">half_t</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="c1">// 构建 TiledCopy (多线程协作版本)</span>
+<span class="k">using</span> <span class="n">TiledCopy</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span>
+    <span class="n">make_tiled_copy</span><span class="p">(</span>
+        <span class="n">CopyAtom</span><span class="p">{},</span>
+        <span class="n">Layout</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&lt;</span><span class="n">_32</span><span class="p">,</span> <span class="n">_4</span><span class="o">&gt;&gt;</span><span class="p">{},</span>   <span class="c1">// 线程布局: 32x4 = 128线程</span>
+        <span class="n">Layout</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&lt;</span><span class="n">_1</span><span class="p">,</span> <span class="n">_8</span><span class="o">&gt;&gt;</span><span class="p">{}</span>     <span class="c1">// 每线程搬运的值布局</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></div> <h2 id="5-c-标准库中-traits-相关的常用工具">5. C++ 标准库中 Traits 相关的常用工具</h2> <h3 id="51-类型判断">5.1. 类型判断</h3> <h4 id="511-基本类型判断">5.1.1. 基本类型判断</h4> <blockquote> <p>返回 <code class="language-plaintext highlighter-rouge">::value</code>，bool 类型，C++17 起可用 <code class="language-plaintext highlighter-rouge">_v</code> 后缀简写。</p> </blockquote> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">td</span><span class="o">::</span><span class="n">is_void</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                  <span class="c1">// T 是 void？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_null_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>          <span class="c1">// T 是 std::nullptr_t？       (C++14)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_integral</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 是整数类型？(bool/char/int/long...)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>        <span class="c1">// T 是浮点？(float/double/long double)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_arithmetic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>            <span class="c1">// T 是算术类型？(整数 或 浮点)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_enum</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                  <span class="c1">// T 是枚举？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// T 是 class/struct？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 是函数类型？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_array</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// T 是数组类型？(T[] 或 T[N])</span>
+</code></pre></div></div> <h4 id="512-复合类型判断">5.1.2. 复合类型判断</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">is_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>               <span class="c1">// T 是指针？(int*, 但不含成员指针)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>             <span class="c1">// T 是引用？(左值引用 或 右值引用)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_lvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>      <span class="c1">// T 是左值引用？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_rvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>      <span class="c1">// T 是右值引用？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_member_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>        <span class="c1">// T 是成员指针？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_const</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// T 有顶层 const？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_volatile</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 有顶层 volatile？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_signed</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                <span class="c1">// T 是有符号类型？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_unsigned</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 是无符号类型？</span>
+</code></pre></div></div> <h4 id="513-类型关系判断">5.1.3. 类型关系判断</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ===== 两个类型的关系 =====</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span>              <span class="c1">// T 和 U 是完全相同的类型？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_base_of</span><span class="o">&lt;</span><span class="n">Base</span><span class="p">,</span> <span class="n">Derived</span><span class="o">&gt;</span>  <span class="c1">// Base 是 Derived 的基类？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_convertible</span><span class="o">&lt;</span><span class="n">From</span><span class="p">,</span> <span class="n">To</span><span class="o">&gt;</span>   <span class="c1">// From 能隐式转换为 To？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_assignable</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span>        <span class="c1">// T = U 赋值合法？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span> <span class="c1">// T(Args...) 构造合法？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span>   <span class="c1">// F(Args...) 可调用？           (C++17)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r</span><span class="o">&lt;</span><span class="n">R</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span> <span class="c1">// F(Args...) 可调用且返回 R？ (C++17)</span>
+</code></pre></div></div> <h3 id="52-类型变换">5.2. 类型变换</h3> <h4 id="521-修饰符增删">5.2.1. 修饰符增删</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ===== 去除修饰 =====</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_const</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>           <span class="c1">// const int      → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_volatile</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>        <span class="c1">// volatile int   → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_cv</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// const volatile int → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>       <span class="c1">// int&amp;/int&amp;&amp;     → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>         <span class="c1">// int*           → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_extent</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>          <span class="c1">// int[10]        → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_all_extents</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>     <span class="c1">// int[3][4]      → int</span>
+
+<span class="c1">// ===== 添加修饰 =====</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_const</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// int            → const int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_volatile</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>           <span class="c1">// int            → volatile int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_cv</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// int            → const volatile int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_lvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>   <span class="c1">// int            → int&amp;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_rvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>   <span class="c1">// int            → int&amp;&amp;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>            <span class="c1">// int            → int*</span>
+</code></pre></div></div> <h4 id="522-decay">5.2.2. decay</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// decay 模拟"按值传参"时的类型退化:</span>
+<span class="c1">//   - 去掉引用</span>
+<span class="c1">//   - 去掉顶层 cv</span>
+<span class="c1">//   - 数组 → 指针</span>
+<span class="c1">//   - 函数 → 函数指针</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">int</span><span class="o">&amp;&gt;</span>      <span class="c1">// → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">&gt;</span>         <span class="c1">// → int*</span>
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="o">&gt;</span>     <span class="c1">// → int(*)(double)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">int</span><span class="o">&amp;&amp;&gt;</span>     <span class="c1">// → int</span>
+
+<span class="c1">// --- 实用示例: 存储任意传入的值 ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Storage</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">StoredType</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="n">StoredType</span> <span class="n">value</span><span class="p">;</span>
+
+    <span class="n">Storage</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="o">:</span> <span class="n">value</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="p">{}</span>
+<span class="p">};</span>
+</code></pre></div></div> <h4 id="523-stdconditional">5.2.3. std::conditional</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ===== conditional: 编译期三目运算符 =====</span>
+<span class="n">std</span><span class="o">::</span><span class="n">conditional</span><span class="o">&lt;</span><span class="nb">true</span><span class="p">,</span>  <span class="kt">int</span><span class="p">,</span> <span class="kt">double</span><span class="o">&gt;::</span><span class="n">type</span>  <span class="c1">// → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">conditional</span><span class="o">&lt;</span><span class="nb">false</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">double</span><span class="o">&gt;::</span><span class="n">type</span>  <span class="c1">// → double</span>
+
+<span class="c1">// --- 实用示例: 根据大小选计算类型 ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">ComputeTypeSelector</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">conditional_t</span><span class="o">&lt;</span>
+        <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">),</span>   <span class="c1">// 半精度/int8 等小类型</span>
+        <span class="kt">float</span><span class="p">,</span>               <span class="c1">// → 提升到 float 计算</span>
+        <span class="n">T</span>                    <span class="c1">// → 原类型计算</span>
+    <span class="o">&gt;</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// ComputeTypeSelector&lt;half&gt;::type   → float</span>
+<span class="c1">// ComputeTypeSelector&lt;float&gt;::type  → float</span>
+<span class="c1">// ComputeTypeSelector&lt;double&gt;::type → double</span>
+</code></pre></div></div> <h4 id="524-common_type">5.2.4. common_type</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 求多个类型的"公共类型" (类似三目运算符的推导)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">double</span><span class="o">&gt;::</span><span class="n">type</span>         <span class="c1">// → double</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">float</span><span class="o">&gt;::</span><span class="n">type</span>    <span class="c1">// → float</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">type</span>   <span class="c1">// → unsigned int</span>
+
+<span class="c1">// --- 实用示例: 通用 max ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">U</span><span class="p">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span> <span class="n">generic_max</span><span class="p">(</span><span class="n">T</span> <span class="n">a</span><span class="p">,</span> <span class="n">U</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="o">?</span> <span class="n">a</span> <span class="o">:</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">generic_max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">);</span>   <span class="c1">// 返回 double</span>
+<span class="n">generic_max</span><span class="p">(</span><span class="mi">1L</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>    <span class="c1">// 返回 long</span>
+</code></pre></div></div> <h3 id="53-sfinae-相关工具">5.3. SFINAE 相关工具</h3> <h4 id="531-stdenable_if">5.3.1. std::enable_if</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 原理:</span>
+<span class="c1">//   enable_if&lt;true,  T&gt;::type = T</span>
+<span class="c1">//   enable_if&lt;false, T&gt;::type = 不存在 → SFINAE</span>
+
+<span class="c1">// ---- 用法1: 放在返回类型 ----</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">bit_count</span><span class="p">(</span><span class="n">T</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">__builtin_popcount</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// ---- 用法2: 放在模板参数默认值 (更简洁) ----</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span>
+          <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral_v</span><span class="o">&lt;</span><span class="n">T</span><span class="p">&gt;,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">0</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="nf">bit_count_v2</span><span class="p">(</span><span class="n">T</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">__builtin_popcount</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// ---- 用法3: 放在函数参数 ----</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="n">T</span> <span class="nf">bit_count_v3</span><span class="p">(</span><span class="n">T</span> <span class="n">val</span><span class="p">,</span>
+               <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;*</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">__builtin_popcount</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div> <h4 id="532-stdvoid_t">5.3.2. std::void_t</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// void_t&lt;Ts...&gt; = void (无论 Ts 是什么)</span>
+<span class="c1">// 但如果 Ts 中有无效类型 → 替换失败 → SFINAE</span>
+
+<span class="c1">// 检测是否有 .size() 方法</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_size</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_size</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">().</span><span class="n">size</span><span class="p">())</span><span class="o">&gt;&gt;</span>
+    <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+
+<span class="c1">// 检测是否有嵌套 value_type</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_value_type</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_value_type</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;&gt;</span>
+    <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+
+<span class="c1">// 检测是否支持 &lt;&lt; 输出</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_printable</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_printable</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span>
+    <span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;&gt;</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+</code></pre></div></div> <h4 id="533-stddeclval">5.3.3. std::declval</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// std::declval&lt;T&gt;() 在不构造对象的情况下，"假装"有一个 T 类型的值</span>
+<span class="c1">// 只能在 decltype / sizeof 等不求值上下文中使用</span>
+
+<span class="c1">// 用途: 探测表达式是否合法</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">U</span><span class="p">&gt;</span>
+<span class="k">using</span> <span class="n">add_result_t</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">()</span> <span class="o">+</span> <span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span><span class="p">());</span>
+
+<span class="c1">// add_result_t&lt;int, double&gt; → double</span>
+<span class="c1">// add_result_t&lt;string, string&gt; → string</span>
+<span class="c1">// add_result_t&lt;int, string&gt; → 替换失败</span>
+
+<span class="c1">// 也可以检测成员函数返回类型</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Container</span><span class="p">&gt;</span>
+<span class="k">using</span> <span class="n">iterator_t</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">Container</span><span class="o">&gt;</span><span class="p">().</span><span class="n">begin</span><span class="p">());</span>
+
+<span class="c1">// iterator_t&lt;std::vector&lt;int&gt;&gt; → std::vector&lt;int&gt;::iterator</span>
 </code></pre></div></div> <h2 id="a-资料">A. 资料</h2> <ul> <li><a href="https://www.cnblogs.com/zhxmdefj/p/12530982.html">C++ Traits Classes</a></li> <li><a href="https://stackoverflow.com/questions/27687389/how-do-we-use-void-t-for-sfinae">How do we use void_t for SFINAE?</a></li> </ul>]]></content><author><name></name></author><category term="Cpp"/><category term="Cpp"/><summary type="html"><![CDATA[C++ Traits 是一种元编程技术，将类型信息封装在一个类中，供算法或其他模板使用，以期达到从算法/逻辑中分离类型信息的目的。比如元素类型、一些常量定义、指令选择、对齐要求等等。]]></summary></entry><entry><title type="html">道格拉斯-普克算法(Douglas–Peucker algorithm)</title><link href="https://hxf0223.github.io/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/" rel="alternate" type="text/html" title="道格拉斯-普克算法(Douglas–Peucker algorithm)"/><published>2025-12-28T00:00:00+00:00</published><updated>2025-12-28T00:00:00+00:00</updated><id>https://hxf0223.github.io/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95</id><content type="html" xml:base="https://hxf0223.github.io/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/"><![CDATA[<p>道格拉斯-普克算法（Douglas–Peucker algorithm），又称为<code class="language-plaintext highlighter-rouge">Ramer-Douglas-Peucker</code>算法，是一种用于简化曲线的算法。它通过减少曲线上的点数来近似表示原始曲线，同时尽量保持其形状和特征。可以应用于计算机图形学、地理信息系统（GIS）、甚至CAD领域。</p> <p>算法的具体实现逻辑如下：</p> <ol> <li>在轨迹曲线在曲线首尾两点<code class="language-plaintext highlighter-rouge">A</code>，<code class="language-plaintext highlighter-rouge">B</code>之间连接一条直线<code class="language-plaintext highlighter-rouge">AB</code>，该直线为曲线的弦；</li> <li>遍历曲线上其他所有点，求每个点到直线<code class="language-plaintext highlighter-rouge">AB</code>的距离，找到最大距离的点<code class="language-plaintext highlighter-rouge">C</code>，最大距离记为<code class="language-plaintext highlighter-rouge">maxDistance</code></li> <li>比较该距离<code class="language-plaintext highlighter-rouge">maxDistance</code>与预先定义的阈值<code class="language-plaintext highlighter-rouge">epsilon</code>大小，如果<code class="language-plaintext highlighter-rouge">maxDistance</code> &lt; <code class="language-plaintext highlighter-rouge">epsilon</code>，则将该直线<code class="language-plaintext highlighter-rouge">AB</code>作为曲线段的近似，舍去<code class="language-plaintext highlighter-rouge">AB</code>之间的所有点，曲线段处理完毕；</li> <li>若<code class="language-plaintext highlighter-rouge">maxDistance</code> &gt;= <code class="language-plaintext highlighter-rouge">epsilon</code>，则使<code class="language-plaintext highlighter-rouge">C</code>点将曲线<code class="language-plaintext highlighter-rouge">AB</code>分为<code class="language-plaintext highlighter-rouge">AC</code>和<code class="language-plaintext highlighter-rouge">CB</code>两段，并分别对这两段进行（1）~（3）步处理；</li> <li>当所有曲线都处理完毕时，依次连接各个分割点形成的折线，即为原始曲线的路径。</li> </ol> <p><img src="/assets/images/algorithm/20251228/Douglas-Peucker-algorithm.webp" alt="Douglas-Peucker Algorithm Illustration"/></p>]]></content><author><name></name></author><category term="Algorithm"/><category term="Algorithm"/><summary type="html"><![CDATA[道格拉斯-普克算法（Douglas–Peucker algorithm），又称为Ramer-Douglas-Peucker算法，是一种用于简化曲线的算法。它通过减少曲线上的点数来近似表示原始曲线，同时尽量保持其形状和特征。可以应用于计算机图形学、地理信息系统（GIS）、甚至CAD领域。]]></summary></entry><entry><title type="html">CMake支持库收集</title><link href="https://hxf0223.github.io/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93/" rel="alternate" type="text/html" title="CMake支持库收集"/><published>2025-12-23T00:00:00+00:00</published><updated>2025-12-23T00:00:00+00:00</updated><id>https://hxf0223.github.io/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93</id><content type="html" xml:base="https://hxf0223.github.io/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93/"><![CDATA[<ul> <li><a href="https://github.com/MarkSchofield/WindowsToolchain">CMake Toolchain files for Windows</a></li> <li><a href="https://github.com/aminya/project_options">CMake project_options</a></li> </ul>]]></content><author><name></name></author><category term="CMake"/><category term="CMake"/><summary type="html"><![CDATA[CMake Toolchain files for Windows CMake project_options]]></summary></entry><entry><title type="html">QGC代码架构解析：飞行前检查（起飞条件）</title><link href="https://hxf0223.github.io/blog/2025/QGC%E9%A3%9E%E8%A1%8C%E5%89%8D%E6%A3%80%E6%9F%A5/" rel="alternate" type="text/html" title="QGC代码架构解析：飞行前检查（起飞条件）"/><published>2025-12-18T00:00:00+00:00</published><updated>2025-12-18T00:00:00+00:00</updated><id>https://hxf0223.github.io/blog/2025/QGC%E9%A3%9E%E8%A1%8C%E5%89%8D%E6%A3%80%E6%9F%A5</id><content type="html" xml:base="https://hxf0223.github.io/blog/2025/QGC%E9%A3%9E%E8%A1%8C%E5%89%8D%E6%A3%80%E6%9F%A5/"><![CDATA[<p><code class="language-plaintext highlighter-rouge">QGC</code>中，飞行状态指示器（<code class="language-plaintext highlighter-rouge">Flight Status Indicator</code>）显示的状态列表：</p> <table> <thead> <tr> <th>状态名称</th> <th>说明</th> </tr> </thead> <tbody> <tr> <td>准备好飞速 (_绿色背景)</td> <td>载具已准备就绪，可以起飞</td> </tr> <tr> <td>准备好飞行 (_黄色背景)</td> <td>载具已准备好在当前飞行模式下飞行，但有些警告可能造成问题</td> </tr> <tr> <td>尚未准备好</td> <td>载具没有准备好飞行，也不会起飞</td> </tr> <tr> <td>解锁</td> <td>载具已解锁并准备起飞。</td> </tr> <tr> <td>飞行</td> <td>载具正在飞行</td> </tr> <tr> <td>着陆</td> <td>载具正在着陆</td> </tr> <tr> <td>通信丢失</td> <td><code class="language-plaintext highlighter-rouge">QGC</code>已失去与载具的通信</td> </tr> </tbody> </table> <p>更多信息，参考<a href="https://github.com/mavlink/qgroundcontrol/blob/master/docs/zh/qgc-user-guide/fly_view/fly_view_toolbar.md">飞行视图工具栏</a>。</p> <h2 id="1-解锁检查项">1. 解锁检查项</h2> <ul> <li>气压计（Barometer）</li> <li>指南针（Compass）</li> <li>GPS 锁定（GPS lock）</li> <li>惯性导航系统（INS）</li> <li>参数（Parameters）</li> <li>遥控通道（RC Channels）</li> <li>电路板电压（Board voltage）</li> <li>电池电量（Battery Level）</li> <li>空速（Airspeed）</li> <li>日志记录可用（Logging Available）</li> <li>硬件安全开关（Hardware safety switch）</li> <li>GPS 配置（GPS Configuration）</li> <li>系统（System） ：<a href="https://github.com/mavlink/qgroundcontrol/blob/master/docs/en/qgc-user-guide/setup_view/safety_ardupilot.md">Safety Setup (ArduPilot)</a></li> </ul> <p>检查实现函数：<code class="language-plaintext highlighter-rouge">HealthAndArmingCheckReport::update</code>。</p> <p><code class="language-plaintext highlighter-rouge">QGC</code>提供了可选的飞行前检查清单功能：<a href="https://github.com/mavlink/qgroundcontrol/blob/master/docs/en/qgc-user-guide/fly_view/hud.md#pre-flight-checklist-preflight_checklist">Pre Flight Checklist</a>。</p> <p>备注：</p> <ul> <li>通常情况下，不需要手动解锁飞机。简单地起飞或开始执行任务时，飞行器会自动解锁。</li> <li>不同的飞行器类型（多旋翼、固定翼、地面车、潜水器）可能有略微不同的解锁检查项，但核心检查项是相似的。</li> </ul> <h2 id="2-mav_mode">2. MAV_MODE</h2> <p><code class="language-plaintext highlighter-rouge">MAV_MODE</code>枚举定义了飞行器的标准飞行模式。不同的飞行模式决定了飞行器的行为和控制方式，设置命令是<code class="language-plaintext highlighter-rouge">MAV_CMD_DO_SET_MODE</code>。</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// common/common.h</span>
 <span class="k">typedef</span> <span class="k">enum</span> <span class="n">MAV_MODE</span>
 <span class="p">{</span>
