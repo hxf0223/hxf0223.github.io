@@ -49,7 +49,7 @@ ninja.data = [{
         
           title: "C++ Traits",
         
-        description: "TBD资料  An introduction to C++ Traits  C++ Traits Classes",
+        description: "C++ Traits 是一种元编程技术，将类型信息封装在一个类中，供算法或其他模板使用，以期达到从算法/逻辑中分离类型信息的目的。比如元素类型、一些常量定义、指令选择、对齐要求等等。 问题 Traits 如何解决 内置类型（int, float）不能添加成员 Traits 外挂信息 不同类型需要不同的算法策略 模板特化选择策略 想要零开销的编译期多态 全部在编译期决议 接口与实现解耦 算法只依赖 Traits 接口 1. 自定义 Traits 常见模式1.1 类型信息萃取目的：从不同类型中统一提取需要的信息。// 主模板 (可以留空或给默认值)template &amp;lt;typename T&amp;gt;struct NumericTraits;// 对 float 特化template &amp;lt;&amp;gt;struct NumericTraits&amp;lt;float&amp;gt; { using type = float; using compute_type = float; // 计算时用的类型 using accum_type = float; // 累加器类型 static constexpr int bits = 32; static constexpr float epsilon...",
         section: "Posts",
         handler: () => {
           
