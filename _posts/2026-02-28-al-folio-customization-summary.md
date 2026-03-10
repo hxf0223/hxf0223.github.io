@@ -285,11 +285,11 @@ on:
 
 ## 8. Markdown 表格样式增强
 
-### 问题
+### 8.1. 问题
 
 al-folio 默认的表格样式没有边框，表格线不可见，可读性差。
 
-### 改动文件
+### 8.2. 改动文件
 
 **`_sass/_themes.scss`** — 为亮色和暗色主题分别添加表格相关 CSS 变量：
 
@@ -345,16 +345,16 @@ table {
 
 ## 9. 图片宽度约束与点击放大
 
-### 问题
+### 9.1. 问题
 
 1. Markdown 中的图片按原始尺寸显示，大图会超出内容区宽度
 2. 无法点击图片在页面内单独放大查看
 
-### 解决方案
+### 9.2. 解决方案
 
 利用 al-folio 已内置的 `medium-zoom` 库（`_config.yml` 中 `enable_medium_zoom: true` 已默认开启），扩展其选择器覆盖所有 post 内图片。
 
-### 改动文件
+### 9.3. 改动文件
 
 **`_sass/_typography.scss`** — 添加图片宽度约束：
 
@@ -395,7 +395,7 @@ $(document).ready(function () {
 
 原始模板中 `_scripts/photoswipe-setup.js` 是一个带 Liquid front matter 的脚本，Jekyll 会将其编译输出到 `assets/js/photoswipe-setup.js`。之前错误地在 `assets/js/` 下也创建了同名文件，导致编译 warning：
 
-```
+```text
 Conflict: The following destination is shared by multiple files.
   /home/hxf0223/work/hxf0223.github.io/_site/assets/js/photoswipe-setup.js
    - _scripts/photoswipe-setup.js
@@ -408,30 +408,30 @@ Conflict: The following destination is shared by multiple files.
 
 ## 提交历史参考
 
-| 日期       | Commit    | 说明                                                       |
-| ---------- | --------- | ---------------------------------------------------------- |
-| 2026-02-27 | `9d5407b` | 更新个人信息和站点 URL                                     |
-| 2026-02-27 | `86b0695` | 初始化仓库 fork 配置                                       |
-| 2026-02-27 | `59860f6` | 迁移博客文章                                               |
-| 2026-02-27 | `3d120b6` | 添加 PWA manifest                                          |
-| 2026-02-27 | `5d5993f` | 添加 Service Worker 和 theme-color                         |
-| 2026-02-27 | `92c705e` | 修复 manifest.json 尾部换行导致 JSON 无效                  |
-| 2026-02-28 | `4ad9c06` | 完成全部文章迁移（含中文文件名）                           |
-| 2026-02-28 | `c16ac46` | Tags/Categories 自动显示                                   |
-| 2026-02-28 | `aed979b` | PWA 远程修复（SW 容错、manifest scope/id、CSP worker-src） |
-| 2026-02-28 | `804f9b0` | 修复 SW fetch 拦截 chrome-extension 协议的错误             |
+| 日期       | Commit    | 说明                                                             |
+| ---------- | --------- | ---------------------------------------------------------------- |
+| 2026-02-27 | `9d5407b` | 更新个人信息和站点 URL                                           |
+| 2026-02-27 | `86b0695` | 初始化仓库 fork 配置                                             |
+| 2026-02-27 | `59860f6` | 迁移博客文章                                                     |
+| 2026-02-27 | `3d120b6` | 添加 PWA manifest                                                |
+| 2026-02-27 | `5d5993f` | 添加 Service Worker 和 theme-color                               |
+| 2026-02-27 | `92c705e` | 修复 manifest.json 尾部换行导致 JSON 无效                        |
+| 2026-02-28 | `4ad9c06` | 完成全部文章迁移（含中文文件名）                                 |
+| 2026-02-28 | `c16ac46` | Tags/Categories 自动显示                                         |
+| 2026-02-28 | `aed979b` | PWA 远程修复（SW 容错、manifest scope/id、CSP worker-src）       |
+| 2026-02-28 | `804f9b0` | 修复 SW fetch 拦截 chrome-extension 协议的错误                   |
 | 2026-03-09 | —         | SW 缓存策略改为 Stale-While-Revalidate，解决页面需刷新才更新问题 |
-| 2026-03-10 | —         | 修复 blockquote 字号偏大问题，与正文保持一致                 |
+| 2026-03-10 | —         | 修复 blockquote 字号偏大问题，与正文保持一致                     |
 
 ---
 
 ## 10. Blockquote（引用段落）字号修复
 
-### 问题
+### 10.1. 问题
 
 al-folio 默认的 `blockquote` 字号为 `1.2rem`，比正文（`1rem`）大，在文章中视觉上不协调。
 
-### 改动文件
+### 10.2. 改动文件
 
 **`_sass/_typography.scss`** — 将 `blockquote` 的 `font-size` 从 `1.2rem` 改为 `1rem`：
 
