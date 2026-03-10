@@ -166,23 +166,22 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// fetch 事件：必须过滤非 HTTP 协议请求
+// fetch 事件：Stale-While-Revalidate 策略
+// 先返回缓存（保证加载速度），同时后台更新缓存，下次访问即为最新内容
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET" || !url.protocol.startsWith("http")) return;
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type === "opaque") {
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cached) => {
+        const fetchPromise = fetch(event.request).then((response) => {
+          if (response && response.status === 200 && response.type !== "opaque") {
+            cache.put(event.request, response.clone()).catch(() => {});
+          }
           return response;
-        }
-        const toCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, toCache).catch(() => {});
         });
-        return response;
+        return cached || fetchPromise; // 有缓存则立即返回，同时后台更新
       });
     })
   );
@@ -194,6 +193,7 @@ self.addEventListener("fetch", (event) => {
 1. `cache.addAll()` 如果任何一个 URL 失败，整个 Promise 会 reject，导致 SW 安装失败 → 浏览器不显示安装按钮。必须添加 `.catch()` 容错
 2. Edge/Chrome 浏览器扩展的请求（`chrome-extension://`）也会被 SW 的 fetch 事件拦截，`cache.put()` 不支持非 HTTP scheme，导致 `Uncaught TypeError`。必须用 `url.protocol.startsWith('http')` 过滤
 3. `cache.put()` 也需要 `.catch(() => {})` 兜底，防止其他异常场景
+4. 初版使用 **Cache First** 策略（命中缓存直接返回），导致部署新版本后用户打开页面仍看到旧内容，必须手动刷新才能更新。改为 **Stale-While-Revalidate** 策略后，首次打开走缓存保证速度，同时后台拉取最新内容更新缓存，下次访问即可看到新版本
 
 ### 4.3 修改 \_includes/head.liquid
 
@@ -420,3 +420,33 @@ Conflict: The following destination is shared by multiple files.
 | 2026-02-28 | `c16ac46` | Tags/Categories 自动显示                                   |
 | 2026-02-28 | `aed979b` | PWA 远程修复（SW 容错、manifest scope/id、CSP worker-src） |
 | 2026-02-28 | `804f9b0` | 修复 SW fetch 拦截 chrome-extension 协议的错误             |
+| 2026-03-09 | —         | SW 缓存策略改为 Stale-While-Revalidate，解决页面需刷新才更新问题 |
+| 2026-03-10 | —         | 修复 blockquote 字号偏大问题，与正文保持一致                 |
+
+---
+
+## 10. Blockquote（引用段落）字号修复
+
+### 问题
+
+al-folio 默认的 `blockquote` 字号为 `1.2rem`，比正文（`1rem`）大，在文章中视觉上不协调。
+
+### 改动文件
+
+**`_sass/_typography.scss`** — 将 `blockquote` 的 `font-size` 从 `1.2rem` 改为 `1rem`：
+
+```scss
+// 修改前
+blockquote {
+  font-size: 1.2rem;
+  ...
+}
+
+// 修改后
+blockquote {
+  font-size: 1rem; // 与正文保持一致
+  ...
+}
+```
+
+> **提示：** 若希望引用段落比正文略小，可设为 `0.9rem`，在视觉上形成层次感但不会突兀。
