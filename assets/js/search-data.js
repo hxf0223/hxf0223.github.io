@@ -540,15 +540,26 @@ ninja.data = [{
             window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84/";
           
         },
-      },{id: "post-cuda-架构",
+      },{id: "post-hpc-零散笔记集合",
         
-          title: "CUDA 架构",
+          title: "HPC 零散笔记集合",
         
         description: "1. 概念：带宽(Bandwidth) vs 延迟(Latency)定义如下： 带宽(Bandwidth)：单位时间内能传输的数据量，通常以 GB/s 或 TB/s 表示。 延迟(Latency)：发出一次内存访问请求到数据返回所需的时间，通常以 ns（纳秒）或 时钟周期 表示。在不同的应用场景下，强调的性能指标不同。比如在AI训练中，需要持续搬运大量数据，比如大量密集的GEMM计算，即此时是计算密集型。另外，CPU/GPU 的算力极强。这种情况下，带宽经常成为性能瓶颈。而针对推理场景，由于其访问数据是随机访问的 KV-Cache，细粒度、低复用，带宽利用率低。这种情形下，等待数据的时间，即延迟成为性能瓶颈。推理与训练的对比如下： 对比项 训练 推理（Decode 阶段） Batch size 大（数百~数千） 小（1~几十） 数据访问模式 连续大块读写 逐 token 随机小块访问 计算强度 高（Compute-bound） 低（Memory-bound） KV Cache 访问 无 每步都要读取历史 KV 带宽 vs 延迟区别总结： 指标 带宽 延迟 衡量什么 数据吞吐量（多宽） 访问响应时间（多快） 单位 GB/s, TB/s ns, 时钟周期 决定因素 总线宽度、内存并行度 物理距离、内存层级 训练瓶颈 ✅ 主要瓶颈 次要（大 batch 可掩盖）...",
         section: "Posts",
         handler: () => {
           
             window.location.href = "/blog/2025/HPC%E7%AC%94%E8%AE%B0-%E9%9B%B6%E6%95%A3%E6%A6%82%E5%BF%B5/";
+          
+        },
+      },{id: "post-cuda-笔记集合",
+        
+          title: "CUDA 笔记集合",
+        
+        description: "1. cutlass/CuTe GEMM 中矩阵的存储方式 NT / TN / NN / TT1.1. 背景BLAS 的约定是：所有矩阵一律按 column-major 存储，然后用 transA/transB 标志告诉 BLAS 要不要对它做转置：\[C = \alpha \cdot op(A) \cdot op(B) + \beta \cdot C\]其中： 当transX为N时：$op(X) = X$，当transX为T时：$op(X) = X^T$。 乘法要求 $op(A)$ 是 $M \times K$，$op(B)$ 是 $K \times N$。1.2. GEMM 命名含义CuTe给矩阵做了一个约定：A(M, K)，B(N, K)，C(M, N)，即： A 矩阵：(M，K) – M 行 K 列 B 矩阵：(N，K) – N...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E7%AC%94%E8%AE%B0%E9%9B%86%E5%90%88/";
           
         },
       },{id: "post-c-右值引用-万能引用-完美转发",
