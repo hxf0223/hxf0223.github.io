@@ -22,7 +22,7 @@ toc:
 
 针对`Shared Memory`的访问，`CUDA`使用`bank`机制，将`shared memory`的访问（读/写）映射到不同的`bank`，以实现并行访问。`bank`以4字节为单位，共32个`bank`。这样，一个时钟周期内，可以并行访问32个不同的`bank`，即访问`128字节`的数据。映射公式`bank index = (address /4) % 32`。
 
-> 每次发起共享内存事务（transation）时，可以从这 32 个 bank 中分别读取一个 32 位数据。以 32 位的字为单位索引，则 bank 以地址的低 5 位进行划分，与高位没有关系。
+> ⭐ 每次发起共享内存事务（transation）时，可以从这 32 个 bank 中分别读取一个 32 位数据。以 32 位的字为单位索引，则 bank 以地址的低 5 位进行划分，与高位没有关系。
 
 图示`transaction`：
 
@@ -98,7 +98,7 @@ __global__ void all_conflicts() {
 
 ![bank-conflict-example](/assets/images/cuda/20250223/all-conflicts.svg)
 
-由于是 32-way Bank Conflicts，则每个 warp 产生的 bank conflicts 次数是 10000 _ 31，所有 warp 总共是 8 _ 10000 \* 31 = 2,480,000 次。与 Nsight Compute 测量结果吻合。
+由于是 32-way Bank Conflicts，则每个 warp 产生的 bank conflicts 次数是 10000 \* 31，所有 warp 总共是 8 \* 10000 \* 31 = 2,480,000 次。与 Nsight Compute 测量结果吻合。
 
 ![ncu_32_way_bank_conflicts](/assets/images/cuda/20250225/cuda_basic_bank_conflicts/ncu_bank_conflicts_demo1.png)
 
@@ -142,7 +142,7 @@ __global__ void vectorized_loads() {
     int lane_id = threadIdx.x;
 
     float4* ptr = reinterpret_cast<float4*>(&sh[warp_id][lane_id * 4]);
-    int addr = (int)ptr & 0xFFFF;
+    int addr = (int)(std::uintptr_t)ptr & 0xFFFF;
 
     float4 r;
     for (int j = 0; j < num_iters; j++) {
@@ -151,6 +151,8 @@ __global__ void vectorized_loads() {
                         : "r"(addr));
     }
 }
+
+// vectorized_loads<<<1, dim3(32, 8)>>>();
 ```
 
 {% endraw %}
@@ -158,7 +160,7 @@ __global__ void vectorized_loads() {
 ![vectorized-loads](/assets/images/cuda/20250223/v4loads.svg)
 
 > 上图只给出了一半的线程访问情况。编号(`Lane`)为0的线程与编号为8的线程，访问的`shared memory`中的数据映射到了同一个`bank 0`；同时，编号为16，以及24，同样映射到了`bank 0`。
-> 不过，由于其每个线程一次访问4个32位数据，其平均访问时间折算下来，与32位加载相当。
+> 不过，由于其每个线程一次访问 4 个 32 位数据，其平均访问时间折算下来，与 32 位加载相当。
 
 要想避免`Bank Conflicts`，可以错开（`interleave`）冲突的线程访问的顺序，比如：
 
