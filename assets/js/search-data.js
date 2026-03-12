@@ -500,7 +500,7 @@ ninja.data = [{
         
           title: "CUDA入门：Bank Conflict",
         
-        description: "使用到的测试代码：bank_conflict.cu1. Bank Conflicts (Shared Memory)1.1. Bank 划分针对Shared Memory的访问，CUDA使用bank机制，将shared memory的访问（读/写）映射到不同的bank，以实现并行访问。bank以4字节为单位，共32个bank。这样，一个时钟周期内，可以并行访问32个不同的bank，即访问128字节的数据。映射公式bank index = (address /4) % 32。 每次发起共享内存事务（transation）时，可以从这 32 个 bank 中分别读取一个 32 位数据。以 32 位的字为单位索引，则 bank 以地址的低 5 位进行划分，与高位没有关系。图示transaction：Thread（在CUDA Core中） ↓ 访问Shared Memory ↓[Bank系统处理] ← Transaction 在这里发生 ↓返回数据到Thread举例：warp中定义的shared memory如何映射到banks：__shared__ float s[64];如上变量，其映射如下：1.2. Bank Conflicts在一次transaction的时候，如果，当warp中的不同线程访问到同一个bank中的不同地址时，就会产生Bank Conflicts，导致访问串行化：需要分成多次transaction。有N个线程访问同一个bank，称为N-way Bank Conflicts。 所谓 Bank Conflicts，只与transaction有关，即其由 Shared Memory 访问控制器相关。引用https://forums.developer.nvidia.com/t/how-to-understand-the-bank-conflict-of-shared-mem/260900/2：When you store (or load) more than 4 bytes per...",
+        description: "使用到的测试代码：bank_conflict.cu1. Bank Conflicts (Shared Memory)1.1. Bank 划分针对Shared Memory的访问，CUDA使用bank机制，将shared memory的访问（读/写）映射到不同的bank，以实现并行访问。bank以4字节为单位，共32个bank。这样，一个时钟周期内，可以并行访问32个不同的bank，即访问128字节的数据。映射公式bank index = (address /4) % 32。 ⭐ 每次发起共享内存事务（transation）时，可以从这 32 个 bank 中分别读取一个 32 位数据。以 32 位的字为单位索引，则 bank 以地址的低 5 位进行划分，与高位没有关系。图示transaction：Thread（在CUDA Core中） ↓ 访问Shared Memory ↓[Bank系统处理] ← Transaction 在这里发生 ↓返回数据到Thread举例：warp中定义的shared memory如何映射到banks：__shared__ float s[64];如上变量，其映射如下：1.2. Bank Conflicts在一次transaction的时候，如果，当warp中的不同线程访问到同一个bank中的不同地址时，就会产生Bank Conflicts，导致访问串行化：需要分成多次transaction。有N个线程访问同一个bank，称为N-way Bank Conflicts。 所谓 Bank Conflicts，只与transaction有关，即其由 Shared Memory 访问控制器相关。引用https://forums.developer.nvidia.com/t/how-to-understand-the-bank-conflict-of-shared-mem/260900/2：When you store (or load) more than 4 bytes...",
         section: "Posts",
         handler: () => {
           
@@ -1442,9 +1442,9 @@ ninja.data = [{
             window.location.href = "/blog/2024/Topology-and-Geometry-in-Open-CASCADE/";
           
         },
-      },{id: "post-我的vscode插件清单",
+      },{id: "post-vscode-改用-mathjax-渲染数学公式",
         
-          title: "我的VSCode插件清单",
+          title: "VSCode 改用 MathJax 渲染数学公式",
         
         description: "首先安装Markdown Preview Enhanced插件，并做如下配置：  Ctrl+Shift+P → Markdown Preview Enhanced: Open Config Script (Global)将如下内容添加到配置文件config.js中：{  &quot;mathjaxConfig&quot;: {    &quot;tex&quot;: {      &quot;inlineMath&quot;: [[&quot;$&quot;, &quot;$&quot;], [&quot;\\(&quot;, &quot;\\)&quot;]],      &quot;displayMath&quot;: [[&quot;$$&quot;, &quot;$$&quot;], [&quot;\\[&quot;, &quot;\\]&quot;]],      &quot;tags&quot;: &quot;ams&quot;    }  }}",
         section: "Posts",
