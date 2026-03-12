@@ -123,11 +123,10 @@ Import-Module oh-my-posh
 notepad $PROFILE
 
 # 在 Profile 文件中添加以下内容
-# 设置 PowerShell 终端编码为 UTF-8，另外还需要设置 PowerShell 
+# 设置 PowerShell 终端编码为 UTF-8，另外还需要设置 PowerShell
 # 字体为支持 Box-drawing 的字体（如 Fira Code、Consolas），新宋体这种点阵字体不行。
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
-
 ```
 
 ## 参考资料
