@@ -116,6 +116,20 @@ Import-Module oh-my-posh
 
 安装字体之后，打开`PowerShell`终端，在`默认值->外观->字体`中选择`Fira Code`字体。
 
+## 3. 设置 PowerShell 终端编码为 UTF-8
+
+```bash
+# 打开 Profile 文件
+notepad $PROFILE
+
+# 在 Profile 文件中添加以下内容
+# 设置 PowerShell 终端编码为 UTF-8，另外还需要设置 PowerShell 
+# 字体为支持 Box-drawing 的字体（如 Fira Code、Consolas），新宋体这种点阵字体不行。
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
+```
+
 ## 参考资料
 
 - [oymyposh themes](https://ohmyposh.dev/docs/themes/)
