@@ -128,7 +128,7 @@ __global__ void conflict_free_kernel() {
 
 {% endraw %}
 
-## 3. 矢量读写指令
+### 2.2. 矢量读写指令
 
 使用矢量指令`ld.shared.v4`可以读取4个连续的32位数据。如下代码，一个线程读取`s[4*i]`, `s[4*i+1]`, `s[4*i+2]`, `s[4*i+3]`（分为四个`transaction`）。会产生四路`Bank Conflicts`：
 
@@ -257,7 +257,35 @@ int swizzled = (x + (y >> 4)) % 32;
 - [issue -- how to understand "block swizzling"](https://github.com/NVIDIA/cutlass/issues/1017)：Swizzle可以提升L2 cache命中率
 - [issue -- Swizzling the shared memory](https://github.com/triton-lang/triton/issues/2675)
 
-## 学习资料
+## 4. 概念总结
+
+**Lane ID**：每个线程在`warp`中的编号，范围为0-31，物理固定。
+
+**sector**：L1TEX / L2 缓存的最小传输单位是 sector，大小为 32 字节。一条缓存 cacheline = 128 字节 = 4 个 sector。一个 warp（32 线程）发出内存请求时，硬件会把所有线程的访问地址合并（coalesce），看需要覆盖几个 sector。
+
+**wavefront**：在 L1TEX语境下，表征 L1TEX 处理一次内存请求，需花费的次数。举例如下：
+
+情形一：4 sectors，1 wavefront（理想）
+
+```text
+32 个线程访问连续的 128 字节（完全合并）
+   → 覆盖 4 个 sector，但地址都在同一个 cacheline
+   → 1 个 wavefront 处理完毕，消耗 1 个周期
+```
+
+情形二：4 sectors，2+ wavefronts（有冲突/分散）
+
+```text
+32 个线程访问的地址跨越多个 cacheline 或
+访问了 shared memory 中有 bank conflict 的位置
+→ 同样是 4 个 sector 的数据量
+→ 但 L1TEX 无法一次处理，需要拆成 2+ 个 wavefront
+→ 消耗 2+ 个周期
+```
+
+**内存事务（Memory Transaction）**：每次访问共享内存时，硬件会将访问请求打包成内存事务。一个 warp 内的多个线程可能会访问同一个 bank，从而产生 bank conflicts，导致内存事务被串行化。
+
+## A. 学习资料
 
 - [CCUDA 编程手册系列第五章: 性能指南](https://developer.nvidia.com/zh-cn/blog/cuda-performance-guide-cn/)
 - [NVIDIA -- Performance Optimization: Paulius Micikevicius Programming Guidelines and GPU Architecture Reasons Behind Them](https://www.cs.emory.edu/~cheung/Courses/355/Syllabus/94-CUDA/DOCS/S3466-Programming-Guidelines-GPU-Architecture.pdf)
