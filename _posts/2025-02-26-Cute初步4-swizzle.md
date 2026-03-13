@@ -18,15 +18,17 @@ toc:
 
 - $MBase$：以 $2^M$ 个一维坐标连续的元素为单位，将其当做一个元素；
 - $SShift$：控制行号、列号提取的低位偏移；
-- $BBits$：参与 XOR 的位数，即掩码位数，用于提取一维`index`中的行号、列号中的部分位。
+- $BBits$：参与`XOR`的位数，即掩码位数，用于提取一维`index`中的行号、列号中的部分位。
 
-引用reed解释及图示，其输入为一个一维坐标的 layout，通过 swizzle 将其拆分为二维坐标表示形式：
+引用reed解释及图示，其输入为一个一维坐标的`layout`，通过`swizzle`将其拆分为二维坐标表示形式：
 
 ![swizzle 逻辑示意](/assets/images/cuda/20250226/cute_swizzle/swizzle_logic.jpg)
 
-> 📌 `BBits`表示有$2^B$个交换模式，`SShift`表示交换模式的周期。通常，$\mid{S}\mid \ge B$，如果$\mid{S}\mid \gt B$，则此交换模式重复$2^{\mid{S}\mid - B}$次，如果$\mid{S}\mid = B$，则只套用一次此交换模式。
+`BBits`表示有$2^B$个交换模式，`SShift`表示交换模式的周期。通常$\mid{S}\mid \ge B$，如果$\mid{S}\mid \gt B$，则此交换模式重复$2^{\mid{S}\mid - B}$次，如果$\mid{S}\mid = B$，则只套用一次此交换模式。
 
-> 📌 一般在设置`Swizzle`参数时，按输入的`layout`一行（准确的说是fast dimension）为周期进行`swizzle`，$2^{S+M}$ = 输入`layout`的列长度（此处仅指逻辑上的，实际完整的计算公式还需要考虑到元素存储字节数，具体见下面章`Swizzle 参数设计规则`）。比如 half 类型的 `layout (8, 32):(32, 1)`，定义`swizzle<3, 3, 3>`，即 8 个元素形成新的最小单位（M），8 个最小单位为一行（B），所以`swizzle`从$8 \times 8 = 64$个元素开始。见下面示例。B 为 8，则整个`swizzle`周期为 8 行。
+一般在设置`Swizzle`参数时，按输入的`layout`一行（准确的说是`fast dimension`）为周期进行`swizzle`，$2^{S+M}$ = 输入`layout`的列长度（此处仅指逻辑上的，实际完整的计算公式还需要考虑到元素存储字节数，具体见下面章`Swizzle 参数设计规则`）。
+
+比如 half 类型的`layout (8, 32):(32, 1)`，定义`swizzle<3, 3, 3>`，即 8 个元素形成新的最小单位（M），8 个最小单位为一行（B），所以`swizzle`从$8 \times 8 = 64$个元素开始。见下面示例。B 为 8，则整个`swizzle`周期为 8 行。
 
 - 设计`Swizzle`参数时，要求`S >= B`，即将掩码的源与目标分开（否则重合）。
 - 上图借用reed博客中的图示，其理解`S`、`B`的作用与我理解的相反，放在此作为参考。
