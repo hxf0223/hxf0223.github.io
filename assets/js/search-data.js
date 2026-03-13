@@ -434,7 +434,7 @@ ninja.data = [{
         
           title: "CUTLASS-Cute 初步(4)：Swizzle",
         
-        description: "给定 layout 范围内，swizzle 通过列异或操作（icol = irow ^ icol），周期性的 coord 重排，映射到新的物理地址 offset。swizzle 定义了三个参数： M：以 $2^M$ 个一维坐标连续的元素为单位，将其当做一个元素； S：控制行号、列号提取的低位偏移； B：参与 XOR 的位数，即掩码位数，用于提取一维 index 中的行号、列号中的部分位。引用reed解释及图示，其输入为一个一维坐标的 layout，通过 swizzle 将其拆分为二维坐标表示形式： 一般在设置 swizzle 参数时，按输入的 layout 一行为周期进行 swizzle，$2^{S+M}$ = 输入 layout 的列长度。比如 half 类型的 layout (8, 32):(32, 1)，定义swizzle&amp;lt;3, 3, 3&amp;gt;，即 8 个元素形成新的最小单位（M），8 个最小单位为一行（S），所以 swizzle 从$8 \times 8 = 64$个元素开始。见下面示例。B 为 8，则整个 swizzle 周期为 8 行。 设计 swizzle 参数时，要求...",
+        description: "给定 layout 范围内，swizzle 通过列异或操作（icol = irow ^ icol），周期性的 coord 重排，映射到新的物理地址 offset。swizzle 定义了三个参数： $MBase$：以 $2^M$ 个一维坐标连续的元素为单位，将其当做一个元素； $SShift$：控制行号、列号提取的低位偏移； $BBits$：参与 XOR 的位数，即掩码位数，用于提取一维 index 中的行号、列号中的部分位。引用reed解释及图示，其输入为一个一维坐标的 layout，通过 swizzle 将其拆分为二维坐标表示形式： 一般在设置 swizzle 参数时，按输入的 layout 一行为周期进行 swizzle，$2^{S+M}$ = 输入 layout 的列长度。比如 half 类型的 layout (8, 32):(32, 1)，定义swizzle&amp;lt;3, 3, 3&amp;gt;，即 8 个元素形成新的最小单位（M），8 个最小单位为一行（S），所以 swizzle 从$8 \times 8 = 64$个元素开始。见下面示例。B 为 8，则整个 swizzle 周期为 8 行。 设计 swizzle 参数时，要求...",
         section: "Posts",
         handler: () => {
           
