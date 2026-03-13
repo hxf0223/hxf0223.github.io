@@ -283,7 +283,7 @@ int swizzled = (x + (y >> 4)) % 32;
 → 消耗 2+ 个周期
 ```
 
-**内存事务（Memory Transaction）**：每次访问共享内存时，硬件会将访问请求打包成内存事务。一个 warp 内的多个线程可能会访问同一个 bank，从而产生 bank conflicts，导致内存事务被串行化。
+**内存事务（Memory Transaction）**：每次访问共享内存时，硬件会将访问请求打包成内存事务。一个 warp 内的多个线程可能会访问同一个 bank，从而产生 bank conflicts，导致内存事务被串行化。transaction 与 wavefront 应该是同一个意思。
 
 ## A. 学习资料
 
