@@ -463,6 +463,17 @@ ninja.data = [{
             window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A53-TiledCopy-TiledMMA/";
           
         },
+      },{id: "post-cutlass-cute-初步-2-1-tensor-amp-layout-实操笔记",
+        
+          title: "CUTLASS-Cute 初步(2.1)：Tensor &amp; Layout 实操笔记",
+        
+        description: "1. local_tile给定一个 tiler，使用 local_tile 函数，将 Tensor 按 tiler 的 shape 切分成多个 tile。由于切分之后，每个 tile 保留输入 Tensor 的stride信息，以及rest mode的shape，故称为Inner-Partition。1.1. 示例一：常规使用（常规 CTA 切分）比如有一个 4x6 的 Tensor，将其切分并分配到 thread block，每个 thread block 获取到的 tile 大小为 (2,2)，当前 thread block 的 coord 为 (1,1)，就可以使用如下代码： constexpr int M = 4, N = 6; auto layout = cute::make_layout(cute::make_shape(M, N), cute::make_stride(N, cute::Int&amp;lt;1&amp;gt;{})); auto tensor = cute::make_tensor(h_data.data(), layout); constexpr auto tiler...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A52.1-Tensor-Layout-%E5%AE%9E%E6%93%8D%E7%AC%94%E8%AE%B0/";
+          
+        },
       },{id: "post-cutlass-cute-初步-2-tensor-amp-layout-algebra",
         
           title: "CUTLASS-Cute 初步(2)：Tensor &amp; Layout Algebra",
