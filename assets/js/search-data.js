@@ -375,6 +375,17 @@ ninja.data = [{
             window.location.href = "/blog/2025/NVIDIA-Jetson-Orin-AGX-%E5%AE%89%E8%A3%85/";
           
         },
+      },{id: "post-使用-cute-tiled-copy-tiled-mma-以及-multi-stage-实现高性能-gemm",
+        
+          title: "使用 CuTe Tiled Copy、Tiled MMA 以及 Multi-Stage 实现高性能 GEMM",
+        
+        description: "代码： https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/gemm_sm80.cu https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/kernel_sm80.cuh1. 定义 block tile 大小配置 CTA 大小为 MNK = 128 * 128 * 32，数据类型为FP16： constexpr auto bM = cute::Int&amp;lt;128 * 2 / sizeof(TA)&amp;gt;{}; constexpr auto bN = cute::Int&amp;lt;128 * 2 / sizeof(TB)&amp;gt;{}; constexpr auto bK = cute::Int&amp;lt;32&amp;gt;{}; constexpr auto cta_tiler = cute::make_shape(bM, bN, bK); // (bM, bN, bK) constexpr auto bP = cute::Int&amp;lt;3&amp;gt;{}; // pipeline1.1. Roofline 计算RTX 3060...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CuTe-GEMM-TiledCopy-TiledMMA-Pipeline/";
+          
+        },
       },{id: "post-cuda-gemm-计算优化-软件流水及双缓存",
         
           title: "CUDA GEMM 计算优化：软件流水及双缓存",
