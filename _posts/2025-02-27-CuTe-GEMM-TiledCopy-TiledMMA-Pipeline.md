@@ -107,7 +107,7 @@ MMA_Atom
 
 ![SM80_16x8x16_F16F16F16F16_TN](/assets/images/cuda/20250227/gemm_tiled_mma_tiled_copy_pipeline/SM80_16x8x16_F16F16F16F16_TN.webp)
 
-在 SMEM -> REG 的过程中，使用`ldmatrix`拷贝（具体为使用 CopyTraits：`SM75_U16x8_LDSM_T`）。`ldmatrix`以`128-bit`（即 8 个 FP16 元素）为单位进行拷贝（可理解为：每个线程指向的`SMEM`要求`8 x FP16`连续）。`SM75_U16x8_LDSM_T`使用`ldmatrix` `.x4`指令，使用一个`warp`（32个线程），一次拷贝四个`8x8 FP16`子块，即子块的大小为`(32, 8)`。`SM75_U16x8_LDSM_T`打印信息如下：
+在 SMEM -> REG 的过程中，使用`ldmatrix`拷贝（具体为使用 CopyTraits：`SM75_U16x8_LDSM_T`）。`ldmatrix`以`8 x FP16=128-bit`为单位进行拷贝（可理解为：每个线程指向的`SMEM`要求`8 x FP16`连续）。`SM75_U16x8_LDSM_T`使用`ldmatrix.x4`指令，使用一个`warp`（32个线程），一次拷贝四个`8x8 FP16=(32, 8)`。`SM75_U16x8_LDSM_T`的打印信息如下：
 
 ```text
 Copy_Atom
@@ -120,7 +120,7 @@ Copy_Atom
 
 > 参考<https://zhuanlan.zhihu.com/p/696231622>，有如下表述：“矩阵中连续的两行无需在shared memory中连续，但1行是连续的128-bit。也就是说，ldmatrix读取shared memory的单元是128-bit。”。
 
-`Tiled MMA` 受上述 `SMEM`的`Tiled Copy`约束，要求每个线程处理 8 个`FP16`数据，这个约束作用于`A sub-tile`和`B sub-tile`。`A sub-tile`已经满足要求，针对`B sub-tile`，`SM80_16x8x16_F16F16F16F16_TN`只给每个线程分配四个`FP16`，因此需要使用`permutation`参数（即`mma_layout`）使其满足`SMEM` `TiledCopy`要求：
+`Tiled MMA`受上述`SMEM`的`Tiled Copy`约束，要求每个线程处理 `8 x FP16`数据，这个约束作用于`A sub-tile`和`B sub-tile`。`A sub-tile`已经满足要求，针对`B sub-tile`，`SM80_16x8x16_F16F16F16F16_TN`只给每个线程分配四个`FP16`，因此需要使用`permutation`参数（即`mma_layout`）使其满足`SMEM` `TiledCopy`要求：
 
 ```cpp
   using MMATraits               = cute::MMA_Traits<cute::SM80_16x8x16_F16F16F16F16_TN>;
