@@ -19,6 +19,26 @@ toc:
 - <https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/gemm_sm80.cu>
 - <https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/kernel_sm80.cuh>
 
+TODO：GMEM -> SMEM 不会产生 bank conflicts？
+
+配置流程及约束概览：
+
+1. 定义 CTA tile 大小
+
+TODO
+
+2. 定义 GMEM -> SMEM 的 Tiled Copy 配置
+
+TODO
+
+3. 定义 Tiled MMA 配置（包含SMEM TiledCopy）
+
+TODO
+
+4. 定义 SMEM swizzle 配置，以及SMEM Layout（包含multi-stage）
+
+TODO
+
 ## 1. 定义 block tile 大小
 
 配置 CTA 大小为 MNK = `128 * 128 * 32`，数据类型为`FP16`：
@@ -70,4 +90,76 @@ cuBLAS:  5.24442 ms, 26.2067 TFLOPS
 Custom:  3.64926 ms, 37.6622 TFLOPS
 ```
 
-达到峰值的`37.66 / 51 = 73.84%`。
+达到理论峰值的`37.66 / 51 = 73.84%`。
+
+## 2. Tiled MMA 配置
+
+TiledMMA 使用`SM80_16x8x16_F16F16F16F16_TN`，对应 PTX 指令`m16n8k16`，使用一个`warp`（32个线程协作）完成子块的`MMA`计算。打印的`MMA Atom`配置信息如下：
+
+```text
+MMA_Atom
+  ThrID:      _32:_1
+  Shape_MNK:  (_16,_8,_16)
+  LayoutA_TV: ((_4,_8),(_2,_2,_2)):((_32,_1),(_16,_8,_128))
+  LayoutB_TV: ((_4,_8),(_2,_2)):((_16,_1),(_8,_64))
+  LayoutC_TV: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+```
+
+![SM80_16x8x16_F16F16F16F16_TN](/assets/images/cuda/20250227/gemm_tiled_mma_tiled_copy_pipeline/SM80_16x8x16_F16F16F16F16_TN.webp)
+
+在 SMEM -> REG 的过程中，使用`ldmatrix`拷贝（具体为使用 CopyTraits：`SM75_U16x8_LDSM_T`）。`ldmatrix`以`128-bit`（即 8 个 FP16 元素）为单位进行拷贝（可理解为：每个线程指向的`SMEM`要求`8 x FP16`连续）。`SM75_U16x8_LDSM_T`使用`ldmatrix` `.x4`指令，使用一个`warp`（32个线程），一次拷贝四个`8x8 FP16`子块，即子块的大小为`(32, 8)`。`SM75_U16x8_LDSM_T`打印信息如下：
+
+```text
+Copy_Atom
+  ThrID:        _32:_1
+  ValLayoutSrc: (_32,_8):(_8,_1)
+  ValLayoutDst: ((_4,_8),(_1,_2,_4)):((_16,_1),(_1,_8,_64))
+  ValLayoutRef: ((_4,_8),(_1,_2,_4)):((_16,_1),(_1,_8,_64))
+  ValueType:    16b
+```
+
+> 参考<https://zhuanlan.zhihu.com/p/696231622>，有如下表述：“矩阵中连续的两行无需在shared memory中连续，但1行是连续的128-bit。也就是说，ldmatrix读取shared memory的单元是128-bit。”。
+
+`Tiled MMA` 受上述 `SMEM`的`Tiled Copy`约束，要求每个线程处理 8 个`FP16`数据，这个约束作用于`A sub-tile`和`B sub-tile`。`A sub-tile`已经满足要求，针对`B sub-tile`，`SM80_16x8x16_F16F16F16F16_TN`只给每个线程分配四个`FP16`，因此需要使用`permutation`参数（即`mma_layout`）使其满足`SMEM` `TiledCopy`要求：
+
+```cpp
+  using MMATraits               = cute::MMA_Traits<cute::SM80_16x8x16_F16F16F16F16_TN>;
+  using MMAAtomShape            = MMATraits::Shape_MNK;
+  constexpr auto mma_atom       = cute::MMA_Atom<MMATraits>{};
+  constexpr auto mma_atom_shape = MMAAtomShape{};  // (16, 8, 16)
+
+  constexpr auto MMA_LAYOUT_M = 2, MMA_LAYOUT_N = 2, MMA_LAYOUT_K = 1;                       // 线程数扩充
+  constexpr auto NUM_MMA_TILE_M = 1, NUM_MMA_TILE_N = 2, NUM_MMA_TILE_K = 1;                 // 每个线程Atom数量扩充
+  constexpr auto MMA_TILE_M = cute::get<0>(mma_atom_shape) * NUM_MMA_TILE_M * MMA_LAYOUT_M;  // 32
+  constexpr auto MMA_TILE_N = cute::get<1>(mma_atom_shape) * NUM_MMA_TILE_N * MMA_LAYOUT_N;  // 32
+  constexpr auto MMA_TILE_K = cute::get<2>(mma_atom_shape) * NUM_MMA_TILE_K * MMA_LAYOUT_K;  // 16
+
+  constexpr auto mma_layout =
+    cute::make_layout(cute::make_shape(cute::Int<MMA_LAYOUT_M>{}, cute::Int<MMA_LAYOUT_N>{}, cute::Int<MMA_LAYOUT_K>{}));
+
+  constexpr auto mma_tile  = cute::make_tile(cute::Int<MMA_TILE_M>{}, cute::Int<MMA_TILE_N>{}, cute::Int<MMA_TILE_K>{});
+  constexpr auto tiled_mma = cute::make_tiled_mma(mma_atom, mma_layout, mma_tile);
+```
+
+打印的`TiledMMA`配置信息如下：
+
+```text
+(MMA_Atom
+  ThrID:      _32:_1
+  Shape_MNK:  (_16,_8,_16)
+  LayoutA_TV: ((_4,_8),(_2,_2,_2)):((_32,_1),(_16,_8,_128))
+  LayoutB_TV: ((_4,_8),(_2,_2)):((_16,_1),(_8,_64))
+  LayoutC_TV: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
+,(2,2,1):(_1,2,4),(32,32,16):(_1,32,1024))
+```
+
+- `(2,2,1):(_1,2,4)`：描述Atom的线程扩展配置，即在M、N、K三个维度上分别扩展2倍、2倍、1倍线程。
+- `(32,32,16):(_1,32,1024)`：描述Tile的大小配置，即解决的MNK规模。
+
+### 2.1. 约束
+
+这个定义的`TiledMMA`针对线程做了配置：在`M`方向及`N`方向均使用`MMAAtom`的两倍线程，在`K`方向上保持不变。即使用 `2x2=4`个`warp`，共`128`个线程协作完成一个`MMA Tile`的计算。
+
+`TiledMMA`的配置，对 GMEM -> SMEM 拷贝过程中的线程划分形成约束，即在`A/B`子块的 GMEM -> SMEM 过程中，配置的线程数量也是 128 个线程。
+
+同时，`TildMMA`的配置，对输入`A/B`矩阵的`tiler`也形成约束，即要求分配给`CTA`的`tile`大小在 M、N、K 三个维度上分别是`MMA_TILE_M=32`、`MMA_TILE_N=32`、`MMA_TILE_K=16`的整数倍。
