@@ -163,3 +163,18 @@ Copy_Atom
 `TiledMMA`的配置，对 GMEM -> SMEM 拷贝过程中的线程划分形成约束，即在`A/B`子块的 GMEM -> SMEM 过程中，配置的线程数量也是 128 个线程。
 
 同时，`TildMMA`的配置，对输入`A/B`矩阵的`tiler`也形成约束，即要求分配给`CTA`的`tile`大小在 M、N、K 三个维度上分别是`MMA_TILE_M=32`、`MMA_TILE_N=32`、`MMA_TILE_K=16`的整数倍。
+
+## A. 资料
+
+- [cute 之 GEMM流水线](https://zhuanlan.zhihu.com/p/665082713)
+- [cute 之 高效GEMM实现](https://zhuanlan.zhihu.com/p/675308830)
+- [CUDA SGEMM优化笔记](https://linn-ylz.com/Computer-Science/CUDA/CUDA-SGEMM-optimization-notes/#fn3)
+- [从 GEMM 实践 CUDA 优化](https://tom-jerr.github.io/notes/cuda/%E4%BB%8EGEMM%E5%AE%9E%E8%B7%B5CUDA%E4%BC%98%E5%8C%96/)
+
+### A.1. 全流程优化参考资料
+
+- [Nvidia Tensor Core-CUDA HGEMM Advanced Optimization](https://bruce-lee-ly.medium.com/nvidia-tensor-core-cuda-hgemm-advanced-optimization-5a17eb77dd85)：**待阅读**
+- [Advanced Matrix Multiplication Optimization on NVIDIA GPUs](https://salykova.github.io/sgemm-gpu)：**待阅读**
+
+- [Performance Analysis of CUDA-based General Matrix Multiplication through Memory Coalescing and Grid-Level Parallelization](https://www.diva-portal.org/smash/get/diva2:1985710/FULLTEXT01.pdf)
+- [CUTLASS MMA Pipelined Header](https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/gemm/threadblock/mma_pipelined.h)

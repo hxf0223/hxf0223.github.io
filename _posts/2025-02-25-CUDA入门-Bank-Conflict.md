@@ -64,6 +64,8 @@ __shared__ float s[64];
 - `warp`中的多个线程，访问同一个`bank`中的相同地址--使用`boardcast`分发相同地址数据到多个线程；
 - `warp`中的线程，单个线程一次访问多个`bank`，但其他线程不访问这些`bank`。此时，生成多次`transaction`。
 
+> 总结来说：一次**内存事务**（SMEM 读/写），传输大小为128字节，并对应到32个bank。如果SMEM中有两个不同地址落入到同一个bank，则产生bank conflict，导致访问串行化。另外一个概念是：bank conflict，是在warp级别上发生的（可以理解为：warp是一个最小的调度单元，其对SMEM的一次访问对应到一次内存事务）。
+
 ## 2. Bank Conflicts 示例
 
 > 以下示例来自博客[Notes About Nvidia GPU Shared Memory Banks](https://feldmann.nyc/blog/smem-microbenchmarks)。
@@ -284,6 +286,12 @@ int swizzled = (x + (y >> 4)) % 32;
 ```
 
 **内存事务（Memory Transaction）**：每次访问共享内存时，硬件会将访问请求打包成内存事务。一个 warp 内的多个线程可能会访问同一个 bank，从而产生 bank conflicts，导致内存事务被串行化。transaction 与 wavefront 应该是同一个意思。
+
+**Bank Conflicts相关名词**：
+
+当发生 bank conflict 时，warp 需要额外的一个 cycle 来重新提交 shared memory 的访问指令到 LSU 单元，该指令需要在 MIO 中排队，这种排队会导致访问延迟增加，此时 warp 可能处于等待数据返回的状态，warp state 标识为 Stall Short Scoreboard。
+
+如果 MIO 队列满，此时 warp 先需要等待 MIO 队列处于非空的状态，此时 warp state 标识为 Stall MIO Throttle。
 
 ## A. 学习资料
 
