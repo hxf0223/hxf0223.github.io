@@ -17,12 +17,17 @@ toc:
 `Swizzle`作用于`SMEM`的`layout`。给定`layout`范围内，`Swizzle`通过列异或操作（`icol = irow ^ icol`），周期性的`coord`重排，映射到新的物理地址`offset`。`Swizzle`定义了三个参数：
 
 - $MBase$：以 $2^M$ 个一维坐标连续的元素为单位，将其当做一个元素；
-- $SShift$：控制行号、列号提取的低位偏移；
-- $BBits$：参与`XOR`的位数，即掩码位数，用于提取一维`index`中的行号、列号中的部分位。
+- $SShift$：从`Offset`中提取的高位偏移，用于提取`Offset`的`lead dimension`；
+- $BBits$：参与`XOR`的位数，用于提取一维`index`中的`lead dimension`、`fast dimension`中的部分bits。
 
 引用reed解释及图示，其输入为一个一维坐标的`layout`，通过`swizzle`将其拆分为二维坐标表示形式：
 
 ![swizzle 逻辑示意](/assets/images/cuda/20250226/cute_swizzle/swizzle_logic.jpg)
+
+给定义一个输入Offset:`<LeadBits:FastBits>`：
+
+- 提取关系为：`BBits+MBase` -> `FastBits`，`SShift+MBase` -> `LeadBits`。
+- 参与`XOR`操作的位宽为：`BBits`，即`LeadBits`中的低`BBits`位，`FastBits`中的高`BBits`位。
 
 `BBits`表示有$2^B$个交换模式，`SShift`表示交换模式的周期。通常$\mid{S}\mid \ge B$，如果$\mid{S}\mid \gt B$，则此交换模式重复$2^{\mid{S}\mid - B}$次，如果$\mid{S}\mid = B$，则只套用一次此交换模式。
 
@@ -30,13 +35,20 @@ toc:
 
 比如 half 类型的`layout (8, 32):(32, 1)`，定义`swizzle<3, 3, 3>`，即 8 个元素形成新的最小单位（M），8 个最小单位为一行（B），所以`swizzle`从$8 \times 8 = 64$个元素开始。见下面示例。B 为 8，则整个`swizzle`周期为 8 行。
 
-- 设计`Swizzle`参数时，要求`S >= B`，即将掩码的源与目标分开（否则重合）。
-- 上图借用reed博客中的图示，其理解`S`、`B`的作用与我理解的相反，放在此作为参考。
+- 设计`Swizzle`参数时，要求`S >= B`，否则不能提取到`LeadBits`。
+- 设计`Layout`时，如果`Layout`的`fast dimension`长度小于 $2^{S+M}$，`Swizzle`不能完整的提取`LeadBits`，导致`Swizzle`失效或部分失效。
 - 异或操作数学符号为 $\oplus$。
 
 ## 1. Cute Swizzle 示例
 
-定义 `layout (8, 32):(32, 1)`，定义`swizzle<3, 2, 3>`，即 $2^{3+2}$ = 32（输入`layout`列宽）。代码如下：
+定义 `layout (8, 32):(32, 1)`，定义`swizzle<3, 2, 3>`。定义的`Swizzle`含义如下：
+
+- $2^{B+M}=2^{3+2}$ = 32：fast dimension 长度，32个elements。
+- $2^{M}=2^2=4$：4个element组成一个最小单位。
+- $2^{B}=2^3=8$：8个交换模式。
+- $2^{S}=2^3=8$：交换模式周期为8。
+
+代码如下：
 
 ```python
 from cutlass import cute
@@ -206,6 +218,74 @@ SShift = log2(64) - MBase = 6 - 3 = 3。即其约束在于 `shared memory` 的 `
 BBits = log2(32 \* 2) - MBase = 6 - 3 = 3。即要求 32 个连续的 word 地址，经过 `swizzle` 之后，分别落入 `shared memory` 的32个 `bank` 中。
 
 最终，得到 `swizzle<3, 3, 3>`。
+
+### 3.2. 一个错误的设计示例，以及修复
+
+输入 layout，其 Offset 组成为：`<LeadBits>:<FastBits>`。Swizzle 对输入 layout 的约束为：
+
+- 输入 layout 的 fast dimension 长度，即连续内存访问的维度长度，应该等于 $2^{MBase + SShift}$。
+- 如果输入 layout fast dimension 长度小于 $2^{MBase + SShift}$，则导致 Swizzle 只取到`LeadBits`的高位部分，低位部分取到`FastBits`里面去了。
+- 输入 layout 的 lead dimension 长度小于 $2^{MBase + SShift}$，没有影响，即一个`交换模式周期`没有被完整应用。
+
+错误示例如下：
+
+```cpp
+  constexpr auto bM = cute::Int<128>{};
+  constexpr auto bK = cute::Int<32>{};
+
+  constexpr auto MBase_A   = constexpr_log2(sizeof(cute::uint128_t) / sizeof(T));  // log2(8) = 3
+  constexpr auto BBits_A   = constexpr_log2(32 * 4 / sizeof(T)) - MBase_A;         // log2(64) - 3 =  3
+  constexpr auto SShift_A  = constexpr_log2(bM) - MBase_A;                         // log2(128) - 3 = 4
+  constexpr auto swizzle_A = cute::Swizzle<BBits_A, MBase_A, SShift_A>{};
+
+  constexpr auto smem_atom_layout_A          = cute::make_layout(cute::make_shape(cute::Int<32>{}, cute::Int<8>{}));
+  constexpr auto smem_atom_layout_A_swizzled = cute::composition(swizzle_A, smem_atom_layout_A);
+  constexpr auto smem_layout_A               = cute::tile_to_shape(smem_atom_layout_A_swizzled, cute::make_shape(bM, bK));
+```
+
+上述示例中，输入 layout 的 `fast dimension=32` => 位宽为 5；`LeadBits= 8` => 位宽为 3。得到 Offset 位格式为`<LeadBits=3:FastBits=5>`。与 Swizzle 对齐的位宽组成要求为`<X:4+3>`，导致 Swizzle 只从`lead dimension`的高位部分获取`2-Bit`，低位`2-Bit`是从Offset的`fast dimension`中获取的；另外，经过`BBits`位与之后，`LeadBits`只有`1-Bit`起作用。
+
+其结果就是，Swizzle 之后的结果，shape 等于输入 layout 的 shape，但是没有达到预期的效果。测试代码：
+
+```python
+@cute.jit
+def test_swizzle_layout2():  # 该swizzle不起作用
+    """该swizzle不起作用, 因为fast dimension长度不满足要求"""
+    layout_3d = cute.make_layout((32, 8))  # 列主序布局
+    sw = cute.make_swizzle(3, 3, 4)  # 要求fast dimension 长度为 2^(4+3) = 128
+    swizzled_layout = cute.make_composed_layout(sw, 0, layout_3d)
+    render_layout_svg(layout_3d, "out/original_layout2.svg")
+    render_swizzle_layout_svg(swizzled_layout, "out/swizzled_layout2.svg")
+
+test_swizzle_layout2()
+```
+
+修复代码如下：
+
+```cpp
+  // constexpr auto bM = cute::Int<128>{};
+  constexpr auto smem_atom_layout_A = cute::make_layout(cute::make_shape(bM, cute::Int<8>{}));
+```
+
+对应的测试代码：
+
+```python
+@cute.jit
+def test_swizzle_layout3():
+    """修正: fast dimension长度满足要求, swizzle生效"""
+    """MBase=3: 8个元素组成一组. """
+    layout_3d = cute.make_layout((128, 8))  # 列主序布局
+    sw = cute.make_swizzle(3, 3, 4)  # 要求fast dimension 长度为 2^(4+3) = 128
+    swizzled_layout = cute.make_composed_layout(sw, 0, layout_3d)
+    render_layout_svg(layout_3d, "out/original_layout3.svg")
+    render_swizzle_layout_svg(swizzled_layout, "out/swizzled_layout3.svg")
+
+test_swizzle_layout3()
+```
+
+Swizzle之后的Layout：
+
+![swizzle_128_8_3_3_4](/assets/images/cuda/20250226/cute_swizzle/swizzled_layout_128x8_3_3_4.svg)
 
 ## 4. Thread Block Swizzle
 
