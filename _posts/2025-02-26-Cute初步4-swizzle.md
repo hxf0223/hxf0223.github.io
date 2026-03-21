@@ -144,7 +144,7 @@ class Swizzle {
 
 如果使用 `S = 5`，行号提取范围扩大到 32，由于 `layout` 的行号、列号范围对应掩码为 4 位，导致的结果为行号有效的掩码位为 `0bxxxx0 >> 1`，即最低一位被丢弃，且有效的掩码位为 4 位（注意 `shiftr` 的实现是提取高位之后右移`S`位）。最终的规律为：第 0、1 行维持不变，行周期变为 32 行，即第32、33行维持不变。中间的行，则每两行异或计算结果一致，即如果应用于解决 bank conflicts，此时只能消除一半的 bank conflicts。
 
-## 2.2. 测试代码
+### 2.2. 测试代码
 
 ```python
 from cutlass import cute
@@ -161,7 +161,7 @@ def test_swizzle_layout():
 test_swizzle_layout()
 ```
 
-## 2.3. Swizzle 与 Layout 的关系
+### 2.3. Swizzle 与 Layout 的关系
 
 Swizzle 的实现与 Layout 没有关系，但是从其实现看，最终形成的 index，fast dimension （即内存连续的维度）位于低位，得到的结果就是对 fast dimension 形成`XOR`操作，即改变其映射顺序。演示代码片段如下：
 
@@ -286,6 +286,8 @@ test_swizzle_layout3()
 Swizzle之后的Layout：
 
 ![swizzle_128_8_3_3_4](/assets/images/cuda/20250226/cute_swizzle/swizzled_layout_128x8_3_3_4.svg)
+
+相关测试代码：<https://github.com/HPC02/cuda_perf/blob/master/src/study_codes/test_gmem_smem_swizzle/test_gemm_smem_swizzle.cu>。
 
 ## 4. Thread Block Swizzle
 

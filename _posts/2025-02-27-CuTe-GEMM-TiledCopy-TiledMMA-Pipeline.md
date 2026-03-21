@@ -178,3 +178,4 @@ Copy_Atom
 
 - [Performance Analysis of CUDA-based General Matrix Multiplication through Memory Coalescing and Grid-Level Parallelization](https://www.diva-portal.org/smash/get/diva2:1985710/FULLTEXT01.pdf)
 - [CUTLASS MMA Pipelined Header](https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/gemm/threadblock/mma_pipelined.h)
+- <https://github.com/NVIDIA/cutlass/blob/main/test/unit/gemm/device/default_gemm_configuration.hpp>
