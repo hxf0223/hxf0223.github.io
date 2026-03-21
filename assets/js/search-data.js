@@ -434,7 +434,7 @@ ninja.data = [{
         
           title: "CUTLASS-Cute 初步(5)：TV Layout",
         
-        description: "TV-Layout 描述 CTA 中线程的 layout，以及每个线程可以访问到哪些数据。TV-Layout 的第一个 mode 定义线程在 CTA 中的分布，第二个 mode 定义每个线程处理的数据布局。见下面例子中的LayoutA_TV。Inverse TV-Layout 描述的是数据的逻辑坐标 coord 到线程ID的映射关系。比如给定 layout 的逻辑坐标 (m, n)，经过 inverse TV-Layout 得到 (threadID, valueID)，即： threadID，表示该逻辑坐标 (m, n) 属于 warp 中的哪个线程处理 valueID，表示该线程处理的第几个数据，即线程内数据的偏移，比如 reg[2] (M, K) -&amp;gt; (T, V) 分为两个步骤： 逻辑坐标(m, n) 计算得到一维坐标 Index = Thread_ID + (Value_ID * Thread_Group_Size) 转换为人可理解的二维坐标 (threadID, valueID)，比如 threadID = Index % Thread_Group_Size，valueID = Index /...",
+        description: "TV-Layout 描述 CTA 中线程的 layout，以及每个线程可以访问到哪些数据。TV-Layout 的第一个 mode 定义线程在 CTA 中的分布，第二个 mode 定义每个线程处理的数据布局。见下面例子中的LayoutA_TV。数学表述形式为：$\text{TV-Layout}:(t,v) -&amp;gt; \text{linear index in tile}$。以 LayoutA_TV: ((_4,_8),(_2,_2,_2)):((_32,_1),(_16,_8,_128)) 为例：(t0,t1, v0,v1,v2) → t0×32 + t1×1 + v0×16 + v1×8 + v2×128Thread 5 (t0=1, t1=1), Value 0 (v0=0,v1=0,v2=0):→ 1×32 + 1×1 = 33 → A矩阵线性坐标 33Inverse TV-Layout 描述的是数据的逻辑坐标 coord 到线程ID的映射关系。比如给定 layout 的逻辑坐标 (m, n)，经过 inverse TV-Layout 得到 (threadID, valueID)，即： threadID，表示该逻辑坐标 (m,...",
         section: "Posts",
         handler: () => {
           
