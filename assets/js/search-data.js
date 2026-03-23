@@ -104,7 +104,7 @@ ninja.data = [{
         
           title: "AI工具收集，其他不分类工具收集，持续更新",
         
-        description: "BabelDOC: 一款基于AI的文档生成工具，能够自动从代码库中提取信息并生成详细的技术文档，支持多种编程语言和格式。其他实用工具  yt-dlp: 一个命令行视频下载工具，支持从YouTube及其他多个网站下载视频，功能强大且持续更新。",
+        description: "1. 开发相关Skills  agent-gpu-skills：包含 cutlass、CuTe、CuTeDSL、triton  ptx-isa-markdown：PTX指令集的Markdown版本2. AI工具收集  BabelDOC: 一款基于AI的文档生成工具，能够自动从代码库中提取信息并生成详细的技术文档，支持多种编程语言和格式。其他实用工具  yt-dlp: 一个命令行视频下载工具，支持从YouTube及其他多个网站下载视频，功能强大且持续更新。",
         section: "Posts",
         handler: () => {
           
