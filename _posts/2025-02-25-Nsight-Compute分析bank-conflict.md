@@ -22,6 +22,28 @@ toc:
 
 ![nsight-compute-metrics-full](/assets/images/cuda/20250225/nsight-compute-start-activity.png)
 
+### 1.1. 命令行方式
+
+```bash
+# 完整分析，输出到文件
+ncu --set full -o gemm_sm80_profile ./ncu_gemm_sm80 4096 4096 4096
+
+# 查看 memory 相关指标
+ncu --set memory ./ncu_gemm_sm80 4096 4096 4096
+
+# 查看 compute 相关指标
+ncu --set compute ./ncu_gemm_sm80 4096 4096 4096
+
+# 查看 roofline
+# 1. Memory Throughput(GB/s)、L2 Cache Throughput(GB/s)、Compute (SM) Throughput(TFLOPS/s)
+# 结果以百分比形式给出，即与理论峰值的比值
+# 2. SM Active Cycles / Elapsed Cycles，他们的比值表示 SM 的利用率，即可以看出等待内存的时间占比
+ncu --set roofline ./ncu_gemm_sm80 4096 4096 4096
+
+# 查看 shared memory bank conflict
+ncu --metrics l1tex__data_bank_conflicts_pipe_lsu_mem_shared,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum ./ncu_gemm_sm80 4096 4096 4096
+```
+
 ## 2. 分析Bank Conflicts
 
 被测试`CUDA`程序运行结束后，打开`Nsight Compute`的结果页面（`Details`），进入`Memory Workload Analysis`章节，在章节标题右侧，选择`Memory Tables`，查看`Shared Memory`部分：
