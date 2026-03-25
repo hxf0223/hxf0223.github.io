@@ -422,6 +422,7 @@ Conflict: The following destination is shared by multiple files.
 | 2026-02-28 | `804f9b0` | 修复 SW fetch 拦截 chrome-extension 协议的错误                   |
 | 2026-03-09 | —         | SW 缓存策略改为 Stale-While-Revalidate，解决页面需刷新才更新问题 |
 | 2026-03-10 | —         | 修复 blockquote 字号偏大问题，与正文保持一致                     |
+| 2026-03-25 | —         | 切换代码语法高亮主题：亮色 github.light、暗色 gruvbox.dark       |
 
 ---
 
@@ -450,3 +451,54 @@ blockquote {
 ```
 
 > **提示：** 若希望引用段落比正文略小，可设为 `0.9rem`，在视觉上形成层次感但不会突兀。
+
+---
+
+## 11. 代码语法高亮主题切换
+
+### 11.1. 背景
+
+al-folio 默认使用 Rouge 高亮引擎，亮色主题为 `github`，暗色主题为 `native`。`github` 主题中 C++ 关键字（`if`/`class`/`int`/`void` 等）被定义为 `#000000`（纯黑色），在白色背景上几乎没有颜色区分，函数名、类名虽有颜色但整体高亮效果较弱。
+
+### 11.2. 主题选择
+
+通过 `rougify help style` 枚举所有可用主题，并对比各主题对 C++ token 的颜色定义：
+
+| 主题         | 关键字颜色               | 函数名颜色     | 类名颜色       | 背景色    |
+| ------------ | ------------------------ | -------------- | -------------- | --------- |
+| github（原） | `#000000` 黑色（无差异） | `#990000` 深红 | `#445588` 蓝   | 白色      |
+| github.light | `#cf222e` 红色           | `#8250df` 紫色 | `#953800` 橙色 | `#f6f8fa` |
+| gruvbox.dark | `#fb4934` 亮红           | `#fabd2f` 黄色 | `#8ec07c` 绿色 | `#282828` |
+
+最终选择：**亮色用 `github.light`，暗色用 `gruvbox.dark`**。
+
+### 11.3. 改动文件
+
+**生成新主题 CSS：**
+
+```bash
+rougify style github.light > assets/css/jekyll-pygments-themes-colorful.css
+rougify style gruvbox.dark > assets/css/jekyll-pygments-themes-gruvbox-dark.css
+```
+
+**`assets/css/jekyll-pygments-themes-gruvbox-dark.css`** — 在文件顶部补充 `.highlight pre` 规则，确保暗色主题下 `pre` 元素背景正确：
+
+```css
+.highlight pre {
+  background-color: #282828;
+}
+```
+
+> **原因：** Rouge CSS 通过 `.highlight` 设置外层容器背景，但内层 `pre` 元素的背景由 SCSS `var(--global-code-bg-color)` 决定，CSS 特异性 `(0,1,1)` 低于高亮 CSS 的 `.highlight pre` 规则。若不显式覆盖，暗色主题切换时 `pre` 背景可能显示为浅色（`#f6f8fa`），导致文字不可见。
+
+**`_includes/head.liquid`** — 更新两处 CSS 引用路径：
+
+```html
+<!-- 亮色主题（原 github.css → 新 colorful.css，内容为 github.light 主题） -->
+<link defer rel="stylesheet" href="{{ '/assets/css/jekyll-pygments-themes-colorful.css' | relative_url | bust_file_cache }}" media="" id="highlight_theme_light" />
+
+<!-- 暗色主题（原 native.css → 新 gruvbox-dark.css） -->
+<link defer rel="stylesheet" href="{{ '/assets/css/jekyll-pygments-themes-gruvbox-dark.css' | relative_url | bust_file_cache }}" media="none" id="highlight_theme_dark" />
+```
+
+两个 `<link>` 的 `id` 不变（`highlight_theme_light` / `highlight_theme_dark`），`theme.js` 通过这两个 id 动态切换 `media` 属性来实现亮暗色主题切换，不需要改动 JS 逻辑。
