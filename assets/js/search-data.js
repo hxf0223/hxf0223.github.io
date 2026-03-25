@@ -390,7 +390,7 @@ ninja.data = [{
         
           title: "CUDA GEMM 计算优化：软件流水及双缓存",
         
-        description: "GEMM 分块公式：\[C[i, j] = \sum_{k=0}^{K-1} A[i, k] \times B[k, j]\]翻译资料： CUTLASS: Fast Linear Algebra in CUDA C++ 知乎翻译：https://zhuanlan.zhihu.com/p/1955941729250279491 层级 说明 Thread Block Tile 每个 CUDA 线程块（thread block）负责计算输出矩阵 C 的一个子块（tile） Warp Tile 在线程块内部，每个 warp（32个线程）负责计算 thread block tile 的一个子区域 Thread Tile 在 warp 内部，每个线程负责计算 warp tile 的一个更小的子区域 1. GEMM 计算步骤–分层 GEMM 结构依照硬件架构层次划分（也即 CUDA 编程模型），GEMM 计算可以分为多个层次：Thread Block Tile -&amp;gt; Warp Tile -&amp;gt; Thread...",
+        description: "CTA loop-over BK 分块公式：\[C[i, j] = \sum_{k=0}^{nBK-1} A[i, k] \times B[k, j]\]整个 GEMM 计算可以表达为：\[C[i, j] = \sum_{k&#39;=0}^{nK-1} \sum_{k=0}^{nBK-1} A[i, k] \times B[k, j]\]图示如下（引用自https://am17an.bearblog.dev/a-gentle-introduction-to-gemm-using-mma-tensor-cores/）：如下主要来自翻译资料： CUTLASS: Fast Linear Algebra in CUDA C++ 知乎翻译：https://zhuanlan.zhihu.com/p/1955941729250279491 层级 说明 Thread Block Tile 每个 CUDA 线程块（thread block）负责计算输出矩阵 C 的一个子块（tile） Warp Tile 在线程块内部，每个 warp（32个线程）负责计算 thread block tile 的一个子区域 Thread Tile 在 warp 内部，每个线程负责计算 warp tile 的一个更小的子区域 1. GEMM...",
         section: "Posts",
         handler: () => {
           
