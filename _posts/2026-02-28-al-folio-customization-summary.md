@@ -423,6 +423,7 @@ Conflict: The following destination is shared by multiple files.
 | 2026-03-09 | —         | SW 缓存策略改为 Stale-While-Revalidate，解决页面需刷新才更新问题 |
 | 2026-03-10 | —         | 修复 blockquote 字号偏大问题，与正文保持一致                     |
 | 2026-03-25 | —         | 切换代码语法高亮主题：亮色 github.light、暗色 gruvbox.dark       |
+| 2026-03-25 | —         | 修复中文 tags/categories 点击后 URL 显示乱码问题                 |
 
 ---
 
@@ -502,3 +503,41 @@ rougify style gruvbox.dark > assets/css/jekyll-pygments-themes-gruvbox-dark.css
 ```
 
 两个 `<link>` 的 `id` 不变（`highlight_theme_light` / `highlight_theme_dark`），`theme.js` 通过这两个 id 动态切换 `media` 属性来实现亮暗色主题切换，不需要改动 JS 逻辑。
+
+---
+
+## 12. 修复中文 Tags/Categories URL 乱码
+
+### 12.1. 问题
+
+点击中文 tag 或 category 链接后，浏览器地址栏显示 percent-encoded 乱码，如 `/blog/tag/%E5%B7%A5%E5%85%B7` 而非 `/blog/tag/工具`。
+
+### 12.2. 根本原因
+
+Jekyll 的 `relative_url` 过滤器内部使用 `Addressable::URI` 解析 URL，会把路径中的中文字符 percent-encode 后写入 HTML `href` 属性。模板中大量使用了以下写法：
+
+```liquid
+{{ tag | slugify | prepend: '/blog/tag/' | relative_url }}
+```
+
+`relative_url` 再处理含中文的路径时，产生编码后的 URL。
+
+### 12.3. 改动文件
+
+修改 3 个文件共 8 处，将 `relative_url` 管道替换为直接字符串拼接：
+
+```liquid
+{# 修改前 #}
+{{ tag | slugify | prepend: '/blog/tag/' | relative_url }}
+
+{# 修改后 #}
+{{ site.baseurl }}/blog/tag/{{ tag | slugify }}
+```
+
+**修改的文件：**
+
+- **`_pages/blog.md`** — 4 处（标签栏列表 2 处 + 文章列表每篇的 tag/category 链接 2 处）
+- **`_layouts/post.liquid`** — 2 处（文章详情页的 tag/category 链接）
+- **`_layouts/book-review.liquid`** — 2 处（书评页的 tag/category 链接）
+
+> **说明：** 中文字符放在 HTML `href` 属性中是合法的 HTML。浏览器发起请求时会自动编码，但地址栏显示为原始中文字符。`site.baseurl` 在个人站点（`baseurl` 为空）和 project site（`baseurl: /repo-name`）下均能正确工作。
