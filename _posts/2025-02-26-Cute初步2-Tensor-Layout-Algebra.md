@@ -274,6 +274,7 @@ C(11) = 42,     flat(11) = 11,  A(flat(11)) = 42
 - [deepwiki -- cutlass -- Layout Algebra](https://deepwiki.com/NVIDIA/cutlass/2.1-layout-algebra)
 - [cute Layout 的代数和几何解释](https://zhuanlan.zhihu.com/p/662089556)。来自知乎 reed 文章
 - [CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)。来自Yifan Yang (杨轶凡) 博客
+- [CuTe Layout Representation and Algebra](https://arxiv.org/pdf/2603.02298)：来自 arxiv 的论文
 - [CuTe Layout 的范畴论基础](https://shenh10.github.io/papercache/papers/mlsys/gpu/2025/09/01/categorical-foundations-for-cute-layouts.html)
 - [CuTe 02 - Layout 运算](https://wangyu.me/posts/cuda/cute-layout-algebra/)
 - [Cute概念速通](https://zhen8838.github.io/2026/02/03/cute-concepts/)：待阅读
