@@ -2,7 +2,7 @@
 layout: post
 title: al-folio 模板定制修改总结
 date: 2026-02-28 10:00:00 +0800
-categories: [工具, 博客]
+categories: [Tools, Blog]
 tags: [jekyll, al-folio, ubuntu]
 toc:
   sidebar: right
