@@ -1332,6 +1332,17 @@ ninja.data = [{
             window.location.href = "/blog/2024/nginx-autho-config/";
           
         },
+      },{id: "post-vscode-remote-ssh-使用局域网代理",
+        
+          title: "VSCode Remote SSH 使用局域网代理",
+        
+        description: "配置路径：远程[SSH:xxxx] -&amp;gt; 应用程序 -&amp;gt; Proxy。填入代理地址以及端口。另外，去掉Proxy Strict SSL复选框的选中，即将Copilot配置为忽略证书错误。",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-remotessh-%E5%B1%80%E5%9F%9F%E7%BD%91%E4%BB%A3%E7%90%86/";
+          
+        },
       },{id: "post-vscode-remote-ssh-免密登陆",
         
           title: "VSCode Remote SSH 免密登陆",

@@ -255,7 +255,7 @@ mma_tCrA (dst):
 ptr[16b](0xffffa4fffc60) o ((_2,_2,_2),_4,_2):((_1,_2,_4),_8,_32)
 smem_tCrA_view (dst view):
 ptr[16b](0xffffa4fffc60) o ((_8,_1),_4,_2):((_1,_0),_8,_32)
-</code></pre></div></div> <h3 id="36-有关inverse-tv-layout的说明">3.6. 有关<code class="language-plaintext highlighter-rouge">Inverse TV-Layout</code>的说明</h3> <p>上面<code class="language-plaintext highlighter-rouge">Inverse TV-Layout</code>的图示中A只有64个线程，实际上CTA中128个线程都有从<code class="language-plaintext highlighter-rouge">SMEM</code>中加载数据，只不过可以分为两个64线程group，这两个group从<code class="language-plaintext highlighter-rouge">SMEM</code>上加载的位置相同，即<code class="language-plaintext highlighter-rouge">SMEM</code>被加载了两次，但是加载到不同的thread group的寄存器中，图示不能体现出来。</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tiled_mma infomation:
+</code></pre></div></div> <h3 id="36-有关inverse-tv-layout图示的说明">3.6. 有关<code class="language-plaintext highlighter-rouge">Inverse TV-Layout</code>图示的说明</h3> <p>上面<code class="language-plaintext highlighter-rouge">Inverse TV-Layout</code>的图示中A只有64个线程，实际上CTA中128个线程都有从<code class="language-plaintext highlighter-rouge">SMEM</code>中加载数据，只不过可以分为两个64线程group，这两个group从<code class="language-plaintext highlighter-rouge">SMEM</code>上加载的位置相同，即<code class="language-plaintext highlighter-rouge">SMEM</code>被加载了两次，但是加载到不同的thread group的寄存器中，图示不能体现出来。</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tiled_mma infomation:
 TiledMMA
   ThrLayoutVMNK:  (_32,_2,_2,_1):(_1,_32,_64,_0)
   PermutationMNK: (_32,_32,_16)
