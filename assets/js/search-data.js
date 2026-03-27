@@ -522,7 +522,7 @@ ninja.data = [{
         
           title: "使用Nsight Compute分析Bank Conflict",
         
-        description: "测试用例：github – cuda_perf1. 启动配置使用Nsight Compute运行被测试CUDA程序，启动时，指定metrics为full：1.1. 命令行方式# 完整分析，输出到文件ncu --set full -o gemm_sm80_profile ./ncu_gemm_sm80 4096 4096 4096# 查看 memory 相关指标ncu --set memory ./ncu_gemm_sm80 4096 4096 4096# 查看 compute 相关指标ncu --set compute ./ncu_gemm_sm80 4096 4096 4096# 查看 roofline# 1. Memory Throughput(GB/s)、L2 Cache Throughput(GB/s)、Compute (SM) Throughput(TFLOPS/s)# 结果以百分比形式给出，即与理论峰值的比值# 2. SM Active Cycles / Elapsed Cycles，他们的比值表示 SM 的利用率，即可以看出等待内存的时间占比ncu --set roofline ./ncu_gemm_sm80 4096 4096 4096# 查看 shared...",
+        description: "测试用例：github – cuda_perf1. 启动配置使用Nsight Compute运行被测试CUDA程序，启动时，指定metrics为full：1.1. 命令行方式# 完整分析，输出到文件ncu --set full -o gemm_sm80_profile ./ncu_gemm_sm80 4096 4096 4096# 查看 memory 相关指标ncu --set memory ./ncu_gemm_sm80 4096 4096 4096# 查看 compute 相关指标ncu --set compute ./ncu_gemm_sm80 4096 4096 4096# 查看 roofline# 1. Memory Throughput(GB/s)、L2 Cache Throughput(GB/s)、Compute (SM) Throughput(TFLOPS/s)# 结果以百分比形式给出，即与理论峰值的比值# 2. SM Active Cycles / Elapsed Cycles，他们的比值表示 SM 的利用率，即可以看出等待内存的时间占比ncu --set roofline ./ncu_gemm_sm80 4096 4096 4096# 查看 occupancy...",
         section: "Posts",
         handler: () => {
           
