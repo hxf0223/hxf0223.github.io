@@ -2,7 +2,7 @@
 layout: post
 title: al-folio 模板定制修改总结
 date: 2026-02-28 10:00:00 +0800
-categories: [工具, 博客]
+categories: [Tools, Blog]
 tags: [jekyll, al-folio, ubuntu]
 toc:
   sidebar: right
@@ -422,6 +422,8 @@ Conflict: The following destination is shared by multiple files.
 | 2026-02-28 | `804f9b0` | 修复 SW fetch 拦截 chrome-extension 协议的错误                   |
 | 2026-03-09 | —         | SW 缓存策略改为 Stale-While-Revalidate，解决页面需刷新才更新问题 |
 | 2026-03-10 | —         | 修复 blockquote 字号偏大问题，与正文保持一致                     |
+| 2026-03-25 | —         | 切换代码语法高亮主题：亮色 github.light、暗色 gruvbox.dark       |
+| 2026-03-25 | —         | 修复中文 tags/categories 点击后 URL 显示乱码问题                 |
 
 ---
 
@@ -450,3 +452,92 @@ blockquote {
 ```
 
 > **提示：** 若希望引用段落比正文略小，可设为 `0.9rem`，在视觉上形成层次感但不会突兀。
+
+---
+
+## 11. 代码语法高亮主题切换
+
+### 11.1. 背景
+
+al-folio 默认使用 Rouge 高亮引擎，亮色主题为 `github`，暗色主题为 `native`。`github` 主题中 C++ 关键字（`if`/`class`/`int`/`void` 等）被定义为 `#000000`（纯黑色），在白色背景上几乎没有颜色区分，函数名、类名虽有颜色但整体高亮效果较弱。
+
+### 11.2. 主题选择
+
+通过 `rougify help style` 枚举所有可用主题，并对比各主题对 C++ token 的颜色定义：
+
+| 主题         | 关键字颜色               | 函数名颜色     | 类名颜色       | 背景色    |
+| ------------ | ------------------------ | -------------- | -------------- | --------- |
+| github（原） | `#000000` 黑色（无差异） | `#990000` 深红 | `#445588` 蓝   | 白色      |
+| github.light | `#cf222e` 红色           | `#8250df` 紫色 | `#953800` 橙色 | `#f6f8fa` |
+| gruvbox.dark | `#fb4934` 亮红           | `#fabd2f` 黄色 | `#8ec07c` 绿色 | `#282828` |
+
+最终选择：**亮色用 `github.light`，暗色用 `gruvbox.dark`**。
+
+### 11.3. 改动文件
+
+**生成新主题 CSS：**
+
+```bash
+rougify style github.light > assets/css/jekyll-pygments-themes-colorful.css
+rougify style gruvbox.dark > assets/css/jekyll-pygments-themes-gruvbox-dark.css
+```
+
+**`assets/css/jekyll-pygments-themes-gruvbox-dark.css`** — 在文件顶部补充 `.highlight pre` 规则，确保暗色主题下 `pre` 元素背景正确：
+
+```css
+.highlight pre {
+  background-color: #282828;
+}
+```
+
+> **原因：** Rouge CSS 通过 `.highlight` 设置外层容器背景，但内层 `pre` 元素的背景由 SCSS `var(--global-code-bg-color)` 决定，CSS 特异性 `(0,1,1)` 低于高亮 CSS 的 `.highlight pre` 规则。若不显式覆盖，暗色主题切换时 `pre` 背景可能显示为浅色（`#f6f8fa`），导致文字不可见。
+
+**`_includes/head.liquid`** — 更新两处 CSS 引用路径：
+
+```html
+<!-- 亮色主题（原 github.css → 新 colorful.css，内容为 github.light 主题） -->
+<link defer rel="stylesheet" href="{{ '/assets/css/jekyll-pygments-themes-colorful.css' | relative_url | bust_file_cache }}" media="" id="highlight_theme_light" />
+
+<!-- 暗色主题（原 native.css → 新 gruvbox-dark.css） -->
+<link defer rel="stylesheet" href="{{ '/assets/css/jekyll-pygments-themes-gruvbox-dark.css' | relative_url | bust_file_cache }}" media="none" id="highlight_theme_dark" />
+```
+
+两个 `<link>` 的 `id` 不变（`highlight_theme_light` / `highlight_theme_dark`），`theme.js` 通过这两个 id 动态切换 `media` 属性来实现亮暗色主题切换，不需要改动 JS 逻辑。
+
+---
+
+## 12. 修复中文 Tags/Categories URL 乱码
+
+### 12.1. 问题
+
+点击中文 tag 或 category 链接后，浏览器地址栏显示 percent-encoded 乱码，如 `/blog/tag/%E5%B7%A5%E5%85%B7` 而非 `/blog/tag/工具`。
+
+### 12.2. 根本原因
+
+Jekyll 的 `relative_url` 过滤器内部使用 `Addressable::URI` 解析 URL，会把路径中的中文字符 percent-encode 后写入 HTML `href` 属性。模板中大量使用了以下写法：
+
+```liquid
+{{ tag | slugify | prepend: '/blog/tag/' | relative_url }}
+```
+
+`relative_url` 再处理含中文的路径时，产生编码后的 URL。
+
+### 12.3. 改动文件
+
+修改 3 个文件共 8 处，将 `relative_url` 管道替换为直接字符串拼接：
+
+```liquid
+{# 修改前 #}
+{{ tag | slugify | prepend: '/blog/tag/' | relative_url }}
+
+{# 修改后 #}
+{{ site.baseurl }}/blog/tag/{{ tag | slugify }}
+```
+
+**修改的文件：**
+
+- **`_pages/blog.md`** — 4 处（标签栏列表 2 处 + 文章列表每篇的 tag/category 链接 2 处）
+- **`_layouts/post.liquid`** — 2 处（文章详情页的 tag/category 链接）
+- **`_layouts/book-review.liquid`** — 2 处（书评页的 tag/category 链接）
+
+> **说明：** 中文字符放在 HTML `href` 属性中是合法的 HTML。浏览器发起请求时会自动编码，但地址栏显示为原始中文字符。`site.baseurl` 在个人站点（`baseurl` 为空）和 project site（`baseurl: /repo-name`）下均能正确工作。

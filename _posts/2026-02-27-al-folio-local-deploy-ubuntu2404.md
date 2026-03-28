@@ -2,7 +2,7 @@
 layout: post
 title: al-folio 本地部署记录（Ubuntu 24.04）
 date: 2026-02-27 10:00:00 +0800
-categories: [工具, 博客]
+categories: [Tools, Blog]
 tags: [jekyll, al-folio, ubuntu, ruby, rbenv]
 toc:
   sidebar: right

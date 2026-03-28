@@ -2,8 +2,8 @@
 layout: post
 title: Jekyll Chirpy 主题配置优化记录
 date: 2025-02-03 20:30:00 +0800
-categories: [计算机]
-tags: [jekyll, 网站]
+categories: [Computer]
+tags: [jekyll, Website]
 description: 记录 Jekyll Chirpy 主题从部署错误修复到功能优化的完整过程，包括 GitHub Actions 配置、数学公式渲染、目录展开等改进。
 toc:
   sidebar: right

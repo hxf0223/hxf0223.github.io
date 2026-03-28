@@ -40,6 +40,9 @@ ncu --set compute ./ncu_gemm_sm80 4096 4096 4096
 # 2. SM Active Cycles / Elapsed Cycles，他们的比值表示 SM 的利用率，即可以看出等待内存的时间占比
 ncu --set roofline ./ncu_gemm_sm80 4096 4096 4096
 
+# 查看 occupancy 相关指标
+ncu --section Occupancy ./cu_gemm_sm80.exe 4096 4096 4096
+
 # 查看 shared memory bank conflict
 ncu --metrics l1tex__data_bank_conflicts_pipe_lsu_mem_shared,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum ./ncu_gemm_sm80 4096 4096 4096
 ```
