@@ -397,17 +397,6 @@ ninja.data = [{
             window.location.href = "/blog/2025/CUDA%E8%BD%AF%E4%BB%B6%E6%B5%81%E6%B0%B4%E5%8F%8A%E5%8F%8C%E7%BC%93%E5%AD%98/";
           
         },
-      },{id: "post-使用-nsight-compute-进行-kernel-性能分析",
-        
-          title: "使用 Nsight Compute 进行 kernel 性能分析",
-        
-        description: "github – 测试代码编译时，加上 -lineinfo 参数，Nsight Compute 分析时，可以看到具体的 C++/cu 代码。1. 查看 Warp State StatisticsWarp State Statistics 表征从执行/issue当前指令到执行/issue下一条指令之间的周期数。导致指令周期长的原因有多种，比如等待内存访问、指令流水线Stall等（一个方法是需要更多 warp 来掩盖指令延迟）。见官方文档https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#sections-and-rules 并搜索 Warp State Statistics。在 Warp State 图表中，有一个 Stall MIO Throttle 项，表示由于内存访问延迟，导致的指令 Stall：2. Bank Conflicts 分析在 Memory Workload Analysis 这一节中，性能指标 Shared Load 这一行中，有如下几列，其含义如下表： 项目 解释 Instructions GMEM -&amp;gt; SMEM Load 指令总数 Requests GMEM -&amp;gt; SMEM Load 请求数，每条指令都会生成一个 Request Wavefronts Wavefront 数量，一个 Wavefront 覆盖...",
-        section: "Posts",
-        handler: () => {
-          
-            window.location.href = "/blog/2025/Nsight-Compute%E5%88%86%E6%9E%90/";
-          
-        },
       },{id: "post-gemm-版本1-使用-cute-实现一个-naive-gemm",
         
           title: "GEMM 版本1：使用 CuTe 实现一个 naive GEMM",
@@ -518,15 +507,15 @@ ninja.data = [{
             window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A51-Layout/";
           
         },
-      },{id: "post-使用nsight-compute分析bank-conflict",
+      },{id: "post-使用-nsight-compute-进行-kernel-性能分析",
         
-          title: "使用Nsight Compute分析Bank Conflict",
+          title: "使用 Nsight Compute 进行 kernel 性能分析",
         
-        description: "测试用例：github – cuda_perf1. 启动配置使用Nsight Compute运行被测试CUDA程序，启动时，指定metrics为full：1.1. 命令行方式# 完整分析，输出到文件ncu --set full -o gemm_sm80_profile ./ncu_gemm_sm80 4096 4096 4096# 查看 memory 相关指标ncu --set memory ./ncu_gemm_sm80 4096 4096 4096# 查看 compute 相关指标ncu --set compute ./ncu_gemm_sm80 4096 4096 4096# 查看 roofline# 1. Memory Throughput(GB/s)、L2 Cache Throughput(GB/s)、Compute (SM) Throughput(TFLOPS/s)# 结果以百分比形式给出，即与理论峰值的比值# 2. SM Active Cycles / Elapsed Cycles，他们的比值表示 SM 的利用率，即可以看出等待内存的时间占比ncu --set roofline ./ncu_gemm_sm80 4096 4096 4096# 查看 occupancy...",
+        description: "测试用例：github – cuda_perf 编译时，加上 -lineinfo 参数，Nsight Compute 分析时，可以看到具体的 C++/cu 代码。 另外一篇性能分析文章：CUDA 架构(1.1)：Hopper架构及性能分析(ncu) + 性能优化。1. 启动配置使用Nsight Compute运行被测试CUDA程序，启动时，指定metrics为full：1.1. 命令行方式# 完整分析，输出到文件ncu --set full -o gemm_sm80_profile ./ncu_gemm_sm80 4096 4096 4096# 查看 memory 相关指标ncu --set memory ./ncu_gemm_sm80 4096 4096 4096# 查看 compute 相关指标ncu --set compute ./ncu_gemm_sm80 4096 4096 4096# 查看 roofline# 1. Memory Throughput(GB/s)、L2 Cache Throughput(GB/s)、Compute (SM) Throughput(TFLOPS/s)# 结果以百分比形式给出，即与理论峰值的比值# 2. SM Active Cycles / Elapsed...",
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2025/Nsight-Compute%E5%88%86%E6%9E%90bank-conflict/";
+            window.location.href = "/blog/2025/ncu-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/";
           
         },
       },{id: "post-cuda入门-bank-conflict",
