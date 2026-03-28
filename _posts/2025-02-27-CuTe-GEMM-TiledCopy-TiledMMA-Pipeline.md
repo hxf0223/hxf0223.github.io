@@ -170,6 +170,7 @@ Copy_Atom
 - [cute 之 高效GEMM实现](https://zhuanlan.zhihu.com/p/675308830)
 - [CUDA SGEMM优化笔记](https://linn-ylz.com/Computer-Science/CUDA/CUDA-SGEMM-optimization-notes/#fn3)
 - [从 GEMM 实践 CUDA 优化](https://tom-jerr.github.io/notes/cuda/%E4%BB%8EGEMM%E5%AE%9E%E8%B7%B5CUDA%E4%BC%98%E5%8C%96/)
+- <https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu>：官方源码，包含multi-stage pipeline实现
 
 ### A.1. 全流程优化参考资料
 
