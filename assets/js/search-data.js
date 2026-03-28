@@ -562,6 +562,17 @@ ninja.data = [{
             window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84%E5%8F%8A%E5%85%B6%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9BCC/";
           
         },
+      },{id: "post-cuda-架构-1-1-hopper架构及性能分析-ncu-性能优化",
+        
+          title: "CUDA 架构(1.1)：Hopper架构及性能分析(ncu) + 性能优化",
+        
+        description: "1. GPU thread hierarchy, SIMT, and Warp divergence1.1. Thread Hierarchy: Grid &amp;amp; Blocksgrid是thread blocks的集合，代表这次启动kernel的全部工作。thread block之间完全独立，不能共享数据，不能通过__syncthreads同步，不能假设他们的执行顺序，不能假设两个thread block同时启动及运行。有关thread block与SM： 若干个thread block可以同时在一个SM上运行（可以达到Hide Latency），前提是它们的资源需求（寄存器、共享内存等）满足SM的资源限制（Occupancy）。 同一个thread block的所有线程必须在同一个SM上运行，因为它们需要共享资源（如共享内存）和进行同步。\[占用率Occupancy = \frac{SM上实际驻留的Warp数}{SM支持的最大Warp数}\] 资源 SM上限 如何影响 最大Block数 32 硬性上限，不管Block多小 最大Warp数 64 即最多2048个线程同时驻留 最大线程数 2048 同上 寄存器文件 65536个32-bit寄存器 每个线程用的寄存器越多，能驻留的线程越少 共享内存 最大228 KB 每个Block用的shared memory越多，能放的Block越少 计算Occupancy举例：场景1：每个Block有256个线程，每个线程用32个寄存器，每个Block用0 shared memory线程数限制： 2048 / 256 = 8 个BlockWarp数限制： 64 / (256/32) = 64/8 = 8...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%841.1-Hopper%E5%8F%8A%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/";
+          
+        },
       },{id: "post-cuda-架构",
         
           title: "CUDA 架构",
