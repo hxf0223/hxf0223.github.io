@@ -2,8 +2,8 @@
 layout: post
 title: Intel TBB 并行计算
 date: 2024-08-28 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
-categories: [Cpp]
-tags: [Cpp, Performance]
+categories: [TBB, Cpp]
+tags: [TBB, Cpp, Performance, HPC]
 
 # 以下默认false
 math: true
