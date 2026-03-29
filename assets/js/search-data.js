@@ -1043,7 +1043,7 @@ ninja.data = [{
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2024/intel-tbb-paralle/";
+            window.location.href = "/blog/2024/intel-tbb-parallel/";
           
         },
       },{id: "post-信号处理资料-butterworth-和-chebyshev-滤波器",
