@@ -13,9 +13,7 @@ toc:
   sidebar: right
 ---
 
-## 1. TBB Malloc 介绍
-
-### 1.1. TBB Malloc 使用入门
+## 1. TBB Malloc 使用入门
 
 有两种方式使用`TBB Malloc`：`Run-Time`替换，`Link-Time`替换。替换的函数(routines)包括：
 
@@ -62,7 +60,7 @@ Windows平台下，icc编译器添加如下编译flags：
 
 > 替换Proxy入口代码文件为`src/tbbmalloc_proxy/proxy.cpp`。
 
-#### 1.1.1. 直接使用TBB malloc（Compile-Time）
+### 1.1. 直接使用TBB malloc（Compile-Time）
 
 | Allocation Routine                                 | Deallocation Routine  | 对应系统运行时库    |
 | -------------------------------------------------- | --------------------- | ------------------- |
@@ -85,7 +83,7 @@ std::vector<int, tbb::scalable_allocator<int>> v{…};
 std::sort(std::execution::par, v.begin(), v.end());
 ```
 
-#### 1.1.2. Huge Pages
+### 1.2. Huge Pages
 
 TBB malloc支持Huge Pages，可以通过设置环境变量`TBB_MALLOC_USE_HUGE_PAGES`来启用，或者在代码中设置：
 
@@ -95,7 +93,7 @@ scalable_allocation_mode( TBBMALLOC_USE_HUGE_PAGES,1);
 
 Huage Pages可以减少malloc调用，减少TLB Miss，提高性能，尤其是在分配大块内存时。
 
-#### 1.1.3. memory_pool_allocator
+### 1.3. memory_pool_allocator
 
 TBB malloc提供了一个`memory_pool_allocator`，它通过预先分配一大块内存，避免TBB Malloc模块的管理开销。管理器需要查找空闲块、分割块、记录元数据（这块内存多大、是否在用等）。
 
@@ -126,7 +124,7 @@ class memory_pool : public pool_base
 
 另外，定义了一个`fixed_pool`，内存池耗尽之后不会扩展。
 
-#### 1.1.4. 局部替代 new & delete
+### 1.4. 局部替代 new & delete
 
 当某些模块需要自定义allocator时，可以通过局部替代`new`和`delete`来实现：
 
@@ -202,19 +200,15 @@ int main(int argc, char **argv) {
 
 > 代码示例来自`Pro TBB`第七章：Scalable Memory Allocation。
 
-### 1.2. TBB Malloc 架构分析
+## 2. TBB Malloc 架构分析
 
 `TBB Malloc`基于前后端两层分层架构：分为`Frontend`和`Backend`两层。`Frontend`负责处理基于线程的内存分配请求，`Backend`负责物理内存分配和全局内存管理（线程分配及回收）。
 
-每个线程都有一个自己独立的本地缓存（local cache）。当线程请求内存时，首先检查本地缓存中分配，如果有空闲块，则直接返回本地的空闲块，这个查询及分配操作是**无锁的**。另外，本地维护的空闲链表，被分类为不同大小的内存块（size class），每个size class维护一个空闲链表，比如8字节、16字节、2KB等。
-
-`Frontend`代码路径：`src/tbbmalloc/frontend.cpp`。
+每个线程都有一个自己独立的本地缓存（local cache）。当线程请求内存时，首先检查本地缓存中分配，如果有空闲块，则直接返回本地的空闲块，这个查询及分配操作是**无锁的**。另外，本地维护的空闲链表，被分类为不同大小的内存块（**Size Class**），每个`Size Class`维护一个空闲链表，比如8字节、16字节、2KB等。
 
 `Backend`负责物理内存分配/释放、处理碎片。当某个线程的缓存空了，会向`Backend`请求内存块，当线程本地的缓存太多时，会将多余的内存块返回给`Backend`。
 
 由于`Backend`是共享的，所有访问`Backend`需要加锁。另外，`Huge Pages`的支持也是在`Backend`实现的。
-
-`Backend`代码路径：`src/tbbmalloc/backend.cpp`。
 
 这套前端/后端的分层架构，特点为：
 
@@ -222,12 +216,14 @@ int main(int argc, char **argv) {
 - Cross-Thread Recycling: 如果线程 A 释放了内存，而线程 B 需要内存，分配器需要能安全地将 A 释放的块转交给 B。TBB malloc 使用一种延迟回收或集中式回收的机制来处理这种跨线程转移，同时尽量减少锁竞争。
 - Object Caching: 释放的内存不会立即还给 OS，而是保留在缓存中，以便下次快速重用。
 
+> `Frontend`代码路径：`src/tbbmalloc/frontend.cpp`。
+> `Backend`代码路径：`src/tbbmalloc/backend.cpp`。
 > tbbmalloc相关的部分高层代码路径：
 > `include/oneapi/tbb/memory_pool.h`
 > `src/tbb/allocator.cpp`
 > `src/tbbmalloc_proxy/proxy.cpp`。
 
-#### 1.2.1. Linux系统符号替换
+### 2.1. Linux系统符号替换
 
 ELF 格式中，符号有三种绑定类型（st_bind）：
 
@@ -271,4 +267,5 @@ inline void InitOrigPointers()
 - [Scalable Memory Allocation for Parallel Algorithms](/assets/pdf/perf/intel_tbb/Scalable_Memory_Allocation_for_Parallel_Algorithms.pdf)
 - [scalable_allocators](https://github.com/arminms/scalable_allocators)：Intel TBB scalable_malloc benchmark
 - [2007-vol11-iss-4-intel-technology-journal](/assets/pdf/perf/intel_tbb/2007-vol11-iss-4-intel-technology-journal.pdf)：早期讲述TBB Malloc设计的文章（`Scalable Memory Allocator Architecture`），介绍了当时的设计思路和实现细节。搜索`allocator`
-- [How to Use oneTBB for Efficient Memory Allocation in C++ Applications](https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-use-onetbb-for-memory-allocation-cpp.html)
+- [How to Use oneTBB for Efficient Memory Allocation in C++ Applications](https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-use-onetbb-for-memory-allocation-cpp.html)：Intel 官方文章，介绍了tbbmalloc架构
+- [On the Impact of Memory Allocation on High-Performance Query Processing](https://arxiv.org/pdf/1905.01135)
