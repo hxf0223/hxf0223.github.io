@@ -266,6 +266,6 @@ inline void InitOrigPointers()
 - [Memory Allocation](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/Memory_Allocation.html)：官方文档
 - [Scalable Memory Allocation for Parallel Algorithms](/assets/pdf/perf/intel_tbb/Scalable_Memory_Allocation_for_Parallel_Algorithms.pdf)
 - [scalable_allocators](https://github.com/arminms/scalable_allocators)：Intel TBB scalable_malloc benchmark
-- [2007-vol11-iss-4-intel-technology-journal](/assets/pdf/perf/intel_tbb/2007-vol11-iss-4-intel-technology-journal.pdf)：早期讲述TBB Malloc设计的文章（`Scalable Memory Allocator Architecture`），介绍了当时的设计思路和实现细节。搜索`allocator`
+- [The_Foundations_for_Scalable_Multi-Core_Software_in_Intel_Threading_Building_Blocks](/assets/pdf/perf/intel_tbb/Scalable_Memory_Allocation_for_Parallel_Algorithms.pdf)：早期讲述TBB Malloc设计的文章（`Scalable Memory Allocator Architecture`），介绍了当时的设计思路和实现细节。搜索`allocator`
 - [How to Use oneTBB for Efficient Memory Allocation in C++ Applications](https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-use-onetbb-for-memory-allocation-cpp.html)：Intel 官方文章，介绍了tbbmalloc架构
 - [On the Impact of Memory Allocation on High-Performance Query Processing](https://arxiv.org/pdf/1905.01135)
