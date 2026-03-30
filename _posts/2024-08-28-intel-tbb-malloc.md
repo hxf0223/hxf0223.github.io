@@ -231,11 +231,11 @@ int main(int argc, char **argv) {
 
 ELF 格式中，符号有三种绑定类型（st_bind）：
 
-| 类型 | 说明 |
-| --- | --- |
-| STB_GLOBAL | 强符号，全局可见，重复定义时链接报错 |
-| STB_WEAK | 弱符号，可被强符号覆盖，未覆盖时使用弱版本 |
-| STB_LOCAL |	局部符号，仅文件内可见 |
+| 类型       | 说明                                       |
+| ---------- | ------------------------------------------ |
+| STB_GLOBAL | 强符号，全局可见，重复定义时链接报错       |
+| STB_WEAK   | 弱符号，可被强符号覆盖，未覆盖时使用弱版本 |
+| STB_LOCAL  | 局部符号，仅文件内可见                     |
 
 `dlopen`以及动态链接器只加载找到的第一个强符号，在`proxy.cpp`中，定义这些符号（部分定义截图）：
 
@@ -271,3 +271,4 @@ inline void InitOrigPointers()
 - [Scalable Memory Allocation for Parallel Algorithms](/assets/pdf/perf/intel_tbb/Scalable_Memory_Allocation_for_Parallel_Algorithms.pdf)
 - [scalable_allocators](https://github.com/arminms/scalable_allocators)：Intel TBB scalable_malloc benchmark
 - [2007-vol11-iss-4-intel-technology-journal](/assets/pdf/perf/intel_tbb/2007-vol11-iss-4-intel-technology-journal.pdf)：早期讲述TBB Malloc设计的文章（`Scalable Memory Allocator Architecture`），介绍了当时的设计思路和实现细节。搜索`allocator`
+- [How to Use oneTBB for Efficient Memory Allocation in C++ Applications](https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-use-onetbb-for-memory-allocation-cpp.html)
