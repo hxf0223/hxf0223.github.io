@@ -146,7 +146,7 @@ struct S1 {
 - [pdf -- A Top-Down Method for Performance Analysis and Counters Architecture](/assets/pdf/perf/perf_docs_20241110/A%20Top-Down%20Method%20for%20Performance%20Analysis%20and%20Counters%20Architecture.pdf)
 - [cnblogs --C/C++ 性能优化背后的方法论：TMAM](https://www.cnblogs.com/vivotech/p/14547399.html)
 - [调优指南: Xeon E5 v3](https://zzqcn.github.io/perf/intel_vtune/tunning_guide_e5v3.html)
-- [pdf -- intel lectures: Intel_VTune_Amplifier-jackson](/assets/pdf/perf/perf_docs_20241110/Intel_VTune_Amplifier-jackson.pdf)
+- [pdf -- intel lectures: Intel_VTune_Amplifier-jackson](/assets/pdf/perf/perf_docs_20241110/Intel_VTune_Amplifier-jackson.pdf)：PPT文档
 
 ## 更多阅读
 

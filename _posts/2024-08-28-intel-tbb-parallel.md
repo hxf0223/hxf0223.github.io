@@ -99,8 +99,8 @@ tbb::parallel_for_each(data_xy_info.begin(), data_xy_info.end(), parse_dataxy_in
 
 相关官方文档：
 
-- [Bandwidth and Cache Affinity](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-2/bandwidth-and-cache-affinity.html)
-- [Partitioner Summary](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-2/partitioner-summary.html)
+- [Bandwidth and Cache Affinity](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/Bandwidth_and_Cache_Affinity_os.html)
+- [Partitioner Summary](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/Partitioner_Summary.html)
 
 #### 2.3.2 示例：基于分块的 parallel_for
 
@@ -190,7 +190,7 @@ oneapi::tbb::parallel_for( /* ... */ [] {
 oneapi::tbb::global_control global_limit(tbb::global_control::thread_stack_size, 16 * 1024 * 1024);
 ```
 
-- [Migrating from tbb::task_scheduler_init](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-0/migrating-from-tbb-task-scheduler-init.html)
+- [Migrating from tbb::task_scheduler_init](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/Migration_Guide/Task_Scheduler_Init.html)
 
 ## 4. TBB原理：任务划分
 
@@ -202,18 +202,18 @@ TBB采用递归分块的方式划分Task，直到任务足够小（小于grainsi
 
 ![task_execution_and_steal](/assets/images/intel_tbb/20240828/Work_Depth_First_Steal_Breadth_First.png)
 
-资料：[PPT--Parallel Programming with Intel® Threading Building Blocks](/assets/pdf/perf/TBB_PPT_2008.pdf)
+资料：[PPT--Parallel Programming with Intel® Threading Building Blocks](/assets/pdf/perf/intel_tbb/TBB_PPT_2008.pdf)
 
 ## A. 资料
 
 - [TBB并发库代码学习](https://woodpenker.github.io/2022/01/16/TBB%E5%B9%B6%E5%8F%91%E5%BA%93%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/)：博客，介绍了一些内部实现
 - [Intel Thread Building Blocks (TBB)](https://yuhao0102.github.io/2022/03/07/Intel_TBB/)：中文博客，其中任务调度讲解比较好
-- [Pro TBB](https://reubensun.com/program/Pro-TBB/)：Pro TBB 代码示例
 - [Intel Community](https://community.intel.com/)
 
 ### A.1. 官方文档
 
-- [Intel® oneAPI Threading Building Blocks Developer Guide and API Reference](https://www.intel.com/content/www/us/en/docs/onetbb/developer-guide-api-reference/2022-2/onetbb-developer-guide.html)
+- [oneTBB Developer Guide](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/title.html)
 - [Pro TBB](https://link.springer.com/book/10.1007/978-1-4842-4398-5)
-- [Today's TBB pdf](/assets/pdf/perf/Today’s-TBB.pdf)
+  - [Pro TBB](https://reubensun.com/program/Pro-TBB/)：Pro TBB 代码示例
+- [Today's TBB pdf](/assets/pdf/perf/intel_tbb/Today’s-TBB.pdf)
   - [Source Code](https://github.com/Apress/pro-TBB)
