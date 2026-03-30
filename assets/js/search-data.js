@@ -1046,6 +1046,17 @@ ninja.data = [{
             window.location.href = "/blog/2024/intel-tbb-parallel/";
           
         },
+      },{id: "post-intel-tbb-malloc-内存分配器",
+        
+          title: "Intel TBB malloc 内存分配器",
+        
+        description: "1. TBB Malloc 介绍1.1. TBB Malloc 使用入门有两种方式使用TBB Malloc：Run-Time替换，Link-Time替换。替换的函数(routines)包括： routines Linux MacOS Windows global C++ new / delete √ √ √ C库：malloc / calloc / realloc / free √ √ √ C库(C11)：aligned_alloc √ - - POSIX：posix_memalign √ √ - Run-Time替换方法： 平台 替换方法 Linux export LD_PRELOAD=$TBBROOT/lib/intel64/gcc4.8/libtbbmalloc_proxy.so.2 MacOS export DYLD_INSERT_LIBRARIES=$TBBROOT/lib/intel64/gcc4.8/libtbbmalloc_proxy.dylib Link-Time替换方法： 平台 替换方法 Linux &amp;amp; MacOS -L$TBBROOT/lib/intel64/gcc4.8 -ltbbmalloc_proxy Windows tbbmalloc_proxy.lib /INCLUDE:&quot;__TBB_malloc_proxy&quot; Link-Time替换，需要添加编译flags。不添加这些编译flags，可能导致malloc等这些函数被内联为汇编，即失去了符号，也就没有办法替换了。需要添加的flags如下：Linux/MacOS平台下，添加如下编译flags（适用于Linux/MacOS）：-fno-builtin-malloc-fno-builtin-calloc-fno-builtin-realloc-fno-builtin-freeWindows平台下，icc编译器添加如下编译flags：- /Qfno-builtin-malloc-...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-malloc/";
+          
+        },
       },{id: "post-信号处理资料-butterworth-和-chebyshev-滤波器",
         
           title: "信号处理资料：Butterworth 和 Chebyshev 滤波器",
