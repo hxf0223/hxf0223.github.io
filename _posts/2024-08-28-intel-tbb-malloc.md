@@ -319,7 +319,7 @@ TLSData  // 每个线程独立一份（Thread Local Storage）
 
 > 使用`Block` / `Object`结构以及等分设计，是的内存更紧凑，针对小`Object`具有良好的内存局部性以及缓存局部性，即相同`Size Class`的内存对象都分配在一起。实际实践上，附近的变量更可能被访问到，这样就能更好地利用CPU缓存，提升性能。
 
-### 2.3. 生产-消费模型：跨线程回收
+#### 2.2.3. 生产-消费模型：跨线程回收
 
 ![table_tbb_malloc_cross_thread_recycle](/assets/images/intel_tbb/20240828/tbb_scalable_allocator_block_struct.png)
 
@@ -335,6 +335,60 @@ void privatizePublicFreeList(bool reset = true);
 ```cpp
 std::atomic<FreeObject*> publicFreeList;
 ```
+
+#### 2.2.4. 碎片整理：Coalescing(合并)
+
+`Coalescing`流程主要发生在`Backend`，目的是将相邻的空闲内存块合并，以减少碎片，并在整个内存区域（`MemRegion`）空闲时将其归还给操作系统。
+
+##### 2.2.4.1. 核心数据结构 GuardedSize
+
+其中定义枚举：
+
+```cpp
+enum State {
+        LOCKED,             // 块正在被使用
+        COAL_BLOCK,        // 块正在参与合并，block is coalescing now
+        MAX_LOCKED_VAL = COAL_BLOCK,
+        LAST_REGION_BLOCK, // 区域末尾的标记块，used to mark last block in region
+        // values after this are "normal" block sizes
+        MAX_SPEC_VAL = LAST_REGION_BLOCK // 正常的大小值（> MAX_SPEC_VAL）：块空闲
+    };
+```
+
+##### 2.2.4.2. 核心数据结构：`FreeBlock`
+
+- myL：保护本块大小的锁
+- leftL：保护左侧邻居大小的锁（存在于右侧块头部，供合并时快速访问）
+- nextToFree：用于组成合并延迟队列的链表指针
+
+##### 2.2.4.3. 核心类：CoalRequestQ — 延迟合并请求队列
+
+当合并因邻居块被锁定而无法立即进行时，当前块会被放入这个无锁队列，等待后续处理。
+
+coalescQ 的存在是为了避免死锁与过度竞争：当两个线程同时释放相邻块时，有一方会检测到邻居正在合并（COAL_BLOCK 状态），并将自己的块放入 coalescQ，由后续任意线程的分配/清理操作来处理。
+
+##### 2.2.4.4. 核心合并函数：doCoalesc
+
+`doCoalesc()`尝试将一个块与其左右邻居进行合并，返回合并后的大块；若无法立即合并，则将块放入`coalescQ`并返回`nullptr`。
+
+##### 2.2.4.5. 其他核心处理函数
+
+函数`coalescAndPutList()`对合并后的块列表逐一处理，
+
+- 场景 A：整个区域已空（memRegion != nullptr 且块大小等于区域的初始块大小）
+- 场景 B：合并后的块放回 bin
+- 最终解锁
+
+函数`scanCoalescQ()`：延迟合并队列。scanCoalescQ() 负责将 coalescQ 中积压的块取出并重新尝试合并，在以下时机被调用：
+
+- 分配时（genericGetBlock()）：每次尝试获取块前，先扫描延迟队列
+- 等待块释放时（BackendSync::waitTillBlockReleased()）：监测 inFlyBlocks，若有进展则扫描队列
+- 软限制清理时（releaseCachesToLimit()）：超过内存软限制时扫描
+- 全局清理时（Backend::clean()）：清理 advance regions 前先扫描
+
+### 2.3. Frontend: handling large objects
+
+TODO
 
 ## A. 资料
 
