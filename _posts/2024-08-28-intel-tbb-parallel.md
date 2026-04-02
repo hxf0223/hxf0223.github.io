@@ -89,7 +89,7 @@ tbb::parallel_for_each(data_xy_info.begin(), data_xy_info.end(), parse_dataxy_in
 
 使用`auto_partitioner`以及`affinity_partitioner`，会根据执行情况调整每个线程的负载，可能会有一些额外开销，`static_partitioner`则不会在执行过程中调整线程的负载，可能会有一些负载不均的情况。
 
-#### 2.3.1 affinity_partitioner
+#### 2.3.1. affinity_partitioner
 
 `affinity_partitioner`除了自动选择grainsize（粒度）之外，还会记录每个线程处理的数据块，以便在后续的parallel_for等并行算法中优先分配给同一线程，减少数据迁移，提高**缓存命中率**。对于内存数据需要重复访问的情况，`affinity_partitioner`尤其有用。
 
@@ -102,7 +102,7 @@ tbb::parallel_for_each(data_xy_info.begin(), data_xy_info.end(), parse_dataxy_in
 - [Bandwidth and Cache Affinity](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/Bandwidth_and_Cache_Affinity_os.html)
 - [Partitioner Summary](https://uxlfoundation.github.io/oneTBB/main/tbb_userguide/Partitioner_Summary.html)
 
-#### 2.3.2 示例：基于分块的 parallel_for
+#### 2.3.2. 示例：基于分块的 parallel_for
 
 > 如果需要使用到任务共享写变量，需要添加锁，或者使用原子变量，如下面示例中使用到的原子变量。`TBB`不保证线程安全。
 
@@ -134,13 +134,13 @@ tbb::parallel_for_each(data_xy_info.begin(), data_xy_info.end(), parse_dataxy_in
 }
 ```
 
-### 2.3.3 示例：基于分块的 parallel_reduce
+#### 2.3.3. 示例：基于分块的 parallel_reduce
 
 归并主要用于查找最大值，合并计算（如求和）等场景。其原理如下：
 
 ![serial_reduce](/assets/images/intel_tbb/20240828/serial_reduce.png)
 
-![parallel_reduce](/assets/images/intel_tbb/20240828/tbb_parallel_redue.png)
+![parallel_reduce](/assets/images/intel_tbb/20240828/tbb_parallel_reduce.png)
 
 参考资料：[intel-TBB使用笔记](https://chuckiewill.github.io/2022/01/26/C++/IntelTBB/)
 
