@@ -55,3 +55,5 @@ sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llv
 ```
 
 - [How to install Clang 17 or 18 in Ubuntu 22.04 20.04](https://www.cnblogs.com/RioTian/p/17981544)
+
+LLVM下载镜像（包含Windows/Ubuntu安装包）：[清华大学开源软件镜像站](https://mirrors.tuna.tsinghua.edu.cn/github-release/llvm/llvm-project/LatestRelease/)。
