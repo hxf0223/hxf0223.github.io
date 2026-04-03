@@ -413,6 +413,7 @@ print_layout(s2xh4_col);
 - [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
 - [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)
 - [01_layout.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/01_layout.md)：CUTLASS/CuTe 官方文档
+- [CuTe-Copy for GPUMode PPT](/assets/pdf/cuda/CuTe-Copy_for_GPUMode_PPT.pdf)：NVIDIA 官方 PPT，**待学习**
 - [CUTLASS: A CUDA C++ Template Library for Accelerating Deep Learning](https://www.youtube.com/watch?v=PWWOGrLZtZg&t=534s) ：YouTube 视频，介绍 CUTLASS/CuTe 的 Layout 和 Tensor 概念。
 
 ### A.1. 更多学习资料
