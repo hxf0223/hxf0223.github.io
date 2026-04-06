@@ -434,7 +434,7 @@ ninja.data = [{
         
           title: "CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle",
         
-        description: "1. ldmatrix 指令 &amp;amp; HMMA 指令一些名词： LDS：LoaD Shared Memory，warp 指令，比如 LDS.32 表示加载 32 位数据到寄存器 LDSM：LoaD Shared Memory Matrix，Tensor Core 指令，ldmatrix的 SASS 表示ldmatrix指令为配合 Tensor Core 的 HMMA 指令使用的，数据在SMEM中的布局与mma指令一致。ldmatrix指令格式为（以.x1、.x4为例）：ldmatrix.sync.aligned.m8n8.x1.shared.b16{.trans} { %0 }, [ %1 ]ldmatrix.sync.aligned.m8n8.x4.shared.b16{.trans} { %0, %1, %2, %3 }, [ %4 ]一个ldmatrix.x1指令加载一个8x8-BF16 = 128B矩阵，占用8个线程（比如0~7），并将从SMEM中加载的数据均分到一个warp 32个线程中，在warp线程中以32位寄存器存储。格式如下： ldmatrix.x1要求提供8 x (8-BF16 = 16B) SMEM地址（每个线程提供一个，共8个线程），且每个地址16B且连续。 REG均分规律：T0 SMEM（16B = 8-BF16 = 4-REG） =&amp;gt; T0、T1、T2、T3；T1 SMEM...",
+        description: "1. ldmatrix 指令 与 MMA 指令一些名词： LDS：LoaD Shared Memory，warp 指令，比如 LDS.32 表示加载 32 位数据到寄存器 LDSM：LoaD Shared Memory Matrix，Tensor Core 指令，ldmatrix的 SASS 表示ldmatrix指令为配合 Tensor Core 的 MMA 指令使用的，数据在RF中的布局与mma指令一致（准确的理解应该是：加载RF之后的Thread-Value布局）。ldmatrix指令格式为（以.x1、.x4为例）：ldmatrix.sync.aligned.m8n8.x1.shared.b16{.trans} { %0 }, [ %1 ]ldmatrix.sync.aligned.m8n8.x4.shared.b16{.trans} { %0, %1, %2, %3 }, [ %4 ]一个ldmatrix.x1指令加载一个8x8-BF16 = 128B矩阵，占用8个线程（比如0~7），并将从SMEM中加载的数据均分到一个warp 32个线程中，在warp线程中以32位寄存器存储。格式如下： ldmatrix.x1要求提供8 x (8-BF16 = 16B) SMEM地址（每个线程提供一个，共8个线程），且每个地址16B且连续。 REG均分规律：T0 SMEM（16B = 8-BF16 = 4-REG） =&amp;gt; T0、T1、T2、T3；T1 SMEM...",
         section: "Posts",
         handler: () => {
           
