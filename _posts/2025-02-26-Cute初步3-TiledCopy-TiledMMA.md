@@ -14,54 +14,179 @@ toc:
   sidebar: right
 ---
 
-- [tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例
-
 ## 1. Cute TiledCopy
 
-层次化的 copy 抽象，将 Copy_Atom 分为几个可组合的层次：
+![tiled_copy_hiarchy.png](/assets/images/cuda/20250226/cute_tiled_mma/v2-6dd2070aa1e70515090e6956735c0a4c_r.jpg)
 
-- CopyOperation：NVidia在不同的硬件架构、不同的存储层次之间数据搬运提供了不同的指令，如 ldmatrix 和 LDS 等，还有针对Ampere架构的 cp.async 等。
-- Copy_Traits：和 MMA_Traits 类似，提供了 CopyOperation 类型没有提供，但是其使用者 Copy_Atom 却需要的起到桥梁作用的信息；
-- Copy_Atom：封装了基本的拷贝指令，针对 SRC-DST 的一次搬运；
+- [tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例
 
-TiledCopy 则根据提供的 LayoutCopy_TV 执行 Copy_Atom，可能需要重复多次的 atom 搬运操作。
+层次化的`copy`抽象，分为几个可组合的层次：
 
-### 1.1. Copy_Atom
+- **CopyOperation**：NVidia在不同的硬件架构、不同的存储层次之间数据搬运提供了不同的指令，如`ldmatrix`和`LDS`等，还有针对Ampere架构的`cp.async`等。
+- **Copy_Traits**：主要提供拷贝的`metadata`信息：源`Thread-Value Layout`、目标`Thread-Value Layout`等。
+- **Copy_Atom**：封装一个完整的最小数据搬运单元，包含`CopyOperation`和`Copy_Traits`。
+- **TiledCopy**：根据线程布局，重复使用`Copy_Atom`完成分块数据搬运计算。
+- **make_tiled_copy{\_A|B|C}**：提供用户级别的API接口；
 
-Copy_Atom 封装基本的拷贝指令，所以叫 Atom，即针对 SRC-DST 的一次搬运。适配不同的硬件指令集，比如通用拷贝/向量化 UniversalCopy<...>，cp.async（Ampere架构）。
+### 1.1. CopyOperation
 
-![copy_atom_structure](/assets/images/cuda/20250226/cute_tiled_copy/Copy_Atom_Structure.png)
-
-需要关注的两个模板参数是：CopyOperation 和 Copy_Traits。CopyOperation 定义了具体的拷贝指令，而 Copy_Traits 定义了拷贝的元信息，比如每次拷贝多少个元素（元素类型），SRC-DST 的 Layout 等。不同平台，实现不同的 Copy_Traits。（个人理解：一些 copy 操作也需要用到 layout 信息，以及 bits 位宽等信息）
-
-![copy_traits_arch](/assets/images/cuda/20250226/cute_tiled_copy/Copy_Traits_Arch.png)
-
-部分代码实现文件列表：
-
-- [cute/atom/copy_atom.hpp -- Copy_Atom](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_atom.hpp#L54)
-- [cute/atom/copy_traits.hpp -- copy_unpack](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_traits.hpp#L113)
-- [cute/atom/copy_traits.hpp -- Copy_Traits](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/atom/copy_traits.hpp#L66)
-- [cute/arch/copy_sm90.hpp](https://github.com/NVIDIA/cutlass/blob/v4/include/cute/arch/copy_sm90.hpp)：针对 SM90 架构的 Copy_Traits 实现
-
-### 1.2. TiledCopy
-
-TiledCopy 封装 Copy_Atom，根据 LayoutCopy_TV 执行 Copy_Atom，可能需要重复多次的 atom 搬运操作。其 template 参数有：
-
-- **LayoutCopy_TV**：定义 Thread Layout，以及 Value Layout；
-- **ShapeTiler_MN**：切分器的 shape；
-- **Copy_Atom**：定义复制指令；
-
-ThrCopy 完成实际的生成线程对应的 tensor（软件工程功能划分需要，剥离出来的功能模块）。
-
-### 1.3. make_tiled_copy
-
-提供工厂函数，提供 thr_layout、val_layout、CopyOperation 参数生成 TiledCopy 实例。其中，thr_layout、val_layout 分别定义线程划分 layout 和每个线程拷贝数据的 layout。
+`CopyOperation`封装了执行一次数据搬运指令，以及所需要的指令参数。其中指令参数（源参数、目的参数）描述了参数的类型以及个数，供API层级的`copy`函数使用。示例：
 
 ```cpp
-make_tiled_copy(copy_atom, thr_layout, val_layout)
+struct SM75_U16x8_LDSM_T
+{
+  using SRegisters = uint128_t[1];
+  using DRegisters = uint32_t[4];
+
+  CUTE_HOST_DEVICE static void
+  copy(uint128_t const& smem_src,
+       uint32_t& dst0, uint32_t& dst1, uint32_t& dst2, uint32_t& dst3)
+  {
+#if defined(CUTE_ARCH_LDSM_SM75_ACTIVATED)
+    uint32_t smem_int_ptr = cast_smem_ptr_to_uint(&smem_src);
+    asm volatile ("ldmatrix.sync.aligned.x4.trans.m8n8.shared.b16 {%0, %1, %2, %3}, [%4];\n"
+        : "=r"(dst0), "=r"(dst1), "=r"(dst2), "=r"(dst3)
+        :  "r"(smem_int_ptr));
+#else
+    CUTE_INVALID_CONTROL_PATH("Trying to use ldmatrix without CUTE_ARCH_LDSM_SM75_ACTIVATED.");
+#endif
+  }
+};
 ```
 
-### 1.4. copy 执行
+### 1.2. Copy_Traits
+
+执行数据拷贝操作，有如下需求：**向量化指令**，**合并访存**。
+
+另外一般是以一个`warp`为单位，即需要考虑`SRC`/`DST`是如何分配给一个`warp`中的线程的。典型的如`ldmatrix`指令：一个`phase`要求一个`warp`中一组8个线程（如T0~T7），分别提供源`SMEM`地址`uint128_t`，以及32个线程的目的`REG`（`uint32_t`）。
+
+`Copy_Traits`提供了源`Thread-Value Layout`、目的`Thread-Value Layout`等信息，即描述了线程如何访问数据的布局。示例：
+
+```cpp
+template <>
+struct Copy_Traits<SM75_U16x8_LDSM_T>
+{
+  // Logical thread id to thread idx (warp)
+  using ThrID = Layout<_32>;
+
+  // Map from (src-thr,src-val) to bit
+  using SrcLayout = Layout<Shape < _32,_128>,
+                           Stride<_128,  _1>>;
+  // Map from (dst-thr,dst-val) to bit
+  using DstLayout = Layout<Shape <Shape <  _4, _8>,Shape <_16,  _2,   _4>>,
+                           Stride<Stride<_256,_16>,Stride< _1,_128,_1024>>>;
+
+  // Reference map from (thr,val) to bit
+  using RefLayout = DstLayout;
+};
+```
+
+### 1.3. TiledCopy
+
+通过`TiledCopy`，将`Copy_Atom`扩展到更多线程。需要提供两个参数：`Thread-Value Layout`，以及`Tiler_MN`，其中\*\*`Tiler_MN`表示最终处理的`M`、`N`维度的`tile`大小，`TV_Layout`则包含了需要的线程数量，以及线程如何访问数据的布局。`TiledCopy`实现如下：
+
+```cpp
+template <class Copy_Atom,
+          class LayoutCopy_TV,  // (tid,vid) -> coord   [Need not be 2D...]
+          class ShapeTiler_MN>  // coord space
+struct TiledCopy : Copy_Atom
+{
+  // Layout information from the CopyAtom
+  using AtomThrID     = typename Copy_Atom::ThrID;        // thrid -> thr_idx
+  using AtomLayoutSrc = typename Copy_Atom::ValLayoutSrc; // (thr,val) -> offset
+  using AtomLayoutDst = typename Copy_Atom::ValLayoutDst; // (thr,val) -> offset
+  using AtomLayoutRef = typename Copy_Atom::ValLayoutRef; // (thr,val) -> offset
+
+  using AtomNumThr = decltype(size<0>(AtomLayoutRef{}));
+  using AtomNumVal = decltype(size<1>(AtomLayoutRef{}));
+
+  // Layout information for the TiledCopy
+  using Tiler_MN       = ShapeTiler_MN;
+  using TiledLayout_TV = LayoutCopy_TV;
+  using TiledNumThr    = decltype(size<0>(TiledLayout_TV{}));
+  using TiledNumVal    = decltype(size<1>(TiledLayout_TV{}));
+
+  CUTE_STATIC_ASSERT_V(TiledNumThr{} % AtomNumThr{} == Int<0>{}, "TiledCopy uses too few thrs for selected CopyAtom");
+  CUTE_STATIC_ASSERT_V(TiledNumVal{} % AtomNumVal{} == Int<0>{}, "TiledCopy uses too few vals for selected CopyAtom");
+
+  // ....
+};
+```
+
+从代码中，可以看到，`TiledCopy`中`Thread`数量比如为`CopyAtom`中线程数量的整数倍，`Value`数量也是`CopyAtom`中`Value`数量的整数倍。
+
+### 1.4. ThrCopy
+
+前面几个小节所描述的`CopyOperation`、`Copy_Traits`、`Copy_Atom`、`TiledCopy`等都是在编译期定义的抽象，描述了数据搬运的指令、线程访问数据的布局，以及如何将一个基本的搬运单元扩展到更多线程上。`ThrCopy`则是运行时根据线程 id 获取每个线程实际执行的数据搬运任务。
+
+通过调用`TiledCopy::get_slice`接口，生成一个`ThrCopy`对象。通过`ThrCopy`的接口`partition_S/D`，获取线程拷贝的`SRC`/`DST`数据的`Layout`，比如`(CPY, CPY_M, CPY_K)`。
+
+另外，待切分的`Tensor`可能其`Shape`不满足`cute::copy`的要求，使用`ThrCopy::retile_S/D`接口，重新切分成满足要求的`Shape`，`retile`前后`Layout`，其`size(layout)`与`cosize(layout)`保持一致，即指向同一块`GMEM`/`SMEM`且大小不变。
+
+比如从`TiledMMA`创建的`TiledCopy`，其`DST`的`Layout`与`SRC`数据的`Layout`不匹配，需要使用`retile_D`接口重新切分成与`SRC Tensor`一致的`Shape`。
+
+`ThrCopy`的定义如下：
+
+```cpp
+template <class TiledCopy, class ThrIdx>
+struct ThrCopy {
+ auto partition_S(Tensor&& stensor);
+ auto partition_D(Tensor&& dtensor);
+ auto retile_S(Tensor&& stensor);
+ auto retile_D(Tensor&& stensor);
+};
+```
+
+### 1.5. `make_tiled_copy{_A|B|C}`
+
+使用`make_tiled_copy`可以直接使用`Thread-Value Layout`创建一个`TiledCopy`对象，其中`Tiler_MN`可以从`TV-Layout`推导。
+
+如果从一个`TiledMMA`创建`TiledCopy`，由于`TiledMMA`表示的是`(M, N, K)`三个维度（见下面章节`TiledMMA`的介绍），所以针对`A/B/C`，分别使用对应的`make_tiled_copy_A/B/C`接口创建`TiledCopy`对象。
+
+使用示例：
+
+```cpp
+  using T          = cute::half_t;
+  using VectorType = cute::uint128_t;
+  using CopyOp     = cute::SM80_CP_ASYNC_CACHEALWAYS<VectorType>;
+
+  constexpr auto thread_shape_A  = cute::make_shape(cute::Int<16>{}, cute::Int<8>{});                 // (16M, 8K)
+  constexpr auto thread_stride_A = cute::make_stride(cute::Int<1>{}, cute::size<0>(thread_shape_A));  // (1, 16)，M-major
+  constexpr auto thread_layout_A = cute::make_layout(thread_shape_A, thread_stride_A);
+
+  constexpr auto NUM_ELEMENTS_A  = sizeof(VectorType) / sizeof(T);
+  constexpr auto vector_shape_A  = cute::make_shape(cute::Int<NUM_ELEMENTS_A>{}, cute::Int<1>{});  // (8M, 1K)
+  constexpr auto vector_stride_A = cute::make_stride(cute::Int<1>{}, cute::size<0>(vector_shape_A));
+  constexpr auto vector_layout_A = cute::make_layout(vector_shape_A, vector_stride_A);
+
+  constexpr auto gmem_tiled_copy_A = cute::make_tiled_copy(cute::Copy_Atom<CopyOp, T>{}, thread_layout_A, vector_layout_A);
+  // constexpr auto tiler_mn = decltype(gmem_tiled_copy_A)::Tiler_MN{};
+
+  cute::print(gmem_tiled_copy_A);
+  std::cout << "-----------------------------" << std::endl;
+  cute::print_latex(gmem_tiled_copy_A);
+```
+
+打印信息如下：
+
+```text
+TiledCopy
+  Tiler_MN:       (_128,_8)
+  TiledLayout_TV: (_128,_8):(_8,_1)
+Copy_Atom
+  ThrID:        _1:_0
+  ValLayoutSrc: (_1,_8):(_0,_1)
+  ValLayoutDst: (_1,_8):(_0,_1)
+  ValLayoutRef: (_1,_8):(_0,_1)
+  ValueType:    16b
+```
+
+含义如下：
+
+- `Tiler_MN: (_128,_8)`：表示分块的`M`维度大小为128，`K`维度大小为8。
+- `TiledLayout_TV: (_128,_8):(_8,_1)`：表示线程访问数据的布局，其中`(_128,_8)`表示线程数量为`128`，且每个线程处理`8`个元素，`Stride`信息表明了每个线程处理的数据在内存中是连续的。
+
+### 1.6. `cute::copy` -- 执行数据搬运指令
 
 copy 函数是拷贝的实际执行函数，完成线程指令的执行：
 
@@ -69,12 +194,6 @@ copy 函数是拷贝的实际执行函数，完成线程指令的执行：
 void copy(TiledCopy const& copy, Tensor const& src, Tensor& dst);
 void copy_if(TiledCopy const& copy, PrdTensor const& pred, Tensor const& src, Tensor& dst);
 ```
-
-### 1.5. 可视化工具
-
-- [cutlass-viz](https://github.com/flashinfer-ai/cutlass-viz)
-- [cute_render](https://github.com/hxf0223/cute_render)
-- [cute-viz](https://github.com/NTT123/cute-viz)
 
 ## 2. MMAAtom 以及 TiledMMA
 
@@ -497,6 +616,7 @@ MMA_Atom
 
 - [CuTe Tiled Copy](https://leimao.github.io/blog/CuTe-Tiled-Copy/)：Mao Lei 博客
 - [cute 之 Copy抽象](https://zhuanlan.zhihu.com/p/666232173)：reed 知乎文章
+- [CUTLASS 笔记 (4)：Tiled Copy](https://zhuanlan.zhihu.com/p/1968745447741972494)：知乎杨远航文章
 - [cute/tutorial/tiled_copy.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/tiled_copy.cu)：官方示例代码
 
 ### A.2. MMA Atom 资料
@@ -512,7 +632,14 @@ MMA_Atom
 - [sm80_mma_multistage.hpp](https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/gemm/collective/sm80_mma_multistage.hpp)：官方示例代码
 - [sgemm_sm80.cu](https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu)：官方示例代码
 
-### A.3. 工具
+### A.4. Latex转换工具
 
 - [TeXPage](https://www.texpage.com/)
 - [Aspose.TeX viewer](https://products.aspose.app/tex/viewer)
+
+### A.5. Layout / TV-Layout 可视化
+
+- [cutlass-viz](https://github.com/flashinfer-ai/cutlass-viz)
+- [cute_render](https://github.com/hxf0223/cute_render)
+- [cute-viz](https://github.com/NTT123/cute-viz)
+- [example_cute_tv_layout](https://github.com/hxf0223/example_cute_tv_layout)：使用cute-viz可视化的测试代码

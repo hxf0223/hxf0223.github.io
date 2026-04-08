@@ -144,13 +144,15 @@ Copy_Atom
 打印的`TiledMMA`配置信息如下：
 
 ```text
-(MMA_Atom
+TiledMMA
+  ThrLayoutVMNK:  (_32,_2,_2,_1):(_1,_32,_64,_0)
+  PermutationMNK: (_32,_32,_16)
+MMA_Atom
   ThrID:      _32:_1
   Shape_MNK:  (_16,_8,_16)
   LayoutA_TV: ((_4,_8),(_2,_2,_2)):((_32,_1),(_16,_8,_128))
   LayoutB_TV: ((_4,_8),(_2,_2)):((_16,_1),(_8,_64))
   LayoutC_TV: ((_4,_8),(_2,_2)):((_32,_1),(_16,_8))
-,(2,2,1):(_1,2,4),(32,32,16):(_1,32,1024))
 ```
 
 - `(2,2,1):(_1,2,4)`：描述Atom的线程扩展配置，即在M、N、K三个维度上分别扩展2倍、2倍、1倍线程。
@@ -171,6 +173,50 @@ Copy_Atom
 - [CUDA SGEMM优化笔记](https://linn-ylz.com/Computer-Science/CUDA/CUDA-SGEMM-optimization-notes/#fn3)
 - [从 GEMM 实践 CUDA 优化](https://tom-jerr.github.io/notes/cuda/%E4%BB%8EGEMM%E5%AE%9E%E8%B7%B5CUDA%E4%BC%98%E5%8C%96/)
 - <https://github.com/NVIDIA/cutlass/blob/main/examples/cute/tutorial/sgemm_sm80.cu>：官方源码，包含multi-stage pipeline实现
+
+## 3. Multi-Stage Pipeline
+
+### 3.1. SMEM 资源分配
+
+`GMEM` => `SMEM`采用`cp.async`指令，重叠内存拷贝与`GEMM`计算以隐藏`GMEM`访问延迟。其需要的`SMEM`计算公式为：
+
+$$
+\text{SMEM} = \text{numStages} \times \left( bM \times bK \times \text{sizeof}(\text{ElementA}) + bK \times bN \times \text{sizeof}(\text{ElementB}) \right)
+$$
+
+其中：
+
+- $bM \times bK$：加载自矩阵 $A$ 的分块大小
+- $bK \times bN$：加载自矩阵 $B$ 的分块大小
+- $\text{numStages}$：流水线级数（即 SMEM 中同时维护的分块副本数）
+
+配置部分代码如下：
+
+```cpp
+  constexpr auto smem_shape_A  = cute::make_shape(bM, bK, bP);  // (bM, bK, bP)
+  constexpr auto smem_shape_B  = cute::make_shape(bN, bK, bP);  // (bN, bK, bP)
+  constexpr auto smem_layout_A = cute::tile_to_shape(smem_atom_layout_A_swizzled, smem_shape_A);
+  constexpr auto smem_layout_B = cute::tile_to_shape(smem_atom_layout_B_swizzled, smem_shape_B);
+
+  // GMEM -> SMEM 的 Tiled Copy 配置
+  constexpr auto gmem_tiled_copy_A =
+    cute::make_tiled_copy(cute::Copy_Atom<CopyOperationA, TA>{}, thread_layout_A, vector_layout_A);
+  constexpr auto gmem_tiled_copy_B =
+    cute::make_tiled_copy(cute::Copy_Atom<CopyOperationB, TB>{}, thread_layout_B, vector_layout_B);
+
+  // Tiled MMA 配置
+  // 见上面章节，此处省略......
+
+  // Tiled MMA 配置对 GMEM -> SMEM 过程的约束
+  CUTE_STATIC_ASSERT(cute::size(tiled_mma) == cute::size(thread_shape_C));
+  CUTE_STATIC_ASSERT(std::is_same_v<TA, cute::half_t> && std::is_same_v<TB, cute::half_t> && std::is_same_v<TC, cute::half_t>);
+
+  // configure tiled copy from smem to register via tiled MMA
+  using Copy_Atom_A                = cute::Copy_Atom<cute::SM75_U16x8_LDSM_T, TA>;
+  using Copy_Atom_B                = cute::Copy_Atom<cute::SM75_U16x8_LDSM_T, TB>;
+  constexpr auto smem_tiled_copy_A = cute::make_tiled_copy_A(Copy_Atom_A{}, tiled_mma);
+  constexpr auto smem_tiled_copy_B = cute::make_tiled_copy_B(Copy_Atom_B{}, tiled_mma);
+```
 
 ### A.1. 全流程优化参考资料
 
