@@ -26,7 +26,7 @@ toc:
 - **Copy_Traits**：主要提供拷贝的`metadata`信息：源`Thread-Value Layout`、目标`Thread-Value Layout`等。
 - **Copy_Atom**：封装一个完整的最小数据搬运单元，包含`CopyOperation`和`Copy_Traits`。
 - **TiledCopy**：根据线程布局，重复使用`Copy_Atom`完成分块数据搬运计算。
-- **make_tiled_copy{\_A|B|C}**：提供用户级别的API接口；
+- **make_tiled_copy{\_A\|B\|C}**：提供用户级别的API接口；
 
 ### 1.1. CopyOperation
 
