@@ -32,6 +32,8 @@ toc:
 
 `CopyOperation`封装了执行一次数据搬运指令，以及所需要的指令参数。其中指令参数（源参数、目的参数）描述了参数的类型以及个数，供API层级的`copy`函数使用。示例：
 
+{% raw %}
+
 ```cpp
 struct SM75_U16x8_LDSM_T
 {
@@ -53,6 +55,8 @@ struct SM75_U16x8_LDSM_T
   }
 };
 ```
+
+{% endraw %}
 
 ### 1.2. Copy_Traits
 
