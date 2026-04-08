@@ -162,9 +162,9 @@ MMA_Atom
 
 这个定义的`TiledMMA`针对线程做了配置：在`M`方向及`N`方向均使用`MMAAtom`的两倍线程，在`K`方向上保持不变。即使用 `2x2=4`个`warp`，共`128`个线程协作完成一个`MMA Tile`的计算。
 
-`TiledMMA`的配置，对 GMEM -> SMEM 拷贝过程中的线程划分形成约束，即在`A/B`子块的 GMEM -> SMEM 过程中，配置的线程数量也是 128 个线程。
+`TiledMMA`的配置，对 `GMEM` => `SMEM`拷贝过程中的线程划分形成约束，即在`A/B`子块的`GMEM` => `SMEM`过程中，配置的线程数量也是 128 个线程。
 
-同时，`TildMMA`的配置，对输入`A/B`矩阵的`tiler`也形成约束，即要求分配给`CTA`的`tile`大小在 M、N、K 三个维度上分别是`MMA_TILE_M=32`、`MMA_TILE_N=32`、`MMA_TILE_K=16`的整数倍。
+同时，`TildMMA`的配置，对输入`A/B`矩阵的`tiler`也形成约束，即要求分配给`CTA`的`tile`大小在`M`、`N`、`K`三个维度上分别是`MMA_TILE_M=32`、`MMA_TILE_N=32`、`MMA_TILE_K=16`的整数倍。
 
 ## A. 资料
 
