@@ -254,8 +254,6 @@ print_latex(tiled_mma);
 
 > 📌 **SM80_16x8x8_F32F16F16F32_TN** 使用一个 warp（32 个线程）处理 MNK 规模为 16 \* 8 \* 8 的一个 sub-tile。一个线程处理 A 中的 2 \* 2 个数据，即LayoutA*TV 中的第二个 mode (\_2, \_2)，则线程数位 $ThrNum*{A} = 16 \times 8 \div 4 = 32$。同理可以知道，每个线程处理 B、C 中多少个数据，以及需要的线程数。
 
-- **TODO：Tensor Core 的指令是什么，对应的布局是什么规则？**
-
 CUDA PTX 文档也给出了指令 m16n8k8 的布局信息：[9.7.14.5.7. Matrix Fragments for mma.m16n8k8](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-1688)。
 
 ### 2.2. MMA_Traits
@@ -319,7 +317,7 @@ constexpr void call(Tensor<TD, DLayout>& D,
 
 ### 2.4. TiledMMA
 
-TiledMMA 的模版参数表达了 TiledMMA 在 MMA_Atom 上的扩展逻辑：AtomLayoutMNK 表示 M、N、K 方向上分别重复几次 Atom，这种重复会要求更多的执行线程。get_slice、get_thread_slice 函数功过给定线程 id 则获取线程对应到 ThrMMA 结构。
+`TiledMMA`的模版参数表达了`TiledMMA`对`MMA_Atom`上的扩展逻辑：`AtomLayoutMNK`表示`M`、`N`、`K`方向上分别扩展的倍数（同时处理的`MNK`问题的规模也会相应倍数的增加）。`TiledMMA::get_slice`、`TiledMMA::get_thread_slice`函数功过给定线程 id 则获取线程对应到`ThrMMA`对象。
 
 ```cpp
 template <class MMA_Atom,
@@ -347,13 +345,13 @@ struct TiledMMA : MMA_Atom {
 | -------------- | ------------------------- | ------------------------------------------------- |
 | MMA_Atom       | 底层指令                  | 定义单条 MMA 指令涉及的线程和值的布局             |
 | AtomLayoutMNK  | `Layout<Shape<_2,_2,_1>>` | 在 M/N/K 方向上重复多少个 atom（分配更多线程）    |
-| PermutationMNK | `Layout<Shape<_1,_2,_1>>` | 每个线程在 M/N/K 方向上处理更多的值（不增加线程） |
+| PermutationMNK | `Tile<_8, _16, _8>{}`     | 每个线程在 M/N/K 方向上处理更多的值（不增加线程） |
 
-> 📌 AtomLayoutMNK 决定如何将 MMA_Atom 复制到更多的线程上执行，且将 MMA_ATOM 处理的线程扩展为 size(AtomLayoutMNK) 倍数。PermutationMNK 决定每个线程如何处理更多的值（即哪些逻辑坐标位置的值）。
+`AtomLayoutMNK`决定如何将`MMA_Atom`复制到更多的线程上执行，且将`MMA_Atom`处理的线程扩展为`size(AtomLayoutMNK)`倍数。**注意**：`AtomLayoutMNK`是以倍数的形式给出的，且`AtomLayoutMNK`定义的是`mma_layout`。
 
-> 3.4 之前版本还有 ValLayoutMNK 参数，从 3.4 版本开始 去掉该模板参数。PermutationMNK 可以替代 ValLayoutMNK 的功能。即 AtomLayoutMNK 定义 Thread 扩展，PermutationMNK 定义 Value 级别的扩展，即执行多次 Atom，**使用 PermutationMNK 导致线程需要占用更多的寄存器**。
+在`cutlass / CuTe 3.4`之前版本还有`ValLayoutMNK`参数，从`3.4`版本开始去掉该模板参数。`PermutationMNK`可以替代 `ValLayoutMNK`的功能。`PermutationMNK` 定义的是`mma_tile`，即定义这个`TiledMMA`最终处理的`MNK`规模，不影响线程的扩展（`cAtomLayoutMNK`已经定义了线程扩展的布局）。
 
-> PermutationMNK 的展开讲述见下面章节。
+`PermutationMNK` 的展开讲述见下面章节。
 
 #### 2.4.1. 四层 Layout 以及获取线程 fragment
 
@@ -415,7 +413,12 @@ struct ThrMMA : TiledMMA {
 
 ### 2.6. Permutation：置换
 
-Permutation 是一个 Tiler，由三个独立的分量组成，分别作用于 M、N、K 维度。它在 TV-layout 分配之前，对逻辑坐标进行重新映射。以 SM80_8x8x4_F64F64F64F64_TN 为例，其 inverse TV-Layout 如下：
+`Permutation`是一个`Tiler`，由三个独立的分量组成，分别作用于`M`、`N`、`K`维度。`Permutation`可以实现两种变换：
+
+- 创建`Tiler`，即定义最终`TiledMMA`处理的`MNK`规模。
+- 对`M`、`N`、`K`维度的逻辑坐标进行重新映射。
+
+以`SM80_8x8x4_F64F64F64F64_TN`为例，这个`MMA_Atom`的`Inverse TV-Layout`如下：
 
 ![SM80_8x8x4_F64F64F64F64_TN](/assets/images/cuda/20250226/cute_tiled_mma/abc_SM80_8x8x4_F64F64F64F64_TN.webp)
 
@@ -434,21 +437,33 @@ MMA_Atom
 代码如下：
 
 ```cpp
-TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{});
-/* TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{}, Layout<Shape<_1, _1, _1>>{}, Tile<_8, _8, _4>{}); */
+  using namespace cute;
+  TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{});
 
-print(tiled_mma), print("\n");
-/*print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
-print("BLayout: "), print(typename decltype(tiled_mma)::BLayout{}), print("\n");
-print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");*/
+  std::cout << "=== SM80_8x8x4_F64F64F64F64_TN ===\n";
+  print(tiled_mma), print("\n");
 
-std::cout << "\nMMA Atom Layout:" << std::endl;
-print_latex(tiled_mma);
+  std::cout << "=== SM80_8x8x4_F64F64F64F64_TN latex format ===\n";
+  print_latex(tiled_mma);
+  std::cout << "\n";
 ```
 
-使用 permutation 参数将线程处理的单元 size 修改为 8x16x8，即 N、K 方向扩大为两倍，M 方向不变：
+#### 2.6.1. PermutationMNK 的作用1：Tiler
 
-![Permutation 8x16x8](/assets/images/cuda/20250226/cute_tiled_mma/abc_SM80_8x8x4_F64F64F64F64_TN_permute_8_16_8.webp)
+```cpp
+  using namespace cute;
+
+  TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{},
+                                      Layout<Shape<_1, _1, _1>>{},  // AtomLayout
+                                      Tile<_8, _16, _8>{});         // Tiler
+
+  std::cout << "=== SM80_8x8x4_F64F64F64F64_TN ===\n";
+  print(tiled_mma), print("\n");
+
+  std::cout << "=== SM80_8x8x4_F64F64F64F64_TN latex format ===\n";
+  print_latex(tiled_mma);
+  std::cout << "\n";
+```
 
 ```text
 TiledMMA
@@ -462,69 +477,46 @@ MMA_Atom
   LayoutC_TV: ((_4,_8),_2):((_16,_1),_8)
 ```
 
-代码如下：
+![SM80_8x8x4_F64F64F64F64_TN with Tiler](/assets/images/cuda/20250226/cute_tiled_mma/SM80_8x8x4_F64F64F64F64_TN__Tile_8_16_8.webp)
+
+#### 2.6.2. PermutationMNK 的作用2：重新映射逻辑坐标
+
+通过对`M`、`N`、`K`这三个维度进行置换操作，即逻辑坐标重新映射，实现线程访问数据的合并，即**合并访存**。
 
 ```cpp
-TiledMMA tiled_mma = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{},
-                                        Layout<Shape<_1, _1, _1>>{},  // AtomLayout
-                                        Tile<_8, _16, _8>{});         // Tiler
+  using namespace cute;
 
-print(tiled_mma), print("\n");
-/*print("ALayout: "), print(typename decltype(tiled_mma)::ALayout{}), print("\n");
-print("BLayout: "), print(typename decltype(tiled_mma)::BLayout{}), print("\n");
-print("CLayout: "), print(typename decltype(tiled_mma)::CLayout{}), print("\n");*/
+  TiledMMA tiled_mma_perm = make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{},
+                                           Layout<Shape<_1, _1, _1>>{},  // AtomLayout
+                                           Tile<_8,                      // Permutation on M, equivalent to 8:1, identity
+                                                Layout<Shape<_2, _4, _2>, Stride<_1, _4, _2>>,  // Permutation on N, size 16
+                                                _8>{});
 
-std::cout << "\nMMA Atom Layout:" << std::endl;
-print_latex(tiled_mma);
+  std::cout << "=== SM80_8x8x4_F64F64F64F64_TN ===\n";
+  print(tiled_mma_perm), print("\n");
+
+  std::cout << "=== SM80_8x8x4_F64F64F64F64_TN latex format ===\n";
+  print_latex(tiled_mma_perm);
+  std::cout << "\n";
 ```
-
-> 如何理解？ This doesn't actually affect the partitioning of input/output tensors because, by convention, only a single atom is ever partitioned out. It will affect the output of `tile_size` and `get_layoutC_MN` and `get_layoutC_TV` etc, which could affect any `TiledCopy` that rely on those partitioning patterns by being built on this `TiledMMA`. Regardless, you'll find the resulting tensors from `partition_C` etc to be exactly the same since the atom partitioning is exactly the same.
-
-#### 2.6.1. 映射重排
-
-上面的例子中，使用的 PermutationMNK：Tile<\_8, \_16, \_8>{}，**T0**划分的逻辑坐标不连续。使用**scatter permutation**，可以得到连续的逻辑坐标划分，如下代码将对 N-coord 进行重排：
-
-```cpp
-TiledMMA tiled_mma =
-      make_tiled_mma(SM80_8x8x4_F64F64F64F64_TN{},
-                     Layout<Shape<_1, _1, _1>>{},  // AtomLayout
-                     Tile<_8,                      // Permutation on M, equivalent to 8:1, identity
-                          Layout<Shape<_2, _4, _2>, Stride<_1, _4, _2>>,  // Permutation on N, size 16
-                          _8>{});  // Permutation on K, equivalent to 8:1, identity
-
-print_latex(tiled_mma);
-```
-
-这将对 N 模式重排如下（影响 B、C）：
-
-- 前 2 个元素保持原位
-- 接下来 4 组（每组 2 个元素）被发送到 n 坐标 4
-- 再接下来 2 组（每组 8 个元素）被发送到 n 坐标 2
-
-对应的 layout 如下：
 
 ```text
-(2,(4,2)):(1,(4,2))
-       0    1    2    3    4    5    6    7
-    +----+----+----+----+----+----+----+----+
- 0  |  0 |  4 |  8 | 12 |  2 |  6 | 10 | 14 |
-    +----+----+----+----+----+----+----+----+
- 1  |  1 |  5 |  9 | 13 |  3 |  7 | 11 | 15 |
-    +----+----+----+----+----+----+----+----+
+TiledMMA
+  ThrLayoutVMNK:  (_32,_1,_1,_1):(_1,_0,_0,_0)
+  PermutationMNK: (_8,(_2,_4,_2):(_1,_4,_2),_8)
+MMA_Atom
+  ThrID:      _32:_1
+  Shape_MNK:  (_8,_8,_4)
+  LayoutA_TV: ((_4,_8),_1):((_8,_1),_0)
+  LayoutB_TV: ((_4,_8),_1):((_8,_1),_0)
+  LayoutC_TV: ((_4,_8),_2):((_16,_1),_8)
 ```
 
-```cpp
-auto shape  = make_shape(2, make_shape(4, 2));
-auto stride = make_stride(1, make_stride(4, 2));
-print_layout(make_layout(shape, stride)), print("\n");
-```
+![SM80_8x8x4_F64F64F64F64_TN with Permutation](/assets/images/cuda/20250226/cute_tiled_mma/SM80_8x8x4_F64F64F64F64_TN__permute_N_2_4_2.webp)
 
-![Scatter Permutation 8x16x8](/assets/images/cuda/20250226/cute_tiled_mma/scatter_permute_SM80_8x8x4_F64F64F64F64_TN.webp)
+#### 2.6.3. 参考资料
 
-> 映射重排以获得简洁的内存布局，从而提高内存访问效率，避免 bank conflicts。
-
-#### 2.6.2. 参考资料
-
+- [0t_mma_atom](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0t_mma_atom.md)：官方文档，讲了`Permute`操作，包括**scatter permutation**
 - [[QST] What is PermutationMNK in TiledMMA in CUTLASS 3.4 changes?](https://github.com/NVIDIA/cutlass/discussions/1345#discussioncomment-8485429)
 - [02_layout_algebra.md -- Logical Divide 2-D Example](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/02_layout_algebra.md#logical-divide-2-d-example)
 - [0t_mma_atom -- TiledMMAs](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0t_mma_atom.html#tiledmmas)
