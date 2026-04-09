@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/search/";
           },
-        },{id: "post-al-folio-模板定制修改总结",
+        },{id: "post-nvidia-gpu-架构-sp-sm-与-lsu-工作原理详解",
+        
+          title: "NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解",
+        
+        description: "本文整理自 NVIDIA 开发者论坛的两个讨论帖，重点探讨 SM 内部功能执行单元（FMA / LSU 等）的调度模型，以及 Ampere 架构中 LSU（Load/Store Unit）的详细工作机制。以下内容主要来自 NVIDIA 工程师 Greg 以及资深版主 Robert Crovella 的回答。功能执行单元与 Warp-wide 调度GPU 中所有指令的调度都以 warp（32 个 thread） 为粒度。SM 内的每一类功能执行单元（functional unit）——包括 FMA 单元（即 CUDA Core）、LSU（LD/ST Unit）、Tensor Core 等——每个单元每周期只处理 1 条指令、1 个 thread。因此，要在单个时钟周期内完成一条 warp-wide 指令（涵盖 32 个 thread），就需要 32 个同类功能单元并行工作。以浮点乘加指令（FMUL/FMA）为例：如果希望一条 FMUL 在 1 个周期内完成整个 warp 的处理，就需要 32 个 FMA 单元同时工作，每个 FMA 单元负责 1 个...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/NVIDIA-GPU-SP-SM-LSU/";
+          
+        },
+      },{id: "post-al-folio-模板定制修改总结",
         
           title: "al-folio 模板定制修改总结",
         
@@ -386,17 +397,6 @@ ninja.data = [{
             window.location.href = "/blog/2025/CuTe-GEMM-TiledCopy-TiledMMA-Pipeline/";
           
         },
-      },{id: "post-cuda-gemm-计算优化-软件流水及双缓存",
-        
-          title: "CUDA GEMM 计算优化：软件流水及双缓存",
-        
-        description: "CTA loop-over BK 分块公式：\[C[i, j] = \sum_{k=0}^{nBK-1} A[i, k] \times B[k, j]\]整个 GEMM 计算可以表达为：\[C[i, j] = \sum_{k&#39;=0}^{nK-1} \sum_{k=0}^{nBK-1} A[i, k] \times B[k, j]\]图示如下（引用自https://am17an.bearblog.dev/a-gentle-introduction-to-gemm-using-mma-tensor-cores/）：如下主要来自翻译资料： CUTLASS: Fast Linear Algebra in CUDA C++ 知乎翻译：https://zhuanlan.zhihu.com/p/1955941729250279491 层级 说明 Thread Block Tile 每个 CUDA 线程块（thread block）负责计算输出矩阵 C 的一个子块（tile） Warp Tile 在线程块内部，每个 warp（32个线程）负责计算 thread block tile 的一个子区域 Thread Tile 在 warp 内部，每个线程负责计算 warp tile 的一个更小的子区域 1. GEMM...",
-        section: "Posts",
-        handler: () => {
-          
-            window.location.href = "/blog/2025/CUDA%E8%BD%AF%E4%BB%B6%E6%B5%81%E6%B0%B4%E5%8F%8A%E5%8F%8C%E7%BC%93%E5%AD%98/";
-          
-        },
       },{id: "post-gemm-版本1-使用-cute-实现一个-naive-gemm",
         
           title: "GEMM 版本1：使用 CuTe 实现一个 naive GEMM",
@@ -408,15 +408,15 @@ ninja.data = [{
             window.location.href = "/blog/2025/GEMM1-Cute-naive-GEMM/";
           
         },
-      },{id: "post-cutlass-cute-初步-6-pipeline",
+      },{id: "post-cuda-gemm-计算优化-multi-stage-与软流水-software-pipelining",
         
-          title: "CUTLASS-Cute 初步(6)：Pipeline",
+          title: "CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)",
         
-        description: "GEMM Pipeline",
+        description: "整个GEMM可用如下公式表示：\[C[i, j] = \sum_{k=0}^{nK-1} A[i, k] \times B[k, j]\] 层级 说明 Thread Block Tile 每个 CUDA 线程块（thread block）负责计算输出矩阵 C 的一个子块（tile） Warp Tile 在线程块内部，每个 warp（32个线程）负责计算 thread block tile 的一个子区域 Thread Tile 在 warp 内部，每个线程负责计算 warp tile 的一个更小的子区域 1. GEMM 计算步骤–分层 GEMM 结构依照硬件架构层次划分（也即 CUDA 编程模型），GEMM 计算可以分为多个层次：Thread Block Tile -&amp;gt; Warp Tile -&amp;gt; Thread Tile。即将一个大矩阵的算术运算，依次分解，直到最小的线程级别，一个线程计算一小部分的 tile。数据搬运过程分为几步：GMEM -&amp;gt; Shared Memory -&amp;gt; Register File -&amp;gt;...",
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A56-Pipeline/";
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A56-Pipeline-And-Multi-Stage/";
           
         },
       },{id: "post-cutlass-cute-初步-5-tv-layout",
@@ -555,7 +555,7 @@ ninja.data = [{
         
           title: "CUDA 架构(1.1)：Hopper架构及性能分析(ncu) + 性能优化",
         
-        description: "1. GPU thread hierarchy, SIMT, and Warp divergence1.1. Thread Hierarchy: Grid &amp;amp; Blocksgrid是thread blocks的集合，代表这次启动kernel的全部工作。thread block之间完全独立，不能共享数据，不能通过__syncthreads同步，不能假设他们的执行顺序，不能假设两个thread block同时启动及运行。有关thread block与SM： 若干个thread block可以同时在一个SM上运行（可以达到Hide Latency），前提是它们的资源需求（寄存器、共享内存等）满足SM的资源限制（Occupancy）。 同一个thread block的所有线程必须在同一个SM上运行，因为它们需要共享资源（如共享内存）和进行同步。\[占用率Occupancy = \frac{SM上实际驻留的Warp数}{SM支持的最大Warp数}\] 资源 SM上限 如何影响 最大Block数 32 硬性上限，不管Block多小 最大Warp数 64 即最多2048个线程同时驻留 最大线程数 2048 同上 寄存器文件 65536个32-bit寄存器 每个线程用的寄存器越多，能驻留的线程越少 共享内存 最大228 KB 每个Block用的shared memory越多，能放的Block越少 计算Occupancy举例：场景1：每个Block有256个线程，每个线程用32个寄存器，每个Block用0 shared memory线程数限制： 2048 / 256 = 8 个BlockWarp数限制： 64 / (256/32) = 64/8 = 8...",
+        description: "1. GPU thread hierarchy, SIMT, and Warp divergence1.1. Thread Hierarchy: Grid &amp;amp; Blocksgrid是thread blocks的集合，代表这次启动kernel的全部工作。thread block之间完全独立，不能共享数据，不能通过__syncthreads同步，不能假设他们的执行顺序，不能假设两个thread block同时启动及运行。有关thread block与SM： 若干个thread block可以同时在一个SM上运行（可以达到Hide Latency），前提是它们的资源需求（寄存器、共享内存等）满足SM的资源限制（Occupancy）。 同一个thread block的所有线程必须在同一个SM上运行，因为它们需要共享资源（如共享内存）和进行同步。\[占用率Occupancy = \frac{\text{SM上实际驻留的Warp数}}{\text{SM支持的最大Warp数}}\] 资源 SM上限 如何影响 最大Block数 32 硬性上限，不管Block多小 最大Warp数 64 即最多2048个线程同时驻留 最大线程数 2048 同上 寄存器文件 65536个32-bit寄存器 每个线程用的寄存器越多，能驻留的线程越少 共享内存 最大228 KB 每个Block用的shared memory越多，能放的Block越少 计算Occupancy举例：场景1：每个Block有256个线程，每个线程用32个寄存器，每个Block用0 shared memory线程数限制： 2048 / 256 = 8 个BlockWarp数限制： 64 / (256/32) = 64/8 = 8...",
         section: "Posts",
         handler: () => {
           
