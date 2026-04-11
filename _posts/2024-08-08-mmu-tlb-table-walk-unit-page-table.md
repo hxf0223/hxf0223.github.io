@@ -15,7 +15,7 @@ toc:
 
 ## 1. `MMU` 结构以及工作过程
 
-大多数使用`MMU`的机器采用内存`分页机制`，虚拟地址空间以`页(Page)`为单位，相应的，物理地址空间也被划分为`页帧(Frame)`。`页帧`必须与`页`保持相同的大小，通常为4KB，对于大页，页帧可以是2MB或1GB。大页一般用于服务器，用于系统分配大量数据，减少缺页中断的发生。
+大多数使用`MMU`的机器采用内存`分页机制`，虚拟地址空间以`页(Page)`为单位，相应的，物理地址空间也被划分为`页帧(Frame)`。`页帧`必须与`页`保持相同的大小，通常为`4KB`，对于大页，页帧可以是`2MB`或`1GB`。大页一般用于服务器，用于系统分配大量数据，减少缺页中断的发生。
 
 `MMU`通过`页表(Page Table)`将虚拟地址映射到物理地址，页表存储在主存中，由`系统内核`创建及管理。
 
@@ -26,13 +26,15 @@ toc:
 1. `TLB (Translation Lookaside Buffer)`：缓存最近使用的 `VA` 到 `PA` 的映射；
 2. `Table Walk Unit`：如果`TLB`没有命中CPU发出的`VA`，则由`Table Walk Unit`根据位于物理内存中的`页表(Page Table)`完成`VA`到`PA`的查找。
 
+`CPU`访问内存的时候，将`VA`发给`MMU`，`MMU`先在`TLB`中查找是否有对应的`PA`，如果有，则直接返回对应的`PA`；如果没有，则由`Table Walk Unit`根据位于物理内存中的页表完成查找。
+
 在上述过程中，如果`Table Walk Unit`没有找到对应的`PA`，则向CPU发出`Page fault`中断，CPU处理缺页中断（具体见后面章节描述）。
 
 `MMU`的工作过程图示：
 
 ![MMU Work Process](/assets/images/cpu/mmu_20240808/workflow_of_mmu.webp)
 
-CPU发出的`VA`由两部分组成：`VPN(Virtual Page Number)` + `offseet`。对应的，转换之后的物理地址也有两部分：页框号`PFN(Pyysical Frame Number)` + `offset`。
+CPU发出的`VA`由两部分组成：`VPN(Virtual Page Number)` + `offset`。对应的，转换之后的物理地址也有两部分：页框号`PFN(Physical Frame Number)` + `offset`。
 
 ![VPN to PFN](/assets/images/cpu/mmu_20240808/vpn_to_pfn.webp)
 
@@ -87,15 +89,19 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 
 ## 4. 缺页处理过程
 
-- 处理器要对虚拟地址`VA`进行访问。
-- `MMU`的`TLB`没有命中，通过`TWU`遍历主存页表中的PTEA（PTE地址）。
-- 主存向`MMU`返回`PTE`。
-- `PTE`中有效位是0，`MMU`触发一次异常，CPU响应`page fault`异常，运行相应的处理程序。
-- 缺页异常处理程序选出物理内存中的牺牲页，若这个页面已经被修改，将其换出到硬盘。
-- `page fault`处理程序从硬盘中加载新的页面，并更新内存中页表的PTE。
-- `page fault`处理程序返回到原来的进程，再次执行导致缺页的指令。`CPU`将引起缺页异常的虚拟地址重新发给`MMU`。由于虚拟页面现在缓存在主存中，主存会将所请求的地址对应的内容返回给`cache`和处理器。
+当调用`malloc`时，内核**不会立即分配物理内存**，仅在进程的虚拟地址空间中创建`VMA(vm_area_struct)`，记录该段虚拟地址的范围和权限。此时`PTE`尚未建立或`P`位为`0`。当进程首次访问该虚拟地址时，`MMU`触发`Page Fault`异常，CPU陷入内核态。
 
-![Page Fault Process](/assets/images/cpu/mmu_20240808/page_fault.png)
+内核根据异常地址查找进程的`VMA`，按以下三种情况处理：
+
+**情况一：非法地址** —— 地址不属于任何`VMA`，内核向进程发送`SIGSEGV`（`Segmentation Fault`），进程被终止。
+
+**情况二：首次访问（页面尚未分配物理内存）** —— `PTE`为空，内核分配物理页框、清零、建立`PTE`映射（读操作可先映射到共享零页，写时再分配，即`COW`）。
+
+**情况三：页面被换出到 Swap** —— `PTE`的`P`位为0，其余位记录了`Swap`位置。内核分配新物理页框，从`Swap`读回数据，更新`PTE`并置`P`位为1。
+
+### 4.1 物理内存分配完成之后
+
+`PTE`映射建立后，内核刷新`TLB`使旧缓存失效，然后返回用户态**重新执行**触发异常的指令。`MMU`此次通过`Table Walk Unit`查到有效`PTE`，完成`VA → PA`转换并缓存到`TLB`，CPU正常访问物理内存。
 
 ## 参考
 
