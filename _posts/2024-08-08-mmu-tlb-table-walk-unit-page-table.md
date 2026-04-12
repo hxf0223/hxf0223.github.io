@@ -114,3 +114,4 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 - [一步一图带你深入理解Linux物理内存](https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&mid=2247486879&idx=1&sn=0bcc59a306d59e5199a11d1ca5313743&chksm=ce77cbd8f90042ce06f5086b1c976d1d2daa57bc5b768bac15f10ee3dc85874bbeddcd649d88&scene=178&cur_album_id=2559805446807928833#rd)
 - [五万字 \| 深入理解Linux内存管理](https://mp.weixin.qq.com/s/nlMGEhuaDUYqV6r8A4cRlA)
 - [How Does the Memory Management Unit (MMU) Work with the Unix/Linux Kernel?](https://chessman7.substack.com/p/how-does-the-memory-management-unit)
+- [Linux Kernel Documentation -- Page Tables -- MMU, TLB, and Page Faults](https://github.com/torvalds/linux/blob/master/Documentation/mm/page_tables.rst#mmu-tlb-and-page-faults)
