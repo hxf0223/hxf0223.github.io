@@ -110,4 +110,4 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 - [一步一图带你构建 Linux 页表体系 —— 详解虚拟内存如何与物理内存进行映射](https://www.cnblogs.com/binlovetech/p/17571929.html)
 - [CPU入门扫盲篇之MMU内存管理单元------万字长文带你搞定MMU&TLB&TWU](https://blog.csdn.net/weixin_65286359/article/details/135577694)
 - [一步一图带你深入理解Linux物理内存](https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&mid=2247486879&idx=1&sn=0bcc59a306d59e5199a11d1ca5313743&chksm=ce77cbd8f90042ce06f5086b1c976d1d2daa57bc5b768bac15f10ee3dc85874bbeddcd649d88&scene=178&cur_album_id=2559805446807928833#rd)
-- [五万字 | 深入理解Linux内存管理](https://mp.weixin.qq.com/s/nlMGEhuaDUYqV6r8A4cRlA)
+- [五万字 \| 深入理解Linux内存管理](https://mp.weixin.qq.com/s/nlMGEhuaDUYqV6r8A4cRlA)
