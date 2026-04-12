@@ -103,6 +103,8 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 
 `PTE`映射建立后，内核刷新`TLB`使旧缓存失效，然后返回用户态**重新执行**触发异常的指令。`MMU`此次通过`Table Walk Unit`查到有效`PTE`，完成`VA → PA`转换并缓存到`TLB`，CPU正常访问物理内存。
 
+![mmu_page_fault_process](/assets/images/cpu/mmu_20240808/mmu_malloc_flow.jpg)
+
 ## 参考
 
 - [知乎 -- 图解MMU](https://zhuanlan.zhihu.com/p/487386274)
@@ -111,3 +113,4 @@ MMU先根据一级页表的物理地址和一级页表Index去一级页表中找
 - [CPU入门扫盲篇之MMU内存管理单元------万字长文带你搞定MMU&TLB&TWU](https://blog.csdn.net/weixin_65286359/article/details/135577694)
 - [一步一图带你深入理解Linux物理内存](https://mp.weixin.qq.com/s?__biz=Mzg2MzU3Mjc3Ng==&mid=2247486879&idx=1&sn=0bcc59a306d59e5199a11d1ca5313743&chksm=ce77cbd8f90042ce06f5086b1c976d1d2daa57bc5b768bac15f10ee3dc85874bbeddcd649d88&scene=178&cur_album_id=2559805446807928833#rd)
 - [五万字 \| 深入理解Linux内存管理](https://mp.weixin.qq.com/s/nlMGEhuaDUYqV6r8A4cRlA)
+- [How Does the Memory Management Unit (MMU) Work with the Unix/Linux Kernel?](https://chessman7.substack.com/p/how-does-the-memory-management-unit)
