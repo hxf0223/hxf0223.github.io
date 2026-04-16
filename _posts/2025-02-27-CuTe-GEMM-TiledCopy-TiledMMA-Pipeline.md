@@ -39,6 +39,13 @@ TODO
 
 TODO
 
+> 大部分内容已经在其他文章中记录：
+>
+> 1. CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle；
+> 2. CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)。
+>
+> 本文主要记录一些第三方资料，见末尾附录。
+
 ## 1. 定义 block tile 大小
 
 配置 CTA 大小为 MNK = `128 * 128 * 32`，数据类型为`FP16`：
@@ -224,7 +231,19 @@ $$
 - [CUTLASS Tutorial: Efficient GEMM kernel designs with Pipelining](https://research.colfax-intl.com/cutlass-tutorial-design-of-a-gemm-kernel/)
 - [Nvidia Tensor Core-CUDA HGEMM Advanced Optimization](https://bruce-lee-ly.medium.com/nvidia-tensor-core-cuda-hgemm-advanced-optimization-5a17eb77dd85)：**待阅读**
 - [Advanced Matrix Multiplication Optimization on NVIDIA GPUs](https://salykova.github.io/sgemm-gpu)：**待阅读**
-
+- [0x_gemm_tutorial.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0x_gemm_tutorial.md)：cutlass/CuTe仓库教程
+- [CUDA Techniques to Maximize Compute and Instruction Throughput(pdf)](</assets/pdf/cuda/CUDA_Techniques_to_Maximize_Compute_and_Instruction_Throughput(S72685).pdf>)
+- [Developing CUDA Kernels to Push Tensor Cores to the Absolute Limit on NVIDIA A100 (pdf)](/assets/pdf/cuda/developing-cuda-kernels-to-push-tensor-cores-to-the-absolute-limit-on-nvidia-a100.pdf)
 - [Performance Analysis of CUDA-based General Matrix Multiplication through Memory Coalescing and Grid-Level Parallelization](https://www.diva-portal.org/smash/get/diva2:1985710/FULLTEXT01.pdf)
 - [CUTLASS MMA Pipelined Header](https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/gemm/threadblock/mma_pipelined.h)
 - <https://github.com/NVIDIA/cutlass/blob/main/test/unit/gemm/device/default_gemm_configuration.hpp>
+- [CuTe– CUDA Tensors](/assets/pdf/cuda/CuTe-Copy_for_GPUMode_PPT.pdf)：Layout & Tensor基础
+
+### A.2. Learn CUTLASS the hard way
+
+- [Learn CUTLASS the hard way!](https://www.kapilsharma.dev/posts/learn-cutlass-the-hard-way/)
+- [Learn CUTLASS the hard way - part 2!](https://siboehm.com/articles/22/CUDA-MMM)
+
+### A.3. Triton
+
+- [Triton Linear Layout: Concept](https://www.lei.chat/posts/triton-linear-layout-concept/)
