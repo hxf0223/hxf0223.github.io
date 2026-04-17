@@ -14,7 +14,7 @@ toc:
   sidebar: right
 ---
 
-`Swizzle`作用于`SMEM`的`layout`。给定`layout`范围内，`Swizzle`通过列异或操作（`icol = irow ^ icol`），周期性的`coord`重排，映射到新的物理地址`offset`。`Swizzle`定义了三个参数：
+`Swizzle`作用于`SMEM`的`layout`。给定`layout`范围内，`Swizzle`通过列异或操作（`icol = irow ^ icol`），**周期性的`coord`重排，映射到新的物理地址`offset`**。`Swizzle`定义了三个参数：
 
 - $MBase$：以 $2^M$ 个一维坐标连续的元素为单位，将其当做一个元素；
 - $SShift$：从`Offset`中提取的高位偏移，用于提取`Offset`的`lead dimension`；
