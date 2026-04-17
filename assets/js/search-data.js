@@ -386,6 +386,17 @@ ninja.data = [{
             window.location.href = "/blog/2025/NVIDIA-Jetson-Orin-AGX-%E5%AE%89%E8%A3%85/";
           
         },
+      },{id: "post-ampere-gpu-新特性",
+        
+          title: "Ampere GPU 新特性",
+        
+        description: "1. Async Copy异步拷贝cp.async（即指令LDGSTS）支持4/8/16字节单位的拷贝，其中：  4/8字节单位的拷贝：L2 -&amp;gt; L1 -&amp;gt; SMEM；  16字节单位的拷贝(Bypass L1)：L2 -&amp;gt; SMEM。明显的，16字节单位的拷贝性能最高。另外，cp.async需要使用commit/wait指令来配合使用。A. 资料  4.11. Asynchronous Data Copies：官方文档，介绍cp.async  CUDA 11 NEW FEATURES(pdf)：Ampere 新特性介绍  CUDA on NVIDIA GPU AMPERE MICROARCHITECTURE Taking your algorithms to the next level of performance(pdf)",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA-Ampere-Feature/";
+          
+        },
       },{id: "post-使用-cute-tiled-copy-tiled-mma-以及-multi-stage-实现高性能-gemm",
         
           title: "使用 CuTe Tiled Copy、Tiled MMA 以及 Multi-Stage 实现高性能 GEMM",
