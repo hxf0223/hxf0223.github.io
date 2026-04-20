@@ -122,6 +122,17 @@ ninja.data = [{
             window.location.href = "/blog/2025/AI%E5%B7%A5%E5%85%B7%E6%94%B6%E9%9B%86/";
           
         },
+      },{id: "post-ai工具-使用docling转换文档",
+        
+          title: "AI工具：使用docling转换文档",
+        
+        description: "1. 环境搭建环境搭建参考：Python venv 环境搭建及 VSCode 环境配置。pip install docling2. 使用 docling转换文档&quot;&quot;&quot;docx 转 Markdown 脚本用法： 转换单个文件：python docx2md.py 文件.docx 转换整个目录：python docx2md.py 目录路径/ 指定输出目录：python docx2md.py 文件.docx -o 输出目录/&quot;&quot;&quot;import argparseimport sysfrom pathlib import Pathfrom docling.document_converter import DocumentConverterdef convert_file(input_path: Path, output_dir: Path) -&amp;gt; None: &quot;&quot;&quot;将单个 docx 文件转换为 Markdown。&quot;&quot;&quot; print(f&quot;正在转换：{input_path}&quot;) converter = DocumentConverter() result = converter.convert(str(input_path)) md_content = result.document.export_to_markdown() output_dir.mkdir(parents=True, exist_ok=True) output_path = output_dir / (input_path.stem +...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/AI-%E4%BD%BF%E7%94%A8docling%E8%BD%AC%E6%8D%A2%E6%96%87%E4%BB%B6/";
+          
+        },
       },{id: "post-qgc代码架构解析-qgc初始加载及状态机",
         
           title: "QGC代码架构解析：QGC初始加载及状态机",
@@ -1336,7 +1347,7 @@ ninja.data = [{
         
           title: "Python venv 环境搭建及 VSCode 环境配置",
         
-        description: "1 Python venv 环境搭建1.1 venv 安装pip install virtualenv# 设置永久国内 pip 源pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple/pip config set install.trusted-host pypi.tuna.tsinghua.edu.cn1.2 创建 venv 环境# python -m venv &amp;lt;目录&amp;gt;python -m venv my_env1.3 激活 venv 环境Linux/Mac：source ./my_env/bin/activateWindows：.\my_env\Scripts\activate# 退出虚拟环境.\my_env\Scripts\deactivate.bat1.4. 安装依赖# pip install -r requirements.txt# pip install pygame2. vscode 环境配置2.1 settings.json 配置需要安装插件： Python Pylance Yapf&quot;terminal.integrated.env.linux&quot;: { &quot;PYTHONPATH&quot;: &quot;${workspaceFolder}/python;${env:PYTHONPATH}&quot;},&quot;python.envFile&quot;: &quot;${workspaceFolder}/.env&quot;,&quot;python.analysis.extraPaths&quot;: [ &quot;${workspaceFolder}/python&quot;],&quot;[python]&quot;: { &quot;diffEditor.ignoreTrimWhitespace&quot;: false, &quot;editor.defaultFormatter&quot;: &quot;eeyore.yapf&quot;,...",
+        description: "1. Python venv 环境搭建1.1. venv安装pip install virtualenv# 设置永久国内 pip 源pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple/pip config set install.trusted-host pypi.tuna.tsinghua.edu.cn1.2. 创建venv环境# python -m venv &amp;lt;目录&amp;gt;python -m venv .venv1.3. 激活venv环境Linux/Mac：source ./.venv/bin/activateWindows：.\.venv\Scripts\activate# 退出虚拟环境.\.venv\Scripts\deactivate.bat1.4. 安装依赖# pip install -r requirements.txt# pip install pygame2. vscode 环境配置2.1. settings.json配置需要安装插件： Python Pylance Yapf&quot;terminal.integrated.env.linux&quot;: { &quot;PYTHONPATH&quot;: &quot;${workspaceFolder}/python;${env:PYTHONPATH}&quot;},&quot;python.envFile&quot;: &quot;${workspaceFolder}/.env&quot;,&quot;python.analysis.extraPaths&quot;: [ &quot;${workspaceFolder}/python&quot;],&quot;[python]&quot;: { &quot;diffEditor.ignoreTrimWhitespace&quot;: false, &quot;editor.defaultFormatter&quot;: &quot;eeyore.yapf&quot;, &quot;editor.formatOnSaveMode&quot;: &quot;file&quot;, &quot;editor.formatOnSave&quot;: true, &quot;editor.indentSize&quot;: 2,...",
         section: "Posts",
         handler: () => {
           
