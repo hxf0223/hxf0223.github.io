@@ -13,9 +13,9 @@ toc:
   sidebar: right
 ---
 
-## 1 Python venv 环境搭建
+## 1. Python venv 环境搭建
 
-### 1.1 venv 安装
+### 1.1. `venv`安装
 
 ```bash
 pip install virtualenv
@@ -25,28 +25,28 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple/
 pip config set install.trusted-host pypi.tuna.tsinghua.edu.cn
 ```
 
-### 1.2 创建 venv 环境
+### 1.2. 创建`venv`环境
 
 ```bash
 # python -m venv <目录>
-python -m venv my_env
+python -m venv .venv
 ```
 
-### 1.3 激活 venv 环境
+### 1.3. 激活`venv`环境
 
 Linux/Mac：
 
 ```bash
-source ./my_env/bin/activate
+source ./.venv/bin/activate
 ```
 
 Windows：
 
 ```bash
-.\my_env\Scripts\activate
+.\.venv\Scripts\activate
 
 # 退出虚拟环境
-.\my_env\Scripts\deactivate.bat
+.\.venv\Scripts\deactivate.bat
 ```
 
 ### 1.4. 安装依赖
@@ -58,13 +58,15 @@ Windows：
 
 ## 2. vscode 环境配置
 
-### 2.1 settings.json 配置
+### 2.1. `settings.json`配置
 
 需要安装插件：
 
 - Python
 - Pylance
 - Yapf
+
+{% raw %}
 
 ```json
 "terminal.integrated.env.linux": {
@@ -87,7 +89,9 @@ Windows：
 "yapf.args": ["--style", "{based_on_style: pep8, indent_width: 2}"],
 ```
 
-### 2.1 extensions.json 配置
+{% endraw %}
+
+### 2.2. `extensions.json`配置
 
 ```json
 {
