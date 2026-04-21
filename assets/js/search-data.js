@@ -412,7 +412,7 @@ ninja.data = [{
         
           title: "使用 CuTe Tiled Copy、Tiled MMA 以及 Multi-Stage 实现高性能 GEMM",
         
-        description: "代码： https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/gemm_sm80.cu https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/kernel_sm80.cuhTODO：GMEM -&amp;gt; SMEM 不会产生 bank conflicts？配置流程及约束概览： 定义 CTA tile 大小TODO 定义 GMEM -&amp;gt; SMEM 的 Tiled Copy 配置TODO 定义 Tiled MMA 配置（包含SMEM TiledCopy）TODO 定义 SMEM swizzle 配置，以及SMEM Layout（包含multi-stage）TODO 大部分内容已经在其他文章中记录： CUTLASS-Cute 初步(4.1)：MMA Swizzle – MMA、ldmatrix、smem swizzle； CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)。 本文主要记录一些第三方资料，见末尾附录。1. 定义 block tile 大小配置 CTA 大小为 MNK = 128 * 128 * 32，数据类型为FP16： constexpr auto bM =...",
+        description: "代码： https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/gemm_sm80.cu https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/kernel_sm80.cuhTODO：GMEM -&amp;gt; SMEM 不会产生 bank conflicts？配置流程及约束概览： 定义 CTA tile 大小TODO 定义 GMEM -&amp;gt; SMEM 的 Tiled Copy 配置TODO 定义 Tiled MMA 配置（包含SMEM TiledCopy）TODO 定义 SMEM swizzle 配置，以及SMEM Layout（包含multi-stage）TODO 大部分内容已经在其他文章中记录： CUTLASS-Cute 初步(4.1)：MMA Swizzle – MMA、ldmatrix、smem swizzle； CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)。 本文主要记录一些第三方资料，见末尾附录。1. 定义 block tile 大小配置 CTA 大小为 MNK = 128 * 128 * 32，数据类型为FP16： constexpr auto bM...",
         section: "Posts",
         handler: () => {
           
@@ -430,9 +430,9 @@ ninja.data = [{
             window.location.href = "/blog/2025/GEMM1-Cute-naive-GEMM/";
           
         },
-      },{id: "post-cuda-gemm-计算优化-multi-stage-与软流水-software-pipelining",
+      },{id: "post-cutlass-cute-初步-6-cuda-gemm-计算优化-multi-stage-与软流水-software-pipelining",
         
-          title: "CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)",
+          title: "CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)",
         
         description: "整个GEMM可用如下公式表示：\[C[i, j] = \sum_{k=0}^{nK-1} A[i, k] \times B[k, j]\] 层级 说明 Thread Block Tile 每个 CUDA 线程块（thread block）负责计算输出矩阵 C 的一个子块（tile） Warp Tile 在线程块内部，每个 warp（32个线程）负责计算 thread block tile 的一个子区域 Thread Tile 在 warp 内部，每个线程负责计算 warp tile 的一个更小的子区域 1. GEMM 计算步骤–分层 GEMM 结构依照硬件架构层次划分（也即 CUDA 编程模型），GEMM 计算可以分为多个层次：Thread Block Tile -&amp;gt; Warp Tile -&amp;gt; Thread Tile。即将一个大矩阵的算术运算，依次分解，直到最小的线程级别，一个线程计算一小部分的 tile。数据搬运过程分为几步：GMEM -&amp;gt; Shared Memory -&amp;gt; Register File -&amp;gt;...",
         section: "Posts",
