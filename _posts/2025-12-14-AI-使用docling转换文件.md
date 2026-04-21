@@ -15,7 +15,7 @@ toc:
 
 ## 1. 环境搭建
 
-环境搭建参考：**Python venv 环境搭建及 VSCode 环境配置**。
+环境搭建参考：[Python venv 环境搭建及 VSCode 环境配置]({% link _posts/2024-06-10-VSCode进行Python开发环境设置.md %})。
 
 ```bash
 pip install docling

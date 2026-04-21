@@ -1,6 +1,6 @@
 ---
 layout: post
-title: CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)
+title: CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)
 date: 2025-02-26 +1130
 categories: [CUDA]
 tags: [CUDA]

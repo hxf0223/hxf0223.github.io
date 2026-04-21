@@ -41,8 +41,8 @@ TODO
 
 > 大部分内容已经在其他文章中记录：
 >
-> 1. CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle；
-> 2. CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)。
+> 1. [CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle]({% link _posts/2025-02-26-Cute初步4.1-mma-ldmatrix-swizzle.md %})；
+> 2. [CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)]({% link _posts/2025-02-26-Cute初步6-Pipeline-And-Multi-Stage.md %})。
 >
 > 本文主要记录一些第三方资料，见末尾附录。
 
