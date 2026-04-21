@@ -1794,15 +1794,15 @@ ninja.data = [{
             window.location.href = "/blog/2023/OCCT-sample-projects/";
           
         },
-      },{id: "post-ubuntu-下载资源",
+      },{id: "post-office笔记",
         
-          title: "Ubuntu 下载资源",
+          title: "Office笔记",
         
-        description: "Ubuntu 24.04  中科大  华为Ubunut 22.04  华为  阿里云",
+        description: "1. 自定义页脚格式1：第x页/共y页首先双击页面底部进入页脚编辑，输入：第页/共页然后鼠标放在需要编辑的位置，比如”第”与”页”之间，鼠标操作如下：“共”与”页”之间同样操作，从对话框的列表中选择NUMPAGES即可。最终样式如下：格式2：第x页/共y页，且总页数从正文数起假设前面4页是封面、目录等。首先依然输入”“第页/共页”“，鼠标依旧放在需要编辑的位置（以”共”与”页”之间为例），作如下操作：  按下快捷键Ctrl + F9，会出现一对大括号{}。这个步骤为输入最外层括号。  输入等于号：=。  再次按下快捷键Ctrl + F9，会出现一对大括号{}，在大括号内输入NUMPAGES，表示总页数。  最后在等于号后输入减去4的表达式：-4。同样可以输入”PAGE”，要注意的是，其中的大括号，不能使用普通的大括号，比如使用其快捷键。一个样例如下：快捷键如下：1.1. 参考  How to make NUMPAGES show 1 less page?  The Function and Shortcut Keys that manipulate fields",
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2023/ubuntu-iso-download/";
+            window.location.href = "/blog/2023/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6-Office%E7%AC%94%E8%AE%B0/";
           
         },
       },{id: "post-ubuntu-系统安装-llvm-套件-可选择版本",
