@@ -951,7 +951,7 @@ ninja.data = [{
         
           title: "Git加速资源",
         
-        description: "GitHub Proxy 加速  GitHub Proxy  GitHub 文件加速  dev-sidecar  网易UU 加速器：然后打开软件，在右上角搜索【学术】二字，点击学术资源",
+        description: "GitHub Proxy 加速  GitHub Proxy",
         section: "Posts",
         handler: () => {
           
