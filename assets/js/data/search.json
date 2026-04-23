@@ -127,6 +127,15 @@
   },
   
   {
+    "title": "地面站 Helios 以及 Dart/Flutter 环境搭建",
+    "url": "/blog/2025/%E5%9C%B0%E9%9D%A2%E7%AB%99-helios-%E4%BB%A5%E5%8F%8A-dart-flutter-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/",
+    "categories": "Ardupilot",
+    "tags": "Ardupilot, QGC, Helios, Dart, Flutter",
+    "date": "2025-12-08",
+    "content": "1. Flutter 环境搭建从Flutter 南京大学镜像下载并解压 Flutter SDK，当前最新版本3.41.7。随后，将其子目录bin添加到系统环境变量Path中。并添加如下两个环境变量（以Linux环境为例）：export FLUTTER_STORAGE_BASE_URL=\"https://mirrors.cernet.edu.cn/flutter\"export PUB_HOSTED_URL=\"https://mirrors.cernet.edu.cn/dart-pub\" # pub get2. Helios 地面站从Helios GitHub 仓库下载源码。A. 资源 Dart中文网站 Flutter 文档 Helios 官方网站"
+  },
+  
+  {
     "title": "ArduPilot 笔记",
     "url": "/blog/2025/ardupilot-notes/",
     "categories": "Ardupilot",
