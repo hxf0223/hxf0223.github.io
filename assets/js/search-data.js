@@ -45,15 +45,26 @@ ninja.data = [{
             window.location.href = "/blog/2026/al-folio-customization-summary/";
           
         },
-      },{id: "post-al-folio-本地部署记录-ubuntu-24-04",
+      },{id: "post-al-folio-部署记录-ubuntu-24-04",
         
-          title: "al-folio 本地部署记录（Ubuntu 24.04）",
+          title: "al-folio 部署记录（Ubuntu 24.04）",
         
-        description: "本文记录在 Ubuntu 24.04 上从零开始本地部署 al-folio Jekyll 主题的完整流程，以及遇到的问题和解决方案。环境说明 操作系统：Ubuntu 24.04 x86_64 Ruby 版本管理：rbenv 目标 Ruby 版本：3.3.5第一步：安装系统依赖Ruby 编译和 Jekyll 运行需要以下系统包：sudo apt-get install -y libyaml-dev libssl-dev libreadline-dev zlib1g-dev libffi-dev imagemagick nodejs 说明： libyaml-dev：编译 Ruby 3.3.x 时必须，缺少会导致 psych 扩展编译失败。 imagemagick：提供 convert 命令，用于生成响应式 WebP 图片。 nodejs：为 Terser JS 压缩插件提供运行时。 第二步：安装 Ruby 3.3.5（通过 rbenv）# 安装 Ruby 3.3.5rbenv install 3.3.5# 在项目目录设置 Ruby 版本cd ~/work/hxf0223.github.iorbenv local 3.3.5# 验证ruby...",
+        description: "本文记录在 Ubuntu 24.04 上从零开始本地部署 al-folio Jekyll 主题的完整流程，以及遇到的问题和解决方案。使用Docker方式进行部署使用Docker部署，需要先安装 Docker 和 Docker Compose，见：安装 Docker 和 Docker Compose。安装nodejs + npm，用于安装prettier（代码格式化工具）：sudo apt install nodejs npmnode --version &amp;amp;&amp;amp; npm --version安装prettier及其Liquid插件（package.json 里已定义）：npm install检查以及修复markdown格式：npx prettier . --checknpx prettier . --write拉取al-folio Docker镜像，并运行：docker compose pulldocker compose up如果需要根据Dockerfile自定义镜像，执行（在这个命令执行过程中，其需要安装一些依赖项）：docker compose up --buildDocker部署方式操作结束。下面介绍的本地部署的方式作为备份。环境说明 操作系统：Ubuntu 24.04 x86_64 Ruby 版本管理：rbenv 目标 Ruby 版本：3.3.5第一步：安装系统依赖Ruby 编译和 Jekyll 运行需要以下系统包：sudo apt-get install -y libyaml-dev libssl-dev libreadline-dev zlib1g-dev libffi-dev...",
         section: "Posts",
         handler: () => {
           
             window.location.href = "/blog/2026/al-folio-local-deploy-ubuntu2404/";
+          
+        },
+      },{id: "post-ubuntu-26-04-安装-docker-和-docker-compose",
+        
+          title: "Ubuntu 26.04 安装 Docker 和 Docker Compose",
+        
+        description: "1. 依赖安装先检查是否已经安装了Docker和Docker Compose，如果安装了，则先卸载旧版本：sudo apt remove -y docker docker-engine docker.io containerd runcsudo rm -rf /var/lib/docker /var/lib/containerd安装依赖项：sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y# 安装证书、curl、gnupg 等基础依赖sudo apt install -y ca-certificates curl gnupg lsb-release2. 添加国内源首先添加GPP密钥，另外再添加阿里云的Docker源：# 创建密钥存储目录sudo mkdir -p /etc/apt/trusted.gpg.d# 导入阿里云 Docker GPG 密钥（避免签名验证失败）curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/docker.gpg# 添加适配 Ubuntu 24.04（noble）的阿里云 Docker 源echo &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs)...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/%E5%AE%89%E8%A3%85Docker-Docker-Compose/";
           
         },
       },{id: "post-c-traits",
