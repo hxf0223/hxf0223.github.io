@@ -1,6 +1,6 @@
 ---
 layout: post
-title: al-folio 本地部署记录（Ubuntu 24.04）
+title: al-folio 部署记录（Ubuntu 24.04）
 date: 2026-02-27 10:00:00 +0800
 categories: [Tools, Blog]
 tags: [jekyll, al-folio, ubuntu, ruby, rbenv]
@@ -9,6 +9,45 @@ toc:
 ---
 
 本文记录在 Ubuntu 24.04 上从零开始本地部署 [al-folio](https://github.com/alshedivat/al-folio) Jekyll 主题的完整流程，以及遇到的问题和解决方案。
+
+## 使用Docker方式进行部署
+
+使用Docker部署，需要先安装 Docker 和 Docker Compose，见：[安装 Docker 和 Docker Compose]({% link _posts/2026-02-27-安装Docker-Docker-Compose.md %})。
+
+安装`nodejs` + `npm`，用于安装`prettier`（代码格式化工具）：
+
+```bash
+sudo apt install nodejs npm
+node --version && npm --version
+```
+
+安装`prettier`及其Liquid插件（package.json 里已定义）：
+
+```bash
+npm install
+```
+
+检查以及修复`markdown`格式：
+
+```bash
+npx prettier . --check
+npx prettier . --write
+```
+
+拉取al-folio Docker镜像，并运行：
+
+```bash
+docker compose pull
+docker compose up
+```
+
+如果需要根据Dockerfile自定义镜像，执行（在这个命令执行过程中，其需要安装一些依赖项）：
+
+```bash
+docker compose up --build
+```
+
+Docker部署方式操作结束。下面介绍的本地部署的方式作为备份。
 
 ## 环境说明
 
