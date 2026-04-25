@@ -43,6 +43,7 @@ TODO
 >
 > 1. [CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle]({% link _posts/2025-02-26-Cute初步4.1-mma-ldmatrix-swizzle.md %})；
 > 2. [CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)]({% link _posts/2025-02-26-Cute初步6-Pipeline-And-Multi-Stage.md %})。
+> 3. [CUDA 笔记集合]({% link _posts/2025-02-23-CUDA笔记集合.md %})：其中第一个章节：cutlass/CuTe GEMM 中矩阵的存储方式 NT / TN / NN / TT。
 >
 > 本文主要记录一些第三方资料，见末尾附录。
 
