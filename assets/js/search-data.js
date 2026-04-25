@@ -434,7 +434,7 @@ ninja.data = [{
         
           title: "使用 CuTe Tiled Copy、Tiled MMA 以及 Multi-Stage 实现高性能 GEMM",
         
-        description: "代码： https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/gemm_sm80.cu https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/kernel_sm80.cuhTODO：GMEM -&amp;gt; SMEM 不会产生 bank conflicts？配置流程及约束概览： 定义 CTA tile 大小TODO 定义 GMEM -&amp;gt; SMEM 的 Tiled Copy 配置TODO 定义 Tiled MMA 配置（包含SMEM TiledCopy）TODO 定义 SMEM swizzle 配置，以及SMEM Layout（包含multi-stage）TODO 大部分内容已经在其他文章中记录： CUTLASS-Cute 初步(4.1)：MMA Swizzle – MMA、ldmatrix、smem swizzle； CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)。 本文主要记录一些第三方资料，见末尾附录。1. 定义 block tile 大小配置 CTA 大小为 MNK = 128 * 128 * 32，数据类型为FP16： constexpr auto bM...",
+        description: "代码： https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/gemm_sm80.cu https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm_sm80/kernel_sm80.cuhTODO：GMEM -&amp;gt; SMEM 不会产生 bank conflicts？配置流程及约束概览： 定义 CTA tile 大小TODO 定义 GMEM -&amp;gt; SMEM 的 Tiled Copy 配置TODO 定义 Tiled MMA 配置（包含SMEM TiledCopy）TODO 定义 SMEM swizzle 配置，以及SMEM Layout（包含multi-stage）TODO 大部分内容已经在其他文章中记录： CUTLASS-Cute 初步(4.1)：MMA Swizzle – MMA、ldmatrix、smem swizzle； CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)。 CUDA 笔记集合：其中第一个章节：cutlass/CuTe GEMM 中矩阵的存储方式 NT / TN / NN / TT。 本文主要记录一些第三方资料，见末尾附录。1. 定义 block tile 大小配置 CTA...",
         section: "Posts",
         handler: () => {
           
