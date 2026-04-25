@@ -94,7 +94,7 @@ Tensor gB = local_tile(mB, make_tile(Int<BN>{}, Int<BK>{}), make_coord(blockIdx.
 Tensor gC = local_tile(mC, make_tile(Int<BM>{}, Int<BN>{}), make_coord(blockIdx.y, blockIdx.x));  // (BM, BN)
 ```
 
-按照语义理解，A 矩阵使用 shape(BM, BK) 沿着 M 维度以及 K 维度进行切分，即将其划分为若干 tile，每个 tile 的大小为 (BM, BK)。而后，使用 `make_coord(blockIdx.y, _)` 取得第 `blockIdx.y` 个 tile，在 K 维度上使用 `_` 表示取所有 tile，所以生成了一个三维的 Tensor。由于 A 矩阵在 K 维度上被切分为多个 tile，所以最终生成的 tensor 维度为 (BM, BK, K/BK)，即表示有 K/BK 个二维 tile(BM, BK)。
+按照语义理解，A 矩阵使用 shape(BM, BK) 沿着 M 维度以及 K 维度进行切分，即将其划分为若干 tile，每个 tile 的大小为 (BM, BK)。而后，使用 `make_coord(blockIdx.y, _)` 取得第 `blockIdx.y` 个 tile，在 K 维度上使用 `cute::_` 表示取所有 tile，所以生成了一个三维的 Tensor。由于 A 矩阵在 K 维度上被切分为多个 tile，所以最终生成的 tensor 维度为 (BM, BK, K/BK)，即表示有 K/BK 个二维 tile(BM, BK)。
 
 作为对比，矩阵 C 在 M 维度以及 N 维度上进行切分，得到若干个 tile，每个 tile 的大小为 (BM, BN)。而后使用完整的二维坐标 `make_coord(blockIdx.y, blockIdx.x)` 取得唯一的 tile，故其生成的 tensor 维度为 (BM, BN)。
 
@@ -104,7 +104,7 @@ Tensor gC = local_tile(mC, make_tile(Int<BM>{}, Int<BN>{}), make_coord(blockIdx.
 - gB(64, 16, 512)：其中，1024\*8 / 16 = 512，即这是一个 tile group
 - gC(64, 64)
 
-### 2.2.2. 线程分区
+### 2.2.2. 线程划分：将 tile 划分给 Thread Block 内的线程
 
 **分区复制 GMEM -> SMEM**：
 
@@ -256,7 +256,7 @@ $$
 \end{aligned}
 $$
 
-此时，每 8 个线程一组，其访问地址都是同一个地址。下一组 8 个线程，其在 smemB[] 中的编号 +8。即每相邻的 8 个线程，产生一个 broadcast。对应表格如下：
+此时，每 8 个线程一组，其访问地址都是同一个地址。下一组 8 个线程，其在`smemB[]`中的编号 +8。即每相邻的 8 个线程，产生一个 broadcast。对应表格如下：
 
 ```text
 [0 - 0,  1 - 0,  2 - 0,  3 - 0, 4 - 0,  5 - 0,  6 - 0,  7 - 0]
@@ -357,6 +357,64 @@ Tensor tCsA = local_partition(sA, tC, threadIdx.x, Step<_1, X>{});  // (THR_M, B
 > **为什么同一个矩阵有不同的分区？** 因为复制和计算时的线程分工不同。例如 `sA`：
 > 复制时：64个线程平均分配 `BM×BK` 元素 → `tAsA`
 > 计算时：每个线程取 `TM×BK` 子矩阵 → `tCsA`
+
+## 6. 补充知识：partitioning 方式
+
+CuTe 中，总共有三种 partitioning 方式：inner-partition、outer-partition 和 TV-layout-partition。其中`local_tile`和`local_partition`，分别用于不同层次的划分：
+
+|            | Inner-Partition      | Outer-Partition        |
+| ---------- | -------------------- | ---------------------- |
+| 接口       | local_tile           | local_partition        |
+| 用途       | CTA 级别的 tile 划分 | Thread 级别的数据分配  |
+| 结果形状   | (tile形状, rest)     | (thread形状, rest)     |
+| "谁"是主角 | tile 内部坐标        | 每个 thread 拥有的坐标 |
+
+### 6.1. local_tile
+
+对于如下代码：
+
+```cpp
+  // Define CTA tile sizes (static)
+  auto cta_tiler = make_shape(bM, bN, bK);  // (BLK_M, BLK_N, BLK_K)
+
+  // Get the appropriate blocks for this threadblock
+  auto cta_coord = make_coord(blockIdx.x, blockIdx.y, _);              // (m,n,k)
+  Tensor gA = local_tile(mA, cta_tiler, cta_coord, Step<_1, X,_1>{});  // (BLK_M,BLK_K,k)
+  Tensor gB = local_tile(mB, cta_tiler, cta_coord, Step< X,_1,_1>{});  // (BLK_N,BLK_K,k)
+  Tensor gC = local_tile(mC, cta_tiler, cta_coord, Step<_1,_1, X>{});  // (BLK_M,BLK_N)
+```
+
+其中，A是在M方向切分得到tile，K方向上得到一个slice集合。B是按照N方向切分得到tile，K方向上得到一个slice集合。使用`Step<_1, X, _1>`表示选取A的M维度及K维度，等价于：
+
+```cpp
+  // Use select<0,2> to use only the M- and K-modes of the tiler and coord
+  Tensor gA = local_tile(mA, select<0,2>(cta_tiler), select<0,2>(cta_coord));
+```
+
+`local_tile`内部拆分成两个步骤。首先使用`tiler`对输入`mA`进行mode拆分：
+
+```cpp
+  // ((BLK_M,BLK_K),(m,k))
+  Tensor gA_mk = zipped_divide(mA, select<0,2>(cta_tiler));
+```
+
+拆分的结果是，保留了`tiler mode`，得到inner mode `(BLK_M, BLK_K)`，以及rest mode `(m, k)`。
+
+接着使用`coord`从`rest mode`中选择对应的切片：
+
+```cpp
+  // (BLK_M,BLK_K,k)
+  Tensor gA = gA_mk(make_coord(_,_), select<0,2>(cta_coord));
+```
+
+> 1. 总结为两个步骤：inner-partition + slice selection。
+> 2. `zipped_divide`底层使用的是`composition`。
+
+官方相关文档：
+
+- [0x_gemm_tutorial:cta-partitioning](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/0x_gemm_tutorial.html#cta-partitioning)
+- [03_tensor:inner-and-outer-partitioning](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/03_tensor.html#inner-and-outer-partitioning)
+- [02_layout_algebra:composition-tilers](https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/02_layout_algebra.html#composition-tilers)
 
 ## 资料
 
