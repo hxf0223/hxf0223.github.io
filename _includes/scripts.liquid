@@ -30,7 +30,7 @@
   <script defer src="{{ '/assets/js/masonry.js' | relative_url | bust_file_cache }}" type="text/javascript"></script>
 {% endif %}
 
-{% if page.mermaid and page.mermaid.enabled %}
+{% if page.mermaid == true or page.mermaid.enabled %}
   <!-- Mermaid and D3 -->
   <script
     defer
