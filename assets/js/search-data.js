@@ -1772,6 +1772,17 @@ ninja.data = [{
             window.location.href = "/blog/2023/VTK-official-examples/";
           
         },
+      },{id: "post-改用zsh以及oh-my-zsh",
+        
+          title: "改用zsh以及oh-my-zsh",
+        
+        description: "安装zsh以及oh-my-zsh：sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;安装autosuggestions插件（根据历史命令自动补全）：git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions在.zshrc中启用插件，plugins列表中，添加zsh-autosuggestions。例如：plugins=(git zsh-autosuggestions)添加alias：# 实用别名alias ls=&#39;ls --color=auto&#39;alias l=&#39;ls -lh&#39;alias ll=&#39;ls -lAh&#39;alias la=&#39;ls -A&#39;alias grep=&#39;grep --color=auto&#39;# Git 别名alias g=&#39;git&#39;alias ga=&#39;git add&#39;alias gc=&#39;git commit&#39;alias gp=&#39;git push&#39;alias gl=&#39;git pull&#39;alias gs=&#39;git status&#39;alias gd=&#39;git diff&#39;# 目录导航别名alias ..=&#39;cd ..&#39;alias ...=&#39;cd ../..&#39;alias c=&#39;clear&#39;alias h=&#39;history&#39;一些定制化的设置：############################ helpers: add to PATH / LD_LIBRARY_PATH only once_path_append() { [[ &quot;:$PATH:&quot; != *&quot;:$1:&quot;* ]] &amp;amp;&amp;amp; export PATH=&quot;$PATH:$1&quot;; }_ldpath_append()...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/%E5%AE%89%E8%A3%85zsh%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8oh-my-zsh/";
+          
+        },
       },{id: "post-kill信号不同分类的影响",
         
           title: "kill信号不同分类的影响",
