@@ -126,7 +126,7 @@ ninja.data = [{
         
           title: "AI工具收集，其他不分类工具收集，持续更新",
         
-        description: "1. 开发相关Skills  agent-gpu-skills：包含 cutlass、CuTe、CuTeDSL、triton  ptx-isa-markdown：PTX指令集的Markdown版本2. AI工具收集  BabelDOC: 一款基于AI的文档生成工具，能够自动从代码库中提取信息并生成详细的技术文档，支持多种编程语言和格式。其他实用工具  yt-dlp: 一个命令行视频下载工具，支持从YouTube及其他多个网站下载视频，功能强大且持续更新。",
+        description: "1. 开发相关Skills1.1. GPU相关  agent-gpu-skills：包含 cutlass、CuTe、CuTeDSL、triton  ptx-isa-markdown：PTX指令集的Markdown版本1.2. 通用skills  agent-engineer：Google工程师addyosmani写的教程  agent-skills：Google工程师addyosmani写的agent skills2. AI工具收集  BabelDOC: 一款基于AI的文档生成工具，能够自动从代码库中提取信息并生成详细的技术文档，支持多种编程语言和格式。其他实用工具  yt-dlp: 一个命令行视频下载工具，支持从YouTube及其他多个网站下载视频，功能强大且持续更新。",
         section: "Posts",
         handler: () => {
           
@@ -650,15 +650,15 @@ ninja.data = [{
             window.location.href = "/blog/2025/cpp-rvalue/";
           
         },
-      },{id: "post-linux-epoll",
+      },{id: "post-io多路复用与linux-epoll",
         
-          title: "linux epoll",
+          title: "IO多路复用与linux epoll",
         
-        description: "1. epoll 与 select/poll 区别 select由于采用轮询的方式，即轮询所有文件描述符。现实情况中，并发活跃的连接数远小于总连接数(文件描述符列表)，select的效率较低。 poll与select类似，也是采用轮询的方式，但是poll没有最大文件描列表长度述符限制（默认是FD_SETSIZE = 1024）。例如，poll函数使用pollfd数组来查询事件，每次都需要将该pollfd数组传递给内核，内核再遍历该数组，查找有事件发生的fd，特别是数组比较大的时候，效率低下。相比较而言，epoll只在有事件发生时才通知用户程序，效率较高。epoll使用三个高效的数据结构： mmap: 内核空间和用户空间共享一块内存(epoll_event数组)。epoll_wait过程中，内核将等到的event数据直接写入到epoll_event数组中。 红黑树: epoll_ctl将需要监听的文件描述符(针对网络通信就是套接字)时，保存在红黑树中。添加/删除/索引的时间复杂度为O(log n)。 rdlist: rdlist是内核存储的就绪事件列表，当有事件发生时比如套接字数据可读，驱动将fd对应的epitem加入到rdlist中（通过fd上的回调函数ep_poll_callback）。epoll_wait从rdlist中取出epitem，更新对应的epoll_event数据，并返回给用户程序。具体流程如下： epoll_wait调用ep_poll，当rdlist为空（无就绪fd）时挂起当前进程，直到rdlist不空时进程才被唤醒。 文件fd状态改变（buffer由不可读变为可读或由不可写变为可写），导致相应fd上的回调函数ep_poll_callback()被调用。 ep_poll_callback将相应fd对应epitem加入rdlist，导致rdlist不空，进程被唤醒，epoll_wait得以继续执行。 ep_events_transfer函数将rdlist中的epitem拷贝到txlist中，并将rdlist清空。 ep_send_events函数（很关键），它扫描txlist中的每个epitem，调用其关联fd对用的poll方法。此时对poll的调用仅仅是取得fd上较新的events（防止之前events被更新），之后将取得的events和相应的fd发送到用户空间（封装在struct epoll_event，从epoll_wait返回）。epoll_wait流程如下：其中，wq为socket等待队列。2. ET模式与LT模式区别LT模式：当fd就绪时，epoll_wait 会一直返回该fd，直到事件被处理。例如，如果一个socket连接有数据可读，epoll_wait 会每次都返回该socket fd，直到数据被完全读取。ET模式: 当fd从未就绪变为就绪时，epoll_wait 只会返回一次该fd。例如，如果一个socket有数据可读，epoll_wait 只会在数据第一次到达时返回该套接字，之后即使有更多数据到达，也不会再次返回，直到所有数据被读取完并且socket fd再次变为未就绪状态。3. 设置socket为非阻塞 Blocking read Non-blocking read ET模式下，使用阻塞模式socket，如果数据量较大，需要多次read，最后一次可能没有数据可读，此时read将一直阻塞。使用非阻塞模式socket，read返回EWOULDBLOCK即代表数据读完。4. epoll 调用流程图graph TD A[启动服务器] --&amp;gt; B[创建 epoll 实例] B --&amp;gt; C[创建监听套接字] C --&amp;gt; D[设置监听套接字为非阻塞] D --&amp;gt; E[绑定监听套接字到指定端口] E --&amp;gt; F[监听连接请求] F --&amp;gt; G[将监听套接字添加到 epoll...",
+        description: "定义：I/O多路复用是指在单线程中同时监视多个文件描述符的状态变化（如可读、可写、异常等），当其中一个或多个文件描述符发生状态变化时，内核会通知应用程序进行相应的处理。1. epoll 与 select/poll 区别epoll的实现代码fs/eventpoll.c，其分为三个接口函数： epoll_create: 创建一个epoll实例，返回一个文件描述符。 epoll_ctl: 向epoll实例中添加、修改或删除需要监视的文件描述符。 epoll_wait: 等待epoll实例中监视的文件描述符发生状态变化，并返回就绪的文件描述符列表。具体流程分为两个阶段：注册阶段（epoll_ctl EPOLL_CTL_ADD）： 为目标 fd 创建 epitem，插入 ep-&amp;gt;rbr 红黑树。 调用 ep_item_poll(epi, &amp;amp;epq.pt, 1)，内部通过 ep_ptable_queue_proc 分配一个 eppoll_entry，将 ep_poll_callback 注册为回调函数，并通过 add_wait_queue 将其挂入目标 fd（如 socket）自身的等待队列，完成事件监听挂钩。等待/触发阶段（epoll_wait）： epoll_wait 调用 ep_poll，先检查 ep-&amp;gt;rdllist 是否有就绪事件：若有则直接调用 ep_try_send_events 传递事件并返回；若无则将当前进程加入 ep-&amp;gt;wq（epoll 实例自身的等待队列），挂起进程等待唤醒。 当目标 fd（如 socket）收到数据后，内核驱动层（网络栈/设备驱动）调用 wake_up() 唤醒该 fd 自身的等待队列，从而触发挂在其上的回调 ep_poll_callback。 ep_poll_callback 将对应 epitem 加入 ep-&amp;gt;rdllist（若此时正在向用户空间传输事件，则暂存于 ep-&amp;gt;ovflist 溢出链表），然后调用 wake_up(&amp;amp;ep-&amp;gt;wq) 唤醒 epoll_wait 中挂起的进程。 进程被唤醒，ep_poll...",
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2025/epoll/";
+            window.location.href = "/blog/2025/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E4%B8%8Eepoll/";
           
         },
       },{id: "post-jekyll-chirpy-主题配置优化记录",
@@ -973,7 +973,7 @@ ninja.data = [{
         
           title: "Git加速资源",
         
-        description: "GitHub Proxy 加速  GitHub Proxy",
+        description: "GitHub Proxy 加速  GitHub Proxy使用清华镜像加速：git config --global url.&quot;https://mirrors.tuna.tsinghua.edu.cn/git/&quot;.insteadOf https://github.com/使用GitClone加速：# 方法一(替换URL)git clone https://gitclone.com/github.com/tendermint/tendermint.git# 方法二(设置git参数)git config --global url.&quot;https://gitclone.com/&quot;.insteadOf https://git clone https://github.com/tendermint/tendermint.git",
         section: "Posts",
         handler: () => {
           
