@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/search/";
           },
-        },{id: "post-nvidia-gpu-架构-sp-sm-与-lsu-工作原理详解",
+        },{id: "post-fast-dds入门-on-going",
+        
+          title: "Fast DDS入门（On-Going）",
+        
+        description: "1. Fast DDS功能模块TODO2. 发现协议发现协议类型枚举定义(include/fastdds/rtps/attributes/RTPSParticipantAttributes.hpp)：enum class DiscoveryProtocol{ NONE, /*!&amp;lt; NO discovery whatsoever would be used. Publisher and Subscriber defined with the same topic name would NOT be linked. All matching must be done manually through the addReaderLocator, addReaderProxy, addWriterProxy methods. */ SIMPLE, /*!&amp;lt; Discovery works according to &#39;The Real-time Publish-Subscribe Protocol(RTPS) DDS Interoperability Wire Protocol Specification&#39; */ EXTERNAL, /*!&amp;lt; A user...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/Fast-DDS%E5%85%A5%E9%97%A8/";
+          
+        },
+      },{id: "post-nvidia-gpu-架构-sp-sm-与-lsu-工作原理详解",
         
           title: "NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解",
         
