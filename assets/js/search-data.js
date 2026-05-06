@@ -137,7 +137,7 @@ ninja.data = [{
         
           title: "AI工具收集，其他不分类工具收集，持续更新",
         
-        description: "1. 开发相关Skills1.1. GPU相关  agent-gpu-skills：包含 cutlass、CuTe、CuTeDSL、triton  ptx-isa-markdown：PTX指令集的Markdown版本1.2. 通用skills  agent-engineer：Google工程师addyosmani写的教程  agent-skills：Google工程师addyosmani写的agent skills2. AI工具收集  BabelDOC: 一款基于AI的文档生成工具，能够自动从代码库中提取信息并生成详细的技术文档，支持多种编程语言和格式。其他实用工具  yt-dlp: 一个命令行视频下载工具，支持从YouTube及其他多个网站下载视频，功能强大且持续更新。",
+        description: "1. 开发相关Skills1.1. GPU相关 agent-gpu-skills：包含 cutlass、CuTe、CuTeDSL、triton ptx-isa-markdown：PTX指令集的Markdown版本1.2. 通用skills agent-engineer：Google工程师addyosmani写的教程 agent-skills：Google工程师addyosmani写的agent skills2. AI工具收集 BabelDOC: 一款基于AI的文档生成工具，能够自动从代码库中提取信息并生成详细的技术文档，支持多种编程语言和格式。3. 其他实用工具 yt-dlp: 一个命令行视频下载工具，支持从YouTube及其他多个网站下载视频，功能强大且持续更新。4. 使用笔记4.1. 使用NVIDIA免费模型通过使用claude-nvidia-proxy，将claude客户端连接到NVIDIA的API，可以使用NVIDIA提供的免费模型。其流程为：claude 客户端 → claude-nvidia-proxy → NVIDIA API → 模型推理结果返回给claude客户端。4.1.1. 安装claude客户端# 标准安装方式（linux）curl -fsSL https://claude.ai/install.sh | bash# 标准安装方式（windows）irm https://claude.ai/install.ps1 | iex# 国内安装，使用淘宝镜像sudo npm install -g @anthropic-ai/claude-code --registry=https://registry.npmmirror.com# NPM卸载sudo npm uninstall -g @anthropic-ai/claude-code新增并编辑claude的配置文件，添加字段跳过官方登陆引导：{ &quot;skipOnboarding&quot;: true} Windows: C:\Users\你的用户名\.claude.json macOS/Linux: ~/.claude.json测试claude：# 进入claude交互式界面claude# 选择模型/model4.1.2. 获取NVIDIA API密钥登陆https://build.nvidia.com/explore/discover，注册账号并获取API密钥。密钥期限为半年，另外，可以多次获取密钥，重复申请，之前的密钥将失效，最后一个有效。4.1.3. 编译安装及配置claude-nvidia-proxygit clone https://github.com/zhangrr/claude-nvidia-proxy.gitcd...",
         section: "Posts",
         handler: () => {
           
