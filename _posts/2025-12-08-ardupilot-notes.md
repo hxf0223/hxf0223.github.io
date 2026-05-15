@@ -116,30 +116,53 @@ cd /cygdrive/e/work/flight/ardupilot/ArduPlane
 ../Tools/autotest/sim_vehicle.py --map --console
 ```
 
-#### 2.1.1. 更改SITL仿真的HOME坐标
-
-在`Tools\autotest\locations.txt`文件中定义了一些预设的HOME坐标，比如：
-
-```bash
-../Tools/autotest/sim_vehicle.py -L Unalga --map --console --home 31.8269,117.2280,30
-```
-
-也可以添加自定义的坐标。
-
-#### 2.1.2. 命令交互
-
-启动`sim_vehicle.py`后，会启动一个`console`窗口、一个`map`窗口，以及一个`terminal`窗口。可以在`terminal`窗口中输入命令来控制仿真，比如：
+启动之后，观察LOG信息：
 
 ```text
-STABILIZE > wp load ../Tools/autotest/CMAC-circuit.txt
+SIM_VEHICLE: Run ArduPlane
+SIM_VEHICLE: "/cygdrive/e/work/flight/ardupilot/Tools/autotest/run_in_terminal_window.sh" "ArduPlane" "/cygdrive/e/work/flight/ardupilot/build/sitl/bin/arduplane" "--model" "plane" "--speedup" "1" "--slave" "0" "--sim-address=127.0.0.1" "-I0"
+SIM_VEHICLE: Run MavProxy
+SIM_VEHICLE: "/usr/bin/cygstart" "-w" "mavproxy.exe" "--retries" "5" "--out" "127.0.0.1:14550" "--master" "tcp:127.0.0.1:5760" "--sitl" "127.0.0.1:5501" "--map" "--console"
+RiTW: Starting ArduPlane : /cygdrive/e/work/flight/ardupilot/build/sitl/bin/arduplane --model plane --speedup 1 --slave 0 --sim-address=127.0.0.1 -I0
+```
+
+可以看到SITL通过TCP:5760端口与MAVProxy通信，MAVProxy通过TCP:14550端口与QGroundControl通信。
+
+#### 2.1.1. 更改SITL仿真的HOME坐标
+
+在`Tools\autotest\locations.txt`文件中定义了一些预设的HOME坐标，默认加载HOME点是`CMAC`。可以通过NAME选择其他地点，比如：
+
+```bash
+../Tools/autotest/sim_vehicle.py -L Unalga --map --console
+```
+
+也可以在locations.txt中添加NAME+坐标。
+
+#### 2.1.2. 命令交互--固定翼 ArduPlane
+
+启动`sim_vehicle.py`之后，会启动一个`console`窗口、一个`map`窗口，以及一个`terminal`窗口。可以在`terminal`窗口中输入命令来控制仿真，比如：
+
+```text
+# 在cygwin环境中，由于MAVProxy是在windows环境下安装的（不是在cygwin环境安装的），
+# 所以mavproxy命令接收的路径是windows的路径格式。
+# 另外，可以使用相对路径，但是测试这种方式发现不可靠。
+STABILIZE > wp load "E:\work\flight\ardupilot\Tools\autotest\Generic_Missions\CMAC-circuit.txt"
 STABILIZE > mode guided
 GUIDED > arm throttle
 GUIDED > takeoff 40
 GUIDED > mode auto
 GUIDED > mode rtl
+
+# 自动降落返回HOME点
+RTL > param set RTL_AUTOLAND 1
+RTL > mode autoland
 ```
 
 具体操作步骤参考官方教程文档：[Plane SITL/MAVProxy Tutorial](https://ardupilot.org/dev/docs/plane-sitlmavproxy-tutorial.html)。另外参考知乎文章：[ArduPilot 软件在环仿真SITL（SITL+MAVProxy）](https://zhuanlan.zhihu.com/p/62017292)。
+
+> 1. 当飞机处于`MISSION_RUNNING`状态时（Armed + MISSION_RUNNING），不能接收航线修改命令。飞控接收新航线，会冲掉当前的航线。
+> 2. 其他wp命令：`wp list`、`wp clear`。
+> 3. 航线文件格式参见官方文档：[Plan File Format](https://docs.qgroundcontrol.com/master/en/qgc-dev-guide/file_formats/plan.html)。
 
 #### 2.1.3. 参数文件
 
@@ -167,7 +190,7 @@ param set SIM_SPEEDUP 2
 
 #### 2.1.5. 启动仿真以及连接QGroundControl
 
-TODO
+QGC创建一个UDP:14550端口的连接，连接到MAVProxy的TCP:14550端口。MAVProxy会将SITL的数据转发给QGC。
 
 #### 2.1.6. Cygwin终端美化
 
