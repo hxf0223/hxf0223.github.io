@@ -214,7 +214,7 @@ ninja.data = [{
         
           title: "ArduPilot 笔记",
         
-        description: "1. ArduPilot SITL 编译# 编译及开发环境准备./Tools/environment_install/install-prereqs-ubuntu.sh -y./waf configure --board sitl./waf plane    # ArduPlane# 生成 build/sitl/bin/arduplane1.1. 初步运行使用自定义python脚本运行 SITLgithub – ap-swarm-launcher：# 启动两个 ArduPlane SITL 实例，设置数据目录为 ~/tmp/arduplaneuv run ap-sitl-swarm --model plane -n 2 --data-dir ~/tmp/arduplane --no-multicast --tcp-base-port 5760 --home 31.8269,117.2280,30 ~/tmp/arduplane/arduplane更多资料：  Using SITL with AirSim  search: ardupilot airsim  Ardupilot – Simulation",
+        description: "1. ArduPilot SITL 编译设置windows/Cygwin环境下git选项：# 忽略权限位变化git config --global core.fileMode false# 信任当前目录git config --global --add safe.directory /cygdrive/e/work/flight/ardupilot# 关闭 CRLF 自动转换（避免与 Windows 工具冲突）git config --global core.autocrlf false下载 ArduPilot 代码：git clone https://github.com/ardupilot/ardupilot.gitcd ardupilotgit submodule update --init --recursivegit submodule foreach --recursive &quot;git reset --hard HEAD&quot;编译 ArduPilot SITL：# 编译及开发环境准备./Tools/environment_install/install-prereqs-ubuntu.sh -y./waf configure --board sitl./waf plane # ArduPlane# 生成 build/sitl/bin/arduplane1.1. 初步运行使用自定义python脚本运行 SITLgithub – ap-swarm-launcher：# 启动两个 ArduPlane SITL 实例，设置数据目录为...",
         section: "Posts",
         handler: () => {
           
