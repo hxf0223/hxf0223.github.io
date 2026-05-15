@@ -1442,6 +1442,17 @@ ninja.data = [{
             window.location.href = "/blog/2024/OCCT-boolean-ops/";
           
         },
+      },{id: "post-cam资料及笔记-待学习",
+        
+          title: "CAM资料及笔记（待学习）",
+        
+        description: "1. CAM路径规划TODO1.1. CAM路径规划资料  数控加工中路径规划与速度插补综述：在线地址https://arxiv.org/pdf/2303.01368。  OpenCAMLib：开源CAM库，提供3D加工路径生成，适用于CNC车铣。  中科院副研究员袁春明：自由曲面刀具路径规划的现状和新进展          基于运动学约束的五轴机床路径规划与最优速度规划：论文，暂时未下载",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/CAM%E8%B5%84%E6%96%99%E5%8F%8A%E7%AC%94%E8%AE%B0/";
+          
+        },
       },{id: "post-windows下安装-msmpi",
         
           title: "Windows下安装 MSMPI",
