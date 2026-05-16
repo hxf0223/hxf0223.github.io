@@ -230,6 +230,28 @@ alias grep='grep --color'
 - [Bash Prompt Generator](https://bash-prompt-generator.org/)：在线生成 PS1
 - [Configuration CYGWIN - BASHRC](https://gist.github.com/alexandre-touret/d4b570813bb1b7bb44a393e69660827e)：参考的Cygwin command prompt代码片段
 
+### 2.2. SITL 与 JSBSim
+
+在Cygwin环境中，编译并安装JSBSim：
+
+```bash
+git clone git://github.com/JSBSim-Team/jsbsim.git
+cd jsbsim && mkdir build && cd build
+
+cmake -DSYSTEM_EXPAT=ON -DBUILD_SHARED_LIBS=ON -DINSTALL_JSBSIM_PYTHON_MODULE=ON -DCMAKE_CXX_FLAGS_RELEASE="-O3 -march=native -mtune=native" -DCMAKE_C_FLAGS_RELEASE="-O3 -march=native -mtune=native" -DCMAKE_BUILD_TYPE=Release ..
+
+make -j8 && make install
+cmake --install . --component pymodules
+```
+
+> 编译命令参考：<https://github.com/JSBSim-Team/jsbsim/blob/master/doc/DevelopersDocs.md>。
+
+启动仿真命令：
+
+```bash
+../Tools/autotest/sim_vehicle.py -v ArduPlane -f jsbsim --console --map
+```
+
 ## A. 资料
 
 - [Using SITL with AirSim](https://ardupilot.org/dev/docs/sitl-with-airsim.html)
