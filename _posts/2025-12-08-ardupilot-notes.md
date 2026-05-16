@@ -197,15 +197,19 @@ QGC创建一个UDP:14550端口的连接，连接到MAVProxy的TCP:14550端口。
 编辑Cygwin的.bashrc文件（比如在windows中绝对路径为`C:\cygwin64\home\Administrator\.bashrc`）：
 
 ```bash
-case "$TERM" in
-xterm*|rxvt*|screen*|cygwin*)
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[1;36m\]§ \[\033[1;32m\]\h\[\033[0;36m\] {\[\033[1;36m\]\w\[\033[0;36m\]}\[\033[39m\] '
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
-    ;;
-*)
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-    ;;
-esac
+###################
+## Git completion and prompt
+source git-completion.bash
+source git-prompt.sh
+
+# Git prompt 状态标记
+GIT_PS1_SHOWDIRTYSTATE=1       # * 未暂存变更，+ 已暂存变更
+GIT_PS1_SHOWUNTRACKEDFILES=1   # ? 未追踪文件
+GIT_PS1_SHOWUPSTREAM="auto"    # < 落后，> 超前，<> 分叉
+
+# PS1: 蓝色目录名(basename) + 黄色 git 状态 + 普通 $
+PS1='\[\e[1;34m\]\W\[\e[0m\]\[\e[1;33m\]$(__git_ps1 " (%s)")\[\e[0m\] \$ '
+
 
 ################
 # 目录导航别名
@@ -218,6 +222,13 @@ alias la='ls -A'
 alias l='ls -CF'
 alias grep='grep --color'
 ```
+
+其中，`git-completetion.bash`以及`git-prompt.sh`来自<https://github.com/git/git/tree/master/contrib/completion>。
+
+参考：
+
+- [Bash Prompt Generator](https://bash-prompt-generator.org/)：在线生成 PS1
+- [Configuration CYGWIN - BASHRC](https://gist.github.com/alexandre-touret/d4b570813bb1b7bb44a393e69660827e)：参考的Cygwin command prompt代码片段
 
 ## A. 资料
 
