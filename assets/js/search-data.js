@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/search/";
           },
-        },{id: "post-fast-dds入门-on-going",
+        },{id: "post-ai工具大全",
+        
+          title: "AI工具大全",
+        
+        description: "IDE Cursor Zed Kiro Antigravity VS Code Trae GooseADE CodexVS Code extension GitHub Copilot Cline Roo Code Amp Code (free with ads)Cloud agent Codex Jules Cursor background agent GitHub Copilot Claude Code on the webLocal parallel agent Vibe Kanban Crystal by Stravu Conductor Sculptor by imbue emdashCLIHere are the hyperlinks to the official websites (or documentation pages) for each of...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/";
+          
+        },
+      },{id: "post-fast-dds入门-on-going",
         
           title: "Fast DDS入门（On-Going）",
         
