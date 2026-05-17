@@ -23,22 +23,13 @@
   "scss.validate": false,
   "less.validate": false,
   // Stylint extension settings
-  "stylelint.snippet": [
-    "css",
-    "scss"
-  ],
-  "stylelint.validate": [
-    "css",
-    "scss"
-  ],
+  "stylelint.snippet": ["css", "scss"],
+  "stylelint.validate": ["css", "scss"],
   // Run tasks in macOS
   "terminal.integrated.profiles.osx": {
     "zsh": {
       "path": "/bin/zsh",
-      "args": [
-        "-l",
-        "-i"
-      ]
+      "args": ["-l", "-i"]
     }
   },
   "[jsonc]": {
