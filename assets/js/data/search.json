@@ -3,8 +3,8 @@
   {
     "title": "AI工具大全",
     "url": "/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/",
-    "categories": "FastDDS",
-    "tags": "Fast-DDS, RTPS",
+    "categories": "AI",
+    "tags": "AI",
     "date": "2026-05-16",
     "content": "IDE Cursor Zed Kiro Antigravity VS Code Trae GooseADE CodexVS Code extension GitHub Copilot Cline Roo Code Amp Code (free with ads)Cloud agent Codex Jules Cursor background agent GitHub Copilot Claude Code on the webLocal parallel agent Vibe Kanban Crystal by Stravu Conductor Sculptor by imbue emdashCLIHere are the hyperlinks to the official websites (or documentation pages) for each of the three CLI tools: Codex CLI Claude Code Gemini CLI Kimi CLI Qwen3-Coder CLI Amp Code CLI OpenCode Pi Mistral Vibe CLI GitHub Copilot CLI Goose CLI Warp CLI Jules ToolsAgents framework/library OpenAI Agents SDK Google ADK (Agent Development Kit) Microsoft Agent Framework Claude Agent SDKMCP Playwright Chrome Dev Tools Context7Web Search API Brave Exa PerplexityImage models Nano Banana and Nano Banana Pro by Google Seedream by BytedanceOpen weight models Z-Image by Alibaba (HF: Turbo, Base, Edit) Qwen-Image by Alibaba (HF: Qwen-Image and Qwen-Image-Edit) LongCat-Image-Edit by MeituanOCR models GLM-OCRAudio models SAM-Audio by Meta Fun-Audio-Chat by Alibaba PersonaPlex by NvidiaTTS Gemini 3.1 Flash TTSOpen-weight Chatterbox-Turbo Qwen3-TTS: HFTranscription (STT) Parakeet v3: HF Qwen3-ASR: HF Voxtral Transcribe 2: HFTranslate models TranslateGemma by Google (HF: TranslateGemma) HY-MT by Tencent (HF: HY-MT15)Evaluation OpenAI evals Stax by GoogleVibe coding platforms Google AI Studio Apps (frontend only) Google Firebase Studio (full-stack) Cloudflare VibeSDK Lovable Bolt AI Replit v0 by Vercel Base44 GitHub Spark"
   },
