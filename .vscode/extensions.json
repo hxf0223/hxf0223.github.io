@@ -1,3 +1,10 @@
 {
-  "recommendations": ["mkhl.shfmt", "myriad-dreamin.tinymist", "esbenp.prettier-vscode", "shopify.theme-check-vscode"]
+  "recommendations": [
+    "mkhl.shfmt",
+    "ms-python.black-formatter",
+    "myriad-dreamin.tinymist",
+    "esbenp.prettier-vscode",
+    "shopify.theme-check-vscode",
+    "myriad-dreamin.tinymist"
+  ]
 }
