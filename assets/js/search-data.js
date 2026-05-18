@@ -555,7 +555,7 @@ ninja.data = [{
         
           title: "CUTLASS-Cute 初步(2)：Tensor &amp; Layout Algebra",
         
-        description: "github – 测试代码 CuTe Tensors：官方文档1. CuTe 中的 Tensor 划分 (Partitioning a Tensor)在 GEMM 计算是，需要对矩阵进行划分（分块），以便线程块（Thread Block）和线程（Thread）能够并行处理数据。常用的有 Inner-Partitioning、Outer-Partitioning，以及 TV-layout-Partition。1.1. Inner-PartitioningGEMM 计算，先需要按照 Thread Block 划分为若干 Tile，即给每个 Thread Block 分配一个 Tile。如下所示：Tensor A = make_tensor(ptr, make_shape(8,24)); // (8,24)auto tiler = Shape&amp;lt;_4,_8&amp;gt;{}; // (_4,_8)Tensor tiled_a = zipped_divide(A, tiler); // ((_4,_8),(2,3))在使用 tiler 对 A 进行切分之后，(_4, _8) 是第一个mode（first mode），(2, 3) 是第二个mode（second mode）。 第一个 mode (mode 0)：Tile 的 shape...",
+        description: "github – 测试代码 CuTe Tensors：官方文档0. 紧凑 stride 的生成：LayoutLeft 与 LayoutRight当调用 make_layout(shape) 而不显式指定 stride 时，CuTe 使用 LayoutLeft（紧凑列主序）自动生成 stride。也可以通过 LayoutRight（紧凑行主序）来构造。auto shape = make_shape(2, make_shape(2, 2));auto manual = make_layout(shape, make_stride(4, make_stride(2, 1)));auto left = make_layout(shape, LayoutLeft{}); // 等价auto right = make_layout(shape, LayoutRight{});print_layout(left);print_layout(right);LayoutLeft 生成 stride 的算法是”从左侧开始的 exclusive prefix product”——shape 从左到右做前缀乘，得到广义列主序 stride：(2,(2,2)):(_1,(2,4)) 0 1 2 3 +---+---+---+---+ 0 | 0 | 2 | 4 |...",
         section: "Posts",
         handler: () => {
           
@@ -566,7 +566,7 @@ ninja.data = [{
         
           title: "CUTLASS-Cute 初步(1)：Layout",
         
-        description: "github – Layout 测试代码1. LayoutCute(CUDA Tensor) 是 CUBLASS 扩展，用于简化张量 BLAS 操作和内存布局的管理。最主要的概念是 Tensor 和 Layout： Layout&amp;lt;Shape, Stride&amp;gt;: 定义张量的内存布局，用于将一维内存地址映射到多维张量索引。 Shape：Logical dimensions，张量的逻辑维度/形状。 Stride：Physical steps，每一个维度在内存中的步长/跨度。 Tensor&amp;lt;Engine,Layout&amp;gt;: 定义张量的数据类型/存储和布局。映射公式：offset = Σ (index[i] * stride[i])Layout 本质是一个映射函数，将多维索引映射到一维内存地址。称索引为定义域(domain)，映射得到的地址为值域(codomain)。以一个一维映射为例：如上图 layout (8):(2)，按照映射公式得到 index_phy = index_logic * 2，将连续以一维索引 0,1,2,…7 映射到内存地址 0,2,4,…14。此时： size(layout) = 8 cosize(layout) = 16而如果定义 layout (8):(0)，则所有逻辑索引都映射到内存地址偏移 0，即所有索引映射到同一个地址。此时得到： size(layout) = 8 cosize(layout) = 11.1. CuTe IntTuple定义多维 Tensor 时，可以使用嵌套的 Shape 和...",
+        description: "github – Layout 测试代码1. Layout 核心概念CuTe（CUDA Tensor）是 CUTLASS 3.x 引入的底层张量抽象库，用于简化 BLAS 操作和内存布局管理。最核心的概念是 Layout。Layout = (Shape, Stride)，它是一个从逻辑坐标空间到一维内存索引空间的映射函数：offset = Σ (coord[i] * stride[i]) Shape：逻辑维度，定义坐标空间（”domain”，定义域）。 Stride：每个维度在内存中的步长，决定映射结果（”codomain”，值域）。以 1D layout 8:2 为例——8 个元素、stride 为 2： size(layout) = 8 —— 定义域大小（有多少个逻辑坐标） cosize(layout) = 16 —— 值域大小（映射到的最大 index + 1，即 layout(size-1) + 1）Stride 为 0 时（如 8:0），所有坐标映射到同一个地址，此时 size=8, cosize=1。 Layouts are functions from integers to integers. 这一总结来自官方文档。意味着：每个...",
         section: "Posts",
         handler: () => {
           
