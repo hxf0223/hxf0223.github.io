@@ -16,6 +16,37 @@ toc:
 - [github -- 测试代码](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/test_cute_shape.cu)
 - [CuTe Tensors](https://github.com/NVIDIA/cutlass/blob/v4.0.0/media/docs/cpp/cute/03_tensor.md#inner-and-outer-partitioning)：官方文档
 
+## 0. 紧凑 stride 的生成：LayoutLeft 与 LayoutRight
+
+当调用 `make_layout(shape)` 而不显式指定 stride 时，CuTe 使用 `LayoutLeft`（紧凑列主序）自动生成 stride。也可以通过 `LayoutRight`（紧凑行主序）来构造。
+
+```cpp
+auto shape = make_shape(2, make_shape(2, 2));
+auto manual = make_layout(shape, make_stride(4, make_stride(2, 1)));
+auto left   = make_layout(shape, LayoutLeft{});   // 等价
+auto right  = make_layout(shape, LayoutRight{});
+print_layout(left);
+print_layout(right);
+```
+
+`LayoutLeft` 生成 stride 的算法是"从左侧开始的 exclusive prefix product"——shape 从左到右做前缀乘，得到广义列主序 stride：
+
+```text
+(2,(2,2)):(_1,(2,4))
+      0   1   2   3
+    +---+---+---+---+
+ 0  | 0 | 2 | 4 | 6 |
+    +---+---+---+---+
+ 1  | 1 | 3 | 5 | 7 |
+    +---+---+---+---+
+```
+
+`LayoutRight` 从右侧开始做 exclusive prefix product，对于 depth=1 的 shape 就是行主序，但对层级 shape 的结果可能不符合直觉。
+
+> LayoutLeft、colexicographical order、column-major 本质上对应同一种遍历顺序（列优先）。LayoutRight 则对应 row-major。
+>
+> 理解 stride 是如何自动生成的，有助于理解后面的 coalesce 和 composition 操作为什么会有特定的行为。
+
 ## 1. CuTe 中的 Tensor 划分 (Partitioning a Tensor)
 
 在 GEMM 计算是，需要对矩阵进行划分（分块），以便线程块（Thread Block）和线程（Thread）能够并行处理数据。常用的有 Inner-Partitioning、Outer-Partitioning，以及 TV-layout-Partition。

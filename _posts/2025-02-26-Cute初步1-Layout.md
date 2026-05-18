@@ -16,91 +16,82 @@ toc:
 
 - [github -- Layout 测试代码](https://github.com/HPC02/cuda_perf/blob/master/src/cute_gemm/test_cute_shape.cu)
 
-## 1. Layout
+## 1. Layout 核心概念
 
-Cute(CUDA Tensor) 是 CUBLASS 扩展，用于简化张量 BLAS 操作和内存布局的管理。
+CuTe（CUDA Tensor）是 CUTLASS 3.x 引入的底层张量抽象库，用于简化 BLAS 操作和内存布局管理。最核心的概念是 **Layout**。
 
-最主要的概念是 Tensor 和 Layout：
-
-- Layout<Shape, Stride>: 定义张量的内存布局，用于将一维内存地址映射到多维张量索引。
-  - Shape：Logical dimensions，张量的逻辑维度/形状。
-  - Stride：Physical steps，每一个维度在内存中的步长/跨度。
-- Tensor<Engine,Layout>: 定义张量的数据类型/存储和布局。
-
-映射公式：
+**Layout = (Shape, Stride)**，它是一个从**逻辑坐标空间**到**一维内存索引空间**的映射函数：
 
 ```text
-offset = Σ (index[i] * stride[i])
+offset = Σ (coord[i] * stride[i])
 ```
 
-Layout 本质是一个映射函数，将多维索引映射到一维内存地址。称索引为**定义域(domain)**，映射得到的地址为**值域(codomain)**。以一个一维映射为例：
+- **Shape**：逻辑维度，定义坐标空间（"domain"，定义域）。
+- **Stride**：每个维度在内存中的步长，决定映射结果（"codomain"，值域）。
 
-![1d_map_stirde2](/assets/images/cuda/20250226/cute_layout/1d_map_strider2.jpg)
+以 1D layout `8:2` 为例——8 个元素、stride 为 2：
 
-如上图 layout (8):(2)，按照映射公式得到 index_phy = index_logic \* 2，将连续以一维索引 0,1,2,...7 映射到内存地址 0,2,4,...14。此时：
+![1d_map_stride2](/assets/images/cuda/20250226/cute_layout/1d_map_strider2.jpg)
 
-- size(layout) = 8
-- cosize(layout) = 16
+- **size(layout)** = 8 —— 定义域大小（有多少个逻辑坐标）
+- **cosize(layout)** = 16 —— 值域大小（映射到的最大 index + 1，即 `layout(size-1) + 1`）
 
-而如果定义 layout (8):(0)，则所有逻辑索引都映射到内存地址偏移 0，即所有索引映射到同一个地址。此时得到：
+Stride 为 0 时（如 `8:0`），所有坐标映射到同一个地址，此时 size=8, cosize=1。
 
-- size(layout) = 8
-- cosize(layout) = 1
+> Layouts are functions from integers to integers.
+>
+> 这一总结来自官方文档。意味着：**每个 Layout 都可以用 1-D 坐标去索引**，无论它看起来是几维的。这是 CuTe 与 C++23 `mdspan` 的关键区别——`mdspan` 的 N-D 视图不接受 1-D 坐标，而 CuTe 的 Layout 原生支持。
 
-### 1.1. CuTe IntTuple
+### 1.1. IntTuple、rank 与 depth
 
-定义多维 Tensor 时，可以使用嵌套的 Shape 和 Stride 来定义子 Tensor 的形状和步长。在 Cute 中，使用 template tuple 表示表示嵌套的 Shape 和 Stride。
+Shape 和 Stride 都是 **IntTuple**——要么是单个整数，要么是 IntTuple 的 tuple（可嵌套）。IntTuple 中的整数可以是编译期静态整数（用 `Int<N>{}` 或别名 `_1`、`_2` 等表示），也可以是运行期动态整数。
 
-具体是使用 IntTule 表示：IntTuple 可以是一个整形，也可以是一个 tuple，并且可以嵌套。以下都是一个合法的 IntTuple：
+Layout 的两个重要结构属性：
 
-- int{3}，运行时整数。
-- Int<3>{}，Int<3>() 编译时整数，称为静态整数。另外，定义了一些字面量：比如 `_1`、`_2`、`_3` 分别定义为 Int<1>{}、Int<2>{}、Int<3>{}。
-- 带有任何模板参数的 IntTuple，比如 make_tuple(int{2}, Int<3>{})。
+| 属性      | 含义                     | 示例                                   |
+| --------- | ------------------------ | -------------------------------------- |
+| **rank**  | 最外层有几个元素（mode） | `(4,2)` rank=2；`((2,2),2)` rank=2     |
+| **depth** | 括号嵌套的最大深度       | `(4,3)` depth=1；`(3,(6,2),8)` depth=2 |
 
-在对 layout 进行一些操作时，还定义了一些常量表示这些操作：
-
-- cute::\_ : 获取 slice 时，表示或者这个维度（轴）的所有数据，在 Python 中类似于 `:`。
-- cute::X ：在切分操作（比如 partition 操作）的时候，表示不对这个维度进行切分。
-
-### 1.2. rank 和 depth
-
-Rank 只看最外层有几个元素，不管里面嵌套了什么。一些 layout 示例 rank：
+rank/depth 示例：
 
 ```text
-Layout Shape        rank    含义
-────────────        ────    ────
-(8)                 1       向量（1 个 mode）
-(4,2)               2       矩阵（2 个 mode：行和列）
-(M,N,K)             3       3-D tensor（3 个 mode）
-((2,2),2)           2       还是矩阵！虽然内部有嵌套，顶层只有 2 个 mode
+Layout Shape        rank  depth   含义
+────────────        ────  ─────   ────
+(8)                  1     1      向量
+(4,2)                2     1      矩阵（行和列）
+(M,N,K)              3     1      3-D tensor
+((2,2),2)            2     2      矩阵，但第一 mode 是嵌套的
+(3,(6,2),8)          3     2      最深处 (6,2) 嵌套了 2 层
 ```
 
-Depth 度量的是括号嵌套的深度，一些示例：
+## 2. 构造 Layout
 
-```text
-IntTuple              depth    解释
-────────              ─────    ────
-6                     0        没有括号，就是个整数
-(4,3)                 1        一层括号
-(3,(6,2),8)           2        最深处 (6,2) 嵌套了 2 层
-((2,(1,3)),4)         3        最深处 (1,3) 嵌套了 3 层
-```
+Layout 通过 `make_layout(shape, stride)` 构造。如果不指定 stride，默认按 `LayoutLeft`（列优先）生成紧凑 stride。
 
-## 2. Layout 示例
+下面用 4 个递进式例子来展示 Layout 的表达能力。
 
-### 2.1. 例一：定义一个两行三列的矩阵布局，这个矩阵采用列主序存储
+### 2.1. 例一：1D 向量
 
 ```cpp
-    auto tensor_shape = make_shape(2, 3);   // 两行三列
-    auto tensor_stride = make_stride(1, 2); // 列主序存储
-    auto tensor_layout = make_layout(tensor_shape, tensor_stride);
-    print_layout(tensor_layout);
+auto v1 = make_layout(Int<8>{});          // 8:_1  — 静态 shape，stride 默认 1
+auto v2 = make_layout(8, 2);              // 8:2   — 动态 shape，stride 为 2
 ```
 
-输出：
+`8:1` 就是连续排列的 8 个元素，index = coord。`8:2` 则每个坐标步进 2。
+
+### 2.2. 例二：2D 矩阵 — 列主序与行主序
+
+```cpp
+// 列主序（column-major）：沿列 stride=1，沿行 stride=M
+auto col_major = make_layout(make_shape(2, 3), make_stride(1, 2));
+// 行主序（row-major）：沿行 stride=1，沿列 stride=N
+auto row_major = make_layout(make_shape(2, 3), make_stride(3, 1));
+```
+
+`(2,3):(1,2)` 列主序输出：
 
 ```text
-(2,3):(1,2)
       0   1   2
     +---+---+---+
  0  | 0 | 2 | 4 |
@@ -109,24 +100,9 @@ IntTuple              depth    解释
     +---+---+---+
 ```
 
-```cpp
-// A(m, n) = storage[m*1 + n*2]
-const auto val = tensor_layout(1, 2); // 访问张量元素 (1,2)，值为 5
-```
-
-### 2.2. 例二：定义一个两行三列的矩阵，这个矩阵采用行主序存储
-
-```cpp
-    auto tensor_shape = make_shape(2, 3);   // 两行三列
-    auto tensor_stride = make_stride(3, 1); // 行主序存储
-    auto tensor_layout = make_layout(tensor_shape, tensor_stride);
-    print_layout(tensor_layout);
-```
-
-输出：
+`(2,3):(3,1)` 行主序输出：
 
 ```text
-(2,3):(3,1)
       0   1   2
     +---+---+---+
  0  | 0 | 1 | 2 |
@@ -135,154 +111,131 @@ const auto val = tensor_layout(1, 2); // 访问张量元素 (1,2)，值为 5
     +---+---+---+
 ```
 
-### 2.3. 例三：定义一个三维张量布局
+```cpp
+auto val = col_major(1, 2);  // = 1*1 + 2*2 = 5
+```
 
-- 张量形状：(4,2,2)，dim0=4, dim1=2, dim2=2
-- 张量步长：(4,1,2) 行主序存储，子 tensor 为列主序
+所谓"列主序"就是最左侧 mode 的 stride=1，colexicographical 遍历等价于逐列访问。
+
+### 2.3. 例三：带嵌套 mode 的层级 Layout
+
+当 mode 本身也是多维时，使用嵌套 tuple 来表达：
 
 ```cpp
-    auto tensor_shape = make_shape(4, make_shape(2, 2));
-    auto tensor_stride = make_stride(4, make_stride(1, 2));
-    auto tensor_layout = make_layout(tensor_shape, tensor_stride);
-    print_layout(tensor_layout);
+auto shape  = make_shape(4, make_shape(2, 2));   // 4 行，(2,2) 的嵌套列
+auto stride = make_stride(4, make_stride(1, 2)); // stride_i=4, stride_j=1, stride_k=2
+auto layout = make_layout(shape, stride);
+print_layout(layout);
 ```
 
 输出：
 
 ```text
-    (4,(2,2)):(4,(1,2))
-           0    1    2    3
-        +----+----+----+----+
-     0  |  0 |  1 |  2 |  3 |
-        +----+----+----+----+
-     1  |  4 |  5 |  6 |  7 |
-        +----+----+----+----+
-     2  |  8 |  9 | 10 | 11 |
-        +----+----+----+----+
-     3  | 12 | 13 | 14 | 15 |
-        +----+----+----+----+
+(4,(2,2)):(4,(1,2))
+       0    1    2    3
+    +----+----+----+----+
+ 0  |  0 |  1 |  2 |  3 |
+    +----+----+----+----+
+ 1  |  4 |  5 |  6 |  7 |
+    +----+----+----+----+
+ 2  |  8 |  9 | 10 | 11 |
+    +----+----+----+----+
+ 3  | 12 | 13 | 14 | 15 |
+    +----+----+----+----+
 ```
 
 ```cpp
-// A(i, (j, k)) = storage[i*4 + j*1 + k*2]
-const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(1,0))，值为 9
+auto val = layout(2, make_coord(1, 0));  // = 2*4 + 1*1 + 0*2 = 9
 ```
 
-### 2.4. 例四：定义一个三维张量布局
+这里虽然 Shape 里嵌套了 `(2,2)`，但顶层 rank 仍然是 2（行 + 嵌套列）。`print_layout` 将其展示为 4×4 的表格，而嵌套的列 mode 被摊平为 4 列。
 
-- 张量形状：(4,2,2)，dim0=4, dim1=2, dim2=2
-- 张量步长：(2,1,8)
+### 2.4. 例四：改变 stride 对数据排布的影响
+
+保持 Shape 不变，将 stride 改为 `(2,(1,8))`：
 
 ```cpp
-    auto tensor_shape = make_shape(4, make_shape(2, 2));
-    auto tensor_stride = make_stride(2, make_stride(1, 8));
-    auto tensor_layout = make_layout(tensor_shape, tensor_stride);
-    print_layout(tensor_layout);
+auto shape  = make_shape(4, make_shape(2, 2));
+auto stride = make_stride(2, make_stride(1, 8));
+auto layout = make_layout(shape, stride);
+print_layout(layout);
 ```
 
 输出：
 
 ```text
-    (4,(2,2)):(2,(1,8))
-           0    1    2    3
-        +----+----+----+----+
-     0  |  0 |  1 |  8 |  9 |
-        +----+----+----+----+
-     1  |  2 |  3 | 10 | 11 |
-        +----+----+----+----+
-     2  |  4 |  5 | 12 | 13 |
-        +----+----+----+----+
-     3  |  6 |  7 | 14 | 15 |
-        +----+----+----+----+
+(4,(2,2)):(2,(1,8))
+       0    1    2    3
+    +----+----+----+----+
+ 0  |  0 |  1 |  8 |  9 |
+    +----+----+----+----+
+ 1  |  2 |  3 | 10 | 11 |
+    +----+----+----+----+
+ 2  |  4 |  5 | 12 | 13 |
+    +----+----+----+----+
+ 3  |  6 |  7 | 14 | 15 |
+    +----+----+----+----+
 ```
 
 ```cpp
-// A(i, (j, k)) = storage[i*2 + j*1 + k*8]
-const auto val1 = tensor_layout(2, make_coord(1, 0)); // 访问张量元素 (2,(1,0))，值为 5
+auto val = layout(2, make_coord(1, 0));  // = 2*2 + 1*1 + 0*8 = 5
 ```
 
-几何解释：
+比较例三和例四：同样的 Shape `(4,(2,2))`，只改变 stride，就得到了完全不同的数据排布。例三中每一行的 4 个元素在内存中是连续的 `0,1,2,3`；例四中每一行的前两个和后两个元素在内存中相隔 8，呈现"分块"效果。
 
-```text
-内存布局（一维）：
-[0][1][2][3][4][5][6][7] | [8][9][10][11][12][13][14][15]
- ←───── 块 k=0 ─────→     ←────── 块 k=1 ──────→
-```
+| Stride 分量 | 值  | 含义                                                     |
+| ----------- | --- | -------------------------------------------------------- |
+| stride_i    | 2   | 沿行移动一步，offset +2                                  |
+| stride_j    | 1   | 沿内层列移动一步，offset +1                              |
+| stride_k    | 8   | 沿外层列移动一步，offset +8（跳到另一个 4 元素的 block） |
 
-| Stride 分量 | 值  | 含义                                             |
-| ----------- | --- | ------------------------------------------------ |
-| stride_i    | 2   | 沿 i 方向移动一步，offset 增加 2                 |
-| stride_j    | 1   | 沿 j 方向移动一步，offset 增加 1                 |
-| stride_k    | 8   | 沿 k 方向移动一步，offset 增加 8（跳到另一个块） |
+> 关于层级 Layout 的几何直觉，可参考 <https://note.gopoux.cc/hpc/cute/layout/>
 
-> 关于几何解释，更多理解内容参考帖子 <https://note.gopoux.cc/hpc/cute/layout/>
+## 3. 层级 Layout 与 coordinate
 
-## 3. Hierarchy Layout
+### 3.1. 层级 Layout 的解读
 
-层级化的 layout 概念用于更加直观的表示多维 tensor，拆分 layout 划分工作，更好的表示内存局部性，如 TV layout。
+层级 Layout 的核心思想：用嵌套的 Shape/Stride 表达"layout of layouts"。以 `(4,(2,4)):(2,(1,8))` 为例：
 
 ![hierarchy_layout](/assets/images/cuda/20250226/cute_layout/Hierarchy_Layout.jpg)
 
-上图示例中，a, b 情形分别表示 column-major 和 row-major 布局的二维矩阵，不存在嵌套。
+上图中 a 和 b 分别是无嵌套的列主序和行主序。c 和 d 则带有层级结构。
 
-### 3.1. 嵌套 layout 示例 c
+**示例 c** — 仅在列方向有嵌套：
 
 ![layout_424_218](/assets/images/cuda/20250226/cute_layout/layout_424_218.png)
 
-示例 c 中，可以将其看作一个嵌套的 layout：在列方向上存在一个嵌套的 layout。
+- **内层 layout**（红色框内）：`(4,2):(2,1)` —— 4 行 2 列，列主序
+- **外层 layout**：`(1,4):(4,1)` —— 1 行 4 列（每个"元素"是一个内层 layout）
+- 合并 shape：`(4, (2, 4))`，stride：`(2, (1, 8))`
+  - stride_i=2：内层行方向步长
+  - stride_j=1：内层列方向步长
+  - stride_k=8：外层列方向步长（等于一个完整内层 block 的 cosize）
 
-- 内层 layout （红色框内）为: (4, 2):(2, 1)。
-- 外层 layout 为: (1, 4):(4, 1)。即外层 layout 是一个有 1 行 4 列的矩阵（向量），每个元素是一个内层 layout。
+**示例 d** — 行列方向均有嵌套：
 
-合并之后，表示 4 行 8 列。其中，列方向为两个层次：(2, 4)，2 表示内层 layout 的列数，4 表示外层 layout 的列数。
+![layout_2224_1428](/assets/images/cuda/20250226/cute_layout/layout_2224_1428.png)
 
-综合起来的 shape 为 (4, (2, 4))，其含义为（按顺序表示）：第一个 4 表示行数，2 表示内层 layout 列数，第二个 4 表示外层 layout 列数。
+- **内层 layout**（红色框内）：`(2,2):(2,2)`
+- **外层 layout**：`(2,4):(4,1)`
+- 合并 shape：`((2,2), (2,4))`，stride：`((1,4), (2,8))`
 
-针对 stride，其表示顺序要与 shape 保持一致，即 如果 shape 为 (sx, (sy, sz))，则 stride 为 (dx, (dy, dz))即 stride(2, (1, 8)) 的含义如下：
+### 3.2. 坐标访问与 slice
 
-- dx：内层 layout 行方向的间隔为 2。**注意**：这里解读为内层 layout 的行方向间隔，这个 layout 在行方向上没有外层。
-- dy：内层 layout 列方向的间隔为 1。
-- dz：外层 layout 列方向的间隔为 8，即为一个内层 layout 块的大小。
-
-综合得到 layout 为 (4, (2, 4)):(2, (1, 8))。
-
-### 3.2. 嵌套 layout 示例 d
-
-![layout_424_128](/assets/images/cuda/20250226/cute_layout/layout_2224_1428.png)
-
-示例 d 的 layout 在行列方向上均存在嵌套 layout。两层 layout 分别为：
-
-- 内层 layout （红色框内）为: (2, 2)\:(2, 2)。
-- 外层 layout 为: (2, 4)\:(4, 1)。
-
-合并之后，表示 4 行 8 列。其中，行方向为两个层次：(2, 2)，列方向为两个层次：(2, 4)。即：
-
-- ((sx1, sx2)\:(sy1, sy2))，得到综合 shape 为 ((2, 2), (2, 4))。
-  - sx1 表示内层 layout 行数，sx2 表示外层 layout 行数；
-  - sy1 表示内层 layout 列数，sy2 表示外层 layout 列数。
-- 对应的，综合 stride 为 ((dx1, dx2), (dy1, dy2))，得到((1, 4), (2, 8))。
-
-### 3.3. 坐标及数据访问 coordinate
-
-对一个 layout 为 ((2, 4), (3, 5))\:((3, 6), (1, 24)) 的 tensor 进行数据访问时，其访问格式遵从上述的顺序，形式为：
-
-```cpp
-auto row_coord = make_coord(1, 3);
-auto col_coord = make_coord(2, 4);
-auto coord = make_coord(row_coord, col_coord);
-```
-
-如下图所示：
+访问层级 Layout 时，坐标也需对应嵌套结构：
 
 ![hierarchy_layout_coord](/assets/images/cuda/20250226/cute_layout/coord_visit_1.jpg)
 
-### 3.4. slice 操作
+```cpp
+auto row_coord = make_coord(1, 3);          // 内层行=1, 外层行=3
+auto col_coord = make_coord(2, 4);          // 内层列=2, 外层列=4
+auto coord = make_coord(row_coord, col_coord);
+auto val = layout(coord);
+```
 
-CuTe 提供了 slice 函数，使用 UnderScore `cute::_`，用于获取指定维度的子 layout。如下图所示：
+Slice 操作使用 `cute::_`（类似 Python 的 `:`）保留某个维度的所有元素：
 
 ![hierarchy_layout_slice](/assets/images/cuda/20250226/cute_layout/cute_slice_01.jpg)
-
-使用方式如下：
 
 ```cpp
 auto layout = make_layout(
@@ -290,28 +243,25 @@ auto layout = make_layout(
     make_stride(make_stride(3, 6), make_stride(1, 24))
 );
 
-auto row_coord = make_coord(1, 1);
-auto col_coord = make_coord(cute::_, cute::_);
-auto coord = make_coord(row_coord, col_coord); // 获取子块 B
+auto row_coord = make_coord(1, 1);              // 固定行坐标
+auto col_coord = make_coord(cute::_, cute::_);  // 保留所有列
+auto coord = make_coord(row_coord, col_coord);   // 获取子块 B
 auto sub_layout = cute::slice(coord, layout);
 ```
 
-## 4. Layout compatibility 以及 coordinate 转换
+## 4. Layout 的三种坐标空间
 
-一个 layout，都有三个坐标空间，即不同的索引方式：
+每个 Layout 天然拥有三套坐标系统：
 
-- 1-D
-- R-D：rank-D，即多维索引方式。
-- h-D：hierarchy-D，即层级化索引方式，也叫 natural 方式。
+- **1-D 坐标**：单个整数
+- **R-D 坐标**：rank 维坐标（如 2D layout 的 `(m,n)`）
+- **h-D 坐标**：层级坐标（自然坐标，与 Shape 的嵌套结构一致）
 
-转换的原则是 layout 兼容，即 layout compatible。当其 shape 兼容另一个 layout 的 shape 时，两个 layout 兼容。对于 compatible 的 layout，可以进行 coordinate 转换。兼容的条件：
+这三种坐标可以互相转换，前提是 **Shape 兼容**（size 相等且定义域相互包含）。
 
-- size(layout1) == size(layout2)
-- layout1 中的所有坐标都可以用作 layout2 的坐标，即 layout1 的定义域包含于 layout2 的定义域。
+### 4.1. colexicographical order 坐标转换
 
-### 4.1. 坐标转换
-
-Cute 使用余字典序（colexicographical order）对输入坐标转换为 natural 坐标，即左侧的维度（轴）变化更快。以 shape(3, (2, 3)) 为例：
+CuTe 使用 **colexicographical order**（余字典序，从右往左变化更快）进行坐标映射。以 shape `(3,(2,3))` 为例：
 
 | 1-D | 2-D     | Natural     |     | 1-D  | 2-D     | Natural     |
 | --- | ------- | ----------- | --- | ---- | ------- | ----------- |
@@ -325,33 +275,24 @@ Cute 使用余字典序（colexicographical order）对输入坐标转换为 nat
 | `7` | `(1,2)` | `(1,(0,1))` |     | `16` | `(1,5)` | `(1,(1,2))` |
 | `8` | `(2,2)` | `(2,(0,1))` |     | `17` | `(2,5)` | `(2,(1,2))` |
 
-其转换方法为：**对整数做从左到右的逐级取模和除法**：
+转换算法：**从左到右逐级取模和除法**。
 
-以二维 layout (M，N) 为例，从 1-D 转换到 2-D 的方法如下：
+以 shape `(M, N)` 从 1-D 转到 2-D 为例：
 
 ```text
 coord = (index % M, (index / M) % N)
 ```
 
-以三维 layout (M, (N, K)) 为例，从 1-D 转换到 h-D 的方法如下：
+以 shape `(M, (N, K))` 从 1-D 转到 h-D 为例：
 
 ```text
-coord = (index % M, ((index / M) % N, (index / (M*N)) % K))
+index = 7，M=3：
+  mode_0 = 7 % 3 = 1， 7 / 3 = 2
+  mode_1 = (2 % 2 = 0， 2 / 2 = 1 % 3 = 1)
+  → (1, (0, 1))
 ```
 
-三维 index -> coord 具体示例：
-
-```text
-i = 7 为例：
-  第一维大小 = 3:   7 % 3 = 1,  7 / 3 = 2
-  第二维是 (2,3)：
-    子维度大小 = 2:  2 % 2 = 0,  2 / 2 = 1
-    子维度大小 = 3:  1 % 3 = 1
-
-结果: (1, (0, 1))
-```
-
-使用 cute::idx2crd(idx, shape) 转换的时候，就是使用 colex order 来进行转换的：
+坐标转换流程：
 
 ```text
         idx2crd                          crd2idx
@@ -361,7 +302,7 @@ i = 7 为例：
 R-D ──────────→──────┘
 ```
 
-转换示例：
+C++ 示例：
 
 ```cpp
 auto shape = Shape<_3,Shape<_2,_3>>{};
@@ -373,39 +314,15 @@ print(idx2crd(make_coord(   1,make_coord(1,   2)), shape));  // (1,(1,2))
 print(idx2crd(make_coord(_1{},make_coord(1,_2{})), shape));  // (_1,(1,_2))
 ```
 
-> 对一个 layout，使用这三种坐标索引方式，无论使用哪种坐标去调用 layout(...)，只要指的是同一个逻辑位置，得到的 index 完全相同。
+可以看到无论用哪种坐标输入 `idx2crd`，只要指的是同一个逻辑位置，得到的 natural 坐标都等价。
 
-> cute::Layout 提供两种映射。从输入坐标转换为 natural 坐标时，与 stride无关。使用 layout 映射计算得到 index 时，则需要使用各维度的 stride。总结如下表：
+> 坐标转换只依赖 Shape，不依赖 Stride。而调用 `layout(coord)` 计算 index 时才需要 Stride：
 
-| 操作                               | 依赖 Shape | 依赖 Stride |
-| ---------------------------------- | ---------- | ----------- |
-| 1-D ↔ R-D ↔ h-D 坐标转换 (idx2crd) | ✅         | ❌          |
-| 坐标兼容性判断 (compatibility)     | ✅         | ❌          |
-| 坐标 → 内存 index (crd2idx)        | ✅         | ✅          |
-
-### 4.2. LayoutLeft 和 LayoutRight
-
-使用 cute::make_layout 创建一个 layout 时，如果不指定 stride，则使用 LayoutLeft 的方式生成 stride，即紧凑列主序：
-
-```cpp
-Layout s2xh4 = make_layout(make_shape(2, make_shape(2, 2)), make_stride(4, make_stride(2, 1)));
-Layout s2xh4_col = make_layout(shape(s2xh4), LayoutLeft{});
-print_layout(s2xh4_col);
-```
-
-打印 layout 如下：
-
-```text
-(2,(2,2)):(_1,(2,4))
-      0   1   2   3
-    +---+---+---+---+
- 0  | 0 | 2 | 4 | 6 |
-    +---+---+---+---+
- 1  | 1 | 3 | 5 | 7 |
-    +---+---+---+---+
-```
-
-> LayoutLeft、colexicographical order、column-major 都是指同一种布局方式，即列主序。
+| 操作                                             | 依赖 Shape | 依赖 Stride |
+| ------------------------------------------------ | ---------- | ----------- |
+| 1-D ↔ R-D ↔ h-D 坐标转换（`idx2crd`）            | ✅         | ❌          |
+| 坐标兼容性判断（compatibility）                  | ✅         | ❌          |
+| 坐标 → 内存 index（`crd2idx` / `layout(coord)`） | ✅         | ✅          |
 
 ## A. 参考及资料
 
@@ -413,8 +330,8 @@ print_layout(s2xh4_col);
 - [Yifan Yang (杨轶凡) -- CuTe Layout and Tensor](https://yang-yifan.github.io/blogs/cute_layout/cute_layout.html)
 - [CUTLASS CUTE 1 Layout Algebra](https://declk.github.io/blog/CUDA/CUTLASS%20CUTE%201%20Layout%20Algebra.html)
 - [01_layout.md](https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/01_layout.md)：CUTLASS/CuTe 官方文档
-- [CuTe-Copy for GPUMode PPT](/assets/pdf/cuda/CuTe-Copy_for_GPUMode_PPT.pdf)：NVIDIA 官方 PPT，**待学习**
-- [CUTLASS: A CUDA C++ Template Library for Accelerating Deep Learning](https://www.youtube.com/watch?v=PWWOGrLZtZg&t=534s) ：YouTube 视频，介绍 CUTLASS/CuTe 的 Layout 和 Tensor 概念。
+- [CuTe-Copy for GPUMode PPT](/assets/pdf/cuda/CuTe-Copy_for_GPUMode_PPT.pdf)：NVIDIA 官方 PPT
+- [CUTLASS: A CUDA C++ Template Library for Accelerating Deep Learning](https://www.youtube.com/watch?v=PWWOGrLZtZg&t=534s)：YouTube 视频
 
 ### A.1. 更多学习资料
 
