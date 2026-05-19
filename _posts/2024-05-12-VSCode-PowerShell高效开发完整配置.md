@@ -176,20 +176,26 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 ## 附：完整 Profile 示例
 
 ```powershell
-# git 别名函数（必须在 Import-Module posh-git 之前定义，以便 Tab 补全识别）
-function gl {
-    git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-}
+# git 别名函数需在 Import-Module posh-git 之前定义，以便 posh-git Tab 补全识别
+# git log 图形视图
+function gl { git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit }
+
+# git status 简洁视图
 function g { git status -sb }
 
 Import-Module posh-git
+# 若同时使用 oh-my-posh，需开启此变量以让 oh-my-posh 读取 posh-git 状态
+$env:POSH_GIT_ENABLED = $true
 
-# oh-my-posh 主题
-oh-my-posh init pwsh --config 'C:\Users\Administrator\AppData\Local\Programs\oh-my-posh\themes\hotstick.minimal.omp.json' | Invoke-Expression
+Import-Module PSReadLine
 
-# PSReadLine 历史记录与补全设置
+# 设置预测文本来源为历史记录
 Set-PSReadLineOption -PredictionSource History
+
+# Tab 键显示可选补全菜单
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+
+# 上下方向键：按已输入前缀搜索历史记录，并将光标移至行尾
 Set-PSReadLineKeyHandler -Key UpArrow -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::HistorySearchBackward()
     [Microsoft.PowerShell.PSConsoleReadLine]::EndOfLine()
@@ -199,7 +205,8 @@ Set-PSReadLineKeyHandler -Key DownArrow -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::EndOfLine()
 }
 
-# UTF-8 编码
+# 设置 PowerShell 输出编码为 UTF-8，还需要将字体改为支持 Box-drawing 的字体
+# 比如 Cascadia Code、Consolas。新宋体这种点阵字体不行。
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 ```
