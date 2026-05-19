@@ -1596,26 +1596,15 @@ ninja.data = [{
             window.location.href = "/blog/2024/VSCode%E6%8F%92%E4%BB%B6%E6%B8%85%E5%8D%95/";
           
         },
-      },{id: "post-vscode-开发-使能powershell-git自动完成",
+      },{id: "post-vscode-开发-powershell-高效开发完整配置",
         
-          title: "VSCode 开发，使能PowerShell Git自动完成",
+          title: "VSCode 开发，PowerShell 高效开发完整配置",
         
-        description: "准备配置 VSCode 使用 PowerShell7VSCode快捷键打开用户配置文件(Json)：ctrl+shift+p，输入open user settings，选择打开settings.json文件。添加以下内容：&quot;terminal.integrated.profiles.windows&quot;: { &quot;PowerShell&quot;: { &quot;source&quot;: &quot;PowerShell7&quot;, &quot;icon&quot;: &quot;terminal-powershell&quot; }, &quot;Command Prompt&quot;: { &quot;path&quot;: [ &quot;${env:windir}\\Sysnative\\cmd.exe&quot;, &quot;${env:windir}\\System32\\cmd.exe&quot; ], &quot;args&quot;: [], &quot;icon&quot;: &quot;terminal-cmd&quot; }, &quot;Git Bash&quot;: { &quot;source&quot;: &quot;Git Bash&quot; }, &quot;PowerShell7&quot;: { &quot;path&quot;: &quot;C:\\Program Files\\PowerShell\\7\\pwsh.exe&quot;, &quot;args&quot;: [], &quot;icon&quot;: &quot;terminal-powershell&quot; }},&quot;terminal.integrated.defaultProfile.windows&quot;: &quot;PowerShell7&quot;,下载 posh-git需要使用 posh-git。首先确定PowerShell版本（在安装PowerShell 7之后，vscode默认使用的是PowerShell 7）：$PSVersionTable.PSVersion安装 posh-git脚本执行策略必须设置为 RemoteSigned 或 Unlimited，需要以管理员身份在powershell中执行以下语句Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Confirm然后安装posh-git模块：Install-Module PowershellGet -Force# A...",
+        description: "1. 配置 VSCode 使用 PowerShell 7VSCode 快捷键打开用户配置文件 (Json)：Ctrl+Shift+P，输入 open user settings，选择打开 settings.json 文件，添加以下内容：&quot;terminal.integrated.profiles.windows&quot;: { &quot;PowerShell7&quot;: { &quot;path&quot;: &quot;C:\\Program Files\\PowerShell\\7\\pwsh.exe&quot;, &quot;args&quot;: [], &quot;icon&quot;: &quot;terminal-powershell&quot; }, &quot;Command Prompt&quot;: { &quot;path&quot;: [ &quot;${env:windir}\\Sysnative\\cmd.exe&quot;, &quot;${env:windir}\\System32\\cmd.exe&quot; ], &quot;args&quot;: [], &quot;icon&quot;: &quot;terminal-cmd&quot; }, &quot;Git Bash&quot;: { &quot;source&quot;: &quot;Git Bash&quot; }},&quot;terminal.integrated.defaultProfile.windows&quot;: &quot;PowerShell7&quot;,2. PowerShell 执行策略设置Windows 默认不允许自动运行脚本，需要以管理员身份执行：Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Confirm3. 安装 posh-gitposh-git 为 PowerShell 提供 Git 状态信息（branch、暂存区、工作区变更数量等），并支持 Git...",
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2024/VSCode%E4%BD%BF%E8%83%BDPowerShell-Git%E8%87%AA%E5%8A%A8%E5%AE%8C%E6%88%90/";
-          
-        },
-      },{id: "post-vscode-开发-powershell-高效操作设置",
-        
-          title: "VSCode 开发，PowerShell 高效操作设置",
-        
-        description: "1. PowerShell 清屏快捷键设置由于 VSCode Windows 开发使用 cls 命令不能执行清屏操作（仅仅是滚动SCREEN缓冲区），所以使用快捷键代替清屏操作。VSCode 中，Ctrl + Shift + p 打开设置，搜索 Terminal: Clear，找到 Terminal: Clear，将快捷键设置为 Ctrl + l。PowerShell alias 设置前提：Windows 系统为了防止恶意脚本自动执行，故默认不允许自动运行脚本。需要以管理员身份，在 PowerShell 中执行：Set-ExecutionPolicy RemoteSigned打开 PowerShell 终端，输入 notepad $profile，打开 PowerShell 启动配置文件。在配置文件中添加以下内容：# git log 别名function gl { git log --color --graph --pretty=format:&#39;%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&amp;lt;%an&amp;gt;%Creset&#39; --abbrev-commit }# git status 别名function g { git status -sb }2. Poewrshell...",
-        section: "Posts",
-        handler: () => {
-          
-            window.location.href = "/blog/2024/VSCode-PowerShell%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E8%AE%BE%E7%BD%AE/";
+            window.location.href = "/blog/2024/VSCode-PowerShell%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE/";
           
         },
       },{id: "post-qt-笔记及开源库收集",
