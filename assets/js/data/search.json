@@ -798,7 +798,7 @@
     "categories": "Git",
     "tags": "Git",
     "date": "2024-09-14",
-    "content": "GitHub Proxy 加速 GitHub Proxy使用清华镜像加速：git config --global url.\"https://mirrors.tuna.tsinghua.edu.cn/git/\".insteadOf https://github.com/使用GitClone加速：# 方法一(替换URL)git clone https://gitclone.com/github.com/tendermint/tendermint.git# 方法二(设置git参数)git config --global url.\"https://gitclone.com/\".insteadOf https://git clone https://github.com/tendermint/tendermint.git"
+    "content": "GitHub Proxy 加速 GitHub Proxy GitHub 加速链接转换使用清华镜像加速：git config --global url.\"https://mirrors.tuna.tsinghua.edu.cn/git/\".insteadOf https://github.com/使用GitClone加速：# 方法一(替换URL)git clone https://gitclone.com/github.com/tendermint/tendermint.git# 方法二(设置git参数)git config --global url.\"https://gitclone.com/\".insteadOf https://git clone https://github.com/tendermint/tendermint.git"
   },
   
   {

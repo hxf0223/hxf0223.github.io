@@ -995,7 +995,7 @@ ninja.data = [{
         
           title: "Git加速资源",
         
-        description: "GitHub Proxy 加速  GitHub Proxy使用清华镜像加速：git config --global url.&quot;https://mirrors.tuna.tsinghua.edu.cn/git/&quot;.insteadOf https://github.com/使用GitClone加速：# 方法一(替换URL)git clone https://gitclone.com/github.com/tendermint/tendermint.git# 方法二(设置git参数)git config --global url.&quot;https://gitclone.com/&quot;.insteadOf https://git clone https://github.com/tendermint/tendermint.git",
+        description: "GitHub Proxy 加速  GitHub Proxy  GitHub 加速链接转换使用清华镜像加速：git config --global url.&quot;https://mirrors.tuna.tsinghua.edu.cn/git/&quot;.insteadOf https://github.com/使用GitClone加速：# 方法一(替换URL)git clone https://gitclone.com/github.com/tendermint/tendermint.git# 方法二(设置git参数)git config --global url.&quot;https://gitclone.com/&quot;.insteadOf https://git clone https://github.com/tendermint/tendermint.git",
         section: "Posts",
         handler: () => {
           
