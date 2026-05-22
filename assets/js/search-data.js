@@ -1750,17 +1750,6 @@ ninja.data = [{
             window.location.href = "/blog/2023/install-qt5-on-ubuntu-windows/";
           
         },
-      },{id: "post-ubuntu-安装vncserver及使用",
-        
-          title: "Ubuntu 安装VNCServer及使用",
-        
-        description: "1. 安装sudo apt-get install gnome-panelsudo apt-get install tightvncserver# 创建端口vncserver :1 -geometry 1920x1000 -depth 24# 关闭端口vncserver -kill :1# 重新设置密码vncpasswd# 重启vncservervncserver :1# 重启vncserver方式2vncserver -geometry 1920x1080 :1# 查看vncserver logtail -f ~/.vnc/log_name.log编辑配置文件 .vnc/xstartup#!/bin/shunset SESSION_MANAGERunset DBUS_SESSION_BUS_ADDRESSexport XKL_XMODMAP_DISABLE=1export XDG_CURRENT_DESKTOP=&quot;GNOME-Flashback:GNOME&quot;export XDG_MENU_PREFIX=&quot;gnome-flashback-&quot;[ -x /etc/vnc/xstartup ] &amp;amp;&amp;amp; exec /etc/vnc/xstartup[ -r $HOME/.Xresources ] &amp;amp;&amp;amp; xrdb $HOME/.Xresourcesxsetroot -solid greyvncconfig -iconic &amp;amp;#gnome-terminal &amp;amp;#nautilus &amp;amp;gnome-session --session=gnome-flashback-metacity --disable-acceleration-check &amp;amp;",
-        section: "Posts",
-        handler: () => {
-          
-            window.location.href = "/blog/2023/Ubuntu-install-VNCServer/";
-          
-        },
       },{id: "post-从makefile创建compile-commands-json",
         
           title: "从Makefile创建compile_commands.json",
@@ -1825,6 +1814,17 @@ ninja.data = [{
         handler: () => {
           
             window.location.href = "/blog/2023/bash-args-and-special-symbols/";
+          
+        },
+      },{id: "post-ubuntu安装intel-gpu驱动",
+        
+          title: "Ubuntu安装Intel GPU驱动",
+        
+        description: "安装命令：sudo apt install intel-media-va-driver vainfo mesa-utils# 添加用户组sudo usermod -aG render,video hxf0223安装完成后，使用vainfo命令检查是否正确安装：# tty需要加上--display drm参数，否则会提示无法打开显示设备(无桌面会话)vainfo --display drm --device /dev/dri/renderD128顺便安装上FFmpeg：sudo apt install libv4l-dev v4l-utilssudo apt install mesa-common-devsudo apt install ffmpeg libavfilter-dev libavdevice-dev libavutil-dev libavformat-dev libswresample-dev libswscale-dev  FFmpeg tutorials：github上的FFmpeg教程，包含了很多使用FFmpeg的示例代码，可以参考学习。",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Ubuntu%E5%AE%89%E8%A3%85Intel-GPU%E9%A9%B1%E5%8A%A8/";
           
         },
       },{id: "post-ubuntu-安装-occt",

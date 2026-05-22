@@ -1414,15 +1414,6 @@
   },
   
   {
-    "title": "Ubuntu 安装VNCServer及使用",
-    "url": "/blog/2023/Ubuntu-install-VNCServer/",
-    "categories": "Linux",
-    "tags": "Linux",
-    "date": "2023-06-05",
-    "content": "1. 安装sudo apt-get install gnome-panelsudo apt-get install tightvncserver# 创建端口vncserver :1 -geometry 1920x1000 -depth 24# 关闭端口vncserver -kill :1# 重新设置密码vncpasswd# 重启vncservervncserver :1# 重启vncserver方式2vncserver -geometry 1920x1080 :1# 查看vncserver logtail -f ~/.vnc/log_name.log编辑配置文件 .vnc/xstartup#!/bin/shunset SESSION_MANAGERunset DBUS_SESSION_BUS_ADDRESSexport XKL_XMODMAP_DISABLE=1export XDG_CURRENT_DESKTOP=\"GNOME-Flashback:GNOME\"export XDG_MENU_PREFIX=\"gnome-flashback-\"[ -x /etc/vnc/xstartup ] \u0026amp;\u0026amp; exec /etc/vnc/xstartup[ -r $HOME/.Xresources ] \u0026amp;\u0026amp; xrdb $HOME/.Xresourcesxsetroot -solid greyvncconfig -iconic \u0026amp;#gnome-terminal \u0026amp;#nautilus \u0026amp;gnome-session --session=gnome-flashback-metacity --disable-acceleration-check \u0026amp;"
-  },
-  
-  {
     "title": "从Makefile创建compile_commands.json",
     "url": "/blog/2023/Create_CompileDB_from_Makefile/",
     "categories": "Bash",
@@ -1474,6 +1465,15 @@
     "tags": "Bash, Shell",
     "date": "2023-05-24",
     "content": "Shell 特殊参数解释首先来看几个特殊变量：$0, $#, $*, $@, $?, $$, $_#!/bin/bashecho $0 # 当前脚本的文件名（间接运行时还包括绝对路径）。echo $n # 传递给脚本或函数的参数。n 是一个数字，表示第几个参数。例如，第一个参数是 $1 。echo $# # 传递给脚本或函数的参数个数。echo $* # 传递给脚本或函数的所有参数。echo $@ # 传递给脚本或函数的所有参数。被双引号 (\" \") 包含时，与 $* 不同，下面将会讲到。echo $? # 上个命令的退出状态，或函数的返回值。echo $$ # 当前 Shell 进程 ID。对于 Shell 脚本，就是这些脚本所在的进程 ID。echo $_ # 上一个命令的最后一个参数echo $! # 后台运行的最后一个进程的 ID 号执行结果如下：$ ./test.sh test test1 test2 test3 test4./test.sh # $0 # $n5 # $#test test1 test2 test3 test4 # $*test test1 test2 test3 test4 # $@0 # $?12305 # $$12305 # $_ # $!参数中的双引号$* 和 $@ 都表示传递给函数或脚本的所有参数，不被双引号 (“”) 包含时，都以 $1\"\"$2\" … \"$n 的形式输出所有参数。但是当它们被双引号 (“”) 包含时，\"$*\" 会将所有的参数作为一个整体，以 $1 $2 … $n 的形式输出所有参数；$@ 会将各个参数分开，以 \"$1\"\"$2\" … \"$n\" 的形式输出所有参数。传递参数方式一采用 $0, $1, $2 … 等方式获取脚本命令行传入的参数，值得注意的是，$0 获取到的是脚本路径以及脚本名，后面按顺序获取参数，当参数超过10个时(包括10个)，需要使用${10}, ${11}….才能获取到参数。#!/bin/bashecho \"脚本$0\"echo \"第一个参数$1\"echo \"第二个参数$2\"运行结果：$ ./test.sh 1 2#shell中将会输出：脚本./test.sh第一个参数1第二个参数2"
+  },
+  
+  {
+    "title": "Ubuntu安装Intel GPU驱动",
+    "url": "/blog/2023/Ubuntu%E5%AE%89%E8%A3%85Intel-GPU%E9%A9%B1%E5%8A%A8/",
+    "categories": "Linux, GPU",
+    "tags": "Ubuntu, Intel, GPU",
+    "date": "2023-05-24",
+    "content": "安装命令：sudo apt install intel-media-va-driver vainfo mesa-utils# 添加用户组sudo usermod -aG render,video hxf0223安装完成后，使用vainfo命令检查是否正确安装：# tty需要加上--display drm参数，否则会提示无法打开显示设备(无桌面会话)vainfo --display drm --device /dev/dri/renderD128顺便安装上FFmpeg：sudo apt install libv4l-dev v4l-utilssudo apt install mesa-common-devsudo apt install ffmpeg libavfilter-dev libavdevice-dev libavutil-dev libavformat-dev libswresample-dev libswscale-dev FFmpeg tutorials：github上的FFmpeg教程，包含了很多使用FFmpeg的示例代码，可以参考学习。"
   },
   
   {
