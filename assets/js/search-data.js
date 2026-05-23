@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/search/";
           },
-        },{id: "post-ai工具大全",
+        },{id: "post-在ubuntu上部署openmaic",
+        
+          title: "在Ubuntu上部署OpenMAIC",
+        
+        description: "1. 安装WSL2使用管理员启动PowerShell，执行启用WSL2：# 启用WSL功能：/all -- 所有用户启用，/norestart -- 不重启系统dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart# WSL2 依赖 Windows 虚拟机功能，需要额外启用dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart# 将WSL2设为默认WSLwsl --set-default-version 2执行完成之后，重启win10/win11。接下来在WSL2中安装Ubuntu系统。# 查看可用的WSL发行版本wsl --list --online# 安装过程中，在用户目录下如果有.wslconfig引起的错误，可用直接上这个配置文件# 安装过程中，会提示输入用户名和密码，输入完成之后就安装完成了wsl --install -d Ubuntu-26.04 --location D:\WSL\Ubuntu-26.04验证命令如下：# 退出 WSLwsl --shutdown# 验证安装wsl -l -v启动命令：wsl -d Ubuntu-26.04删除命令如下：wsl --unregister Ubuntu-26.04Remove-Item -Recurse -Force &quot;D:\WSL\Ubuntu-26.04&quot;资料: WSL2 完全指南：在 Windows 上安装和使用 Linux 的终极教程2. 安装Nodejs以及pnpm需要安装Node.js和pnpm，安装命令如下：# 可以使用nvm在本地安装Node.js以及npm，并选择Node.js/npm 的版本# nvm是一个Node.js版本管理工具：https://github.com/nvm-sh/nvmcurl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh |...",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/OpenMAIC%E9%83%A8%E7%BD%B2/";
+          
+        },
+      },{id: "post-ai工具大全",
         
           title: "AI工具大全",
         
