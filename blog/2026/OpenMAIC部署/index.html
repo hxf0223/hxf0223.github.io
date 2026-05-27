@@ -43,7 +43,30 @@ Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 </code></pre></div></div> <p>安装必要的软件：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> git cmake build-essential wget unzip vim htop
 <span class="nb">sudo </span>apt <span class="nb">install </span>python3 python3-pip <span class="nt">-y</span>
-</code></pre></div></div> <p>资料:</p> <ul> <li> <a href="https://www.tinyash.com/blog/wsl2/" rel="external nofollow noopener" target="_blank">WSL2 完全指南：在 Windows 上安装和使用 Linux 的终极教程</a>：备注：不要参考文中关于docker的安装部分</li> <li><a href="https://www.58jb.com/ubuntu26-04-mirrors-sources/" rel="external nofollow noopener" target="_blank">Ubuntu26.04 可以稳定使用的国内源</a></li> </ul> <h2 id="2-安装nodejs以及pnpm">2. 安装Nodejs以及pnpm</h2> <p>需要安装<code class="language-plaintext highlighter-rouge">Node.js</code>和<code class="language-plaintext highlighter-rouge">pnpm</code>，并更换源，命令如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 可以使用nvm在本地安装Node.js以及npm，并选择Node.js/npm 的版本</span>
+</code></pre></div></div> <p>资料:</p> <ul> <li> <a href="https://www.tinyash.com/blog/wsl2/" rel="external nofollow noopener" target="_blank">WSL2 完全指南：在 Windows 上安装和使用 Linux 的终极教程</a>：备注：不要参考文中关于docker的安装部分</li> <li><a href="https://www.58jb.com/ubuntu26-04-mirrors-sources/" rel="external nofollow noopener" target="_blank">Ubuntu26.04 可以稳定使用的国内源</a></li> </ul> <h3 id="12-wsl清理及备份">1.2. WSL清理及备份</h3> <p>首先查看Ubuntu占用空间分配情况：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>usdo apt <span class="nb">install</span> <span class="nt">-y</span> ncdu
+<span class="nb">sudo </span>ncdu <span class="nt">--exclude</span><span class="o">=</span><span class="s2">"mnt*"</span> <span class="nt">--exclude</span><span class="o">=</span><span class="s2">"proc*"</span> /
+
+<span class="c">#####################</span>
+<span class="c"># docker 清理</span>
+docker volume prune <span class="c"># 清理 无用的volumes</span>
+docker system prune <span class="c"># 删除无用的镜像和容器及构建缓存</span>
+
+<span class="c"># 删除不必要的docker</span>
+docker images
+docker rmi xxx
+</code></pre></div></div> <p>执行WSL压缩（在windows/powrshell环境下）：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wsl <span class="nt">--shutdown</span>
+diskpart
+
+DISKPART&gt; <span class="k">select </span>vdisk <span class="nv">file</span><span class="o">=</span><span class="s2">"D:</span><span class="se">\W</span><span class="s2">SL</span><span class="se">\U</span><span class="s2">buntu-26.04</span><span class="se">\e</span><span class="s2">xt4.vhdx"</span>
+DISKPART&gt; compact vdisk
+DISKPART&gt; detach vdisk
+<span class="c"># 退回到Powershell环境</span>
+</code></pre></div></div> <p>备份及恢复命令：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 备份指定系统到指定位置</span>
+wsl <span class="nt">--export</span> Ubuntu-26.04 D:<span class="se">\U</span>buntu-26.04.tar
+
+<span class="c"># 还原指定系统</span>
+wsl <span class="nt">--import</span> Ubuntu-26.04 D:<span class="se">\U</span>buntu-26.04.tar
+</code></pre></div></div> <h2 id="2-安装nodejs以及pnpm">2. 安装Nodejs以及pnpm</h2> <p>需要安装<code class="language-plaintext highlighter-rouge">Node.js</code>和<code class="language-plaintext highlighter-rouge">pnpm</code>，并更换源，命令如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 可以使用nvm在本地安装Node.js以及npm，并选择Node.js/npm 的版本</span>
 <span class="c"># nvm是一个Node.js版本管理工具：https://github.com/nvm-sh/nvm</span>
 curl <span class="nt">-o-</span> https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 nvm <span class="nb">install </span>24 <span class="c"># 安装Node.js 24版本</span>
@@ -130,7 +153,7 @@ curl <span class="nt">-fsSL</span> https://nvidia.github.io/libnvidia-container/
 
 docker run <span class="nt">--rm</span> <span class="nt">--gpus</span><span class="o">=</span>all <span class="nt">-v</span> ~/mineru/pdfs:/data/pdfs <span class="nt">-v</span> ~/mineru/output:/data/output mineru:latest mineru <span class="nt">-p</span> /data/pdfs/demo1.pdf <span class="nt">-o</span> /data/output
 </code></pre></div></div> <p>其中：</p> <ul> <li> <code class="language-plaintext highlighter-rouge">-v ~/mineru/pdfs:/data/pdfs</code> 将本地的pdfs目录挂载到容器的/data/pdfs目录，<code class="language-plaintext highlighter-rouge">-v ~/mineru/output:/data/output</code> 将本地的output目录挂载到容器的/data/output目录。</li> <li> <code class="language-plaintext highlighter-rouge">mineru -p /data/pdfs/demo1.pdf -o /data/output</code> 是在容器中运行MinerU命令，指定输入pdf文件和输出目录。</li> <li> <code class="language-plaintext highlighter-rouge">-p</code>、<code class="language-plaintext highlighter-rouge">-o</code>两个参数，表示运行一次MinerU，处理一个pdf文件，输出结果到指定目录。随后就退出了，导致docker容器也随之退出。</li> <li> <code class="language-plaintext highlighter-rouge">--gpus=all</code>去掉这个参数，则使用CPU进行计算，速度会非常慢。</li> <li>使用<code class="language-plaintext highlighter-rouge">docker images</code>命令可以查看本地的docker镜像列表，确认是否成功构建了mineru:latest镜像。</li> </ul> <p>MinerU的另外一种方式：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> <span class="nt">--name</span> mineru <span class="nt">--gpus</span><span class="o">=</span>all mineru:latest /bin/bash
-</code></pre></div></div> <p>这种方式，会在容器中启动一个交互式的bash终端，用户可以在这个终端中执行MinerU命令，处理多个pdf文件，输出结果到指定目录。用户可以在这个交互式终端中执行多次MinerU命令，处理多个pdf文件，输出结果到指定目录。用户处理完成之后，可以输入<code class="language-plaintext highlighter-rouge">exit</code>命令退出交互式终端，随之docker容器也会退出。</p> <p>MinerU还提供web方式访问，使用<code class="language-plaintext highlighter-rouge">Gradio Web</code>进行部署，见参考博客。</p> <ul> <li> <a href="https://www.cnblogs.com/yejinxing/p/19888832" rel="external nofollow noopener" target="_blank">MinerU 安装部署完全指南：CPU、GPU、Docker 保姆级教程</a>：参考 五、Docker 部署</li> </ul> <h3 id="41-docker-compose-服务">4.1. Docker compose 服务</h3> <p>在生产环境下，使用docker compose部署服务会更方便，运行命令如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># CDN加速下载compose.yaml文件，避免下载失败</span>
+</code></pre></div></div> <p>这种方式，会在容器中启动一个交互式的bash终端，用户可以在这个终端中执行MinerU命令，处理多个pdf文件，输出结果到指定目录。用户可以在这个交互式终端中执行多次MinerU命令，处理多个pdf文件，输出结果到指定目录。用户处理完成之后，可以输入<code class="language-plaintext highlighter-rouge">exit</code>命令退出交互式终端，随之docker容器也会退出。</p> <p>MinerU还提供web方式访问，使用<code class="language-plaintext highlighter-rouge">Gradio Web</code>进行部署，见参考博客。</p> <ul> <li> <a href="https://www.cnblogs.com/yejinxing/p/19888832" rel="external nofollow noopener" target="_blank">MinerU 安装部署完全指南：CPU、GPU、Docker 保姆级教程</a>：参考 五、Docker 部署</li> </ul> <blockquote> <p>使用如上命令运行docker+MinerU，构建镜像的Dockerfile文件中，是使用pip安装的方式安装MinerU的依赖包，与本地代码没有关系，即不会部署本地代码。</p> </blockquote> <h3 id="41-docker-compose-服务">4.1. Docker compose 服务</h3> <p>在生产环境下，使用docker compose部署服务会更方便，运行命令如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># CDN加速下载compose.yaml文件，避免下载失败</span>
 <span class="c"># compose.yml文件中，是使能了GPU的配置</span>
 wget https://gcore.jsdelivr.net/gh/opendatalab/MinerU@master/docker/compose.yaml
 
