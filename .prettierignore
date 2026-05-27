@@ -17,3 +17,15 @@ sw.js
 assets/js/data/search.json
 # Ignore upstream files that conflict with prettier
 CUSTOMIZE.md
+**/*.pdf
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.webp
+**/*.svg
+**/*.avif
+**/*.ico
+**/*.bmp
+**/*.tif
+**/*.tiff

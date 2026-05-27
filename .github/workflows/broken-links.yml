@@ -6,37 +6,43 @@ on:
       - master
       - main
     paths:
+      - "_bibliography/**"
+      - "_books/**"
+      - "_data/**"
+      - "_includes/**"
+      - "_layouts/**"
+      - "_news/**"
+      - "_pages/**"
+      - "_posts/**"
+      - "_projects/**"
+      - "_teachings/**"
       - "assets/**"
-      - "**.html"
-      - "**.js"
-      - "**.liquid"
-      - "**/*.md"
-      - "**.yml"
-      - "!.github/workflows/axe.yml"
-      - "!.github/workflows/deploy-docker-tag.yml"
-      - "!.github/workflows/deploy-image.yml"
-      - "!.github/workflows/docker-slim.yml"
-      - "!.github/workflows/lighthouse-badger.yml"
-      - "!.github/workflows/prettier.yml"
-      - "!lighthouse_results/**"
+      - ".github/workflows/broken-links.yml"
+      - "_config.yml"
+      - "robots.txt"
   pull_request:
     branches:
       - master
       - main
     paths:
+      - "_bibliography/**"
+      - "_books/**"
+      - "_data/**"
+      - "_includes/**"
+      - "_layouts/**"
+      - "_news/**"
+      - "_pages/**"
+      - "_posts/**"
+      - "_projects/**"
+      - "_teachings/**"
       - "assets/**"
-      - "**.html"
-      - "**.js"
-      - "**.liquid"
-      - "**/*.md"
-      - "**.yml"
-      - "!.github/workflows/axe.yml"
-      - "!.github/workflows/deploy-docker-tag.yml"
-      - "!.github/workflows/deploy-image.yml"
-      - "!.github/workflows/docker-slim.yml"
-      - "!.github/workflows/lighthouse-badger.yml"
-      - "!.github/workflows/prettier.yml"
-      - "!lighthouse_results/**"
+      - ".github/workflows/broken-links.yml"
+      - "_config.yml"
+      - "robots.txt"
+
+concurrency:
+  group: links-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   link-checker:
