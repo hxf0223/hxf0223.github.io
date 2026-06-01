@@ -73,6 +73,10 @@ xterm xorg-server xinit font-util unifont-fonts
 在`cygwin`环境中安装pip包：
 
 ```bash
+# 确保pip已经安装并升级到最新版本
+python3 -m ensurepip --default-pip
+python3 -m pip install --upgrade pip
+
 pip install pymavlink pyserial empy==3.3.4 MAVProxy pexpect lxml
 ```
 
