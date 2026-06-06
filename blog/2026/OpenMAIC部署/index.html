@@ -189,6 +189,7 @@ docker compose <span class="nt">-f</span> compose.yaml <span class="nt">--profil
 </code></pre></div></div> <h3 id="43-mineru测试">4.3. MinerU　测试</h3> <p>如下测试命令，将 MinerU 返回的json结果保存到mineru_response.json文件中，并将响应头保存到mineru_headers.txt文件中：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl.exe <span class="nt">-F</span> <span class="s2">"files=@E:</span><span class="se">\义</span><span class="s2">务教育教科书·物理八年级全一册.pdf"</span> <span class="nt">-F</span> <span class="s2">"parse_method=auto"</span> <span class="nt">-F</span> <span class="s2">"backend=hybrid-auto-engine"</span> <span class="nt">-F</span> <span class="s2">"return_content_list=true"</span> <span class="nt">-F</span> <span class="s2">"return_images=true"</span> http://172.22.191.184:8000/file_parse <span class="nt">-o</span> mineru_response.json <span class="nt">--max-time</span> 1800 <span class="nt">-D</span> mineru_headers.txt <span class="nt">-sS</span>
 </code></pre></div></div> <h3 id="44-部分资料">4.4. 部分资料</h3> <ul> <li><a href="https://opendatalab.github.io/MinerU/zh/usage/" rel="external nofollow noopener" target="_blank">使用指南</a></li> <li><a href="https://github.com/opendatalab/MinerU/discussions/3956" rel="external nofollow noopener" target="_blank">issue mineru-vl-client 如何配置可用显存等参数呢</a></li> <li><a href="https://github.com/opendatalab/MinerU/issues/3945" rel="external nofollow noopener" target="_blank">issue vlm以及pipeline识别某pdf出现内存泄露占用大量内存导致进程被操作系统kill</a></li> </ul> <h2 id="5-部署及使用-openmaic">5. 部署及使用 OpenMAIC</h2> <p>docker部署、运行命令，以及清理命令如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 在OpenMAIC代码目录中</span>
 docker build <span class="nt">--no-cache</span> <span class="nt">-t</span> openmaic <span class="nb">.</span>
+<span class="c"># docker build --no-cache --build-arg APK_MIRROR=mirrors.aliyun.com --build-arg NPM_REGISTRY=https://registry.npmmirror.com -t openmaic .</span>
 docker run <span class="nt">--rm</span> <span class="nt">-p</span> 3000:3000 <span class="nt">--env-file</span> .env.local openmaic
 
 docker stop <span class="si">$(</span>docker ps <span class="nt">-q</span> <span class="nt">--filter</span> <span class="s2">"ancestor=openmaic"</span><span class="si">)</span> 2&gt;/dev/null
@@ -209,6 +210,10 @@ docker builder prune <span class="nt">-f</span>
 
 <span class="c1"># web search引擎的API Key</span>
 <span class="s">TAVILY_API_KEY=&lt;....&gt;</span>
+
+<span class="c1"># 配置Porxy</span>
+<span class="s">HTTP_PROXY=http://192.168.11.139:7890</span>
+<span class="s">HTTPS_PROXY=http://192.168.11.139:7890</span>
 
 <span class="c1"># 允许局域网访问，如localhost，192.168.x.x等</span>
 <span class="s">ALLOW_LOCAL_NETWORKS=true</span>
