@@ -317,3 +317,16 @@ df -hT /home/hxf0223    # 应该和上面一致
 ---
 
 **完成！** 现在你的 Jetson Orin AGX 已经把高速 M.2 SSD 用作系统额外存储、Docker 镜像/容器的默认存放位置，以及你个人的工作目录。后续拉取大型离线 LLM 模型、构建 Docker 镜像或进行其它 I/O 密集型工作都将享受到 SSD 的带宽和低延迟。祝使用愉快！如有其他细节需求（如单独挂接特定目录、使用 Btrfs/ZFS 等高级文件系统），随时告诉我.
+
+# CLI 条件下连接 WIFI
+
+```bash
+# 查看网卡列表
+nmcli device status
+
+# 扫描附近的WiFi网络
+nmcli device wifi list
+
+# 连接到指定的WiFi网络（替换SSID_NAME和WIFI_PASSWORD）
+sudo nmcli device wifi connect "SSID_NAME" password "WIFI_PASSWORD"
+```
