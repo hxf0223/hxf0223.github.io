@@ -445,7 +445,7 @@ ninja.data = [{
         
           title: "NVIDIA Jetson Orin AGX 安装",
         
-        description: "使用 Nvidia Jetson SDK Manager 安装 Jetson Orin AGX 系列设备的系统镜像。截止目前最新版为 6.2.2，系统镜像为 Ubuntu 22.04（SDK Manager 7.2 将升级到 Ubuntu 24.03）。安装完成之后，安装如下软件包：# 安装 Pythonsudo apt updatesudo apt install python3sudo apt install python3-pip# 安装 jtopsudo pip3 install -U pipsudo pip3 install jetson-statssudo apt install nvidia-jetpack查看已经安装的组件： git clone https://github.com/jetsonhacks/jetsonUtilities.git # python jetsonInfo.py软件包更新1. Ubuntu 22.04 更新安装 CMake 3.28wget https://github.com/Kitware/CMake/releases/download/v3.28.5/cmake-3.28.5-linux-aarch64.shchmod +x cmake-3.28.5-linux-aarch64.shsudo ./cmake-3.28.5-linux-aarch64.sh --prefix=/usr/local --skip-license2. 安装 GTestsudo apt...",
+        description: "使用 Nvidia Jetson SDK Manager 安装 Jetson Orin AGX 系列设备的系统镜像。截止目前最新版为 6.2.2，系统镜像为 Ubuntu 22.04（SDK Manager 7.2 将升级到 Ubuntu 24.03）。安装完成之后，安装如下软件包：# 安装 Pythonsudo apt updatesudo apt install python3sudo apt install python3-pip# 安装 jtopsudo pip3 install -U pipsudo pip3 install jetson-statssudo apt install nvidia-jetpack查看已经安装的组件： git clone https://github.com/jetsonhacks/jetsonUtilities.git # python jetsonInfo.py安装 GTest：sudo apt install libgtest-dev libgmock-devA. 资源A.1. 参考 NVIDIA Jetson Linux 36.4：官方资料页面，包含组件以及驱动源码下载列表 Nvidia Jetson AGX...",
         section: "Posts",
         handler: () => {
           
