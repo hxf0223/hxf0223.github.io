@@ -8,7 +8,7 @@
   },
   "[markdown]": {
     // Markdown Preview Enhanced
-    "editor.defaultFormatter": "shd101wyy.markdown-preview-enhanced"
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
   "markdown-preview-enhanced.enableEmojiSyntax": true, // 插件 BUG: 禁用 Emoji 语法
   // Formatter
