@@ -1585,6 +1585,17 @@ ninja.data = [{
             window.location.href = "/blog/2024/Topology-and-Geometry-in-Open-CASCADE/";
           
         },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "安装 Starship 并使能：curl -sS https://starship.rs/install.sh | sh# Bash导入eval &quot;$(starship init bash)&quot;添加配置文件，路径~/.config/starship.toml。备份文件starship.toml。官方文档：Starship 配置。",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E7%BB%88%E7%AB%AF%E7%BE%8E%E5%8C%96/";
+          
+        },
       },{id: "post-vscode-改用-mathjax-渲染数学公式",
         
           title: "VSCode 改用 MathJax 渲染数学公式",

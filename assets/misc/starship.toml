@@ -1,0 +1,89 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Single-line prompt: prefix info then cursor on same line (traditional bash style)
+format = """\
+$directory\
+$git_branch\
+$git_status\
+$character\
+"""
+
+add_newline = false
+
+# --- Directory: show only the current directory name ---
+[directory]
+format = "[ $path ]($style)"
+truncation_length = 1
+truncation_symbol = ""
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+# --- Git: branch + modification status only ---
+[git_branch]
+symbol = " "
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+format = '[$all_status$ahead_behind ]($style)'
+
+# --- Disable everything else ---
+[username]
+disabled = true
+
+[os]
+disabled = true
+
+[c]
+disabled = true
+
+[cpp]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[golang]
+disabled = true
+
+[gradle]
+disabled = true
+
+[haskell]
+disabled = true
+
+[java]
+disabled = true
+
+[julia]
+disabled = true
+
+[maven]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[bun]
+disabled = true
+
+[nim]
+disabled = true
+
+[rust]
+disabled = true
+
+[scala]
+disabled = true
+
+[time]
+disabled = true
