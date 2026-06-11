@@ -318,6 +318,252 @@ df -hT /home/hxf0223    # 应该和上面一致
 
 **完成！** 现在你的 Jetson Orin AGX 已经把高速 M.2 SSD 用作系统额外存储、Docker 镜像/容器的默认存放位置，以及你个人的工作目录。后续拉取大型离线 LLM 模型、构建 Docker 镜像或进行其它 I/O 密集型工作都将享受到 SSD 的带宽和低延迟。祝使用愉快！如有其他细节需求（如单独挂接特定目录、使用 Btrfs/ZFS 等高级文件系统），随时告诉我.
 
+---
+
+# 在 Jetson Orin AGX 上运行 Gemma 4 31B
+
+> **日期**: 2026-06-11  
+> **设备**: NVIDIA Jetson AGX Orin (64GB eMMC)  
+> **系统**: Ubuntu 24.04, JetPack 7.2-b187, CUDA 13.2
+
+## 环境概览
+
+| 组件                     | 版本/状态                 |
+| ------------------------ | ------------------------- |
+| JetPack                  | 7.2-b187 ✅               |
+| CUDA                     | 13.2 ✅                   |
+| nvidia-container-runtime | 1.19.1 ✅                 |
+| Docker                   | 已配置 NVIDIA runtime ✅  |
+| SSD                      | 916GB，挂载 `/mnt/ssd` ✅ |
+
+## Docker 补充配置
+
+在前面已配置 `data-root` 指向 SSD 的基础上，为支持 NVIDIA GPU 容器运行时和国内镜像加速，需补充以下设置。
+
+### `/etc/docker/daemon.json`
+
+```json
+{
+  "runtimes": {
+    "nvidia": {
+      "args": [],
+      "path": "nvidia-container-runtime"
+    }
+  },
+  "data-root": "/mnt/ssd/docker",
+  "max-concurrent-downloads": 6,
+  "registry-mirrors": ["https://docker.nju.edu.cn"]
+}
+```
+
+### `/etc/containerd/config.toml`（关键行）
+
+```toml
+root = "/mnt/ssd/containerd"
+state = "/mnt/ssd/containerd/state"
+```
+
+### 存储路径一览
+
+| 组件             | 存储路径               | 位置 |
+| ---------------- | ---------------------- | :--: |
+| Docker 镜像/容器 | `/mnt/ssd/docker`      | SSD  |
+| Containerd       | `/mnt/ssd/containerd`  | SSD  |
+| HuggingFace 缓存 | `/mnt/ssd/huggingface` | SSD  |
+| 模型下载         | `HF_HOME` 控制         | SSD  |
+
+## HuggingFace 环境变量
+
+写入 `~/.bashrc`：
+
+```bash
+export HF_HOME=/mnt/ssd/huggingface
+export HF_HUB_CACHE=/mnt/ssd/huggingface/hub
+export HF_ENDPOINT=https://hf-mirror.com
+```
+
+> **重要**: `huggingface.co` 在国内网络不可达，必须使用 `hf-mirror.com` 镜像。  
+> 旧的 `huggingface-cli` 已废弃，改用 `hf` 命令。
+
+## Docker 镜像的双标签问题
+
+```text
+IMAGE                                                   ID
+ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin           959f59339610
+ghcr.nju.edu.cn/nvidia-ai-iot/vllm:gemma4-jetson-orin   959f59339610
+```
+
+两个标签指向同一镜像（ID 相同），实际磁盘只占一份空间（31.2GB）。
+
+- `ghcr.nju.edu.cn/...` 是南大镜像站标签（用于 pull）
+- `ghcr.io/...` 是官方标签（容器内脚本引用此标签）
+- **两个标签都需要保留，不能删除任何一个**
+
+## 下载模型
+
+```bash
+# 使用 hf 工具从镜像站下载（约 20GB，需 1.5 小时）
+export HF_ENDPOINT=https://hf-mirror.com
+export HF_HOME=/mnt/ssd/huggingface
+hf download cyankiwi/gemma-4-31B-it-AWQ-4bit
+```
+
+模型文件位置：
+
+```text
+/mnt/ssd/huggingface/hub/models--cyankiwi--gemma-4-31B-it-AWQ-4bit/snapshots/853ac120bc4d1cd4aa7ae66a412f76a35c4aca4f/
+```
+
+## Docker 启动命令
+
+```bash
+sudo docker run -it --rm --pull always --name gemma4 --runtime=nvidia --network host \
+  -v /mnt/ssd/huggingface:/data/models/huggingface \
+  -e HF_ENDPOINT=https://hf-mirror.com \
+  ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin \
+  vllm serve cyankiwi/gemma-4-31B-it-AWQ-4bit \
+    --port 18000 \
+    --gpu-memory-utilization 0.70 \
+    --max-model-len 32768 \
+    --enable-auto-tool-choice \
+    --reasoning-parser gemma4 \
+    --tool-call-parser gemma4
+```
+
+### 各参数含义
+
+| 参数                                               | 含义                          |
+| -------------------------------------------------- | ----------------------------- |
+| `-it --rm`                                         | 交互式运行，退出自动删除容器  |
+| `--pull always`                                    | 每次都检查镜像更新            |
+| `--runtime=nvidia`                                 | 使用 NVIDIA 容器运行时        |
+| `--network host`                                   | 使用主机网络栈                |
+| `-v /mnt/ssd/huggingface:/data/models/huggingface` | 挂载 SSD 上的模型缓存到容器内 |
+| `-e HF_ENDPOINT=https://hf-mirror.com`             | 设置 HuggingFace 镜像端点     |
+| `--port 18000`                                     | 设置服务端口，默认 8000       |
+| `--gpu-memory-utilization 0.70`                    | GPU 内存使用率 70%            |
+| `--max-model-len 32768`                            | 最大上下文长度 32K            |
+| `--enable-auto-tool-choice`                        | 启用自动工具选择              |
+| `--reasoning-parser gemma4`                        | Gemma 4 推理解析器            |
+| `--tool-call-parser gemma4`                        | Gemma 4 工具调用解析器        |
+
+> **关键注意**:
+>
+> - 容器内 `HF_HOME` 预设为 `/data/models/huggingface`，挂载时必须匹配此路径
+> - `huggingface.co` 在国内网络不可达，必须通过 `-e HF_ENDPOINT=https://hf-mirror.com` 走镜像
+> - AGX Orin 64GB 共享内存中系统占用约 14GB，实际可用只有 ~47GB，默认 90% 内存利用率会 OOM，必须设为 `0.70`
+> - 减少 `--max-model-len` 可进一步降低 KV cache 内存占用
+
+## 遇到过的错误及解决方案
+
+### `[Errno 101] Network is unreachable`
+
+**原因**: 容器无法访问 `huggingface.co`
+
+**解决**: 添加 `-e HF_ENDPOINT=https://hf-mirror.com`，并确保模型已通过 `hf download` 预先下载到 SSD。
+
+### `LocalEntryNotFoundError: Cannot find an appropriate cached snapshot folder`
+
+**原因**: 挂载路径错误。容器 `HF_HOME` 在 `/data/models/huggingface`，而教程默认挂载到 `/root/.cache/huggingface`
+
+**解决**: 将挂载改为 `-v /mnt/ssd/huggingface:/data/models/huggingface`
+
+### `ValueError: Free memory on device (47.51/61.4 GiB) is less than desired (0.9, 55.26 GiB)`
+
+**原因**: AGX Orin 64GB 共享内存中系统占用约 14GB，实际可用只有 ~47GB，vLLM 默认 90% 内存利用率需要 55GB
+
+**解决**: 设置 `--gpu-memory-utilization 0.70`（约 43GB），配合 `--max-model-len 32768` 减少 KV cache
+
+## 日常操作
+
+### 启动服务
+
+```bash
+sudo docker run -it --rm --pull always --name gemma4 --runtime=nvidia --network host \
+  -v /mnt/ssd/huggingface:/data/models/huggingface \
+  -e HF_ENDPOINT=https://hf-mirror.com \
+  ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin \
+  vllm serve cyankiwi/gemma-4-31B-it-AWQ-4bit \
+    --port 18000 \
+    --gpu-memory-utilization 0.70 \
+    --max-model-len 32768 \
+    --enable-auto-tool-choice \
+    --reasoning-parser gemma4 \
+    --tool-call-parser gemma4
+```
+
+### 关闭服务
+
+```bash
+# 在启动终端按 Ctrl+C
+# 或强制停止：
+sudo docker ps                    # 查看容器名
+sudo docker stop gemma4           # 停止容器
+```
+
+### 测试模型
+
+```bash
+curl -sN http://127.0.0.1:18000/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "cyankiwi/gemma-4-31B-it-AWQ-4bit",
+    "messages": [{"role": "user", "content": "你好"}],
+    "chat_template_kwargs": {"enable_thinking": true},
+    "stream": true
+  }'
+```
+
+### 如果内存不足
+
+```bash
+# 清除页面缓存
+sudo sysctl -w vm.drop_caches=3
+
+# 进一步降低参数
+# --gpu-memory-utilization 0.60 --max-model-len 16384
+```
+
+### 查看容器状态
+
+```bash
+# 查看运行中的容器
+sudo docker ps
+
+# 查看容器资源占用
+sudo docker stats
+
+# 查看镜像
+sudo docker images
+```
+
+## 全部模型 ID 参考
+
+| 模型    | Orin MODEL_ID                          | 大小     |
+| ------- | -------------------------------------- | -------- |
+| E2B     | `google/gemma-4-E2B-it`                | 小       |
+| E4B     | `google/gemma-4-E4B-it`                | 中       |
+| 26B-A4B | `cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit` | 大       |
+| **31B** | **`cyankiwi/gemma-4-31B-it-AWQ-4bit`** | **最大** |
+
+## 关键注意事项总结
+
+1. **容器 `HF_HOME` 不是默认路径**: 本容器预设为 `/data/models/huggingface`，挂载时必须匹配
+2. **HuggingFace 必须走镜像**: `HF_ENDPOINT=https://hf-mirror.com` 不可省略
+3. **AGX Orin 64GB 可用内存约 47GB**: 必须用 `--gpu-memory-utilization 0.70`
+4. **双标签镜像正常**: 同一个镜像两个标签，不占额外空间，都需保留
+5. **模型先下载再启动**: 用 `hf download` 预先下载到 SSD，容器启动时从缓存加载
+6. **参考文档**: <https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/>
+
+## 资料
+
+- [Jetson AI Labs -- Supported Models](https://www.jetson-ai-lab.com/models/)：Jetson Orin AGX，支持 Gemma 4 12B / 26B-A4B / 31B
+- [Gemma 4 on Jetson](https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/)：官方安装教程
+- [ModelScope -- gemma 4 31B](https://www.modelscope.cn/models/google/gemma-4-31B)
+- [NemoClaw on Jetson](https://www.jetson-ai-lab.com/tutorials/nemoclaw/)
+
+---
+
 # CLI 条件下连接 WIFI
 
 ```bash
