@@ -26,7 +26,8 @@ sudo apt install python3-pip
 
 # 安装 jtop
 sudo pip3 install -U pip
-sudo pip3 install jetson-stats
+sudo pip3 install --break-system-packages -U jetson-stats
+# https://github.com/rbonghi/jetson_stats
 ```
 
 ```bash
