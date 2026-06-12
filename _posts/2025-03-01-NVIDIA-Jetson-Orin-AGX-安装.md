@@ -406,8 +406,8 @@ flowchart TB
 
 ### 3.2. 环境概览
 
-| 组件                     | 版本/状态               |
-| ------------------------ | ----------------------- |
+| 组件                     | 版本/状态                |
+| ------------------------ | ------------------------ |
 | JetPack                  | 7.2 ✅                   |
 | CUDA                     | 13.2 ✅                  |
 | nvidia-container-runtime | 1.19.1 ✅                |
@@ -443,12 +443,12 @@ state = "/mnt/ssd/containerd/state"
 
 #### 3.3.3. 存储路径一览
 
-| 组件             | 存储路径               | 位置  |
-| ---------------- | ---------------------- | :---: |
-| Docker 镜像/容器 | `/mnt/ssd/docker`      |  SSD  |
-| Containerd       | `/mnt/ssd/containerd`  |  SSD  |
-| HuggingFace 缓存 | `/mnt/ssd/huggingface` |  SSD  |
-| 模型下载         | `HF_HOME` 控制         |  SSD  |
+| 组件             | 存储路径               | 位置 |
+| ---------------- | ---------------------- | :--: |
+| Docker 镜像/容器 | `/mnt/ssd/docker`      | SSD  |
+| Containerd       | `/mnt/ssd/containerd`  | SSD  |
+| HuggingFace 缓存 | `/mnt/ssd/huggingface` | SSD  |
+| 模型下载         | `HF_HOME` 控制         | SSD  |
 
 ## 3.4. HuggingFace 环境变量
 
@@ -633,17 +633,65 @@ sudo docker images
 5. **模型先下载再启动**: 用 `hf download` 预先下载到 SSD，容器启动时从缓存加载
 6. **参考文档**: <https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/>
 
-### 3.12. llama.cpp 版本
+### 3.12. vLLM 与 llama.cpp 共用与差异命令
+
+#### 3.12.1. 共用 Docker 参数
+
+以下参数在使用 **vLLM** 与 **llama.cpp** 时均保持相同：
 
 ```bash
-sudo docker run -it --rm --name gemma4 --runtime=nvidia --network host \
+--runtime=nvidia                # 使用 NVIDIA 容器运行时
+--network host                  # 直接使用宿主机网络
+-v /mnt/ssd/huggingface:/data/models/huggingface   # 挂载模型缓存目录
+-e HF_ENDPOINT=https://hf-mirror.com                 # 通过国内镜像访问 HuggingFace
+```
+
+#### 3.12.2. vLLM 特有命令
+
+```bash
+sudo docker run -it --rm --pull always --name gemma4 \
+  --runtime=nvidia --network host \
+  -v /mnt/ssd/huggingface:/data/models/huggingface \
+  -e HF_ENDPOINT=https://hf-mirror.com \
+  ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin \
+  vllm serve cyankiwi/gemma-4-31B-it-AWQ-4bit \
+    --port 18000 \
+    --gpu-memory-utilization 0.70 \
+    --max-model-len 32768 \
+    --enable-auto-tool-choice \
+    --reasoning-parser gemma4 \
+    --tool-call-parser gemma4
+```
+
+#### 3.12.3. llama.cpp 特有命令
+
+```bash
+sudo docker run -it --rm --name gemma4 \
+  --runtime=nvidia --network host \
   -v /mnt/ssd/huggingface:/data/models/huggingface \
   -e HF_ENDPOINT=https://hf-mirror.com \
   ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin \
   llama-server -hf ggml-org/gemma-4-31B-it-GGUF:Q4_K_M --port 8080
 ```
 
-### 3.13. 资料
+> **说明**：
+>
+> 1. **共用部分**：`--runtime=nvidia`、`--network host`、模型挂载以及 `HF_ENDPOINT` 环境变量。
+> 2. **vLLM** 需要额外的 `--pull always`、`--port`（服务端口）、内存与上下文长度等参数，以适配大模型的显存占用。
+> 3. **llama.cpp** 采用 GGUF 权重文件，参数相对简洁，仅需指定模型文件和服务端口。
+
+### 3.13. 使用 vLLM 与 llama.cpp 的操作差异
+
+| 编号                | 项目                                                                             | ✅ 所有场景（vLLM + llama.cpp）                                                   | 🟢 vLLM‑Only                                                          | 🟣 llama.cpp‑Only                                               |
+| ------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 3.3.1               | `/etc/docker/daemon.json`（data‑root、registry‑mirrors、nvidia‑runtime）         | ✅ 必须一次性完成，一次配置后两套镜像都生效                                       | –                                                                     | –                                                               |
+| 3.3.2               | `/etc/containerd/config.toml`（root / state 指向 SSD）                           | ✅ 同上，容器运行时统一使用 SSD                                                   | –                                                                     | –                                                               |
+| 3.4                 | HF 环境变量（`HF_HOME`、`HF_HUB_CACHE`、`HF_ENDPOINT`）                          | ✅ 两套容器都要访问 HuggingFace 缓存/镜像站                                       | –                                                                     | –                                                               |
+| 3.5                 | Docker 镜像的双标签（`ghcr.io/...` 与 `ghcr.nju.edu.cn/...`）                    | ✅ 只关联 vLLM 镜像（两个标签指向同一镜像），llama.cpp 使用的是另一个单标签镜像。 | ✅ 仅 vLLM 需要关注此双标签（拉取时任选其一，保留两者不会占两倍空间） | –                                                               |
+| 模型格式            | AWQ（`.bin/awq`） vs GGUF（`.gguf`）                                             | –                                                                                 | ✅ vLLM 只能消费 AWQ 4‑bit 权重（`gemma‑4‑31B‑it‑AWQ‑4bit`）          | ✅ llama.cpp 只能消费 GGUF 权重（`gemma‑4‑31B‑it‑GGUF:Q4_K_M`） |
+| Docker run 核心参数 | `--runtime=nvidia`、`--network host`、`-v /mnt/ssd/huggingface:/data/models/hug` |                                                                                   |                                                                       |                                                                 |
+
+### 3.14. 资料
 
 - [Jetson AI Labs -- Supported Models](https://www.jetson-ai-lab.com/models/)：Jetson Orin AGX，支持 Gemma 4 12B / 26B-A4B / 31B
 - [Gemma 4 on Jetson](https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/)：官方安装教程
