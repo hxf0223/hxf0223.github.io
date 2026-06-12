@@ -326,6 +326,81 @@ df -hT /home/hxf0223    # 应该和上面一致
 > **设备**: NVIDIA Jetson AGX Orin (64GB eMMC)  
 > **系统**: Ubuntu 24.04, JetPack 7.2-b187, CUDA 13.2
 
+## 运行 LLM 完整组件图
+
+```mermaid
+flowchart TB
+    subgraph 硬件层["🖥️ 硬件层"]
+        GPU["Jetson AGX Orin\n64GB 统一内存"]
+        SSD["NVMe SSD\n/mnt/ssd"]
+    end
+
+    subgraph 系统驱动层["⚙️ 系统驱动层"]
+        JetPack["JetPack 7.2\n(含 L4T 内核)"]
+        CUDA["CUDA 13.2"]
+        NVIDIA-RT["nvidia-container-runtime\n(Docker 访问 GPU 的桥梁)"]
+    end
+
+    subgraph 容器运行时层["📦 容器运行时层"]
+        Docker["Docker"]
+        Containerd["containerd\n(镜像/容器存储 → SSD)"]
+    end
+
+    subgraph 推理引擎层["🧠 推理引擎层（二选一）"]
+        vLLM["vLLM 容器镜像\nghcr.io/.../vllm:gemma4-jetson-orin\n(高性能，内存占用大)"]
+        llamaCPP["llama.cpp 容器镜像\nghcr.io/.../llama_cpp:latest-jetson-orin\n(内存效率高)"]
+    end
+
+    subgraph 模型数据层["💾 模型数据层（存在 SSD）"]
+        HF-Cache["HuggingFace 缓存\n/mnt/ssd/huggingface/"]
+        AWQ-WT["31B AWQ 权重 (~20GB)\nmodels--cyankiwi--gemma-4-31B-it-AWQ-4bit\n→ 给 vLLM 用"]
+        GGUF-WT["31B GGUF 权重 (~20GB)\nmodels--ggml-org--gemma-4-31B-it-GGUF\n→ 给 llama.cpp 用"]
+    end
+
+    subgraph 网络层["🌐 网络层"]
+        HF-Mirror["hf-mirror.com\n(HuggingFace 国内镜像)"]
+        Docker-Mirror["docker.nju.edu.cn\n(Docker 镜像加速)"]
+    end
+
+    subgraph 配置文件["📝 配置文件"]
+        DaemonJSON["/etc/docker/daemon.json\n· data-root → SSD\n· registry-mirrors"]
+        ContainerdTOML["/etc/containerd/config.toml\n· root → SSD"]
+        BashRC["~/.bashrc\n· HF_HOME=/mnt/ssd/huggingface\n· HF_ENDPOINT=hf-mirror.com"]
+    end
+
+    JetPack --> CUDA
+    CUDA --> NVIDIA-RT
+    NVIDIA-RT --> Docker
+
+    Docker --> Containerd
+    Containerd --> SSD
+    Docker --> vLLM
+    Docker --> llamaCPP
+
+    Docker-Mirror -.-> Docker
+    HF-Mirror -.-> HF-Cache
+
+    vLLM -.-> AWQ-WT
+    llamaCPP -.-> GGUF-WT
+
+    AWQ-WT --> HF-Cache
+    GGUF-WT --> HF-Cache
+
+    DaemonJSON -.-> Docker
+    ContainerdTOML -.-> Containerd
+    BashRC -.-> HF-Cache
+
+    SSD --> HF-Cache
+    GPU --- SSD
+
+    style GPU fill:#4a9,color:#fff
+    style SSD fill:#4a9,color:#fff
+    style vLLM fill:#e8731a,color:#fff
+    style llamaCPP fill:#e8731a,color:#fff
+    style AWQ-WT fill:#d33,color:#fff
+    style GGUF-WT fill:#393,color:#fff
+```
+
 ## 环境概览
 
 | 组件                     | 版本/状态                 |
