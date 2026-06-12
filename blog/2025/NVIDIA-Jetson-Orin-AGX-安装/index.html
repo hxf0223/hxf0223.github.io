@@ -121,7 +121,77 @@ mount | <span class="nb">grep</span> <span class="s2">"on /home/hxf0223"</span>
 <span class="nb">df</span> <span class="nt">-hT</span> /                <span class="c"># eMMC 根分区</span>
 <span class="nb">df</span> <span class="nt">-hT</span> /mnt/ssd         <span class="c"># SSD 挂载点</span>
 <span class="nb">df</span> <span class="nt">-hT</span> /home/hxf0223    <span class="c"># 应该和上面一致</span>
-</code></pre></div></div> <p>如果一切正常，您已经把大量数据迁移到 SSD，并在 eMMC 上释放了可用空间。</p> <hr> <p><strong>完成！</strong> 现在你的 Jetson Orin AGX 已经把高速 M.2 SSD 用作系统额外存储、Docker 镜像/容器的默认存放位置，以及你个人的工作目录。后续拉取大型离线 LLM 模型、构建 Docker 镜像或进行其它 I/O 密集型工作都将享受到 SSD 的带宽和低延迟。祝使用愉快！如有其他细节需求（如单独挂接特定目录、使用 Btrfs/ZFS 等高级文件系统），随时告诉我.</p> <hr> <h1 id="在-jetson-orin-agx-上运行-gemma-4-31b">在 Jetson Orin AGX 上运行 Gemma 4 31B</h1> <blockquote> <p><strong>日期</strong>: 2026-06-11<br> <strong>设备</strong>: NVIDIA Jetson AGX Orin (64GB eMMC)<br> <strong>系统</strong>: Ubuntu 24.04, JetPack 7.2-b187, CUDA 13.2</p> </blockquote> <h2 id="环境概览">环境概览</h2> <table> <thead> <tr> <th>组件</th> <th>版本/状态</th> </tr> </thead> <tbody> <tr> <td>JetPack</td> <td>7.2-b187 ✅</td> </tr> <tr> <td>CUDA</td> <td>13.2 ✅</td> </tr> <tr> <td>nvidia-container-runtime</td> <td>1.19.1 ✅</td> </tr> <tr> <td>Docker</td> <td>已配置 NVIDIA runtime ✅</td> </tr> <tr> <td>SSD</td> <td>916GB，挂载 <code class="language-plaintext highlighter-rouge">/mnt/ssd</code> ✅</td> </tr> </tbody> </table> <h2 id="docker-补充配置">Docker 补充配置</h2> <p>在前面已配置 <code class="language-plaintext highlighter-rouge">data-root</code> 指向 SSD 的基础上，为支持 NVIDIA GPU 容器运行时和国内镜像加速，需补充以下设置。</p> <h3 id="etcdockerdaemonjson"><code class="language-plaintext highlighter-rouge">/etc/docker/daemon.json</code></h3> <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+</code></pre></div></div> <p>如果一切正常，您已经把大量数据迁移到 SSD，并在 eMMC 上释放了可用空间。</p> <hr> <p><strong>完成！</strong> 现在你的 Jetson Orin AGX 已经把高速 M.2 SSD 用作系统额外存储、Docker 镜像/容器的默认存放位置，以及你个人的工作目录。后续拉取大型离线 LLM 模型、构建 Docker 镜像或进行其它 I/O 密集型工作都将享受到 SSD 的带宽和低延迟。祝使用愉快！如有其他细节需求（如单独挂接特定目录、使用 Btrfs/ZFS 等高级文件系统），随时告诉我.</p> <hr> <h1 id="在-jetson-orin-agx-上运行-gemma-4-31b">在 Jetson Orin AGX 上运行 Gemma 4 31B</h1> <blockquote> <p><strong>日期</strong>: 2026-06-11<br> <strong>设备</strong>: NVIDIA Jetson AGX Orin (64GB eMMC)<br> <strong>系统</strong>: Ubuntu 24.04, JetPack 7.2-b187, CUDA 13.2</p> </blockquote> <h2 id="运行-llm-完整组件图">运行 LLM 完整组件图</h2> <pre><code class="language-mermaid">flowchart TB
+    subgraph 硬件层["🖥️ 硬件层"]
+        GPU["Jetson AGX Orin\n64GB 统一内存"]
+        SSD["NVMe SSD\n/mnt/ssd"]
+    end
+
+    subgraph 系统驱动层["⚙️ 系统驱动层"]
+        JetPack["JetPack 7.2\n(含 L4T 内核)"]
+        CUDA["CUDA 13.2"]
+        NVIDIA-RT["nvidia-container-runtime\n(Docker 访问 GPU 的桥梁)"]
+    end
+
+    subgraph 容器运行时层["📦 容器运行时层"]
+        Docker["Docker"]
+        Containerd["containerd\n(镜像/容器存储 → SSD)"]
+    end
+
+    subgraph 推理引擎层["🧠 推理引擎层（二选一）"]
+        vLLM["vLLM 容器镜像\nghcr.io/.../vllm:gemma4-jetson-orin\n(高性能，内存占用大)"]
+        llamaCPP["llama.cpp 容器镜像\nghcr.io/.../llama_cpp:latest-jetson-orin\n(内存效率高)"]
+    end
+
+    subgraph 模型数据层["💾 模型数据层（存在 SSD）"]
+        HF-Cache["HuggingFace 缓存\n/mnt/ssd/huggingface/"]
+        AWQ-WT["31B AWQ 权重 (~20GB)\nmodels--cyankiwi--gemma-4-31B-it-AWQ-4bit\n→ 给 vLLM 用"]
+        GGUF-WT["31B GGUF 权重 (~20GB)\nmodels--ggml-org--gemma-4-31B-it-GGUF\n→ 给 llama.cpp 用"]
+    end
+
+    subgraph 网络层["🌐 网络层"]
+        HF-Mirror["hf-mirror.com\n(HuggingFace 国内镜像)"]
+        Docker-Mirror["docker.nju.edu.cn\n(Docker 镜像加速)"]
+    end
+
+    subgraph 配置文件["📝 配置文件"]
+        DaemonJSON["/etc/docker/daemon.json\n· data-root → SSD\n· registry-mirrors"]
+        ContainerdTOML["/etc/containerd/config.toml\n· root → SSD"]
+        BashRC["~/.bashrc\n· HF_HOME=/mnt/ssd/huggingface\n· HF_ENDPOINT=hf-mirror.com"]
+    end
+
+    JetPack --&gt; CUDA
+    CUDA --&gt; NVIDIA-RT
+    NVIDIA-RT --&gt; Docker
+
+    Docker --&gt; Containerd
+    Containerd --&gt; SSD
+    Docker --&gt; vLLM
+    Docker --&gt; llamaCPP
+
+    Docker-Mirror -.-&gt; Docker
+    HF-Mirror -.-&gt; HF-Cache
+
+    vLLM -.-&gt; AWQ-WT
+    llamaCPP -.-&gt; GGUF-WT
+
+    AWQ-WT --&gt; HF-Cache
+    GGUF-WT --&gt; HF-Cache
+
+    DaemonJSON -.-&gt; Docker
+    ContainerdTOML -.-&gt; Containerd
+    BashRC -.-&gt; HF-Cache
+
+    SSD --&gt; HF-Cache
+    GPU --- SSD
+
+    style GPU fill:#4a9,color:#fff
+    style SSD fill:#4a9,color:#fff
+    style vLLM fill:#e8731a,color:#fff
+    style llamaCPP fill:#e8731a,color:#fff
+    style AWQ-WT fill:#d33,color:#fff
+    style GGUF-WT fill:#393,color:#fff
+</code></pre> <h2 id="环境概览">环境概览</h2> <table> <thead> <tr> <th>组件</th> <th>版本/状态</th> </tr> </thead> <tbody> <tr> <td>JetPack</td> <td>7.2-b187 ✅</td> </tr> <tr> <td>CUDA</td> <td>13.2 ✅</td> </tr> <tr> <td>nvidia-container-runtime</td> <td>1.19.1 ✅</td> </tr> <tr> <td>Docker</td> <td>已配置 NVIDIA runtime ✅</td> </tr> <tr> <td>SSD</td> <td>916GB，挂载 <code class="language-plaintext highlighter-rouge">/mnt/ssd</code> ✅</td> </tr> </tbody> </table> <h2 id="docker-补充配置">Docker 补充配置</h2> <p>在前面已配置 <code class="language-plaintext highlighter-rouge">data-root</code> 指向 SSD 的基础上，为支持 NVIDIA GPU 容器运行时和国内镜像加速，需补充以下设置。</p> <h3 id="etcdockerdaemonjson"><code class="language-plaintext highlighter-rouge">/etc/docker/daemon.json</code></h3> <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"runtimes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="nl">"nvidia"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="nl">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
