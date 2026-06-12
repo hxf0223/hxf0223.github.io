@@ -633,7 +633,17 @@ sudo docker images
 5. **模型先下载再启动**: 用 `hf download` 预先下载到 SSD，容器启动时从缓存加载
 6. **参考文档**: <https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/>
 
-### 3.12. 资料
+### 3.12. llama.cpp 版本
+
+```bash
+sudo docker run -it --rm --name gemma4 --runtime=nvidia --network host \
+  -v /mnt/ssd/huggingface:/data/models/huggingface \
+  -e HF_ENDPOINT=https://hf-mirror.com \
+  ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin \
+  llama-server -hf ggml-org/gemma-4-31B-it-GGUF:Q4_K_M --port 8080
+```
+
+### 3.13. 资料
 
 - [Jetson AI Labs -- Supported Models](https://www.jetson-ai-lab.com/models/)：Jetson Orin AGX，支持 Gemma 4 12B / 26B-A4B / 31B
 - [Gemma 4 on Jetson](https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/)：官方安装教程
