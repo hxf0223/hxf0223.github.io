@@ -325,9 +325,9 @@ df -hT /home/hxf0223    # 应该和上面一致
 
 # 3. 在 Jetson Orin AGX 上运行 Gemma 4 31B
 
-* **设备**: NVIDIA Jetson AGX Orin (64GB eMMC) 
-* **系统**: Ubuntu 24.04, JetPack 7.2-b187, CUDA 13.2
-* **引擎**：vLLM 或者 llama.cpp（两选一）
+- **设备**: NVIDIA Jetson AGX Orin (64GB eMMC)
+- **系统**: Ubuntu 24.04, JetPack 7.2-b187, CUDA 13.2
+- **引擎**：vLLM 或者 llama.cpp（两选一）
 
 ## 3.1. 运行 LLM 完整组件图
 
@@ -406,8 +406,8 @@ flowchart TB
 
 ## 3.2. 环境概览
 
-| 组件                     | 版本/状态               |
-| ------------------------ | ----------------------- |
+| 组件                     | 版本/状态                |
+| ------------------------ | ------------------------ |
 | JetPack                  | 7.2 ✅                   |
 | CUDA                     | 13.2 ✅                  |
 | nvidia-container-runtime | 1.19.1 ✅                |
@@ -443,12 +443,12 @@ state = "/mnt/ssd/containerd/state"
 
 ### 3.3.3. 存储路径一览
 
-| 组件             | 存储路径               | 位置  |
-| ---------------- | ---------------------- | :---: |
-| Docker 镜像/容器 | `/mnt/ssd/docker`      |  SSD  |
-| Containerd       | `/mnt/ssd/containerd`  |  SSD  |
-| HuggingFace 缓存 | `/mnt/ssd/huggingface` |  SSD  |
-| 模型下载         | `HF_HOME` 控制         |  SSD  |
+| 组件             | 存储路径               | 位置 |
+| ---------------- | ---------------------- | :--: |
+| Docker 镜像/容器 | `/mnt/ssd/docker`      | SSD  |
+| Containerd       | `/mnt/ssd/containerd`  | SSD  |
+| HuggingFace 缓存 | `/mnt/ssd/huggingface` | SSD  |
+| 模型下载         | `HF_HOME` 控制         | SSD  |
 
 ## 3.4. HuggingFace 环境变量
 
