@@ -445,7 +445,7 @@ ninja.data = [{
         
           title: "NVIDIA Jetson Orin AGX 安装",
         
-        description: "1. NVIDIA Jetson Orin AGX 安装使用 Nvidia Jetson SDK Manager 安装 Jetson Orin AGX 系列设备的系统镜像。截止目前最新版为 7.2， Ubuntu 24.04。安装完成之后，安装如下软件包：# 安装 Pythonsudo apt updatesudo apt install python3sudo apt install python3-pip# 安装 jtopsudo pip3 install -U pipsudo pip3 install jetson-statssudo apt install nvidia-jetpack查看已经安装的组件： git clone https://github.com/jetsonhacks/jetsonUtilities.git # python jetsonInfo.py安装 GTest：sudo apt install libgtest-dev libgmock-dev1.A. 参考及资源1.A.1. 参考 NVIDIA Jetson Linux 36.4：官方资料页面，包含组件以及驱动源码下载列表 Nvidia Jetson AGX...",
+        description: "1. NVIDIA Jetson Orin AGX 安装使用 Nvidia Jetson SDK Manager 安装 Jetson Orin AGX 系列设备的系统镜像。截止目前最新版为 7.2， Ubuntu 24.04。安装完成之后，安装如下软件包：# 安装 Pythonsudo apt updatesudo apt install python3sudo apt install python3-pip# 安装 jtopsudo pip3 install -U pipsudo pip3 install --break-system-packages -U jetson-stats# https://github.com/rbonghi/jetson_statssudo apt install nvidia-jetpack查看已经安装的组件： git clone https://github.com/jetsonhacks/jetsonUtilities.git # python jetsonInfo.py安装 GTest：sudo apt install libgtest-dev libgmock-dev1.A. 参考及资源1.A.1. 参考 NVIDIA Jetson Linux 36.4：官方资料页面，包含组件以及驱动源码下载列表...",
         section: "Posts",
         handler: () => {
           

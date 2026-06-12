@@ -13,7 +13,8 @@
 
 <span class="c"># 安装 jtop</span>
 <span class="nb">sudo </span>pip3 <span class="nb">install</span> <span class="nt">-U</span> pip
-<span class="nb">sudo </span>pip3 <span class="nb">install </span>jetson-stats
+<span class="nb">sudo </span>pip3 <span class="nb">install</span> <span class="nt">--break-system-packages</span> <span class="nt">-U</span> jetson-stats
+<span class="c"># https://github.com/rbonghi/jetson_stats</span>
 </code></pre></div></div> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>nvidia-jetpack
 </code></pre></div></div> <p>查看已经安装的组件：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git clone https://github.com/jetsonhacks/jetsonUtilities.git
  <span class="c"># python jetsonInfo.py</span>
