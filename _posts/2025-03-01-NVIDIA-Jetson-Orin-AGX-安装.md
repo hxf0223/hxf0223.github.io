@@ -211,13 +211,11 @@ mount | grep "on /home/hxf0223"
 
 ### 2.6. 常见问题 & 小贴士
 
-| 问题                                                           | 解决方案                                                                                                                    |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **开机后挂载失败**                                             | 检查 `/etc/fstab` 是否有语法错误；用 `sudo mount -a` 测试；根据报错修正 UUID 或挂载选项。                                   |
-| **Docker 启动后仍在用旧目录**                                  | 确认 `/etc/docker/daemon.json` JSON 合法（末尾无多余逗号）；重启 Docker 前先 `docker info` 查看 `Docker Root Dir`。         |
-| **用户目录下出现权限问题**                                     | 迁移时使用了 `-aXS` 保持权限；如仍有问题，可 `sudo chown -R $USER:$USER /home/hxf0223`。                                    |
-| **想给 SSD 加密**                                              | 在分区创建后使用 `cryptsetup luksFormat /dev/nvme0n1p1` + `cryptsetup open` 然后挂载解密后的 mapper；此文档未涉及加密细节。 |
-| **想把 SSD 分成多个分区（例如一个给 Docker，一个给用户数据）** | 在 `fdisk` 中创建多个分区（如 `nvme0n1p1`、`nvme0n1p2`），分别格式化，按上面的方法分别挂载到不同目录。                      |
+| 问题                          | 解决方案                                                                                                            |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **开机后挂载失败**            | 检查 `/etc/fstab` 是否有语法错误；用 `sudo mount -a` 测试；根据报错修正 UUID 或挂载选项。                           |
+| **Docker 启动后仍在用旧目录** | 确认 `/etc/docker/daemon.json` JSON 合法（末尾无多余逗号）；重启 Docker 前先 `docker info` 查看 `Docker Root Dir`。 |
+| **用户目录下出现权限问题**    | 迁移时使用了 `-aXS` 保持权限；如仍有问题，可 `sudo chown -R $USER:$USER /home/hxf0223`。                            |
 
 ---
 
@@ -232,8 +230,7 @@ mount | grep "on /home/hxf0223"
 sudo docker info | grep -i "Docker Root Dir"
 ```
 
-**预期输出**：
-`Docker Root Dir: /mnt/ssd/docker`
+**预期输出**：`Docker Root Dir: /mnt/ssd/docker`。
 
 如果看到上述路径，说明 Docker 已经在使用挂载到 SSD 的目录；此时 `/var/lib/docker` 只是一个普通目录（挂载点），实际数据不再占用 eMMC 空间。
 
@@ -682,14 +679,14 @@ sudo docker run -it --rm --name gemma4 \
 
 ### 3.13. 使用 vLLM 与 llama.cpp 的操作差异
 
-| 编号                | 项目                                                                             | ✅ 所有场景（vLLM + llama.cpp）                                                   | 🟢 vLLM‑Only                                                          | 🟣 llama.cpp‑Only                                               |
-| ------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
-| 3.3.1               | `/etc/docker/daemon.json`（data‑root、registry‑mirrors、nvidia‑runtime）         | ✅ 必须一次性完成，一次配置后两套镜像都生效                                       | –                                                                     | –                                                               |
-| 3.3.2               | `/etc/containerd/config.toml`（root / state 指向 SSD）                           | ✅ 同上，容器运行时统一使用 SSD                                                   | –                                                                     | –                                                               |
-| 3.4                 | HF 环境变量（`HF_HOME`、`HF_HUB_CACHE`、`HF_ENDPOINT`）                          | ✅ 两套容器都要访问 HuggingFace 缓存/镜像站                                       | –                                                                     | –                                                               |
-| 3.5                 | Docker 镜像的双标签（`ghcr.io/...` 与 `ghcr.nju.edu.cn/...`）                    | ✅ 只关联 vLLM 镜像（两个标签指向同一镜像），llama.cpp 使用的是另一个单标签镜像。 | ✅ 仅 vLLM 需要关注此双标签（拉取时任选其一，保留两者不会占两倍空间） | –                                                               |
-| 模型格式            | AWQ（`.bin/awq`） vs GGUF（`.gguf`）                                             | –                                                                                 | ✅ vLLM 只能消费 AWQ 4‑bit 权重（`gemma‑4‑31B‑it‑AWQ‑4bit`）          | ✅ llama.cpp 只能消费 GGUF 权重（`gemma‑4‑31B‑it‑GGUF:Q4_K_M`） |
-| Docker run 核心参数 | `--runtime=nvidia`、`--network host`、`-v /mnt/ssd/huggingface:/data/models/hug` |                                                                                   |                                                                       |                                                                 |
+| 编号                | 项目                                                                             | 🟢 vLLM                                                                                                                                                   | 🟣 llama.cpp                                                                                       |
+| ------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 3.3.1               | `/etc/docker/daemon.json`（data‑root、registry‑mirrors、nvidia‑runtime）         | ✅ 必须一次性完成，一次配置后两套镜像都生效                                                                                                               | ✅ 同上，与 vLLM 共用同一份配置                                                                    |
+| 3.3.2               | `/etc/containerd/config.toml`（root / state 指向 SSD）                           | ✅ 容器运行时统一使用 SSD                                                                                                                                 | ✅ 同上，与 vLLM 共用同一份配置                                                                    |
+| 3.4                 | HF 环境变量（`HF_HOME`、`HF_HUB_CACHE`、`HF_ENDPOINT`）                          | ✅ 需要访问 HuggingFace 缓存/镜像站                                                                                                                       | ✅ 同上，与 vLLM 共用同一套环境变量                                                                |
+| 3.5                 | Docker 镜像的双标签（`ghcr.io/...` 与 `ghcr.nju.edu.cn/...`）                    | ✅ 仅 vLLM 需要关注此双标签（两个标签指向同一镜像，拉取时任选其一，保留两者不会占两倍空间）                                                               | –                                                                                                  |
+| 模型格式            | AWQ（`.bin/awq`） vs GGUF（`.gguf`）                                             | ✅ AWQ 4‑bit 权重（`gemma‑4‑31B‑it‑AWQ‑4bit`）                                                                                                            | ✅ GGUF 权重（`gemma‑4‑31B‑it‑GGUF:Q4_K_M`）                                                       |
+| Docker run 核心参数 | `--runtime=nvidia`、`--network host`、`-v /mnt/ssd/huggingface:/data/models/hug` | ✅ 共用参数 + `--pull always`、`--port 18000`、`--gpu-memory-utilization 0.70`、`--max-model-len 32768`、`--enable-auto-tool-choice` 等内存与推理控制参数 | ✅ 共用参数 + `llama-server -hf <model>:<quant> --port 8080`，参数相对简洁，仅需指定模型文件和端口 |
 
 ### 3.14. 资料
 
