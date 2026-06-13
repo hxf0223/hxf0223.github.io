@@ -3,7 +3,7 @@ layout: post
 title: NVIDIA Jetson Orin AGX 安装
 date: 2025-03-01 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [NVIDIA, Jetson]
-tags: [NVIDIA, Jetson, Orin]
+tags: [NVIDIA, Jetson, AI]
 
 # 以下默认false
 math: true
