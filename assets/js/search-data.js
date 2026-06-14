@@ -1596,6 +1596,17 @@ ninja.data = [{
             window.location.href = "/blog/2024/%E7%BB%88%E7%AB%AF%E7%BE%8E%E5%8C%96/";
           
         },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "本笔记记录自zed 1.6.3（202606）开始的使用笔记。1. 使用zed进行远程开发类似VSCode远程开发环境搭建，在首次连接到远程服务器的时候，remote ssh会连接到远程，在远程服务器上下载remote server。在zed的菜单File -&amp;gt; Open Remote，选择Remote SSH连接到远程服务器，这个菜单下面，使用Connect SSH Server菜单项，输入远程服务器地址，诸如user@remote-server。另外，zed可以检测到目录下.ssh/config文件，这个文件存储远程服务器地址及用户名，这个跟VSCode的远程开发配置相同。由于远程下载的时候，没有使用VPN，导致下载失败。所以写了一个Python脚本，用于在本地下载remote server，然后上传到远程服务器，并按zed规定的目录名称格式解压zed server，脚本：setup_remote_zed_server.py。脚本来自博客：Zed 手动/离线 安装 zed_server, 解决远程开发一直卡下载问。",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/zed%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/";
+          
+        },
       },{id: "post-vscode-改用-mathjax-渲染数学公式",
         
           title: "VSCode 改用 MathJax 渲染数学公式",
