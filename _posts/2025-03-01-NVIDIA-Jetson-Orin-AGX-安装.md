@@ -64,7 +64,7 @@ sudo apt install libgtest-dev libgmock-dev
 
 ## 2. 在 Jetson Orin AGX 上挂载 SSD，挂载 Docker 目录及用户目录
 
-> 本指南假设你已经把 M.2 NVMe SSD（约 1 TB）正确插入，系统能看到设备 `/dev/nvme0n1`（目前未分区）。所有操作均需要 **root**（使用 `sudo`）。
+> 本指南假设你已经把 M.2 NVMe SSD（约 1TB）正确插入，系统能看到设备 `/dev/nvme0n1`（目前未分区）。所有操作均需要 **root**（使用 `sudo`）。
 
 ---
 
