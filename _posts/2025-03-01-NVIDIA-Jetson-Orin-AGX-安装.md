@@ -695,6 +695,7 @@ sudo docker run -it --rm --name gemma4 \
 - [ModelScope -- gemma 4 31B](https://www.modelscope.cn/models/google/gemma-4-31B)
 - [NemoClaw on Jetson](https://www.jetson-ai-lab.com/tutorials/nemoclaw/)
 - [How to run a local coding agent with Gemma 4 and Pi](https://patloeber.com/gemma-4-pi-agent/)
+- [齐思头条2026/06/08「Gemma 4 MTP/QAT 合入 llama.cpp 实现低内存本地推理, 开源权重潮：Nemotron 3 Ultra 与 Harness‑1 等发布」](https://news.miracleplus.com/share_link/135307)：LLM参数微调论文检索
 
 ---
 
