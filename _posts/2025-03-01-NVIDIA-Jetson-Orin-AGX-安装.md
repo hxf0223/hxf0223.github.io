@@ -694,6 +694,7 @@ sudo docker run -it --rm --name gemma4 \
 - [Gemma 4 on Jetson](https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/)：官方安装教程
 - [ModelScope -- gemma 4 31B](https://www.modelscope.cn/models/google/gemma-4-31B)
 - [NemoClaw on Jetson](https://www.jetson-ai-lab.com/tutorials/nemoclaw/)
+- [How to run a local coding agent with Gemma 4 and Pi](https://patloeber.com/gemma-4-pi-agent/)
 
 ---
 
