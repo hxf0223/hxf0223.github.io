@@ -688,6 +688,8 @@ sudo docker run -it --rm --name gemma4 \
 | 模型格式            | AWQ（`.bin/awq`） vs GGUF（`.gguf`）                                             | ✅ AWQ 4‑bit 权重（`gemma‑4‑31B‑it‑AWQ‑4bit`）                                                                                                            | ✅ GGUF 权重（`gemma‑4‑31B‑it‑GGUF:Q4_K_M`）                                                       |
 | Docker run 核心参数 | `--runtime=nvidia`、`--network host`、`-v /mnt/ssd/huggingface:/data/models/hug` | ✅ 共用参数 + `--pull always`、`--port 18000`、`--gpu-memory-utilization 0.70`、`--max-model-len 32768`、`--enable-auto-tool-choice` 等内存与推理控制参数 | ✅ 共用参数 + `llama-server -hf <model>:<quant> --port 8080`，参数相对简洁，仅需指定模型文件和端口 |
 
+> **补充说明 20260614**：部署Gemma 4模型，已经改为使用`docker-compose.yml`进行管理，且使用`ModelScope`进行模型下载，另外模型权重文件改为`量化感知训练`版本（QAT）。代码仓库：[github -- gemma4-server](https://github.com/aispace02/gemma4-server)。所以本章只需要关注分区相关目录配置：docker的daemon.json配置，以及containerd的config.toml配置，模型下载和运行命令请参考上面链接的github仓库。
+
 ### 3.14. 资料
 
 - [Jetson AI Labs -- Supported Models](https://www.jetson-ai-lab.com/models/)：Jetson Orin AGX，支持 Gemma 4 12B / 26B-A4B / 31B
