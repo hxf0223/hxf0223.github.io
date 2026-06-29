@@ -167,6 +167,8 @@ RTL > mode autoland
 > 1. 当飞机处于`MISSION_RUNNING`状态时（Armed + MISSION_RUNNING），不能接收航线修改命令。飞控接收新航线，会冲掉当前的航线。
 > 2. 其他wp命令：`wp list`、`wp clear`。
 > 3. 航线文件格式参见官方文档：[Plan File Format](https://docs.qgroundcontrol.com/master/en/qgc-dev-guide/file_formats/plan.html)。
+> 4. txt格式文件格式：[File Formats](https://mavlink.io/en/file_formats/)。
+> 5. sim_vehicle.py的使用：[Using SITL](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)。
 
 #### 2.1.3. 参数文件
 
