@@ -157,19 +157,23 @@ Hefei=31.8206,117.2272,27,0 #Hefei, Anhui, China (WGS84)
 启动`sim_vehicle.py`之后，会启动一个`console`窗口、一个`map`窗口，以及一个`terminal`窗口。可以在`terminal`窗口中输入命令来控制仿真，比如：
 
 ```text
-# 在cygwin环境中，由于MAVProxy是在windows环境下安装的（不是在cygwin环境安装的），
-# 所以mavproxy命令接收的路径是windows的路径格式。
+# 在 cygwin 环境中，由于 MAVProxy 是在 windows 环境下安装的（不是在 cygwin 环境安装的），
+# 所以 MAVProxy 命令接收的路径是 windows 的路径格式。
 # 另外，可以使用相对路径，但是测试这种方式发现不可靠。
 STABILIZE > wp load "E:\work\flight\ardupilot\Tools\autotest\Generic_Missions\CMAC-circuit.txt"
 STABILIZE > mode guided
 GUIDED > arm throttle
 GUIDED > takeoff 40
 GUIDED > mode auto
-GUIDED > mode rtl
+GUIDED >
+GUIDED > mode rtl # 返航模式
 
 # 自动降落返回HOME点
 RTL > param set RTL_AUTOLAND 1
 RTL > mode autoland
+
+# 从 SITL / 飞控 下载航线文件，并更新 Map
+mp list
 ```
 
 具体操作步骤参考官方教程文档：[Plane SITL/MAVProxy Tutorial](https://ardupilot.org/dev/docs/plane-sitlmavproxy-tutorial.html)。另外参考知乎文章：[ArduPilot 软件在环仿真SITL（SITL+MAVProxy）](https://zhuanlan.zhihu.com/p/62017292)。
