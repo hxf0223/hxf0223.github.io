@@ -140,7 +140,17 @@ RiTW: Starting ArduPlane : /cygdrive/e/work/flight/ardupilot/build/sitl/bin/ardu
 ../Tools/autotest/sim_vehicle.py -L Unalga --map --console
 ```
 
-也可以在locations.txt中添加NAME+坐标。
+也可以在`locations.txt`中添加NAME+坐标。例如添加合肥坐标：
+
+```text
+Hefei=31.8206,117.2272,27,0 #Hefei, Anhui, China (WGS84)
+```
+
+此时启动命令为：
+
+```bash
+../Tools/autotest/sim_vehicle.py -L Hefei --map --console
+```
 
 #### 2.1.2. 命令交互--固定翼 ArduPlane
 
@@ -169,6 +179,26 @@ RTL > mode autoland
 > 3. 航线文件格式参见官方文档：[Plan File Format](https://docs.qgroundcontrol.com/master/en/qgc-dev-guide/file_formats/plan.html)。
 > 4. txt格式文件格式：[File Formats](https://mavlink.io/en/file_formats/)。
 > 5. sim_vehicle.py的使用：[Using SITL](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)。
+
+如果使用我修改过的`HOME`地点`Hefei`，此时对应的航线文件`Hefei-circuit.txt`内容如下：
+
+```text
+QGC WPL 110
+0	0	0	16	0.000000	0.000000	0.000000	0.000000	31.820600	117.227200	27.000000	1
+1	0	3	22	15.000000	0.000000	0.000000	0.000000	31.823705	117.226818	41.029999	1
+2	0	3	16	0.000000	0.000000	0.000000	0.000000	31.823953	117.223507	100.000000	1
+3	1	3	16	0.000000	0.000000	0.000000	0.000000	31.817075	117.224346	100.000000	1
+4	0	3	16	0.000000	0.000000	0.000000	0.000000	31.817407	117.226696	100.000000	1
+5	0	3	16	0.000000	0.000000	0.000000	0.000000	31.824266	117.225872	100.000000	1
+6	0	3	177	2.000000	-1.000000	0.000000	0.000000	0.000000	0.000000	0.000000	1
+7	0	3	16	0.000000	0.000000	0.000000	0.000000	31.824266	117.225872	100.000000	1
+```
+
+在`mavProxy`中，加载航线文件的命令为：
+
+```bash
+wp load d:\Hefei-circuit.txt
+```
 
 #### 2.1.3. 参数文件
 
