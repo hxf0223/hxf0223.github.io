@@ -301,3 +301,5 @@ cmake --install . --component pymodules
 ### A.1. 一些地面站收集
 
 - [ADOSMissionControl](https://github.com/altnautica/ADOSMissionControl)：一个基于typescript的地面站
+- [Qt AI Skills](https://github.com/TheQtCompanyRnD/agent-skills)：QtCompany 发布的Qt/QML 开发 skills
+  - [Manual client setup](https://github.com/TheQtCompanyRnD/agent-skills/blob/main/docs/mcp/setup-manual.md)：Qt/QML开发 MCP 安装指南，适用于 CodeX、antigravity、Claude Code。
