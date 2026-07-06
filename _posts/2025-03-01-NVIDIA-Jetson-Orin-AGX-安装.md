@@ -403,8 +403,8 @@ flowchart TB
 
 ### 3.2. 环境概览
 
-| 组件                     | 版本/状态                |
-| ------------------------ | ------------------------ |
+| 组件                     | 版本/状态               |
+| ------------------------ | ----------------------- |
 | JetPack                  | 7.2 ✅                   |
 | CUDA                     | 13.2 ✅                  |
 | nvidia-container-runtime | 1.19.1 ✅                |
@@ -440,12 +440,12 @@ state = "/mnt/ssd/containerd/state"
 
 #### 3.3.3. 存储路径一览
 
-| 组件             | 存储路径               | 位置 |
-| ---------------- | ---------------------- | :--: |
-| Docker 镜像/容器 | `/mnt/ssd/docker`      | SSD  |
-| Containerd       | `/mnt/ssd/containerd`  | SSD  |
-| HuggingFace 缓存 | `/mnt/ssd/huggingface` | SSD  |
-| 模型下载         | `HF_HOME` 控制         | SSD  |
+| 组件             | 存储路径               | 位置  |
+| ---------------- | ---------------------- | :---: |
+| Docker 镜像/容器 | `/mnt/ssd/docker`      |  SSD  |
+| Containerd       | `/mnt/ssd/containerd`  |  SSD  |
+| HuggingFace 缓存 | `/mnt/ssd/huggingface` |  SSD  |
+| 模型下载         | `HF_HOME` 控制         |  SSD  |
 
 ## 3.4. HuggingFace 环境变量
 
@@ -680,15 +680,15 @@ sudo docker run -it --rm --name gemma4 \
 ### 3.13. 使用 vLLM 与 llama.cpp 的操作差异
 
 | 编号                | 项目                                                                             | 🟢 vLLM                                                                                                                                                   | 🟣 llama.cpp                                                                                       |
-| ------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| ------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | 3.3.1               | `/etc/docker/daemon.json`（data‑root、registry‑mirrors、nvidia‑runtime）         | ✅ 必须一次性完成，一次配置后两套镜像都生效                                                                                                               | ✅ 同上，与 vLLM 共用同一份配置                                                                    |
 | 3.3.2               | `/etc/containerd/config.toml`（root / state 指向 SSD）                           | ✅ 容器运行时统一使用 SSD                                                                                                                                 | ✅ 同上，与 vLLM 共用同一份配置                                                                    |
 | 3.4                 | HF 环境变量（`HF_HOME`、`HF_HUB_CACHE`、`HF_ENDPOINT`）                          | ✅ 需要访问 HuggingFace 缓存/镜像站                                                                                                                       | ✅ 同上，与 vLLM 共用同一套环境变量                                                                |
-| 3.5                 | Docker 镜像的双标签（`ghcr.io/...` 与 `ghcr.nju.edu.cn/...`）                    | ✅ 仅 vLLM 需要关注此双标签（两个标签指向同一镜像，拉取时任选其一，保留两者不会占两倍空间）                                                               | –                                                                                                  |
+| 3.5                 | Docker 镜像的双标签（`ghcr.io/...` 与 `ghcr.nju.edu.cn/...`）                    | ✅ 仅 vLLM 需要关注此双标签（两个标签指向同一镜像，拉取时任选其一，保留两者不会占两倍空间）                                                               | –                                                                                                 |
 | 模型格式            | AWQ（`.bin/awq`） vs GGUF（`.gguf`）                                             | ✅ AWQ 4‑bit 权重（`gemma‑4‑31B‑it‑AWQ‑4bit`）                                                                                                            | ✅ GGUF 权重（`gemma‑4‑31B‑it‑GGUF:Q4_K_M`）                                                       |
 | Docker run 核心参数 | `--runtime=nvidia`、`--network host`、`-v /mnt/ssd/huggingface:/data/models/hug` | ✅ 共用参数 + `--pull always`、`--port 18000`、`--gpu-memory-utilization 0.70`、`--max-model-len 32768`、`--enable-auto-tool-choice` 等内存与推理控制参数 | ✅ 共用参数 + `llama-server -hf <model>:<quant> --port 8080`，参数相对简洁，仅需指定模型文件和端口 |
 
-> **补充说明 20260614**：部署Gemma 4模型，已经改为使用`docker-compose.yml`进行管理，且使用`ModelScope`进行模型下载，另外模型权重文件改为`量化感知训练`版本（QAT）。代码仓库：[github -- gemma4-server](https://github.com/aispace02/gemma4-server)。所以本章只需要关注分区相关目录配置：docker的daemon.json配置，以及containerd的config.toml配置，模型下载和运行命令请参考上面链接的github仓库。
+> **补充说明 20260614**：部署Gemma 4模型，已经改为使用`docker-compose.yml`进行管理，且使用`ModelScope`进行模型下载，另外模型权重文件改为`量化感知训练`版本（QAT）。代码仓库：[Gemma-4 Local Servers on Jetson Orin](https://github.com/aispace02/gemma4-server)。所以本章只需要关注分区相关目录配置：docker的daemon.json配置，以及containerd的config.toml配置，模型下载和运行命令请参考上面链接的github仓库。
 
 ### 3.14. 资料
 
@@ -698,6 +698,7 @@ sudo docker run -it --rm --name gemma4 \
 - [NemoClaw on Jetson](https://www.jetson-ai-lab.com/tutorials/nemoclaw/)
 - [How to run a local coding agent with Gemma 4 and Pi](https://patloeber.com/gemma-4-pi-agent/)
 - [齐思头条2026/06/08「Gemma 4 MTP/QAT 合入 llama.cpp 实现低内存本地推理, 开源权重潮：Nemotron 3 Ultra 与 Harness‑1 等发布」](https://news.miracleplus.com/share_link/135307)：LLM参数微调论文检索
+- [Gemma-4 Local Servers on Jetson Orin](https://github.com/aispace02/gemma4-server)：本文配套的包含 `docker-compose.yml` 的代码仓库，其中`README.md`也有完整的搭建指令说明。
 
 ---
 
