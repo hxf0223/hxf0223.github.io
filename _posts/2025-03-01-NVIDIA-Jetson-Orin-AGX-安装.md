@@ -550,40 +550,37 @@ sudo make install
 
 #### 4.2.5. Docker 模式下推理引擎的更新步骤
 
-如果在日常运行中，GitHub 官方的 `llama.cpp` 或 `vLLM` 仓库发布了更新，需要更新运行环境中的推理引擎时，可根据部署方式采取以下步骤：
+当 `llama.cpp` 或 `vLLM` 上游发布更新、需要更换运行环境中的推理引擎时，按部署方式二选一。
 
 ##### 方式 A：使用 Docker Compose 管理服务（推荐）
 
-1. 进入部署代码目录（例如 `gemma4-server` 文件夹）：
-   ```bash
-   cd /path/to/gemma4-server
-   ```
-2. 拉取本地部署代码库的最新更改（以获取最新的容器配置参数）：
-   ```bash
-   git pull
-   ```
-3. 从镜像仓库中拉取最新的推理引擎镜像，并重新构建/拉起服务：
-   ```bash
-   sudo docker compose pull
-   sudo docker compose up -d --build
-   ```
+```bash
+# 进入部署代码目录
+cd /path/to/gemma4-server
+
+# 从镜像仓库中拉取最新的推理引擎镜像，并重建服务
+sudo docker compose pull
+sudo docker compose up -d --build
+```
+
+> `docker compose pull`：读取当前目录下的 `docker-compose.yml`，把其中所有服务引用的镜像从仓库下载到本地，只下载不启动容器。
+>
+> `docker compose up -d --build`：按配置文件创建并启动全部服务。`-d` 表示后台运行（detach，不占用终端）；`--build` 表示启动前重新构建那些用 `build:` 定义的本地镜像（对纯 `image:` 拉取的服务无影响）。
+>
+> 两条分开执行的好处是：`pull` 若因网络失败不会影响正在运行的旧服务，等镜像确认下载完成后再 `up` 切换到新版本，更新过程更可控。
 
 ##### 方式 B：使用手动 `docker run` 命令启动
 
-1. 直接拉取最新版本的推理引擎镜像（自动拉取最新打包版）：
-   - **更新 llama.cpp 镜像**：
-     ```bash
-     sudo docker pull ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin
-     ```
-   - **更新 vLLM 镜像**：
-     ```bash
-     sudo docker pull ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin
-     ```
-2. 停止并删除当前正在运行的老版本服务容器（假设名为 `gemma4`）：
-   ```bash
-   sudo docker stop gemma4
-   ```
-3. 重新执行原有的 `docker run` 启动指令，新创建的容器即会自动应用并运行最新的推理引擎。
+```bash
+# 拉取最新镜像（llama.cpp / vLLM 二选一）
+sudo docker pull ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin
+sudo docker pull ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin
+
+# 停止并删除当前正在运行的老版本容器（假设名为 gemma4）
+sudo docker stop gemma4
+```
+
+随后重新执行原有的 `docker run` 启动指令，新创建的容器即会自动应用并运行最新的推理引擎。
 
 ---
 
