@@ -1,0 +1,2705 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> C++ Traits | Roderick Huang </title> <meta name="author" content="Roderick Huang"> <meta name="description" content="A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. "> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.css" integrity="sha256-zTN0r+0OKaIv2xqeNNIYxNk0pWJ6+IqPGc1iDgVzWF0=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%E2%9A%9B%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=3116ba77db9ee1581d05bb3e86fbf7f1"> <link rel="canonical" href="https://hxf0223.github.io/blog/2026/C++-Traits/"> <script src="/assets/js/theme.js?v=5286c3e4c334d0ecb8fc0c40ff4fa7ec"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Roderick</span> Huang </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/repositories/">repositories </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item "> <a class="nav-link" href="/teaching/">teaching </a> </li> <li class="nav-item "> <a class="nav-link" href="/people/">people </a> </li> <li class="nav-item dropdown "> <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-nav-dropdown-toggle="true" aria-haspopup="true" aria-expanded="false">submenus </a> <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown"> <a class="dropdown-item " href="/books/">bookshelf</a> <div class="dropdown-divider"></div> <a class="dropdown-item " href="/blog/">blog</a> </div> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="row"> <div class="col-sm-9"> <div class="post"> <header class="post-header"> <h1 class="post-title">C++ Traits</h1> <p class="post-meta"> Created on February 06, 2026 </p> <p class="post-tags"> <a href="/blog/2026"> <i class="fa-solid fa-calendar fa-sm"></i> 2026 </a>   ·   <a href="/blog/tag/cpp"> <i class="fa-solid fa-hashtag fa-sm"></i> Cpp</a>   ·   <a href="/blog/category/cpp"> <i class="fa-solid fa-tag fa-sm"></i> Cpp</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p>C++ Traits 是一种元编程技术，将类型信息封装在一个类中，供算法或其他模板使用，以期达到从算法/逻辑中分离类型信息的目的。比如元素类型、一些常量定义、指令选择、对齐要求等等。</p> <table> <thead> <tr> <th>问题</th> <th>Traits 如何解决</th> </tr> </thead> <tbody> <tr> <td>内置类型（int, float）不能添加成员</td> <td>Traits 外挂信息</td> </tr> <tr> <td>不同类型需要不同的算法策略</td> <td>模板特化选择策略</td> </tr> <tr> <td>想要零开销的编译期多态</td> <td>全部在编译期决议</td> </tr> <tr> <td>接口与实现解耦</td> <td>算法只依赖 Traits 接口</td> </tr> </tbody> </table> <h2 id="1-自定义-traits-常见模式">1. 自定义 Traits 常见模式</h2> <h3 id="11-类型信息萃取">1.1 类型信息萃取</h3> <p>目的：从不同类型中统一提取需要的信息。</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 主模板 (可以留空或给默认值)</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">NumericTraits</span><span class="p">;</span>
+
+<span class="c1">// 对 float 特化</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">NumericTraits</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span>          <span class="o">=</span> <span class="kt">float</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">compute_type</span>  <span class="o">=</span> <span class="kt">float</span><span class="p">;</span>      <span class="c1">// 计算时用的类型</span>
+    <span class="k">using</span> <span class="n">accum_type</span>    <span class="o">=</span> <span class="kt">float</span><span class="p">;</span>      <span class="c1">// 累加器类型</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">bits</span> <span class="o">=</span> <span class="mi">32</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">float</span> <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-7f</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">float</span> <span class="n">max_val</span> <span class="o">=</span> <span class="mf">3.4028235e+38f</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// 对 half 特化</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">NumericTraits</span><span class="o">&lt;</span><span class="n">__half</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span>          <span class="o">=</span> <span class="n">__half</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">compute_type</span>  <span class="o">=</span> <span class="kt">float</span><span class="p">;</span>      <span class="c1">// half 计算时提升到 float</span>
+    <span class="k">using</span> <span class="n">accum_type</span>    <span class="o">=</span> <span class="kt">float</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">bits</span> <span class="o">=</span> <span class="mi">16</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// 对 int8_t 特化</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">NumericTraits</span><span class="o">&lt;</span><span class="kt">int8_t</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span>          <span class="o">=</span> <span class="kt">int8_t</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">compute_type</span>  <span class="o">=</span> <span class="kt">int32_t</span><span class="p">;</span>    <span class="c1">// int8 用 int32 累加</span>
+    <span class="k">using</span> <span class="n">accum_type</span>    <span class="o">=</span> <span class="kt">int32_t</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">bits</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// --- 使用 ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">gemm_kernel</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">Traits</span> <span class="o">=</span> <span class="n">NumericTraits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">AccumType</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">Traits</span><span class="o">::</span><span class="n">accum_type</span><span class="p">;</span>
+
+    <span class="n">AccumType</span> <span class="n">accumulator</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// 自动选择合适的累加器类型</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div> <h3 id="12-策略选择">1.2. 策略选择</h3> <p>目的：根据类型选择不同的算法实现。</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 内存拷贝策略 Traits</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="kt">int</span> <span class="n">Size</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">CopyTraits</span><span class="p">;</span>
+
+<span class="c1">// 小数据: 逐元素拷贝</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">CopyTraits</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">*</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+        <span class="o">*</span><span class="n">dst</span> <span class="o">=</span> <span class="o">*</span><span class="n">src</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// 4字节对齐: 用 uint32_t 一次拷贝</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">CopyTraits</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span> <span class="mi">4</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 使用向量化加载</span>
+        <span class="o">*</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">float4</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span> <span class="o">=</span> <span class="o">*</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">float4</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// 128位对齐: 用 LDG.128 指令</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">CopyTraits</span><span class="o">&lt;</span><span class="n">__half</span><span class="p">,</span> <span class="mi">8</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="n">__half</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="k">const</span> <span class="n">__half</span><span class="o">*</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 8 个 half = 128 bit, 用 128-bit load</span>
+        <span class="n">uint4</span> <span class="n">tmp</span> <span class="o">=</span> <span class="o">*</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">uint4</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
+        <span class="o">*</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">uint4</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div> <h3 id="13-特征探测">1.3. 特征探测</h3> <p>目的：检测类型是否具有某些特征，以启用/禁用特定代码路径。</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 检测类型是否有 .size() 方法</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_size_method</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_size_method</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">().</span><span class="n">size</span><span class="p">())</span><span class="o">&gt;&gt;</span>
+    <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+
+<span class="c1">// --- 使用 ---</span>
+<span class="k">static_assert</span><span class="p">(</span><span class="n">has_size_method</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="s">""</span><span class="p">);</span>  <span class="c1">// true</span>
+<span class="k">static_assert</span><span class="p">(</span><span class="o">!</span><span class="n">has_size_method</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="s">""</span><span class="p">);</span>               <span class="c1">// true</span>
+
+<span class="c1">// 检测类型是否有嵌套类型 value_type</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_value_type</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_value_type</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;&gt;</span>
+    <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+</code></pre></div></div> <h3 id="14-标签分发">1.4. 标签分发</h3> <p>目的：通过标签类型分发不同的实现。</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Tags</span>
+<span class="k">struct</span> <span class="nc">RowMajorTag</span> <span class="p">{};</span>
+<span class="k">struct</span> <span class="nc">ColMajorTag</span> <span class="p">{};</span>
+
+<span class="c1">// Layout Traits</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Layout</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">LayoutTraits</span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">LayoutTraits</span><span class="o">&lt;</span><span class="n">RowMajorTag</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="kt">int</span> <span class="n">index</span><span class="p">(</span><span class="kt">int</span> <span class="n">row</span><span class="p">,</span> <span class="kt">int</span> <span class="n">col</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ldim</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">row</span> <span class="o">*</span> <span class="n">ldim</span> <span class="o">+</span> <span class="n">col</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">char</span> <span class="n">name</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"RowMajor"</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">LayoutTraits</span><span class="o">&lt;</span><span class="n">ColMajorTag</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="kt">int</span> <span class="n">index</span><span class="p">(</span><span class="kt">int</span> <span class="n">row</span><span class="p">,</span> <span class="kt">int</span> <span class="n">col</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ldim</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">col</span> <span class="o">*</span> <span class="n">ldim</span> <span class="o">+</span> <span class="n">row</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">char</span> <span class="n">name</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"ColMajor"</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// 算法根据 tag 自动适配</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">LayoutTag</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">fill_matrix</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="kt">int</span> <span class="n">M</span><span class="p">,</span> <span class="kt">int</span> <span class="n">N</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ld</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">LTraits</span> <span class="o">=</span> <span class="n">LayoutTraits</span><span class="o">&lt;</span><span class="n">LayoutTag</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">LTraits</span><span class="o">::</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">ld</span><span class="p">)]</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">N</span> <span class="o">+</span> <span class="n">j</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div> <h2 id="2-traits-核心技术手段">2. Traits 核心技术手段</h2> <h3 id="21-特化偏特化">2.1. 特化/偏特化</h3> <ul> <li> <strong>完全特化（Template Specialization）</strong>：为特定类型提供完整实现。</li> <li> <strong>偏特化（Partial Specialization）</strong>：为满足某些条件的类型提供实现（如指针类型、数组类型等）。</li> </ul> <p>模板特化例子：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">my_is_void</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">bool</span> <span class="n">value</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">my_is_void</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">bool</span> <span class="n">value</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>偏特化例子：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_pointer</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">bool</span> <span class="n">value</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">bool</span> <span class="n">value</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div> <h3 id="22-typename">2.2. typename</h3> <p>在 Traits 中经常需要定义嵌套类型（如 <code class="language-plaintext highlighter-rouge">type</code>、<code class="language-plaintext highlighter-rouge">compute_type</code> 等），使用 <code class="language-plaintext highlighter-rouge">typename</code> 来<strong>显式告诉编译器该名字是一个类型</strong>。</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">NumericTraits</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>  <span class="c1">// 定义一个嵌套类型</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">MyType</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">NumericTraits</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">type</span><span class="p">;</span>  <span class="c1">// 使用嵌套类型</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div> <h3 id="23-sfinaesubstitution-failure-is-not-an-error">2.3. SFINAE（Substitution Failure Is Not An Error）</h3> <p>在 SFINAE 中，如果某个表达式无效（如访问了不存在的成员），编译器会将该特化视为无效，而不是报错，从而允许其他特化继续匹配。</p> <p>在 SFINAE 中，编译器优先特化/偏特化版本，C++ 偏特化规则：更特化（更具体）的版本优先。最后才是主模板版本。</p> <h4 id="231-void_t-和-sfinae-结合实现特征探测">2.3.1. void_t 和 SFINAE 结合实现特征探测</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// void_t 是 SFINAE 的瑞士军刀</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span> <span class="nc">Ts</span><span class="p">&gt;</span>
+<span class="k">using</span> <span class="n">void_t</span> <span class="o">=</span> <span class="kt">void</span><span class="p">;</span>   <span class="c1">// C++17 标准已有</span>
+
+<span class="c1">// 主模板：利用 void_t 探测嵌套类型</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">element_type_of</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>  <span class="c1">// 默认: 类型本身</span>
+<span class="p">};</span>
+
+<span class="c1">// 偏特化：如果 T 有 element_type 嵌套类型，就用它</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">element_type_of</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">void_t</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">::</span><span class="n">element_type</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">T</span><span class="o">::</span><span class="n">element_type</span><span class="p">;</span>  <span class="c1">// 如果有 element_type 就用它</span>
+<span class="p">};</span>
+
+<span class="c1">// 使用</span>
+<span class="c1">// element_type_of&lt;std::unique_ptr&lt;int&gt;&gt;::type  → 得到 int</span>
+<span class="c1">// element_type_of&lt;float&gt;::type              → 得到 float</span>
+</code></pre></div></div> <p><strong>void_t</strong>是一个通用的的类型萃取容器，能将任意数量的<strong>表达式</strong>包裹为 <code class="language-plaintext highlighter-rouge">void</code> 类型。<code class="language-plaintext highlighter-rouge">void_t&lt;X&gt;</code> 本身永远是 <code class="language-plaintext highlighter-rouge">void</code>，但若 <code class="language-plaintext highlighter-rouge">X</code> 是非法类型表达式，模板替换就会失败。</p> <p>上述代码片段中，以 float 为例，偏特化得到：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">element_type_of</span><span class="o">&lt;</span> <span class="kt">float</span><span class="p">,</span>  <span class="n">void_t</span><span class="o">&lt;</span><span class="k">typename</span> <span class="kt">float</span><span class="o">::</span><span class="n">element_type</span><span class="o">&gt;</span> <span class="o">&gt;</span>
+                                <span class="o">^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+                                <span class="kt">float</span> <span class="err">没有</span> <span class="o">::</span><span class="n">element_type</span> <span class="err">成员</span>
+                                <span class="err">→</span> <span class="err">类型表达式非法</span> <span class="err">→</span> <span class="err">替换失败</span>
+</code></pre></div></div> <p>以 std::unique_ptr&lt;int&gt; 为例，偏特化得到：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">void_t</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">element_type</span><span class="o">&gt;</span>
+     <span class="o">=</span> <span class="n">void_t</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span>              <span class="err">←</span> <span class="o">::</span><span class="n">element_type</span> <span class="o">=</span> <span class="kt">int</span><span class="err">，合法！</span>
+     <span class="o">=</span> <span class="kt">void</span>                     <span class="err">←</span> <span class="n">void_t</span> <span class="err">永远返回</span> <span class="kt">void</span>
+</code></pre></div></div> <p>最终得到：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">element_type_of</span><span class="o">&lt;</span> <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="kt">void</span> <span class="o">&gt;</span>
+</code></pre></div></div> <h4 id="232-sfinae-结合-enable_if-实现函数重载">2.3.2. SFINAE 结合 enable_if 实现函数重载</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// enable_if 的原理:</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="kt">bool</span> <span class="n">Cond</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">T</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">enable_if</span> <span class="p">{};</span>             <span class="c1">// 默认: 没有 type 成员</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">enable_if</span><span class="o">&lt;</span><span class="nb">true</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>              <span class="c1">// 条件为 true 时才有 type</span>
+<span class="p">};</span>
+
+<span class="c1">// 使用: 条件不满足 → enable_if&lt;false&gt;::type 不存在 → SFINAE</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;::</span><span class="n">type</span>
+<span class="nf">double_it</span><span class="p">(</span><span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">typename</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;::</span><span class="n">type</span>
+<span class="nf">double_it</span><span class="p">(</span><span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">double_it</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>    <span class="c1">// is_integral = true  → 第一个 ✅</span>
+<span class="n">double_it</span><span class="p">(</span><span class="mf">3.14</span><span class="p">);</span>  <span class="c1">// is_floating = true  → 第二个 ✅</span>
+</code></pre></div></div> <h3 id="24-constexpr-与-static-编译期常量">2.4. constexpr 与 static 编译期常量</h3> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">AlignmentTraits</span> <span class="p">{</span>
+    <span class="c1">// 编译期常量</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">alignment</span> <span class="o">=</span> <span class="k">alignof</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">size_bytes</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+
+    <span class="c1">// 编译期函数 (C++14)</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">max_vector_width</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">16</span><span class="p">;</span>  <span class="c1">// 128-bit / 8-bit</span>
+        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">8</span><span class="p">;</span>   <span class="c1">// 128-bit / 16-bit</span>
+        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="k">return</span> <span class="mi">4</span><span class="p">;</span>   <span class="c1">// 128-bit / 32-bit</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div> <h3 id="25-嵌套类型别名">2.5. 嵌套类型别名</h3> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">AlignmentTraits</span> <span class="p">{</span>
+    <span class="c1">// 编译期常量</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">alignment</span> <span class="o">=</span> <span class="k">alignof</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">size_bytes</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+
+    <span class="c1">// 编译期函数 (C++14)</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">max_vector_width</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">16</span><span class="p">;</span>  <span class="c1">// 128-bit / 8-bit</span>
+        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">8</span><span class="p">;</span>   <span class="c1">// 128-bit / 16-bit</span>
+        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="k">return</span> <span class="mi">4</span><span class="p">;</span>   <span class="c1">// 128-bit / 32-bit</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div> <h2 id="3-cute-中使用-traits-的例子">3. CuTe 中使用 Traits 的例子</h2> <p>以<strong>SM80_CP_ASYNC_CACHEALWAYS</strong>为例，其 Traits 定义如下：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// CuTe 风格的 Copy_Traits (简化示意)</span>
+<span class="c1">// 对应 cp.async 指令的 Traits</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">CopyInstr</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Copy_Traits</span><span class="p">;</span>
+
+<span class="c1">// 针对 SM80_CP_ASYNC_CACHEALWAYS&lt;cute::uint128_t&gt; 的特化</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Copy_Traits</span><span class="o">&lt;</span><span class="n">SM80_CP_ASYNC_CACHEALWAYS</span><span class="o">&lt;</span><span class="n">cute</span><span class="o">::</span><span class="n">uint128_t</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="c1">// ---- 关联类型 ----</span>
+
+    <span class="c1">// 指令操作的寄存器类型</span>
+    <span class="c1">//   源: 1个 gmem 指针 (uint128_t)</span>
+    <span class="c1">//   目标: 1个 smem 指针 (uint128_t)</span>
+    <span class="k">using</span> <span class="n">SRegisters</span> <span class="o">=</span> <span class="n">cute</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">uint128_t</span> <span class="k">const</span><span class="o">*&gt;</span><span class="p">;</span>  <span class="c1">// source (gmem ptr)</span>
+    <span class="k">using</span> <span class="n">DRegisters</span> <span class="o">=</span> <span class="n">cute</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">uint128_t</span><span class="o">*&gt;</span><span class="p">;</span>        <span class="c1">// dest (smem ptr)</span>
+
+    <span class="c1">// Layout 描述: 一个线程搬运多少数据、如何排布</span>
+    <span class="c1">// ThrID: 哪些线程参与</span>
+    <span class="c1">// ValLayoutSrc / ValLayoutDst: 值的布局</span>
+    <span class="k">using</span> <span class="n">ThrID</span>        <span class="o">=</span> <span class="n">Layout</span><span class="o">&lt;</span><span class="n">_1</span><span class="o">&gt;</span><span class="p">;</span>          <span class="c1">// 1个线程</span>
+    <span class="k">using</span> <span class="n">ValLayoutSrc</span> <span class="o">=</span> <span class="n">Layout</span><span class="o">&lt;</span><span class="n">_1</span><span class="o">&gt;</span><span class="p">;</span>          <span class="c1">// 搬运1个128-bit值</span>
+    <span class="k">using</span> <span class="n">ValLayoutDst</span> <span class="o">=</span> <span class="n">Layout</span><span class="o">&lt;</span><span class="n">_1</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="c1">// ---- 核心操作 ----</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">TS</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">TD</span><span class="p">&gt;</span>
+    <span class="n">CUTE_HOST_DEVICE</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="n">TS</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span> <span class="n">TD</span><span class="o">&amp;</span> <span class="n">dst</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 调用 PTX 内联汇编</span>
+        <span class="c1">// cp.async.ca.shared.global [dst], [src], 16;</span>
+        <span class="n">cute</span><span class="o">::</span><span class="n">cp_async</span><span class="o">&lt;</span><span class="mi">16</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div> <p><strong>Copy_Atom 如何使用 Traits</strong></p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 简化版 Copy_Atom</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Traits</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">Element</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Copy_Atom</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">TraitsType</span> <span class="o">=</span> <span class="n">Traits</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">ElementType</span> <span class="o">=</span> <span class="n">Element</span><span class="p">;</span>
+
+    <span class="c1">// 从 Traits 中提取信息</span>
+    <span class="k">using</span> <span class="n">SrcRegisters</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">Traits</span><span class="o">::</span><span class="n">SRegisters</span><span class="p">;</span>
+    <span class="k">using</span> <span class="n">DstRegisters</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">Traits</span><span class="o">::</span><span class="n">DRegisters</span><span class="p">;</span>
+
+    <span class="c1">// 执行拷贝 — 委托给 Traits</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">SrcEngine</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">SrcLayout</span><span class="p">,</span>
+              <span class="k">typename</span> <span class="nc">DstEngine</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">DstLayout</span><span class="p">&gt;</span>
+    <span class="n">CUTE_HOST_DEVICE</span>
+    <span class="kt">void</span> <span class="n">copy</span><span class="p">(</span><span class="n">Tensor</span><span class="o">&lt;</span><span class="n">SrcEngine</span><span class="p">,</span> <span class="n">SrcLayout</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">src</span><span class="p">,</span>
+              <span class="n">Tensor</span><span class="o">&lt;</span><span class="n">DstEngine</span><span class="p">,</span> <span class="n">DstLayout</span><span class="o">&gt;</span>      <span class="o">&amp;</span> <span class="n">dst</span><span class="p">)</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="c1">// 实际调用 Traits::copy</span>
+        <span class="n">Traits</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">dst</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// ===== 用户代码 =====</span>
+<span class="c1">// 选择 Traits → 决定用什么指令</span>
+<span class="k">using</span> <span class="n">CopyTraits</span> <span class="o">=</span> <span class="n">Copy_Traits</span><span class="o">&lt;</span><span class="n">SM80_CP_ASYNC_CACHEALWAYS</span><span class="o">&lt;</span><span class="n">uint128_t</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+<span class="c1">// 创建 Atom</span>
+<span class="k">using</span> <span class="n">CopyAtom</span> <span class="o">=</span> <span class="n">Copy_Atom</span><span class="o">&lt;</span><span class="n">CopyTraits</span><span class="p">,</span> <span class="n">cute</span><span class="o">::</span><span class="n">half_t</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="c1">// 构建 TiledCopy (多线程协作版本)</span>
+<span class="k">using</span> <span class="n">TiledCopy</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span>
+    <span class="n">make_tiled_copy</span><span class="p">(</span>
+        <span class="n">CopyAtom</span><span class="p">{},</span>
+        <span class="n">Layout</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&lt;</span><span class="n">_32</span><span class="p">,</span> <span class="n">_4</span><span class="o">&gt;&gt;</span><span class="p">{},</span>   <span class="c1">// 线程布局: 32x4 = 128线程</span>
+        <span class="n">Layout</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&lt;</span><span class="n">_1</span><span class="p">,</span> <span class="n">_8</span><span class="o">&gt;&gt;</span><span class="p">{}</span>     <span class="c1">// 每线程搬运的值布局</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></div> <h2 id="5-c-标准库中-traits-相关的常用工具">5. C++ 标准库中 Traits 相关的常用工具</h2> <h3 id="51-类型判断">5.1. 类型判断</h3> <h4 id="511-基本类型判断">5.1.1. 基本类型判断</h4> <blockquote> <p>返回 <code class="language-plaintext highlighter-rouge">::value</code>，bool 类型，C++17 起可用 <code class="language-plaintext highlighter-rouge">_v</code> 后缀简写。</p> </blockquote> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">td</span><span class="o">::</span><span class="n">is_void</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                  <span class="c1">// T 是 void？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_null_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>          <span class="c1">// T 是 std::nullptr_t？       (C++14)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_integral</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 是整数类型？(bool/char/int/long...)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_floating_point</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>        <span class="c1">// T 是浮点？(float/double/long double)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_arithmetic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>            <span class="c1">// T 是算术类型？(整数 或 浮点)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_enum</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                  <span class="c1">// T 是枚举？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// T 是 class/struct？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 是函数类型？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_array</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// T 是数组类型？(T[] 或 T[N])</span>
+</code></pre></div></div> <h4 id="512-复合类型判断">5.1.2. 复合类型判断</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">is_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>               <span class="c1">// T 是指针？(int*, 但不含成员指针)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>             <span class="c1">// T 是引用？(左值引用 或 右值引用)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_lvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>      <span class="c1">// T 是左值引用？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_rvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>      <span class="c1">// T 是右值引用？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_member_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>        <span class="c1">// T 是成员指针？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_const</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// T 有顶层 const？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_volatile</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 有顶层 volatile？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_signed</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                <span class="c1">// T 是有符号类型？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_unsigned</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// T 是无符号类型？</span>
+</code></pre></div></div> <h4 id="513-类型关系判断">5.1.3. 类型关系判断</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ===== 两个类型的关系 =====</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span>              <span class="c1">// T 和 U 是完全相同的类型？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_base_of</span><span class="o">&lt;</span><span class="n">Base</span><span class="p">,</span> <span class="n">Derived</span><span class="o">&gt;</span>  <span class="c1">// Base 是 Derived 的基类？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_convertible</span><span class="o">&lt;</span><span class="n">From</span><span class="p">,</span> <span class="n">To</span><span class="o">&gt;</span>   <span class="c1">// From 能隐式转换为 To？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_assignable</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span>        <span class="c1">// T = U 赋值合法？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span> <span class="c1">// T(Args...) 构造合法？</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span>   <span class="c1">// F(Args...) 可调用？           (C++17)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r</span><span class="o">&lt;</span><span class="n">R</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span> <span class="c1">// F(Args...) 可调用且返回 R？ (C++17)</span>
+</code></pre></div></div> <h3 id="52-类型变换">5.2. 类型变换</h3> <h4 id="521-修饰符增删">5.2.1. 修饰符增删</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ===== 去除修饰 =====</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_const</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>           <span class="c1">// const int      → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_volatile</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>        <span class="c1">// volatile int   → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_cv</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// const volatile int → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>       <span class="c1">// int&amp;/int&amp;&amp;     → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>         <span class="c1">// int*           → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_extent</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>          <span class="c1">// int[10]        → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">remove_all_extents</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>     <span class="c1">// int[3][4]      → int</span>
+
+<span class="c1">// ===== 添加修饰 =====</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_const</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>              <span class="c1">// int            → const int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_volatile</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>           <span class="c1">// int            → volatile int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_cv</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>                 <span class="c1">// int            → const volatile int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_lvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>   <span class="c1">// int            → int&amp;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_rvalue_reference</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>   <span class="c1">// int            → int&amp;&amp;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">add_pointer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>            <span class="c1">// int            → int*</span>
+</code></pre></div></div> <h4 id="522-decay">5.2.2. decay</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// decay 模拟"按值传参"时的类型退化:</span>
+<span class="c1">//   - 去掉引用</span>
+<span class="c1">//   - 去掉顶层 cv</span>
+<span class="c1">//   - 数组 → 指针</span>
+<span class="c1">//   - 函数 → 函数指针</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">int</span><span class="o">&amp;&gt;</span>      <span class="c1">// → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">&gt;</span>         <span class="c1">// → int*</span>
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="o">&gt;</span>     <span class="c1">// → int(*)(double)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">decay</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">int</span><span class="o">&amp;&amp;&gt;</span>     <span class="c1">// → int</span>
+
+<span class="c1">// --- 实用示例: 存储任意传入的值 ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">Storage</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">StoredType</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="n">StoredType</span> <span class="n">value</span><span class="p">;</span>
+
+    <span class="n">Storage</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="o">:</span> <span class="n">value</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="p">{}</span>
+<span class="p">};</span>
+</code></pre></div></div> <h4 id="523-stdconditional">5.2.3. std::conditional</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ===== conditional: 编译期三目运算符 =====</span>
+<span class="n">std</span><span class="o">::</span><span class="n">conditional</span><span class="o">&lt;</span><span class="nb">true</span><span class="p">,</span>  <span class="kt">int</span><span class="p">,</span> <span class="kt">double</span><span class="o">&gt;::</span><span class="n">type</span>  <span class="c1">// → int</span>
+<span class="n">std</span><span class="o">::</span><span class="n">conditional</span><span class="o">&lt;</span><span class="nb">false</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">double</span><span class="o">&gt;::</span><span class="n">type</span>  <span class="c1">// → double</span>
+
+<span class="c1">// --- 实用示例: 根据大小选计算类型 ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">ComputeTypeSelector</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">conditional_t</span><span class="o">&lt;</span>
+        <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">),</span>   <span class="c1">// 半精度/int8 等小类型</span>
+        <span class="kt">float</span><span class="p">,</span>               <span class="c1">// → 提升到 float 计算</span>
+        <span class="n">T</span>                    <span class="c1">// → 原类型计算</span>
+    <span class="o">&gt;</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// ComputeTypeSelector&lt;half&gt;::type   → float</span>
+<span class="c1">// ComputeTypeSelector&lt;float&gt;::type  → float</span>
+<span class="c1">// ComputeTypeSelector&lt;double&gt;::type → double</span>
+</code></pre></div></div> <h4 id="524-common_type">5.2.4. common_type</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 求多个类型的"公共类型" (类似三目运算符的推导)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">double</span><span class="o">&gt;::</span><span class="n">type</span>         <span class="c1">// → double</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">float</span><span class="o">&gt;::</span><span class="n">type</span>    <span class="c1">// → float</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">type</span>   <span class="c1">// → unsigned int</span>
+
+<span class="c1">// --- 实用示例: 通用 max ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">U</span><span class="p">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span> <span class="n">generic_max</span><span class="p">(</span><span class="n">T</span> <span class="n">a</span><span class="p">,</span> <span class="n">U</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="o">?</span> <span class="n">a</span> <span class="o">:</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">generic_max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">);</span>   <span class="c1">// 返回 double</span>
+<span class="n">generic_max</span><span class="p">(</span><span class="mi">1L</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>    <span class="c1">// 返回 long</span>
+</code></pre></div></div> <h3 id="53-sfinae-相关工具">5.3. SFINAE 相关工具</h3> <h4 id="531-stdenable_if">5.3.1. std::enable_if</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 原理:</span>
+<span class="c1">//   enable_if&lt;true,  T&gt;::type = T</span>
+<span class="c1">//   enable_if&lt;false, T&gt;::type = 不存在 → SFINAE</span>
+
+<span class="c1">// ---- 用法1: 放在返回类型 ----</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">bit_count</span><span class="p">(</span><span class="n">T</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">__builtin_popcount</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// ---- 用法2: 放在模板参数默认值 (更简洁) ----</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span>
+          <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral_v</span><span class="o">&lt;</span><span class="n">T</span><span class="p">&gt;,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">0</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="nf">bit_count_v2</span><span class="p">(</span><span class="n">T</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">__builtin_popcount</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// ---- 用法3: 放在函数参数 ----</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="n">T</span> <span class="nf">bit_count_v3</span><span class="p">(</span><span class="n">T</span> <span class="n">val</span><span class="p">,</span>
+               <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;*</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">__builtin_popcount</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div> <h4 id="532-stdvoid_t">5.3.2. std::void_t</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// void_t&lt;Ts...&gt; = void (无论 Ts 是什么)</span>
+<span class="c1">// 但如果 Ts 中有无效类型 → 替换失败 → SFINAE</span>
+
+<span class="c1">// 检测是否有 .size() 方法</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_size</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_size</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">().</span><span class="n">size</span><span class="p">())</span><span class="o">&gt;&gt;</span>
+    <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+
+<span class="c1">// 检测是否有嵌套 value_type</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_value_type</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">has_value_type</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;&gt;</span>
+    <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+
+<span class="c1">// 检测是否支持 &lt;&lt; 输出</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="kt">void</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_printable</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_printable</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span>
+    <span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;&gt;</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+</code></pre></div></div> <h4 id="533-stddeclval">5.3.3. std::declval</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// std::declval&lt;T&gt;() 在不构造对象的情况下，"假装"有一个 T 类型的值</span>
+<span class="c1">// 只能在 decltype / sizeof 等不求值上下文中使用</span>
+
+<span class="c1">// 用途: 探测表达式是否合法</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">,</span> <span class="k">typename</span> <span class="nc">U</span><span class="p">&gt;</span>
+<span class="k">using</span> <span class="n">add_result_t</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">()</span> <span class="o">+</span> <span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span><span class="p">());</span>
+
+<span class="c1">// add_result_t&lt;int, double&gt; → double</span>
+<span class="c1">// add_result_t&lt;string, string&gt; → string</span>
+<span class="c1">// add_result_t&lt;int, string&gt; → 替换失败</span>
+
+<span class="c1">// 也可以检测成员函数返回类型</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Container</span><span class="p">&gt;</span>
+<span class="k">using</span> <span class="n">iterator_t</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">Container</span><span class="o">&gt;</span><span class="p">().</span><span class="n">begin</span><span class="p">());</span>
+
+<span class="c1">// iterator_t&lt;std::vector&lt;int&gt;&gt; → std::vector&lt;int&gt;::iterator</span>
+</code></pre></div></div> <h3 id="54-编译期计算工具">5.4. 编译期计算工具</h3> <h4 id="541-stdintegral_constant">5.4.1. std::integral_constant</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// integral_constant: 将编译期常量包装成类型</span>
+<span class="n">std</span><span class="o">::</span><span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="mi">42</span><span class="o">&gt;</span>       <span class="c1">// ::value = 42, ::type = 自身</span>
+
+<span class="c1">// 最常见的两个特化:</span>
+<span class="n">std</span><span class="o">::</span><span class="n">true_type</span>   <span class="c1">// = integral_constant&lt;bool, true&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">false_type</span>  <span class="c1">// = integral_constant&lt;bool, false&gt;</span>
+
+<span class="c1">// --- 实用: 自定义 trait 继承它们 ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_gpu_type</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>  <span class="c1">// 默认 false</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_gpu_type</span><span class="o">&lt;</span><span class="n">__half</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>   <span class="c1">// 特化为 true</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_gpu_type</span><span class="o">&lt;</span><span class="n">__nv_bfloat16</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+
+<span class="c1">// 使用:</span>
+<span class="k">static_assert</span><span class="p">(</span><span class="n">is_gpu_type</span><span class="o">&lt;</span><span class="n">__half</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">);</span>
+<span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">is_gpu_type</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</code></pre></div></div> <h4 id="542-stdinteger_sequence">5.4.2. std::integer_sequence</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 生成编译期整数序列</span>
+<span class="n">std</span><span class="o">::</span><span class="n">integer_sequence</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">index_sequence</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="o">&gt;</span>          <span class="c1">// 简写 (size_t)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">make_index_sequence</span><span class="o">&lt;</span><span class="mi">5</span><span class="o">&gt;</span>                  <span class="c1">// 自动生成 0,1,2,3,4</span>
+
+<span class="c1">// --- 实用: 展开 tuple ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Tuple</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">...</span> <span class="n">Is</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">print_tuple_impl</span><span class="p">(</span><span class="k">const</span> <span class="n">Tuple</span><span class="o">&amp;</span> <span class="n">t</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">index_sequence</span><span class="o">&lt;</span><span class="n">Is</span><span class="p">...</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">((</span><span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="n">Is</span><span class="o">&gt;</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">),</span> <span class="p">...);</span>  <span class="c1">// fold expression</span>
+<span class="p">}</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="o">...</span> <span class="nc">Ts</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">print_tuple</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">Ts</span><span class="p">...</span><span class="o">&gt;&amp;</span> <span class="n">t</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">print_tuple_impl</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">make_index_sequence</span><span class="o">&lt;</span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Ts</span><span class="p">)</span><span class="o">&gt;</span><span class="p">{});</span>
+<span class="p">}</span>
+
+<span class="n">print_tuple</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_tuple</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="s">"hello"</span><span class="p">));</span>
+<span class="c1">// 输出: 1 3.14 hello</span>
+
+<span class="c1">// --- 实用: 编译期循环 ---</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="kt">size_t</span><span class="p">...</span> <span class="n">Is</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">unrolled_copy</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float</span><span class="o">*</span> <span class="n">src</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">index_sequence</span><span class="o">&lt;</span><span class="n">Is</span><span class="p">...</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">((</span><span class="n">dst</span><span class="p">[</span><span class="n">Is</span><span class="p">]</span> <span class="o">=</span> <span class="n">src</span><span class="p">[</span><span class="n">Is</span><span class="p">]),</span> <span class="p">...);</span>  <span class="c1">// 展开成 dst[0]=src[0]; dst[1]=src[1]; ...</span>
+<span class="p">}</span>
+</code></pre></div></div> <h4 id="543-if-constexpr-c17">5.4.3. if constexpr (C++17)</h4> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译期 if — 不满足的分支完全不编译 — 替代大量 enable_if</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="p">&gt;</span>
+<span class="k">auto</span> <span class="nf">convert</span><span class="p">(</span><span class="n">T</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">stoi</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>                      <span class="c1">// string → int</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_floating_point_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>                <span class="c1">// float → int</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_integral_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">val</span><span class="p">;</span>                                  <span class="c1">// int → int</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">static_assert</span><span class="p">(</span><span class="n">always_false</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="s">"Unsupported type"</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 辅助: 永远为 false 的依赖模板 (防止 static_assert 直接触发)</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">&gt;</span> <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">always_false</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</code></pre></div></div> <h3 id="56-常用场景速查表">5.6. 常用场景速查表</h3> <table> <thead> <tr> <th>我想做什么</th> <th>用什么</th> </tr> </thead> <tbody> <tr> <td>判断是不是整数/浮点</td> <td> <code class="language-plaintext highlighter-rouge">is_integral_v</code>, <code class="language-plaintext highlighter-rouge">is_floating_point_v</code> </td> </tr> <tr> <td>判断两个类型是否相同</td> <td><code class="language-plaintext highlighter-rouge">is_same_v&lt;T, U&gt;</code></td> </tr> <tr> <td>去掉 const/引用</td> <td> <code class="language-plaintext highlighter-rouge">remove_cv_t&lt;remove_reference_t&lt;T&gt;&gt;</code> 或 <code class="language-plaintext highlighter-rouge">decay_t</code> </td> </tr> <tr> <td>根据条件选类型</td> <td><code class="language-plaintext highlighter-rouge">conditional_t&lt;cond, A, B&gt;</code></td> </tr> <tr> <td>求公共类型</td> <td><code class="language-plaintext highlighter-rouge">common_type_t&lt;T, U&gt;</code></td> </tr> <tr> <td>按条件启用/禁用重载</td> <td> <code class="language-plaintext highlighter-rouge">enable_if_t</code> (C++11) / <code class="language-plaintext highlighter-rouge">if constexpr</code> (C++17) / <code class="language-plaintext highlighter-rouge">concept</code> (C++20)</td> </tr> <tr> <td>检测类型有没有某成员</td> <td> <code class="language-plaintext highlighter-rouge">void_t</code> + 偏特化 / <code class="language-plaintext highlighter-rouge">is_detected</code> </td> </tr> <tr> <td>检测表达式是否合法</td> <td> <code class="language-plaintext highlighter-rouge">decltype(expr)</code> + <code class="language-plaintext highlighter-rouge">declval</code> </td> </tr> <tr> <td>判断能不能用 memcpy</td> <td><code class="language-plaintext highlighter-rouge">is_trivially_copyable_v</code></td> </tr> <tr> <td>判断是不是空基类(EBO)</td> <td><code class="language-plaintext highlighter-rouge">is_empty_v</code></td> </tr> <tr> <td>判断能不能调用</td> <td><code class="language-plaintext highlighter-rouge">is_invocable_v&lt;F, Args...&gt;</code></td> </tr> <tr> <td>编译期循环/展开</td> <td> <code class="language-plaintext highlighter-rouge">index_sequence</code> + <code class="language-plaintext highlighter-rouge">fold expression</code> </td> </tr> <tr> <td>自定义 bool trait</td> <td>继承 <code class="language-plaintext highlighter-rouge">true_type</code> / <code class="language-plaintext highlighter-rouge">false_type</code> </td> </tr> <tr> <td>有符号↔无符号</td> <td> <code class="language-plaintext highlighter-rouge">make_signed_t</code> / <code class="language-plaintext highlighter-rouge">make_unsigned_t</code> </td> </tr> <tr> <td>组合多个条件</td> <td> <code class="language-plaintext highlighter-rouge">conjunction_v</code> / <code class="language-plaintext highlighter-rouge">disjunction_v</code> (C++17)</td> </tr> </tbody> </table> <h2 id="a-资料">A. 资料</h2> <ul> <li><a href="https://www.cnblogs.com/zhxmdefj/p/12530982.html" rel="external nofollow noopener" target="_blank">C++ Traits Classes</a></li> <li><a href="https://stackoverflow.com/questions/27687389/how-do-we-use-void-t-for-sfinae" rel="external nofollow noopener" target="_blank">How do we use void_t for SFINAE?</a></li> </ul> </div> </article> <br> <hr> <br> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <ul class="list-disc pl-7 my-3 space-y-2 marker:text-[var(--global-theme-color)]"> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/" target="_blank" rel="noopener noreferrer">Google Gemini updates: Flash 1.5, Gemma 2 and Project Astra</a> <svg width="1rem" height="1rem" viewbox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2" target="_blank" rel="noopener noreferrer">Displaying External Posts on Your al-folio Blog</a> <svg width="1rem" height="1rem" viewbox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/OpenMAIC%E9%83%A8%E7%BD%B2/">在Ubuntu上部署OpenMAIC</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/">AI工具大全</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/Fast-DDS%E5%85%A5%E9%97%A8/">Fast DDS入门（On-Going）</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/NVIDIA-GPU-SP-SM-LSU/">NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/al-folio-customization-summary/">al-folio 模板定制修改总结</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/al-folio-local-deploy-ubuntu2404/">al-folio 部署记录（Ubuntu 24.04）</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/%E5%AE%89%E8%A3%85Docker-Docker-Compose/">Ubuntu 26.04 安装 Docker 和 Docker Compose</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/">道格拉斯-普克算法(Douglas–Peucker algorithm)</a> </li> </ul> </div> </div> <div class="col-sm-3"> <nav id="toc-sidebar" class="sticky-top toc toc-sidebar" aria-label="Table of contents" data-toc-collapse="expanded" data-toc-collapse-depth=""></nav> </div> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Roderick Huang. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script defer src="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.min.js" integrity="sha256-lo/r+jQ81wWrxdIiiiEEd538z4+dTJTt+leOuAS7GCw=" crossorigin="anonymous"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "A growing collection of your cool projects.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-repositories",
+          title: "repositories",
+          description: "Edit the `_data/repositories.yml` and change the `github_users` and `github_repos` lists to include your own GitHub profile and repositories.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/repositories/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "This is a description of the page. You can modify it in '_pages/cv.md'. You can also change or remove the top pdf download button.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "nav-teaching",
+          title: "teaching",
+          description: "Course materials, schedules, and resources for classes taught.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/teaching/";
+          },
+        },{id: "nav-people",
+          title: "people",
+          description: "members of the lab or group",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/people/";
+          },
+        },{id: "dropdown-bookshelf",
+              title: "bookshelf",
+              description: "",
+              section: "Dropdown",
+              handler: () => {
+                window.location.href = "/books/";
+              },
+            },{id: "dropdown-blog",
+              title: "blog",
+              description: "",
+              section: "Dropdown",
+              handler: () => {
+                window.location.href = "/blog/";
+              },
+            },{id: "post-在ubuntu上部署openmaic",
+        
+          title: "在Ubuntu上部署OpenMAIC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/OpenMAIC%E9%83%A8%E7%BD%B2/";
+          
+        },
+      },{id: "post-ai工具大全",
+        
+          title: "AI工具大全",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/";
+          
+        },
+      },{id: "post-fast-dds入门-on-going",
+        
+          title: "Fast DDS入门（On-Going）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/Fast-DDS%E5%85%A5%E9%97%A8/";
+          
+        },
+      },{id: "post-nvidia-gpu-架构-sp-sm-与-lsu-工作原理详解",
+        
+          title: "NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/NVIDIA-GPU-SP-SM-LSU/";
+          
+        },
+      },{id: "post-al-folio-模板定制修改总结",
+        
+          title: "al-folio 模板定制修改总结",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/al-folio-customization-summary/";
+          
+        },
+      },{id: "post-al-folio-部署记录-ubuntu-24-04",
+        
+          title: "al-folio 部署记录（Ubuntu 24.04）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/al-folio-local-deploy-ubuntu2404/";
+          
+        },
+      },{id: "post-ubuntu-26-04-安装-docker-和-docker-compose",
+        
+          title: "Ubuntu 26.04 安装 Docker 和 Docker Compose",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/%E5%AE%89%E8%A3%85Docker-Docker-Compose/";
+          
+        },
+      },{id: "post-c-traits",
+        
+          title: "C++ Traits",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/C++-Traits/";
+          
+        },
+      },{id: "post-道格拉斯-普克算法-douglas-peucker-algorithm",
+        
+          title: "道格拉斯-普克算法(Douglas–Peucker algorithm)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/";
+          
+        },
+      },{id: "post-cmake支持库收集",
+        
+          title: "CMake支持库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93/";
+          
+        },
+      },{id: "post-qgc代码架构解析-飞行前检查-起飞条件",
+        
+          title: "QGC代码架构解析：飞行前检查（起飞条件）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QGC%E9%A3%9E%E8%A1%8C%E5%89%8D%E6%A3%80%E6%9F%A5/";
+          
+        },
+      },{id: "post-qgc代码架构解析-mavlink-mission-protocol-以及-qgc-航点管理",
+        
+          title: "QGC代码架构解析：MAVLink Mission Protocol，以及 QGC 航点管理",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_mission_manager/";
+          
+        },
+      },{id: "post-ai工具收集及使用笔记-持续更新",
+        
+          title: "AI工具收集及使用笔记，持续更新",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/AI%E5%B7%A5%E5%85%B7%E6%94%B6%E9%9B%86%E5%8F%8A%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-ai工具-使用docling转换文档",
+        
+          title: "AI工具：使用docling转换文档",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/AI-%E4%BD%BF%E7%94%A8docling%E8%BD%AC%E6%8D%A2%E6%96%87%E4%BB%B6/";
+          
+        },
+      },{id: "post-qgc代码架构解析-qgc初始加载及状态机",
+        
+          title: "QGC代码架构解析：QGC初始加载及状态机",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_init_load_states/";
+          
+        },
+      },{id: "post-qgc代码架构解析-mavlink参数服务及qgc参数管理模块",
+        
+          title: "QGC代码架构解析：MAVLink参数服务及QGC参数管理模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_parameter_module/";
+          
+        },
+      },{id: "post-qgc代码架构解析-firmwareplugin与autopilotplugin",
+        
+          title: "QGC代码架构解析：FirmwarePlugin与AutopilotPlugin",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_firmwareplugin_autopilotplugin/";
+          
+        },
+      },{id: "post-apm-pixhawk常用飞行模式",
+        
+          title: "APM/Pixhawk常用飞行模式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ardupilot-flight-modes/";
+          
+        },
+      },{id: "post-地面站-helios-以及-dart-flutter-环境搭建",
+        
+          title: "地面站 Helios 以及 Dart/Flutter 环境搭建",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E5%9C%B0%E9%9D%A2%E7%AB%99-helios-%E4%BB%A5%E5%8F%8A-dart-flutter-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/";
+          
+        },
+      },{id: "post-ardupilot-笔记",
+        
+          title: "ArduPilot 笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ardupilot-notes/";
+          
+        },
+      },{id: "post-内存模型-memory-model-从多处理器到高级语言",
+        
+          title: "内存模型(Memory Model)：从多处理器到高级语言",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/memory_model2/";
+          
+        },
+      },{id: "post-再理解-std-condition-variable-条件变量",
+        
+          title: "再理解 std::condition_variable 条件变量",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/conditonal_variable/";
+          
+        },
+      },{id: "post-使用-libevent-实现时间戳调度",
+        
+          title: "使用 libevent 实现时间戳调度",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/timestamp_schedule_using_libevent/";
+          
+        },
+      },{id: "post-qml基础语法积累",
+        
+          title: "QML基础语法积累",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QML%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-交叉编译-qt-5-15-2",
+        
+          title: "交叉编译 Qt 5.15.2",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cross_build_qt_arm64_linaro_7.5/";
+          
+        },
+      },{id: "post-使用-c-template-构建一个通信用序列化反序列化模块",
+        
+          title: "使用 C++ template 构建一个通信用序列化反序列化模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%80%9A%E4%BF%A1%E7%94%A8%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%A8%A1%E5%9D%97/";
+          
+        },
+      },{id: "post-static-cast-与-reinterpret-cast",
+        
+          title: "static_cast 与 reinterpret_cast",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/static_cast_vs_reinterpret_cast/";
+          
+        },
+      },{id: "post-c-template-学习资料",
+        
+          title: "C++ template 学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp_template_study_res/";
+          
+        },
+      },{id: "post-使用-cmake-cpack-nsis-打包-qt-应用",
+        
+          title: "使用 CMake CPack NSIS 打包 Qt 应用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qt_cpack_nsis/";
+          
+        },
+      },{id: "post-cmake-export-命令以及-install-命令",
+        
+          title: "CMake export 命令以及 install 命令",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cmake_export_and_install/";
+          
+        },
+      },{id: "post-mavlink消息的打包和解包",
+        
+          title: "MAVLink消息的打包和解包",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/MAVLink_msg_pack_unpack/";
+          
+        },
+      },{id: "post-mavlink协议",
+        
+          title: "MAVLink协议",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/MAVLink_intro/";
+          
+        },
+      },{id: "post-qgc-笔记以及资料",
+        
+          title: "QGC 笔记以及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QGC%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-c-对象模型-多继承",
+        
+          title: "C++对象模型--多继承",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/C++%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B-%E5%A4%9A%E7%BB%A7%E6%89%BF/";
+          
+        },
+      },{id: "post-windows编译安装vtk-tcl-tk-occ",
+        
+          title: "Windows编译安装VTK, TCL/TK, OCC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/windows-build-tcl-tk-occ/";
+          
+        },
+      },{id: "post-系统监控工具套件sysstat的使用",
+        
+          title: "系统监控工具套件sysstat的使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7sysstat/";
+          
+        },
+      },{id: "post-待翻译-performance-hints",
+        
+          title: "待翻译 -- Performance Hints",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Performance-Hints/";
+          
+        },
+      },{id: "post-occ-待学习资料记录",
+        
+          title: "OCC 待学习资料记录",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/OCCT-study-notes/";
+          
+        },
+      },{id: "post-nvidia-jetson-orin-agx-安装",
+        
+          title: "NVIDIA Jetson Orin AGX 安装",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/NVIDIA-Jetson-Orin-AGX-%E5%AE%89%E8%A3%85/";
+          
+        },
+      },{id: "post-ampere-gpu-新特性",
+        
+          title: "Ampere GPU 新特性",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA-Ampere-Feature/";
+          
+        },
+      },{id: "post-使用-cute-tiled-copy-tiled-mma-以及-multi-stage-实现高性能-gemm",
+        
+          title: "使用 CuTe Tiled Copy、Tiled MMA 以及 Multi-Stage 实现高性能 GEMM",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CuTe-GEMM-TiledCopy-TiledMMA-Pipeline/";
+          
+        },
+      },{id: "post-gemm-版本1-使用-cute-实现一个-naive-gemm",
+        
+          title: "GEMM 版本1：使用 CuTe 实现一个 naive GEMM",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/GEMM1-Cute-naive-GEMM/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-6-cuda-gemm-计算优化-multi-stage-与软流水-software-pipelining",
+        
+          title: "CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A56-Pipeline-And-Multi-Stage/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-5-tv-layout",
+        
+          title: "CUTLASS-Cute 初步(5)：TV Layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A55-TV-Layout/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-4-1-mma-swizzle-mma-ldmatrix-smem-swizzle",
+        
+          title: "CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A54.1-mma-ldmatrix-swizzle/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-4-swizzle",
+        
+          title: "CUTLASS-Cute 初步(4)：Swizzle",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A54-swizzle/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-3-1-tiledcopy-以及-tiledmma-配置示例",
+        
+          title: "CUTLASS-Cute 初步(3.1)：TiledCopy 以及 TiledMMA 配置示例",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A53.1-TileMMA%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-3-tiledcopy-以及-tiledmma",
+        
+          title: "CUTLASS-Cute 初步(3)：TiledCopy 以及 TiledMMA",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A53-TiledCopy-TiledMMA/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-2-1-tensor-amp-layout-实操笔记",
+        
+          title: "CUTLASS-Cute 初步(2.1)：Tensor & Layout 实操笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A52.1-Tensor-Layout-%E5%AE%9E%E6%93%8D%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-2-tensor-amp-layout-algebra",
+        
+          title: "CUTLASS-Cute 初步(2)：Tensor & Layout Algebra",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A52-Tensor-Layout-Algebra/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-1-layout",
+        
+          title: "CUTLASS-Cute 初步(1)：Layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A51-Layout/";
+          
+        },
+      },{id: "post-使用-nsight-compute-进行-kernel-性能分析",
+        
+          title: "使用 Nsight Compute 进行 kernel 性能分析",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ncu-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/";
+          
+        },
+      },{id: "post-cuda入门-bank-conflict",
+        
+          title: "CUDA入门：Bank Conflict",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E5%85%A5%E9%97%A8-Bank-Conflict/";
+          
+        },
+      },{id: "post-cuda性能概述-影响因素及优化方法",
+        
+          title: "CUDA性能概述：影响因素及优化方法",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%80%A7%E8%83%BD%E6%A6%82%E8%BF%B0/";
+          
+        },
+      },{id: "post-cuda-架构及对应的计算能力cc",
+        
+          title: "CUDA 架构及对应的计算能力CC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84%E5%8F%8A%E5%85%B6%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9BCC/";
+          
+        },
+      },{id: "post-cuda-架构-1-1-hopper架构及性能分析-ncu-性能优化",
+        
+          title: "CUDA 架构(1.1)：Hopper架构及性能分析(ncu) + 性能优化",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%841.1-Hopper%E5%8F%8A%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/";
+          
+        },
+      },{id: "post-cuda-架构",
+        
+          title: "CUDA 架构",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84/";
+          
+        },
+      },{id: "post-hpc-零散笔记集合",
+        
+          title: "HPC 零散笔记集合",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/HPC%E7%AC%94%E8%AE%B0-%E9%9B%B6%E6%95%A3%E6%A6%82%E5%BF%B5/";
+          
+        },
+      },{id: "post-cuda-笔记集合",
+        
+          title: "CUDA 笔记集合",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E7%AC%94%E8%AE%B0%E9%9B%86%E5%90%88/";
+          
+        },
+      },{id: "post-c-右值引用-万能引用-完美转发",
+        
+          title: "C++ 右值引用，万能引用，完美转发",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp-rvalue/";
+          
+        },
+      },{id: "post-io多路复用与linux-epoll",
+        
+          title: "IO多路复用与linux epoll",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E4%B8%8Eepoll/";
+          
+        },
+      },{id: "post-jekyll-chirpy-主题配置优化记录",
+        
+          title: "Jekyll Chirpy 主题配置优化记录",
+        
+        description: "记录 Jekyll Chirpy 主题从部署错误修复到功能优化的完整过程，包括 GitHub Actions 配置、数学公式渲染、目录展开等改进。",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Jekyll-Chirpy%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/";
+          
+        },
+      },{id: "post-chirpy主题的安装与使用指南",
+        
+          title: "Chirpy主题的安装与使用指南",
+        
+        description: "搭建和使用本网页时找到或参考的各类指南和文档",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Chirpy%E6%A8%A1%E6%9D%BF%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/";
+          
+        },
+      },{id: "post-qemu-学习资料",
+        
+          title: "QEMU 学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qemu-study/";
+          
+        },
+      },{id: "post-memory-segmentation-cheet-sheets",
+        
+          title: "Memory Segmentation Cheet Sheets",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/memory-segmentation-cheet-sheets/";
+          
+        },
+      },{id: "post-std-pmr-内存池",
+        
+          title: "std::pmr -- 内存池",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/std-pmr-memory-pool/";
+          
+        },
+      },{id: "post-c-面向对象三个概念-重载-覆盖和隐藏",
+        
+          title: "C++面向对象三个概念——重载、覆盖和隐藏",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp-override-overload-hide/";
+          
+        },
+      },{id: "post-编译ffmpeg使能-nvidia-硬件解码",
+        
+          title: "编译FFMPEG使能 NVIDIA 硬件解码",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E7%BC%96%E8%AF%91FFMPEG%E4%BD%BF%E8%83%BDNvidia%E7%A1%AC%E4%BB%B6%E8%A7%A3%E7%A0%81/";
+          
+        },
+      },{id: "post-gcc-向量化相关选项",
+        
+          title: "gcc 向量化相关选项",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/gcc-vectorize-options/";
+          
+        },
+      },{id: "post-perf性能分析-7-top-down-分析方法及vtune工具",
+        
+          title: "perf性能分析(7) -- Top-down 分析方法及VTune工具",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-07-top-down-method/";
+          
+        },
+      },{id: "post-c-中-auto-和-decltype-的用法-update-20241106",
+        
+          title: "C++ 中 auto 和 decltype 的用法 (update 20241106)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp-auto-and-decltype/";
+          
+        },
+      },{id: "post-perf性能分析-6-perf实战-1-分支预测",
+        
+          title: "perf性能分析(6) -- perf实战(1) -- 分支预测",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-06-perf-practice-01/";
+          
+        },
+      },{id: "post-perf性能分析-5-linux-perf-工具介绍",
+        
+          title: "perf性能分析(5) -- linux perf 工具介绍",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-05-perf-introduce/";
+          
+        },
+      },{id: "post-perf性能分析-4-linux-perf-工具基本使用-1",
+        
+          title: "perf性能分析(4) -- linux perf 工具基本使用(1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-04-perf-usage/";
+          
+        },
+      },{id: "post-linux-性能及统计工具-1",
+        
+          title: "Linux 性能及统计工具 (1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Linux-perf-stat-commands/";
+          
+        },
+      },{id: "post-有用的-gcc-编译选项收集",
+        
+          title: "有用的 GCC 编译选项收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%9C%89%E7%94%A8%E7%9A%84GCC%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9%E6%94%B6%E9%9B%86/";
+          
+        },
+      },{id: "post-内存分析需要理解的几个概念",
+        
+          title: "内存分析需要理解的几个概念",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Linux-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E8%A6%81%E7%90%86%E8%A7%A3%E7%9A%84%E6%A6%82%E5%BF%B5/";
+          
+        },
+      },{id: "post-perf性能分析-3-intel-vtune-配合-linux-perf-使用",
+        
+          title: "perf性能分析(3) -- Intel VTune 配合 linux perf 使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-03-Intel-VTune-and-perf-usage-03/";
+          
+        },
+      },{id: "post-perf性能分析-2-intel-vtune-配置与使用-2",
+        
+          title: "perf性能分析(2) -- Intel VTune 配置与使用(2)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-02-Intel-VTune-usage-02/";
+          
+        },
+      },{id: "post-给-shared-ptr-添加自定义-deleter-的几种方式",
+        
+          title: "给 shared_ptr 添加自定义 deleter 的几种方式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/shared_ptr-deleters-usage/";
+          
+        },
+      },{id: "post-perf性能分析-1-intel-vtune-配置与使用-1",
+        
+          title: "perf性能分析(1) -- Intel VTune 配置与使用(1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-01-Intel-VTune/";
+          
+        },
+      },{id: "post-plugin-的创建及使用",
+        
+          title: "Plugin 的创建及使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Plugin-Boost-DLL/";
+          
+        },
+      },{id: "post-性能优化学习资料",
+        
+          title: "性能优化学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-stl-图解",
+        
+          title: "STL 图解",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/STL%E5%9B%BE%E8%A7%A3/";
+          
+        },
+      },{id: "post-c-11-新特性",
+        
+          title: "C++11 新特性",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/C++11%E6%96%B0%E7%89%B9%E6%80%A7/";
+          
+        },
+      },{id: "post-opencl-buffer-objects",
+        
+          title: "OpenCL Buffer Objects",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Buffer-Objects/";
+          
+        },
+      },{id: "post-opencl-学习资源",
+        
+          title: "OpenCL 学习资源",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Learn-Resources/";
+          
+        },
+      },{id: "post-opencl-同步操作",
+        
+          title: "OpenCL 同步操作",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Synchronization/";
+          
+        },
+      },{id: "post-opencl-平台模型-执行模型",
+        
+          title: "OpenCL 平台模型、执行模型",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-model/";
+          
+        },
+      },{id: "post-git加速资源",
+        
+          title: "Git加速资源",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/git%E5%8A%A0%E9%80%9F%E8%B5%84%E6%BA%90/";
+          
+        },
+      },{id: "post-总结-git-不常用命令",
+        
+          title: "总结：git 不常用命令",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/git-commands/";
+          
+        },
+      },{id: "post-opencl-端编程流程及主要概念实践",
+        
+          title: "OpenCL 端编程流程及主要概念实践",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-basic-coding-flow/";
+          
+        },
+      },{id: "post-使用-ffmpeg-从视频中提取音频",
+        
+          title: "使用 FFmpeg 从视频中提取音频",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/get-audio-from-vidio-using-ffmpeg/";
+          
+        },
+      },{id: "post-windows-环境编译-vtk",
+        
+          title: "Windows 环境编译 VTK",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/building-vtk-under-windows/";
+          
+        },
+      },{id: "post-spdlog-使用",
+        
+          title: "spdlog 使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/spdlog-usage/";
+          
+        },
+      },{id: "post-mesh-及相关开源仓库收集",
+        
+          title: "Mesh 及相关开源仓库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/mesh-tools/";
+          
+        },
+      },{id: "post-总结-using-几种使用场景",
+        
+          title: "总结：using 几种使用场景",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/keywork-using-of-cpp/";
+          
+        },
+      },{id: "post-复习-rvo-nrvo-and-std-move",
+        
+          title: "复习：RVO NRVO and std::move",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/RVO-NRVO-and-std_move/";
+          
+        },
+      },{id: "post-crtp-使用笔记",
+        
+          title: "CRTP：使用笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/CRTP-introduce/";
+          
+        },
+      },{id: "post-intel-tbb-并行计算",
+        
+          title: "Intel TBB 并行计算",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-parallel/";
+          
+        },
+      },{id: "post-intel-tbb-malloc-内存分配器",
+        
+          title: "Intel TBB malloc 内存分配器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-malloc/";
+          
+        },
+      },{id: "post-信号处理资料-butterworth-和-chebyshev-滤波器",
+        
+          title: "信号处理资料：Butterworth 和 Chebyshev 滤波器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/dsp-filter-butterworth-and-chebyshev/";
+          
+        },
+      },{id: "post-使用-mmap-读取文件",
+        
+          title: "使用 mmap 读取文件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/read-file-using-mmap/";
+          
+        },
+      },{id: "post-range-v3-用法积累-及资料",
+        
+          title: "Range-v3 用法积累，及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/c++-range-v3/";
+          
+        },
+      },{id: "post-总结-内存访问优化",
+        
+          title: "总结：内存访问优化",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp-perf-repos/";
+          
+        },
+      },{id: "post-聚类算法-密度-基于-nano-flann",
+        
+          title: "聚类算法（密度）：基于 nano-flann",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/density-algrithm-knn/";
+          
+        },
+      },{id: "post-ubuntu-安装-opencv",
+        
+          title: "Ubuntu 安装 OpenCV",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/ubuntu-install-opencv/";
+          
+        },
+      },{id: "post-cmake-检查系统和编译器",
+        
+          title: "CMake 检查系统和编译器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-check-system-andcompiler/";
+          
+        },
+      },{id: "post-备份-ubuntu-bash-alias-以及-bash-显示-git-status",
+        
+          title: "备份：Ubuntu Bash Alias, 以及 bash 显示 git status",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/ubuntu-bash-alias/";
+          
+        },
+      },{id: "post-随机一致性抽样算法-ransac",
+        
+          title: "随机一致性抽样算法（RANSAC）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/RANSAC/";
+          
+        },
+      },{id: "post-intel-tbb-malloc-使用-windows",
+        
+          title: "Intel TBB malloc 使用 (windows)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-malloc-usage/";
+          
+        },
+      },{id: "post-复习-std-function-用法笔记",
+        
+          title: "复习：std::function 用法笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/std-function/";
+          
+        },
+      },{id: "post-整理-内存一致模型",
+        
+          title: "整理：内存一致模型",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%95%B4%E7%90%86-%E5%A4%84%E7%90%86%E5%99%A8%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/";
+          
+        },
+      },{id: "post-总结-mmu-包括-tlb-以及-table-walk-unit-以及内存-page-table",
+        
+          title: "总结：MMU -- 包括 TLB 以及 Table Walk Unit ，以及内存 Page Table",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/mmu-tlb-table-walk-unit-page-table/";
+          
+        },
+      },{id: "post-自定义-operator-new-placement-new-以及释放内存",
+        
+          title: "自定义 operator new， placement new，以及释放内存",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/operator-new-placement-new/";
+          
+        },
+      },{id: "post-学术绘图工具-engauge-digitizer",
+        
+          title: "学术绘图工具 -- Engauge Digitizer",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Academic-plot-tools/";
+          
+        },
+      },{id: "post-opencl-环境准备及资料",
+        
+          title: "OpenCL 环境准备及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/openCL-Install-and-Resources/";
+          
+        },
+      },{id: "post-redis常用命令总结",
+        
+          title: "Redis常用命令总结",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/redis-commands/";
+          
+        },
+      },{id: "post-在-markdown-中使用数学公式",
+        
+          title: "在 Markdown 中使用数学公式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E5%9C%A8Markdown%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F/";
+          
+        },
+      },{id: "post-markdown-使用笔记",
+        
+          title: "Markdown 使用笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Markdown%E8%AF%AD%E6%B3%95%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-使用inotify监控文件目录中的文件变化-新建文件",
+        
+          title: "使用inotify监控文件目录中的文件变化（新建文件）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/monitor-files-change-in-dir-using-inotify/";
+          
+        },
+      },{id: "post-总结-使用-gperftools-进行性能分析",
+        
+          title: "总结：使用 gperftools 进行性能分析",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/gperf-tools/";
+          
+        },
+      },{id: "post-cmake-编写findpackage-模块",
+        
+          title: "CMake 编写FindPackage 模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-find_package/";
+          
+        },
+      },{id: "post-简单线程安全队列",
+        
+          title: "简单线程安全队列",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/simple-thread-safe-queue/";
+          
+        },
+      },{id: "post-使能-c-程序的核心转储",
+        
+          title: "使能 C++ 程序的核心转储",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/enable-core-dump-for-cpp/";
+          
+        },
+      },{id: "post-python-venv-环境搭建及-vscode-环境配置",
+        
+          title: "Python venv 环境搭建及 VSCode 环境配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E8%BF%9B%E8%A1%8CPython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E8%AE%BE%E7%BD%AE/";
+          
+        },
+      },{id: "post-nginx-用户的权限配置",
+        
+          title: "nginx 用户的权限配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/nginx-autho-config/";
+          
+        },
+      },{id: "post-vscode-remote-ssh-使用局域网代理",
+        
+          title: "VSCode Remote SSH 使用局域网代理",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-remotessh-%E5%B1%80%E5%9F%9F%E7%BD%91%E4%BB%A3%E7%90%86/";
+          
+        },
+      },{id: "post-vscode-remote-ssh-免密登陆",
+        
+          title: "VSCode Remote SSH 免密登陆",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-remotessh-%E5%85%8D%E5%AF%86%E7%99%BB%E9%99%86/";
+          
+        },
+      },{id: "post-opengl-流水线-待消化吸收",
+        
+          title: "OpenGL 流水线（待消化吸收）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/opengl-pipeline/";
+          
+        },
+      },{id: "post-occ-boolean-operations",
+        
+          title: "OCC boolean operations",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OCCT-boolean-ops/";
+          
+        },
+      },{id: "post-cam资料及笔记-待学习",
+        
+          title: "CAM资料及笔记（待学习）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/CAM%E8%B5%84%E6%96%99%E5%8F%8A%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-windows下安装-msmpi",
+        
+          title: "Windows下安装 MSMPI",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/windows-install-msmpi/";
+          
+        },
+      },{id: "post-基于vtk的3d软件",
+        
+          title: "基于VTK的3D软件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/vtk-based-3d-software/";
+          
+        },
+      },{id: "post-opengl-vulkan-学习网站-记录",
+        
+          title: "OpenGL/Vulkan 学习网站（记录）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/opengl-vulkan%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-为什么要使用-std-enable-shared-from-this-以及使用场景",
+        
+          title: "为什么要使用 std::enable_shared_from_this，以及使用场景",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8enable_shared_from_this/";
+          
+        },
+      },{id: "post-std-shared-ptr-线程安全及性能考量",
+        
+          title: "std::shared_ptr 线程安全及性能考量",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/shared_ptr_thread_safe/";
+          
+        },
+      },{id: "post-系统设计资料-以及23种设计模式彩图",
+        
+          title: "系统设计资料，以及23种设计模式彩图",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/design-patterns-23/";
+          
+        },
+      },{id: "post-c-实现一个简洁的-lru-缓存",
+        
+          title: "C++实现一个简洁的 LRU 缓存",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AALRU/";
+          
+        },
+      },{id: "post-pod-trivial-copyable-standard-layout",
+        
+          title: "POD、trivial copyable，standard layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp11-pod-type/";
+          
+        },
+      },{id: "post-google-gemini-updates-flash-1-5-gemma-2-and-project-astra",
+        
+          title: 'Google Gemini updates: Flash 1.5, Gemma 2 and Project Astra <svg width="1.2rem" height="1.2rem" top=".5rem" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        
+        description: "We’re sharing updates across our Gemini family of models and a glimpse of Project Astra, our vision for the future of AI assistants.",
+        section: "Posts",
+        handler: () => {
+          
+            window.open("https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/", "_blank");
+          
+        },
+      },{id: "post-cmake-创建自定义目标-在构建前复制文件",
+        
+          title: "CMake 创建自定义目标：在构建前复制文件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-create-custom-target-copy-files-before-build/";
+          
+        },
+      },{id: "post-opencascade拓扑与几何的关系",
+        
+          title: "OpenCascade拓扑与几何的关系",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Topology-and-Geometry-in-Open-CASCADE/";
+          
+        },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E7%BB%88%E7%AB%AF%E7%BE%8E%E5%8C%96/";
+          
+        },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/zed%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-vscode-改用-mathjax-渲染数学公式",
+        
+          title: "VSCode 改用 MathJax 渲染数学公式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E6%94%B9%E7%94%A8MathJax%E6%B8%B2%E6%9F%93%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F/";
+          
+        },
+      },{id: "post-我的vscode插件清单",
+        
+          title: "我的VSCode插件清单",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E6%8F%92%E4%BB%B6%E6%B8%85%E5%8D%95/";
+          
+        },
+      },{id: "post-vscode-开发-powershell-高效开发完整配置",
+        
+          title: "VSCode 开发，PowerShell 高效开发完整配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-PowerShell%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE/";
+          
+        },
+      },{id: "post-qt-笔记及开源库收集",
+        
+          title: "Qt 笔记及开源库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/qt-notes/";
+          
+        },
+      },{id: "post-linux系统及编译相关笔记",
+        
+          title: "Linux系统及编译相关笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/linux-and-compile-notes/";
+          
+        },
+      },{id: "post-如何使用-github-pages-以及-chirpy-theme-创建博客",
+        
+          title: "如何使用 github pages 以及 Chirpy Theme 创建博客",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/how-to-create-blog-using-github-pages-and-Chirpy-theme/";
+          
+        },
+      },{id: "post-ubuntu-24-04-分区-以及更换-kernel-6-18",
+        
+          title: "Ubuntu 24.04 分区，以及更换 kernel 6.18",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Ubuntu%E5%AE%89%E8%A3%85%E6%96%B0%E7%89%88%E6%9C%ACkernel/";
+          
+        },
+      },{id: "post-c-17-新功能-std-visit-和-std-variant-配合使用-待更新删除冗余描述",
+        
+          title: "C++ 17 新功能： std::visit 和 std::variant 配合使用 (待更新删除冗余描述)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/combind-usage-of-std-visit-and-std-variant/";
+          
+        },
+      },{id: "post-vtk-笔记",
+        
+          title: "VTK 笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/vtk-notes/";
+          
+        },
+      },{id: "post-linux-系统console使用命令清屏",
+        
+          title: "Linux 系统console使用命令清屏",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/clean-screen-and-reset/";
+          
+        },
+      },{id: "post-vtkunstructuredgrid-显示-hdf5-数据",
+        
+          title: "vtkUnstructuredGrid 显示 HDF5 数据",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/show-hdf5-data-using-vtkUnstructuredGrid/";
+          
+        },
+      },{id: "post-linux-系统下编译-gcc-9-2",
+        
+          title: "Linux 系统下编译 gcc 9.2",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/compile-gdb-commands/";
+          
+        },
+      },{id: "post-occt-使用-bvh-树加速-bounding-box-查找遍历",
+        
+          title: "OCCT 使用 BVH 树加速 bounding box 查找遍历",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-BHV-tree-bounding-box/";
+          
+        },
+      },{id: "post-occ-topexp-explorer-用法",
+        
+          title: "OCC TopExp_Explorer 用法",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-explore-api-usage/";
+          
+        },
+      },{id: "post-occ-boundding-box-以及-distance",
+        
+          title: "OCC boundding box 以及 distance",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-bounding-box/";
+          
+        },
+      },{id: "post-ubuntu-及-windows-系统下安装-qt5",
+        
+          title: "Ubuntu 及 Windows 系统下安装 Qt5",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/install-qt5-on-ubuntu-windows/";
+          
+        },
+      },{id: "post-从makefile创建compile-commands-json",
+        
+          title: "从Makefile创建compile_commands.json",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Create_CompileDB_from_Makefile/";
+          
+        },
+      },{id: "post-ubuntu-编译-qt-vtk-occt-samples",
+        
+          title: "Ubuntu 编译 Qt + VTK + OCCT + samples",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-build-with-samples/";
+          
+        },
+      },{id: "post-vtk学习资源收集",
+        
+          title: "VTK学习资源收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/VTK-official-examples/";
+          
+        },
+      },{id: "post-改用zsh以及oh-my-zsh",
+        
+          title: "改用zsh以及oh-my-zsh",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/%E5%AE%89%E8%A3%85zsh%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8oh-my-zsh/";
+          
+        },
+      },{id: "post-kill信号不同分类的影响",
+        
+          title: "kill信号不同分类的影响",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/kill-signals-of-linux-system/";
+          
+        },
+      },{id: "post-bash参数特殊变量符号",
+        
+          title: "Bash参数特殊变量符号",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/bash-args-and-special-symbols/";
+          
+        },
+      },{id: "post-ubuntu安装intel-gpu驱动",
+        
+          title: "Ubuntu安装Intel GPU驱动",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Ubuntu%E5%AE%89%E8%A3%85Intel-GPU%E9%A9%B1%E5%8A%A8/";
+          
+        },
+      },{id: "post-ubuntu-安装-occt",
+        
+          title: "Ubuntu 安装 OCCT",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Ubuntu-install-OCCT/";
+          
+        },
+      },{id: "post-occt-projects-on-github",
+        
+          title: "OCCT projects on github",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-sample-projects/";
+          
+        },
+      },{id: "post-office笔记",
+        
+          title: "Office笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6-Office%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-ubuntu-系统安装-llvm-套件-可选择版本",
+        
+          title: "Ubuntu 系统安装 LLVM 套件 （可选择版本）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/install-versioned-llvm-ubuntu/";
+          
+        },
+      },{id: "post-通过函数指针地址找到函数",
+        
+          title: "通过函数指针地址找到函数",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/get-function-via-address/";
+          
+        },
+      },{id: "post-写给大家看的设计模式",
+        
+          title: "写给大家看的设计模式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/design-modes-for-all/";
+          
+        },
+      },{id: "post-python与c-混合调试",
+        
+          title: "Python与C++混合调试",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/debug-combind-Python-and-C++/";
+          
+        },
+      },{id: "post-收藏-c-代码仓库-cpu-amp-性能资料",
+        
+          title: "收藏：C++ 代码仓库，CPU & 性能资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/cpu_and_perf_study_docs_collections/";
+          
+        },
+      },{id: "post-c-学习资源-及-代码片段积累",
+        
+          title: "C++ 学习资源 及 代码片段积累",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/cpp-code-snippet/";
+          
+        },
+      },{id: "post-displaying-external-posts-on-your-al-folio-blog",
+        
+          title: 'Displaying External Posts on Your al-folio Blog <svg width="1.2rem" height="1.2rem" top=".5rem" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.open("https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2", "_blank");
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-project-1",
+          title: 'project 1',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_project/";
+            },},{id: "projects-project-2",
+          title: 'project 2',
+          description: "a project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_project/";
+            },},{id: "projects-project-3-with-very-long-name",
+          title: 'project 3 with very long name',
+          description: "a project that redirects to another website",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_project/";
+            },},{id: "projects-project-4",
+          title: 'project 4',
+          description: "another without an image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_project/";
+            },},{id: "projects-project-5",
+          title: 'project 5',
+          description: "a project with a background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_project/";
+            },},{id: "projects-project-6",
+          title: 'project 6',
+          description: "a project with no image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_project/";
+            },},{id: "projects-project-7",
+          title: 'project 7',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_project/";
+            },},{id: "projects-project-8",
+          title: 'project 8',
+          description: "an other project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_project/";
+            },},{id: "projects-project-9",
+          title: 'project 9',
+          description: "another project with an image 🎉",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_project/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-cv',
+        title: 'CV',
+        section: 'Socials',
+        handler: () => {
+          window.open("/assets/pdf/example_pdf.pdf", "_blank");
+        },
+      },{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%79%6F%75@%65%78%61%6D%70%6C%65.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-inspire',
+        title: 'Inspire HEP',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://inspirehep.net/authors/1010907", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+        id: 'social-scholar',
+        title: 'Google Scholar',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://scholar.google.com/citations?user=qc6CJjYAAAAJ", "_blank");
+        },
+      },{
+        id: 'social-custom_social',
+        title: 'Custom_social',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://www.alberteinstein.com/", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

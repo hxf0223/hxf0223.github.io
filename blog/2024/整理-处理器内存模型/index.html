@@ -1,0 +1,2464 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> 整理：内存一致模型 | Roderick Huang </title> <meta name="author" content="Roderick Huang"> <meta name="description" content="A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. "> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.css" integrity="sha256-zTN0r+0OKaIv2xqeNNIYxNk0pWJ6+IqPGc1iDgVzWF0=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%E2%9A%9B%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=3116ba77db9ee1581d05bb3e86fbf7f1"> <link rel="canonical" href="https://hxf0223.github.io/blog/2024/%E6%95%B4%E7%90%86-%E5%A4%84%E7%90%86%E5%99%A8%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"> <script src="/assets/js/theme.js?v=5286c3e4c334d0ecb8fc0c40ff4fa7ec"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Roderick</span> Huang </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/repositories/">repositories </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item "> <a class="nav-link" href="/teaching/">teaching </a> </li> <li class="nav-item "> <a class="nav-link" href="/people/">people </a> </li> <li class="nav-item dropdown "> <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-nav-dropdown-toggle="true" aria-haspopup="true" aria-expanded="false">submenus </a> <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown"> <a class="dropdown-item " href="/books/">bookshelf</a> <div class="dropdown-divider"></div> <a class="dropdown-item " href="/blog/">blog</a> </div> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="row"> <div class="col-sm-9"> <div class="post"> <header class="post-header"> <h1 class="post-title">整理：内存一致模型</h1> <p class="post-meta"> Created on August 11, 2024 </p> <p class="post-tags"> <a href="/blog/2024"> <i class="fa-solid fa-calendar fa-sm"></i> 2024 </a>   ·   <a href="/blog/tag/cpp"> <i class="fa-solid fa-hashtag fa-sm"></i> Cpp</a>   <a href="/blog/tag/cpu"> <i class="fa-solid fa-hashtag fa-sm"></i> CPU</a>   ·   <a href="/blog/category/cpu"> <i class="fa-solid fa-tag fa-sm"></i> CPU</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p>内存一致性模型（<code class="language-plaintext highlighter-rouge">Memory Consistency Model</code>）是并发编程中的一个重要概念，它定义了在多线程环境下，内存操作的可见性和顺序性规则。内存一致性模型还涉及到Cache一致性（<code class="language-plaintext highlighter-rouge">Cache Coherence</code>）和CPU指令的乱序执行（<code class="language-plaintext highlighter-rouge">Out-of-Order Execution</code>）。理解内存一致性模型对于编写正确、高效的并发程序至关重要。</p> <h2 id="1-cpu-cache-内部结构">1. CPU Cache 内部结构</h2> <p><img src="/assets/images/cpu/memory_order_20240811/cpu_structure.png" alt="CPU structure"></p> <p>一个<code class="language-plaintext highlighter-rouge">core</code>内部结构：</p> <ul> <li><code class="language-plaintext highlighter-rouge">cache</code></li> <li><code class="language-plaintext highlighter-rouge">store buffer</code></li> <li><code class="language-plaintext highlighter-rouge">invalidate queue</code></li> </ul> <p>结构如下图所示：</p> <p><img src="/assets/images/cpu/memory_order_20240811/core_structure_cache_store_buffer_inv_queue2.png" alt="CPU cache structure"></p> <h3 id="11-cache一致性协议-mesi">1.1. <code class="language-plaintext highlighter-rouge">Cache</code>一致性协议 <code class="language-plaintext highlighter-rouge">MESI</code> </h3> <p><code class="language-plaintext highlighter-rouge">MESI</code>是<code class="language-plaintext highlighter-rouge">CPU</code>内部多个<code class="language-plaintext highlighter-rouge">core</code>同步通讯协议，保证多个<code class="language-plaintext highlighter-rouge">core</code>中的<code class="language-plaintext highlighter-rouge">cache</code>的数据一致性。<code class="language-plaintext highlighter-rouge">MESI</code>这四个字母分别代表了每一个<code class="language-plaintext highlighter-rouge">cache line</code>可能处于的四种状态：<code class="language-plaintext highlighter-rouge">Modified</code>、<code class="language-plaintext highlighter-rouge">Exclusive</code>、<code class="language-plaintext highlighter-rouge">Shared</code> 和 <code class="language-plaintext highlighter-rouge">Invalid</code>。</p> <p>通过给<code class="language-plaintext highlighter-rouge">cache line</code>设置状态位，以及<code class="language-plaintext highlighter-rouge">CPU core</code>（也可能有内存控制器参与）之间的消息同步逻辑，让多个<code class="language-plaintext highlighter-rouge">core</code>中的<code class="language-plaintext highlighter-rouge">cache</code>数据保持一致性。</p> <p>在没有<code class="language-plaintext highlighter-rouge">store buffer</code>, <code class="language-plaintext highlighter-rouge">invalidate queue</code>之前，<code class="language-plaintext highlighter-rouge">MESI</code>可以保证不需要<code class="language-plaintext highlighter-rouge">memory fence</code>指令也可以保证数据的一致性。</p> <h3 id="12-false-sharing">1.2. <code class="language-plaintext highlighter-rouge">False sharing</code> </h3> <p><code class="language-plaintext highlighter-rouge">False sharing</code>的原因是两个<code class="language-plaintext highlighter-rouge">CPU</code>访问的变量，在内存中的位置，同时落入一个<code class="language-plaintext highlighter-rouge">cache line</code>范围内，根据<code class="language-plaintext highlighter-rouge">MESI</code>协议，一个<code class="language-plaintext highlighter-rouge">CPU</code>写操作，将导致另一个<code class="language-plaintext highlighter-rouge">CPU</code>的读写操作之前，需要进行<code class="language-plaintext highlighter-rouge">memory</code>及两个<code class="language-plaintext highlighter-rouge">CPU</code>的<code class="language-plaintext highlighter-rouge">cache line</code>同步操作。通常发生在两个线程操作同一个数据结构体的时候。</p> <p><img src="/assets/images/cpu/memory_order_20240811/MESI-false-sharing.svg" alt="false sharing"></p> <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define CACHE_ALIGN_SIZE 64
+#define CACHE_ALIGNED __attribute__((aligned(CACHE_ALIGN_SIZE)))
+</span>
+<span class="k">struct</span> <span class="nc">aligned_value</span> <span class="p">{</span>
+  <span class="kt">int64_t</span> <span class="n">val</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">CACHE_ALIGNED</span><span class="p">;</span> <span class="c1">// Note: aligning the struct to a cache line size</span>
+<span class="n">aligned_value</span> <span class="n">aligned_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">CACHE_ALIGNED</span><span class="p">;</span>
+
+<span class="c1">// sizeof(aligned_value) == 128</span>
+</code></pre></div></div> <h3 id="13-现代cpu上mesi的局限">1.3. 现代<code class="language-plaintext highlighter-rouge">CPU</code>上<code class="language-plaintext highlighter-rouge">MESI</code>的局限</h3> <p>由于<code class="language-plaintext highlighter-rouge">MESI</code>同步协议导致处理器之间同步的代价很高，现代处理器再每个<code class="language-plaintext highlighter-rouge">core</code>里面增加两个异步队列: <code class="language-plaintext highlighter-rouge">store buffer</code>和<code class="language-plaintext highlighter-rouge">invalidate queue</code>来减少<code class="language-plaintext highlighter-rouge">CPU</code>的空闲等待。这两个异步队列，导致<code class="language-plaintext highlighter-rouge">MESI</code>协议失效。</p> <ul> <li> <code class="language-plaintext highlighter-rouge">store buffer</code>: <code class="language-plaintext highlighter-rouge">CPU</code>将<code class="language-plaintext highlighter-rouge">write/store</code>操作数据放入<code class="language-plaintext highlighter-rouge">store buffer</code>，<code class="language-plaintext highlighter-rouge">cache</code>负责<code class="language-plaintext highlighter-rouge">flush</code>操作。</li> <li> <code class="language-plaintext highlighter-rouge">invalidate queue</code>: <code class="language-plaintext highlighter-rouge">cache</code>收到<code class="language-plaintext highlighter-rouge">Invalidate</code>消息，不是马上执行，而是放入<code class="language-plaintext highlighter-rouge">invalidate queue</code>，等待<code class="language-plaintext highlighter-rouge">CPU</code>空闲时，再执行。</li> </ul> <blockquote> <p><strong>注意</strong>: <code class="language-plaintext highlighter-rouge">Store Buffer</code> / <code class="language-plaintext highlighter-rouge">Load Buffer</code> 在硬件中并不是简单的 FIFO 队列，而是具有调度逻辑的结构（类似 CAM — Content Addressable Memory），支持乱序发射、乱序完成。Intel 官方手册称之为 “Memory Ordering Buffer”，ARM 架构称之为 “Load-Store Queue (LSQ)”。但即使内部结构支持乱序，<strong>x86 TSO 模型仍然保证 Store Buffer 按程序顺序提交到 cache（FIFO 语义）</strong>，这是 x86 强内存模型的关键。</p> </blockquote> <p>其原因是：针对发起方<code class="language-plaintext highlighter-rouge">CPU</code>，其认为自己的<code class="language-plaintext highlighter-rouge">store</code> / <code class="language-plaintext highlighter-rouge">invalidate</code>操作已经完成，但是由于数据/消息是放在<code class="language-plaintext highlighter-rouge">store buffer</code> / <code class="language-plaintext highlighter-rouge">invalidate queue</code>中，所以可能还没来得及被其他<code class="language-plaintext highlighter-rouge">CPU</code>看到，导致数据不一致。</p> <p>其中的一个解决办法是：发起方的<code class="language-plaintext highlighter-rouge">store buffer</code>被清空，接收方的<code class="language-plaintext highlighter-rouge">invalidate queue</code>被处理掉。在此之后，<code class="language-plaintext highlighter-rouge">MESI</code>协议可以正常工作。</p> <h3 id="14-补充cpu指令流水线">1.4. 补充：CPU指令流水线</h3> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Fetch         &lt;-- ✅ 顺序取指，从指令缓存中取出下一条指令
+2. Decode        &lt;-- 顺序解码，分析操作数和目的寄存器
+3. Rename        &lt;-- 寄存器重命名
+4. Dispatch      &lt;-- 投递到调度窗口，等待执行条件满足
+5. Execute       &lt;-- ✅ 乱序执行（由调度器决定），实际在执行单元上运行指令
+6. Writeback     &lt;-- 写结果到 ROB
+7. Commit        &lt;-- ✅ 按程序顺序提交（retire），更新寄存器状态或进行内存写入
+</code></pre></div></div> <h2 id="2-memory-barrier">2. <code class="language-plaintext highlighter-rouge">memory barrier</code> </h2> <h3 id="21-概念及理论">2.1. 概念及理论</h3> <ul> <li>同步点：针对同一个<code class="language-plaintext highlighter-rouge">原子变量</code>的<code class="language-plaintext highlighter-rouge">load</code>操作与<code class="language-plaintext highlighter-rouge">store</code>操作，分别构成一个<code class="language-plaintext highlighter-rouge">同步点</code>。其概念有三要素：(1)：<code class="language-plaintext highlighter-rouge">load</code>/<code class="language-plaintext highlighter-rouge">store</code>操作，(2)：针对同一个原子变量，(3)：以及在不同线程中；</li> <li> <code class="language-plaintext highlighter-rouge">synchronize-with</code> 关系，该概念包含两个含义：(1)：同一个同步点，(2)：读取的值是另一个同步点写入的值；</li> <li> <code class="language-plaintext highlighter-rouge">happens-before</code> 关系；</li> </ul> <p><code class="language-plaintext highlighter-rouge">memory fence</code>定义的是同步点操作，即分别在<code class="language-plaintext highlighter-rouge">store</code>一方插入一个<code class="language-plaintext highlighter-rouge">write barrier</code>指令，在<code class="language-plaintext highlighter-rouge">load</code>一方插入一个<code class="language-plaintext highlighter-rouge">read barrier</code>指令。因此，<code class="language-plaintext highlighter-rouge">memory barrier</code>需要成对出现，否则达不到同步效果。</p> <blockquote> <p>所谓同步点只是语义上的概念，实际实现中，<code class="language-plaintext highlighter-rouge">memory barrier</code>指令并不直接作用于某个特定的变量，而是通过屏障指令的执行来保证之前/之后的所有内存操作（针对任何变量）满足特定的顺序和可见性要求。</p> </blockquote> <h3 id="22-详细解释">2.2. 详细解释</h3> <p>由于多核处理器 <code class="language-plaintext highlighter-rouge">CPU</code> 之间独立的<code class="language-plaintext highlighter-rouge">L1/L2 cache</code>，会出现<code class="language-plaintext highlighter-rouge">cache line</code>不一致的问题，为了解决这个问题，有相关协议模型，比如 <code class="language-plaintext highlighter-rouge">MESI</code> 协议来保证 <code class="language-plaintext highlighter-rouge">cache</code> 数据一致，同时由于 <code class="language-plaintext highlighter-rouge">CPU</code> 对 <code class="language-plaintext highlighter-rouge">MESI</code> 进行的异步优化，对写和读分别引入了「<code class="language-plaintext highlighter-rouge">store buffer</code>」和「<code class="language-plaintext highlighter-rouge">invalid queue</code>」，很可能导致后面的指令查不到前面指令的执行结果（各个指令的执行顺序非代码执行顺序），这种现象很多时候被称作「<code class="language-plaintext highlighter-rouge">CPU乱序执行</code>」。</p> <p>为了解决乱序问题（也可以理解为可见性问题，修改完没有及时同步到其他的CPU），又引出了「<code class="language-plaintext highlighter-rouge">内存屏障</code>」的概念；内存屏障可以分为三种类型：<code class="language-plaintext highlighter-rouge">写屏障</code>，<code class="language-plaintext highlighter-rouge">读屏障</code>以及<code class="language-plaintext highlighter-rouge">全能屏障（包含了读写屏障）</code>，屏障可以简单理解为：在操作数据的时候，往数据插入一条<code class="language-plaintext highlighter-rouge">特殊的指令</code>。只要遇到这条指令，那前面的操作都得「完成」。</p> <ol> <li> <p><code class="language-plaintext highlighter-rouge">写屏障</code>指令(<code class="language-plaintext highlighter-rouge">write barrier</code>, or <code class="language-plaintext highlighter-rouge">sfence</code>)，等待之前的写操作完成，并把该指令「之前」存在于「<code class="language-plaintext highlighter-rouge">store Buffer</code>」中的所有写指令刷入<code class="language-plaintext highlighter-rouge">cache</code>。就可以让<code class="language-plaintext highlighter-rouge">CPU</code>修改的数据马上暴露给其他<code class="language-plaintext highlighter-rouge">CPU</code>(<code class="language-plaintext highlighter-rouge">MESI</code>)，达到「写操作」可见性的效果。</p> </li> <li> <p><code class="language-plaintext highlighter-rouge">读屏障</code>指令(<code class="language-plaintext highlighter-rouge">read barrier</code>, or <code class="language-plaintext highlighter-rouge">lfence</code>)，会把该指令「之前」存在于「<code class="language-plaintext highlighter-rouge">invalid queue</code>」中的所有的指令都处理掉。通过这种方式就可以确保当前CPU的缓存状态是准确的，达到「读操作」一定是读取最新的效果。</p> </li> </ol> <p>由于不同CPU架构的缓存体系不一样、缓存一致性协议不一样、重排序的策略不一样、所提供的内存屏障指令也有差异，所以一些语言c++/java/go/rust 都有实现自己的内存模型, 比如golang大牛<code class="language-plaintext highlighter-rouge">Russ Cox</code>写的内存模型系列文章 <a href="https://research.swtch.com/mm" rel="external nofollow noopener" target="_blank">Memory Models</a> 值得深入了解。</p> <h3 id="23-x86上面的fence实操演示">2.3. <code class="language-plaintext highlighter-rouge">x86</code>上面的<code class="language-plaintext highlighter-rouge">fence</code>实操演示</h3> <p><code class="language-plaintext highlighter-rouge">ARM</code>架构CPU有<code class="language-plaintext highlighter-rouge">Store Buffer</code>、<code class="language-plaintext highlighter-rouge">Invalidate Queue</code>，是一个松散内存一致性模型。<code class="language-plaintext highlighter-rouge">x86</code>架构只有<code class="language-plaintext highlighter-rouge">Store Buffer</code>，是一个强内存一致性模型。</p> <p>在<code class="language-plaintext highlighter-rouge">x86</code>架构下，对<code class="language-plaintext highlighter-rouge">StoreLoad</code>操作进行重排(乱序)。其余几种保持顺序：<code class="language-plaintext highlighter-rouge">StoreStore</code>, <code class="language-plaintext highlighter-rouge">LoadLoad</code>, <code class="language-plaintext highlighter-rouge">LoadStore</code>，即不需要设置<code class="language-plaintext highlighter-rouge">fence</code>指令也可以保持<code class="language-plaintext highlighter-rouge">CPU</code>之间的内存一致性。</p> <p>禁止编译器重排：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">X</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">asm</span> <span class="nf">volatile</span><span class="p">(</span><span class="s">""</span> <span class="o">:::</span> <span class="s">"memory"</span><span class="p">);</span> <span class="c1">// Prevent compiler reordering</span>
+<span class="n">r1</span> <span class="o">=</span> <span class="n">Y</span><span class="p">;</span>
+</code></pre></div></div> <p>禁止编译器及<code class="language-plaintext highlighter-rouge">CPU</code>重排：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">X</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">asm</span> <span class="nf">volatile</span><span class="p">(</span><span class="s">"mfence"</span> <span class="o">:::</span> <span class="s">"memory"</span><span class="p">);</span> <span class="c1">// Prevent compiler and CPU reordering</span>
+<span class="n">r1</span> <span class="o">=</span> <span class="n">Y</span><span class="p">;</span>
+</code></pre></div></div> <p>详细知识参考：</p> <ul> <li><a href="https://wingsxdu.com/posts/note/cpu-cache-and-memory-barriers/" rel="external nofollow noopener" target="_blank">CPU 缓存一致性与内存屏障</a></li> <li><a href="https://wudaijun.com/2019/04/cache-coherence-and-memory-consistency/" rel="external nofollow noopener" target="_blank">Cache一致性和内存一致性</a></li> <li><a href="https://preshing.com/20130922/acquire-and-release-fences/" rel="external nofollow noopener" target="_blank">Acquire and Release Fences</a></li> <li><a href="https://medium.com/fcamels-notes/%E5%BE%9E%E7%A1%AC%E9%AB%94%E8%A7%80%E9%BB%9E%E4%BA%86%E8%A7%A3-memry-barrier-%E7%9A%84%E5%AF%A6%E4%BD%9C%E5%92%8C%E6%95%88%E6%9E%9C-416ff0a64fc1" rel="external nofollow noopener" target="_blank">從硬體觀點了解 memory barrier 的實作和效果</a></li> <li><a href="https://www.cnblogs.com/yiwanfengweng/articles/18657841" rel="external nofollow noopener" target="_blank">CPU架构和MESI缓存一致性-&gt;内存模型一致性-&gt;内存屏障和原子操作-&gt;内存序-&gt;C++内存序</a></li> </ul> <h2 id="3-c11-内存一致性模型定义">3. C++11 内存一致性模型定义</h2> <table> <thead> <tr> <th>内存序</th> <th>语义</th> <th>x86-64 实现</th> <th>ARM64 实现</th> </tr> </thead> <tbody> <tr> <td>relaxed</td> <td>只保证原子性，不保证顺序</td> <td>普通 MOV</td> <td>普通 LDR/STR</td> </tr> <tr> <td>acquire (load)</td> <td> <strong>Acquire操作之后的读/写</strong>不能重排到此操作<strong>之前</strong>，Acquire操作之后的读操作能看到Release线程的Release操作之前的写入</td> <td>普通 MOV + 编译器屏障</td> <td>LDAR</td> </tr> <tr> <td>release (store)</td> <td> <strong>Release操作之前的读/写</strong>不能重排到此操作<strong>之后</strong>，Release操作之前的写操作对Acquire线程可见</td> <td>普通 MOV + 编译器屏障</td> <td>STLR</td> </tr> <tr> <td>acq_rel (RMW)</td> <td>同时具有 acquire 和 release 语义</td> <td>LOCK 前缀指令（隐含全屏障）</td> <td>LDAXR/STLXR</td> </tr> <tr> <td>seq_cst</td> <td>全局唯一顺序一致性，所有线程看到相同的 seq_cst 操作顺序</td> <td>store: XCHG 或 MOV+MFENCE; load: MOV</td> <td>LDAR/STLR (+ 额外屏障)</td> </tr> </tbody> </table> <blockquote> <ol> <li>关键认知：C++ 内存序是语言层面的抽象，其硬件实现因架构而异。</li> </ol> </blockquote> <p>Release/Aquire语义要保证happens-before关系，所以Release同时约束前面的读以及写操作不能重排到Release store之后。Acquire同时约束后面的读以及写操作不能重排到Acquire load之前。</p> <p><code class="language-plaintext highlighter-rouge">acq_rel</code>则同时添加了 acquire 和 release 语义，适用于 read-modify-write 操作（如 <code class="language-plaintext highlighter-rouge">fetch_add</code>、<code class="language-plaintext highlighter-rouge">compare_exchange</code>）。相当于：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">load</span><span class="p">(</span><span class="n">memory_order_acquire</span><span class="p">);</span>
+<span class="n">modify</span><span class="p">();</span>
+<span class="n">store</span><span class="p">(</span><span class="n">memory_order_release</span><span class="p">);</span>
+</code></pre></div></div> <p><code class="language-plaintext highlighter-rouge">acq_rel</code> 约束本线程中前面的读写操作重排到此操作之前，后面的读写操作重排到此操作之后。且可以看见其他线程在 release 操作之前的写入，另外，其他线程在 acquire 操作之后的读取也能看到本线程Release之前的写入。</p> <p><code class="language-plaintext highlighter-rouge">seq_cst</code> 提供所有线程的一致性，用于多生产-多消费场景，即多线程、多个atomic变量，保证全局顺序一致性。</p> <ul> <li>在 <code class="language-plaintext highlighter-rouge">x86 TSO</code> （Total Store Order）模型下，硬件已经保证了 <code class="language-plaintext highlighter-rouge">LoadLoad</code>、<code class="language-plaintext highlighter-rouge">LoadStore</code>、<code class="language-plaintext highlighter-rouge">StoreStore</code> 顺序，只允许 <code class="language-plaintext highlighter-rouge">StoreLoad</code> 重排。因此 <code class="language-plaintext highlighter-rouge">acquire</code> 和 <code class="language-plaintext highlighter-rouge">release</code> 在 <code class="language-plaintext highlighter-rouge">x86</code> 上不需要任何硬件屏障指令，只需编译器屏障（<code class="language-plaintext highlighter-rouge">asm volatile("" ::: "memory")</code>）来阻止编译器重排。</li> <li>在 <code class="language-plaintext highlighter-rouge">ARM</code> 弱内存模型下，所有四种重排都可能发生，因此需要显式的硬件指令（<code class="language-plaintext highlighter-rouge">LDAR</code>/<code class="language-plaintext highlighter-rouge">STLR</code>/<code class="language-plaintext highlighter-rouge">DMB</code>）。</li> <li> <code class="language-plaintext highlighter-rouge">seq_cst</code> 在 <code class="language-plaintext highlighter-rouge">x86</code> 上需要额外处理 <code class="language-plaintext highlighter-rouge">StoreLoad</code> 重排：编译器在 <code class="language-plaintext highlighter-rouge">store</code> 端使用 <code class="language-plaintext highlighter-rouge">XCHG</code>（隐含 LOCK）或 <code class="language-plaintext highlighter-rouge">MOV + MFENCE</code>，<code class="language-plaintext highlighter-rouge">load</code> 端使用普通 <code class="language-plaintext highlighter-rouge">MOV</code>。</li> </ul> <blockquote> <p>参见：<a href="https://www.felixcloutier.com/x86/sfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/sfence</a>，<a href="https://www.felixcloutier.com/x86/lfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/lfence</a>，<a href="https://www.felixcloutier.com/x86/mfence" rel="external nofollow noopener" target="_blank">https://www.felixcloutier.com/x86/mfence</a>。</p> </blockquote> <h3 id="31-releaseacquire-如何实现局部同步">3.1. release/acquire 如何实现局部同步</h3> <p><code class="language-plaintext highlighter-rouge">release/acquire</code> 提供的是<strong>成对的、局部的</strong>同步关系：当线程 B 的 <code class="language-plaintext highlighter-rouge">acquire load</code> 读到线程 A 的 <code class="language-plaintext highlighter-rouge">release store</code> 写入的值时，线程 A 在 <code class="language-plaintext highlighter-rouge">release store</code> 之前的所有写入，对线程 B 在 <code class="language-plaintext highlighter-rouge">acquire load</code> 之后的所有读取都可见。</p> <p><strong>概念层面：</strong></p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Thread A (producer):                 Thread B (consumer):
+
+  data = 42;                           while (!(p = flag.load(acquire)));
+  str = "Hello";                       // 以下读取能看到 Thread A 在 release 之前的所有写入
+  flag.store(true, release);  ──→      assert(data == 42);   // ✅ 保证成立
+     ↑                                 assert(*p == "Hello"); // ✅ 保证成立
+     |
+     └── release 保证：之前的写入（data, str）
+         不会被重排到此 store 之后
+</code></pre></div></div> <p>示例代码：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;atomic&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span>
+<span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">*&gt;</span> <span class="n">ptr</span><span class="p">{</span><span class="nb">nullptr</span><span class="p">};</span>
+<span class="kt">int</span> <span class="n">data</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">producer</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">*</span> <span class="n">p</span>  <span class="o">=</span> <span class="k">new</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">);</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+  <span class="n">ptr</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_release</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">consumer</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">*</span> <span class="n">p2</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nb">nullptr</span> <span class="o">==</span> <span class="p">(</span><span class="n">p2</span> <span class="o">=</span> <span class="n">ptr</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_acquire</span><span class="p">)));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="o">*</span><span class="n">p2</span> <span class="o">==</span> <span class="s">"Hello"</span><span class="p">);</span> <span class="c1">// never fires</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span> <span class="c1">// never fires</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t1</span><span class="p">(</span><span class="n">producer</span><span class="p">);</span>
+  <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t2</span><span class="p">(</span><span class="n">consumer</span><span class="p">);</span>
+  <span class="n">t1</span><span class="p">.</span><span class="n">join</span><span class="p">();</span> <span class="n">t2</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><strong>x86-64 编译器实际生成的汇编（GCC/Clang）：</strong></p> <pre><code class="language-asm">;; release store (x86-64)
+;; ptr.store(p, std::memory_order_release);  (ptr 是 std::atomic&lt;std::string*&gt;)
+mov QWORD PTR ptr[rip], rax       ; 普通 MOV 指令！
+                                   ; x86 TSO 已保证 StoreStore 顺序
+                                   ; 编译器只需确保不重排（编译器屏障）
+
+;; acquire load (x86-64)
+;; std::string* p = ptr.load(std::memory_order_acquire);
+mov rax, QWORD PTR ptr[rip]       ; 普通 MOV 指令！
+                                   ; x86 TSO 已保证 LoadLoad、LoadStore 顺序
+</code></pre> <p><strong>ARM64 编译器生成的汇编（GCC/Clang）：</strong></p> <pre><code class="language-asm">;; release store (ARM64)
+;; ptr.store(p, std::memory_order_release);  (ptr 是 std::atomic&lt;std::string*&gt;)
+stlr x0, [x1]                     ; Store-Release 指令（64位指针用 x 寄存器）
+                                   ; 硬件保证：之前的读写不会重排到此 store 之后
+
+;; acquire load (ARM64)
+;; std::string* p = ptr.load(std::memory_order_acquire);
+ldar x0, [x1]                     ; Load-Acquire 指令（64位指针用 x 寄存器）
+                                   ; 硬件保证：之后的读写不会重排到此 load 之前
+</code></pre> <p><strong>从硬件角度理解 release/acquire 的作用：</strong></p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Release Store 的效果：
+  ┌──────────────────────────────┐
+  │  之前的所有 store 已经进入   │
+  │  Store Buffer（x86: FIFO    │
+  │  保证顺序提交到 cache）     │
+  ├──────────────────────────────┤
+  │  Release Store 本身          │ ← 保证在之前的 store 之后可见
+  └──────────────────────────────┘
+  x86: Store Buffer 是 FIFO，天然保证 StoreStore 顺序
+  ARM: STLR 指令包含隐式屏障，阻止重排
+
+Acquire Load 的效果：
+  ┌──────────────────────────────┐
+  │  Acquire Load 本身           │ ← 此时可能触发 cache miss，
+  │                              │   从其他 CPU 的 cache 获取最新值
+  ├──────────────────────────────┤
+  │  之后的 load/store           │ ← 保证在 acquire load 之后执行
+  │  能看到 release 之前的写入   │
+  └──────────────────────────────┘
+  x86: 硬件已保证 LoadLoad/LoadStore 顺序，Invalidate Queue 中的
+       失效消息在 load 前被处理（x86 不真正延迟处理 invalidation）
+  ARM: LDAR 指令包含隐式屏障，且强制处理 Invalidate Queue
+</code></pre></div></div> <h3 id="32-memory_order_seq_cst-如何实现全局同步">3.2. memory_order_seq_cst 如何实现全局同步</h3> <p><code class="language-plaintext highlighter-rouge">seq_cst</code> 比 <code class="language-plaintext highlighter-rouge">release/acquire</code> 更强：它提供一个<strong>全局唯一的操作顺序</strong>（single total order），所有线程看到的 <code class="language-plaintext highlighter-rouge">seq_cst</code> 操作顺序完全一致。</p> <p><strong>x86-64 编译器实际生成的汇编（GCC/Clang）：</strong></p> <pre><code class="language-asm">;; seq_cst store (x86-64)
+;; ptr.store(p, std::memory_order_seq_cst);  (ptr 是 std::atomic&lt;std::string*&gt;)
+xchg rax, QWORD PTR ptr[rip]      ; XCHG 隐含 LOCK 前缀（64位指针用 QWORD/rax）
+                                   ; 效果：
+                                   ;   1. 排空 Store Buffer（之前的 store 全部提交）
+                                   ;   2. 原子地写入新值
+                                   ;   3. 等待本次写入被其他 CPU 的 cache 确认（ACK）
+                                   ;   4. 隐含全屏障（相当于 MFENCE）
+
+;; 或者等价写法：
+mov QWORD PTR ptr[rip], rax        ; 普通 store
+mfence                             ; 排空 Store Buffer + 阻止 StoreLoad 重排
+s
+;; seq_cst load (x86-64)
+;; std::string* p = ptr.load(std::memory_order_seq_cst);
+mov rax, QWORD PTR ptr[rip]        ; 普通 MOV 指令！（64位指针用 QWORD/rax）
+                                   ; ⚠️ 注意：x86 上 seq_cst load 不需要 MFENCE
+                                   ; 因为屏障已经放在 store 端，而 x86 TSO 保证
+                                   ; load 不会越过之前的 load（LoadLoad 有序）
+</code></pre> <p><strong>ARM64 编译器生成的汇编（GCC/Clang）：</strong></p> <pre><code class="language-asm">;; seq_cst store (ARM64)
+;; ptr.store(p, std::memory_order_seq_cst);  (ptr 是 std::atomic&lt;std::string*&gt;)
+stlr x0, [x1]                     ; Store-Release（64位指针用 x 寄存器，与 release 相同指令）
+                                   ; ARMv8 中 STLR+LDAR 组合天然提供 seq_cst 语义
+
+;; seq_cst load (ARM64)
+;; std::string* p = ptr.load(std::memory_order_seq_cst);
+ldar x0, [x1]                     ; Load-Acquire（64位指针用 x 寄存器，与 acquire 相同指令）
+</code></pre> <p><strong>为什么 x86 的 seq_cst 把屏障放在 store 端而不是 load 端？</strong></p> <p>在 <code class="language-plaintext highlighter-rouge">x86 TSO</code> 下，唯一允许的重排是 <code class="language-plaintext highlighter-rouge">StoreLoad</code>（后面的 load 可能在前面的 store 提交到 cache 之前就执行了）。因此只需要在 <code class="language-plaintext highlighter-rouge">store</code> 之后 / <code class="language-plaintext highlighter-rouge">load</code> 之前插入屏障。编译器选择在 <code class="language-plaintext highlighter-rouge">store</code> 端处理，使用 <code class="language-plaintext highlighter-rouge">XCHG</code>（隐含 LOCK）或 <code class="language-plaintext highlighter-rouge">MOV + MFENCE</code>，这样 <code class="language-plaintext highlighter-rouge">load</code> 端可以保持为普通 <code class="language-plaintext highlighter-rouge">MOV</code> 指令，<strong>性能更好</strong>（因为 load 通常比 store 更频繁）。</p> <p>关键差异：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Release Store（局部同步，成对使用）：
+-----------------------------------------
+CPU 0: store data=42          ; 进入 Store Buffer
+       store flag=true        ; release store，也进入 Store Buffer
+                              ; x86 FIFO 保证 data 先于 flag 提交
+                                    ↓ cache coherence (MESI)
+CPU 1: load flag (acquire)    ; 如果读到 true，
+       load data              ; 则保证读到 42
+
+
+Seq_cst Store（全局同步，强制唯一顺序）：
+-----------------------------------------
+CPU 0: XCHG [x], 1            ; 隐含 LOCK 前缀
+         ↓
+       1. 排空 Store Buffer（之前所有 store 提交到 cache）
+       2. 锁定 cache line，原子写入
+       3. 通过 MESI 发送 Invalidate 消息
+       4. 等待所有 CPU 的 Invalidate ACK
+         ↓
+       此时所有 CPU 都知道 x 已经被修改
+         ↓
+CPU 1,2,3: 后续的 seq_cst load
+           必须看到一致的全局顺序
+</code></pre></div></div> <h3 id="33-releaseacquire-与-seq_cst-的本质区别iriw-问题">3.3. release/acquire 与 seq_cst 的本质区别：IRIW 问题</h3> <p><code class="language-plaintext highlighter-rouge">release/acquire</code> 只提供<strong>成对的局部同步</strong>，不保证全局顺序。经典的 <strong>IRIW（Independent Reads of Independent Writes）</strong> 问题展示了这一区别：</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">{</span><span class="mi">0</span><span class="p">},</span> <span class="n">y</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="c1">// Thread 1: 只写 x</span>
+<span class="kt">void</span> <span class="nf">thread1</span><span class="p">()</span> <span class="p">{</span> <span class="n">x</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory_order</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="c1">// Thread 2: 只写 y</span>
+<span class="kt">void</span> <span class="nf">thread2</span><span class="p">()</span> <span class="p">{</span> <span class="n">y</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory_order</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="c1">// Thread 3: 先读 x，再读 y</span>
+<span class="kt">void</span> <span class="nf">thread3</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 1</span>
+    <span class="kt">int</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">y</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 0</span>
+<span class="p">}</span>
+
+<span class="c1">// Thread 4: 先读 y，再读 x</span>
+<span class="kt">void</span> <span class="nf">thread4</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">r3</span> <span class="o">=</span> <span class="n">y</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 1</span>
+    <span class="kt">int</span> <span class="n">r4</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">memory_order</span><span class="p">);</span>  <span class="c1">// 读到 0</span>
+<span class="p">}</span>
+</code></pre></div></div> <table> <thead> <tr> <th>memory_order</th> <th>r1=1, r2=0, r3=1, r4=0 是否可能？</th> <th>原因</th> </tr> </thead> <tbody> <tr> <td><code class="language-plaintext highlighter-rouge">acquire/release</code></td> <td>✅ <strong>可能</strong> </td> <td>没有全局顺序要求；Thread 3 和 Thread 4 可能各自看到不同的写入顺序</td> </tr> <tr> <td><code class="language-plaintext highlighter-rouge">seq_cst</code></td> <td>❌ <strong>不可能</strong> </td> <td>全局唯一顺序：如果 Thread 3 看到 x=1 在 y=1 之前，Thread 4 也必须看到相同的顺序</td> </tr> </tbody> </table> <p><strong>这就是 seq_cst 的额外开销所换来的保证：所有线程对所有 seq_cst 操作看到完全相同的执行顺序。</strong></p> <h2 id="4-原子操作的硬件实现">4. 原子操作的硬件实现</h2> <p>上面讨论的 <code class="language-plaintext highlighter-rouge">memory order</code> 解决的是<strong>可见性和顺序</strong>问题。而原子操作本身要解决的是<strong>不可分割性（atomicity）</strong> 问题——确保一个操作在观察者看来要么完全完成，要么完全没有发生。</p> <h3 id="41-原子性的基础自然对齐的-loadstore">4.1. 原子性的基础：自然对齐的 load/store</h3> <p>在大多数现代 CPU 上，<strong>自然对齐的基本类型（≤ 机器字长）的 load 和 store 天然就是原子的</strong>：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x86-64:
+  - 对齐的 1/2/4/8 字节 load/store 是原子的
+  - 即使是普通的 MOV 指令，只要地址对齐，就是原子操作
+  - 这就是为什么 relaxed load/store 在 x86 上就是普通 MOV
+
+ARM64:
+  - 对齐的 1/2/4/8 字节 LDR/STR 是原子的
+</code></pre></div></div> <p>因此，<code class="language-plaintext highlighter-rouge">std::atomic&lt;int&gt;</code> 的 <code class="language-plaintext highlighter-rouge">load()</code> 和 <code class="language-plaintext highlighter-rouge">store()</code> 本质上不需要特殊的硬件支持来保证原子性——对齐的 MOV/LDR/STR 天然就是原子的。<code class="language-plaintext highlighter-rouge">std::atomic</code> 在这里主要提供的是<strong>编译器屏障</strong>和<strong>内存序语义</strong>。</p> <h4 id="stdatomic即使-relaxed与普通变量的区别"> <code class="language-plaintext highlighter-rouge">std::atomic</code>（即使 relaxed）与普通变量的区别</h4> <p>即使使用最弱的 <code class="language-plaintext highlighter-rouge">memory_order_relaxed</code>，<code class="language-plaintext highlighter-rouge">std::atomic</code> 仍然比普通变量多做了关键的几件事：</p> <table> <thead> <tr> <th>特性</th> <th>普通变量</th> <th> <code class="language-plaintext highlighter-rouge">atomic</code>（relaxed）</th> </tr> </thead> <tbody> <tr> <td>操作原子性</td> <td>不保证（可能被拆分为多条指令）</td> <td>保证不可分割</td> </tr> <tr> <td>编译器优化</td> <td>可合并、删除、重排</td> <td>禁止合并/删除（每次操作都会发出指令）</td> </tr> <tr> <td>cache coherence</td> <td>可能一直停留在寄存器中</td> <td>触发 MESI 的 invalidate，保证跨核可见性</td> </tr> <tr> <td>顺序保证</td> <td>无</td> <td>不保证顺序（relaxed），但保证最终可见</td> </tr> </tbody> </table> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 普通变量：编译器可能优化掉前一条</span>
+<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">43</span><span class="p">;</span>   <span class="c1">// 编译器可能直接只保留 x = 43</span>
+
+<span class="c1">// atomic：每条 store 都必须执行</span>
+<span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">;</span>
+<span class="n">x</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>  <span class="c1">// 不会被优化掉</span>
+<span class="n">x</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">43</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>  <span class="c1">// 也不会被优化掉</span>
+</code></pre></div></div> <blockquote> <p>关键理解：<code class="language-plaintext highlighter-rouge">atomic</code> 的”原子性”和”内存序”是<strong>两个独立的概念</strong>。<code class="language-plaintext highlighter-rouge">relaxed</code> 只放弃了顺序保证，但原子性、编译器屏障（禁止优化）、cache coherence 触发一个都不少。</p> </blockquote> <h3 id="42-read-modify-write-rmw-操作">4.2. Read-Modify-Write (RMW) 操作</h3> <p>真正需要特殊硬件支持的是 <strong>RMW 操作</strong>：<code class="language-plaintext highlighter-rouge">fetch_add</code>、<code class="language-plaintext highlighter-rouge">compare_exchange</code>、<code class="language-plaintext highlighter-rouge">exchange</code> 等。这些操作需要在”读取-计算-写入”这个过程中保证没有其他 CPU 插入修改。</p> <h4 id="x86-实现lock-前缀">x86 实现：LOCK 前缀</h4> <pre><code class="language-asm">;; std::atomic&lt;int&gt; x; x.fetch_add(1, relaxed);
+lock add DWORD PTR [rdi], 1        ; LOCK 前缀保证原子 Read-Modify-Write
+
+;; x.compare_exchange_strong(expected, desired);
+lock cmpxchg DWORD PTR [rdi], esi  ; LOCK + CMPXCHG = 原子 CAS
+
+;; x.exchange(val);
+xchg DWORD PTR [rdi], esi          ; XCHG 隐含 LOCK（不需要显式写）
+</code></pre> <blockquote> <p>以 <code class="language-plaintext highlighter-rouge">lock cmpxchg</code> 为例，它在硬件中不是拆成多条独立微指令，而是作为一组<strong>融合微操作（fused micro-op）</strong> 执行：CPU 在执行期间锁定资源，保证”比较-交换”整个过程不可被打断。具体流程：(1) 发出 LOCK# 信号或锁住 cache line → (2) 通过 MESI 抢占独占权限 → (3) 等待其他核 invalidation ACK → (4) 比较并条件写入 → (5) 完成后更新 MESI 状态为 Modified。</p> </blockquote> <p><code class="language-plaintext highlighter-rouge">LOCK</code> 前缀的硬件实现（现代 x86）：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──────────────────────────────────────────────────┐
+│ 1. 检查目标地址是否在 L1 Cache 中                 │
+│    ├─ 是 → Cache Line Locking（锁定 cache line） │
+│    │       - 将 cache line 设为 Modified 状态      │
+│    │       - 在操作期间拒绝其他 CPU 的访问请求     │
+│    │       - 操作完成后释放                        │
+│    └─ 否 → Bus Locking（锁定总线，较慢）          │
+│            - 发出 LOCK# 信号                      │
+│            - 阻止其他 CPU 访问内存                 │
+│            - 现代 CPU 极少走到这条路径              │
+├──────────────────────────────────────────────────┤
+│ 2. 额外效果：                                     │
+│    - LOCK 前缀指令隐含全内存屏障（等同 MFENCE）    │
+│    - 排空 Store Buffer                            │
+│    - 即使使用 memory_order_relaxed，               │
+│      x86 上的 RMW 也有 MFENCE 效果                │
+└──────────────────────────────────────────────────┘
+</code></pre></div></div> <blockquote> <p><strong>重要</strong>: x86 上 <code class="language-plaintext highlighter-rouge">LOCK</code> 前缀指令始终隐含全屏障。这意味着 <code class="language-plaintext highlighter-rouge">x.fetch_add(1, relaxed)</code> 在 x86 上的性能和 <code class="language-plaintext highlighter-rouge">x.fetch_add(1, seq_cst)</code> 几乎相同——都会生成 <code class="language-plaintext highlighter-rouge">lock add</code>。relaxed 的性能优势主要体现在 ARM 等弱内存模型架构上。</p> </blockquote> <h4 id="arm-实现llsc-或-lse-原子指令">ARM 实现：LL/SC 或 LSE 原子指令</h4> <pre><code class="language-asm">;; fetch_add (ARM64, 传统 LL/SC 方式)
+.retry:
+    ldxr  w1, [x0]               ; Load-Exclusive：加载值并标记为"独占"
+    add   w2, w1, #1              ; 计算新值
+    stxr  w3, w2, [x0]           ; Store-Exclusive：仅当独占标记仍有效时写入
+    cbnz  w3, .retry             ; 如果 stxr 失败（其他 CPU 写了同一 cache line），重试
+
+;; fetch_add (ARM64, ARMv8.1 LSE 原子指令)
+    ldadd w1, w0, [x0]           ; 硬件原子 load-add，无需重试循环
+</code></pre> <p>LL/SC（Load-Linked / Store-Conditional）机制：</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌───────────────┐              ┌───────────────┐
+│    CPU 0      │              │    CPU 1      │
+│               │              │               │
+│ LDXR [addr]   │              │               │
+│  ↓ 标记 addr  │              │               │
+│  为 exclusive │              │               │
+│               │              │ STR [addr]    │
+│               │              │  ↓ 清除 CPU0  │
+│               │              │  的 exclusive │
+│               │              │  标记         │
+│ STXR [addr]   │              │               │
+│  ↓ 发现标记   │              │               │
+│  已被清除     │              │               │
+│  → 返回失败   │              │               │
+│  → 跳回 LDXR  │              │               │
+│  重试         │              │               │
+└───────────────┘              └───────────────┘
+</code></pre></div></div> <h3 id="43-三种内存序对-rmw-的影响以-fetch_add-为例">4.3. 三种内存序对 RMW 的影响（以 fetch_add 为例）</h3> <pre><code class="language-asm">;; x86-64: 三种内存序生成的汇编完全相同！
+;; x.fetch_add(1, relaxed / acq_rel / seq_cst)
+lock add DWORD PTR [rdi], 1       ; 都是 lock add（LOCK 隐含全屏障）
+
+;; ARM64: 不同内存序生成不同汇编
+;; relaxed:
+    ldxr  w1, [x0]
+    add   w2, w1, #1
+    stxr  w3, w2, [x0]           ; 普通 LL/SC
+
+;; acquire-release:
+    ldaxr w1, [x0]               ; Load-Acquire-Exclusive
+    add   w2, w1, #1
+    stlxr w3, w2, [x0]           ; Store-Release-Exclusive
+
+;; seq_cst:
+    ldaxr w1, [x0]               ; Load-Acquire-Exclusive
+    add   w2, w1, #1
+    stlxr w3, w2, [x0]           ; Store-Release-Exclusive
+    dmb   ish                    ; 额外的全屏障（某些实现）
+</code></pre> <h3 id="44-总结对比">4.4. 总结对比</h3> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──────────────┬─────────────────┬─────────────────────────┬────────────────────┐
+│   操作类型    │   保证什么       │  x86-64 实现             │  ARM64 实现         │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ relaxed      │ 原子性           │ MOV                     │ LDR/STR            │
+│ load/store   │                 │                         │                    │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ acquire      │ 原子性 +         │ MOV（编译器屏障）        │ LDAR               │
+│ load         │ 后续操作不前移   │                         │                    │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ release      │ 原子性 +         │ MOV（编译器屏障）        │ STLR               │
+│ store        │ 之前操作不后移   │                         │                    │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ seq_cst      │ 原子性 +         │ store: XCHG/MOV+MFENCE │ LDAR/STLR          │
+│ load/store   │ 全局唯一顺序     │ load: MOV               │ (+ 可能额外 DMB)   │
+├──────────────┼─────────────────┼─────────────────────────┼────────────────────┤
+│ RMW          │ 原子性 +         │ LOCK 前缀指令            │ LDXR/STXR          │
+│ (any order)  │ 不可分割的       │ (始终隐含全屏障)         │ 或 LSE 原子指令     │
+│              │ 读-改-写         │                         │ (屏障取决于 order)  │
+└──────────────┴─────────────────┴─────────────────────────┴────────────────────┘
+</code></pre></div></div> <h2 id="参考资料">参考资料</h2> <ul> <li><a href="https://bi-an.github.io/blog/2025/08/01/concurrency/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="external nofollow noopener" target="_blank">内存模型</a></li> <li><a href="https://luyuhuang.tech/2022/06/25/cpp-memory-order.html" rel="external nofollow noopener" target="_blank">谈谈 C++ 中的内存顺序 (Memory Order)</a></li> <li><a href="https://liam.page/2021/12/11/memory-order-cpp-02/" rel="external nofollow noopener" target="_blank">程序员的自我修养（⑫）：C++ 的内存顺序·中</a></li> </ul> <h2 id="更多资料">更多资料</h2> <ul> <li><a href="https://simonhancrew.github.io/CppConcurencyInAction/" rel="external nofollow noopener" target="_blank">C++ Concurrency In Action 2ed 中文翻译</a></li> <li><a href="/assets/pdf/cpu/C++%20Concurrency%20in%20Action,%202nd%20Edition.pdf">C++ Concurrency in Action, 2nd Edition</a></li> <li><a href="https://weedge.github.io/perf-book-cn/zh/chapters/3-CPU-Microarchitecture/3-8_Modern_CPU_design_cn.html" rel="external nofollow noopener" target="_blank">现代CPU性能分析与优化 – 现代CPU设计</a></li> <li><a href="https://weedge.github.io/perf-book-cn/zh/" rel="external nofollow noopener" target="_blank">现代CPU性能分析与优化 – README</a></li> <li><a href="/assets/pdf/cpu/perf-book-cn.pdf">现代CPU性能分析与优化 – pdf</a></li> </ul> </div> </article> <br> <hr> <br> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <ul class="list-disc pl-7 my-3 space-y-2 marker:text-[var(--global-theme-color)]"> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/" target="_blank" rel="noopener noreferrer">Google Gemini updates: Flash 1.5, Gemma 2 and Project Astra</a> <svg width="1rem" height="1rem" viewbox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2" target="_blank" rel="noopener noreferrer">Displaying External Posts on Your al-folio Blog</a> <svg width="1rem" height="1rem" viewbox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/OpenMAIC%E9%83%A8%E7%BD%B2/">在Ubuntu上部署OpenMAIC</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/">AI工具大全</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/Fast-DDS%E5%85%A5%E9%97%A8/">Fast DDS入门（On-Going）</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/NVIDIA-GPU-SP-SM-LSU/">NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/al-folio-customization-summary/">al-folio 模板定制修改总结</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/al-folio-local-deploy-ubuntu2404/">al-folio 部署记录（Ubuntu 24.04）</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/%E5%AE%89%E8%A3%85Docker-Docker-Compose/">Ubuntu 26.04 安装 Docker 和 Docker Compose</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/C++-Traits/">C++ Traits</a> </li> </ul> </div> </div> <div class="col-sm-3"> <nav id="toc-sidebar" class="sticky-top toc toc-sidebar" aria-label="Table of contents" data-toc-collapse="expanded" data-toc-collapse-depth=""></nav> </div> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Roderick Huang. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script defer src="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.min.js" integrity="sha256-lo/r+jQ81wWrxdIiiiEEd538z4+dTJTt+leOuAS7GCw=" crossorigin="anonymous"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "A growing collection of your cool projects.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-repositories",
+          title: "repositories",
+          description: "Edit the `_data/repositories.yml` and change the `github_users` and `github_repos` lists to include your own GitHub profile and repositories.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/repositories/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "This is a description of the page. You can modify it in '_pages/cv.md'. You can also change or remove the top pdf download button.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "nav-teaching",
+          title: "teaching",
+          description: "Course materials, schedules, and resources for classes taught.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/teaching/";
+          },
+        },{id: "nav-people",
+          title: "people",
+          description: "members of the lab or group",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/people/";
+          },
+        },{id: "dropdown-bookshelf",
+              title: "bookshelf",
+              description: "",
+              section: "Dropdown",
+              handler: () => {
+                window.location.href = "/books/";
+              },
+            },{id: "dropdown-blog",
+              title: "blog",
+              description: "",
+              section: "Dropdown",
+              handler: () => {
+                window.location.href = "/blog/";
+              },
+            },{id: "post-在ubuntu上部署openmaic",
+        
+          title: "在Ubuntu上部署OpenMAIC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/OpenMAIC%E9%83%A8%E7%BD%B2/";
+          
+        },
+      },{id: "post-ai工具大全",
+        
+          title: "AI工具大全",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/";
+          
+        },
+      },{id: "post-fast-dds入门-on-going",
+        
+          title: "Fast DDS入门（On-Going）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/Fast-DDS%E5%85%A5%E9%97%A8/";
+          
+        },
+      },{id: "post-nvidia-gpu-架构-sp-sm-与-lsu-工作原理详解",
+        
+          title: "NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/NVIDIA-GPU-SP-SM-LSU/";
+          
+        },
+      },{id: "post-al-folio-模板定制修改总结",
+        
+          title: "al-folio 模板定制修改总结",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/al-folio-customization-summary/";
+          
+        },
+      },{id: "post-al-folio-部署记录-ubuntu-24-04",
+        
+          title: "al-folio 部署记录（Ubuntu 24.04）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/al-folio-local-deploy-ubuntu2404/";
+          
+        },
+      },{id: "post-ubuntu-26-04-安装-docker-和-docker-compose",
+        
+          title: "Ubuntu 26.04 安装 Docker 和 Docker Compose",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/%E5%AE%89%E8%A3%85Docker-Docker-Compose/";
+          
+        },
+      },{id: "post-c-traits",
+        
+          title: "C++ Traits",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/C++-Traits/";
+          
+        },
+      },{id: "post-道格拉斯-普克算法-douglas-peucker-algorithm",
+        
+          title: "道格拉斯-普克算法(Douglas–Peucker algorithm)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/";
+          
+        },
+      },{id: "post-cmake支持库收集",
+        
+          title: "CMake支持库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93/";
+          
+        },
+      },{id: "post-qgc代码架构解析-飞行前检查-起飞条件",
+        
+          title: "QGC代码架构解析：飞行前检查（起飞条件）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QGC%E9%A3%9E%E8%A1%8C%E5%89%8D%E6%A3%80%E6%9F%A5/";
+          
+        },
+      },{id: "post-qgc代码架构解析-mavlink-mission-protocol-以及-qgc-航点管理",
+        
+          title: "QGC代码架构解析：MAVLink Mission Protocol，以及 QGC 航点管理",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_mission_manager/";
+          
+        },
+      },{id: "post-ai工具收集及使用笔记-持续更新",
+        
+          title: "AI工具收集及使用笔记，持续更新",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/AI%E5%B7%A5%E5%85%B7%E6%94%B6%E9%9B%86%E5%8F%8A%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-ai工具-使用docling转换文档",
+        
+          title: "AI工具：使用docling转换文档",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/AI-%E4%BD%BF%E7%94%A8docling%E8%BD%AC%E6%8D%A2%E6%96%87%E4%BB%B6/";
+          
+        },
+      },{id: "post-qgc代码架构解析-qgc初始加载及状态机",
+        
+          title: "QGC代码架构解析：QGC初始加载及状态机",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_init_load_states/";
+          
+        },
+      },{id: "post-qgc代码架构解析-mavlink参数服务及qgc参数管理模块",
+        
+          title: "QGC代码架构解析：MAVLink参数服务及QGC参数管理模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_parameter_module/";
+          
+        },
+      },{id: "post-qgc代码架构解析-firmwareplugin与autopilotplugin",
+        
+          title: "QGC代码架构解析：FirmwarePlugin与AutopilotPlugin",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_firmwareplugin_autopilotplugin/";
+          
+        },
+      },{id: "post-apm-pixhawk常用飞行模式",
+        
+          title: "APM/Pixhawk常用飞行模式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ardupilot-flight-modes/";
+          
+        },
+      },{id: "post-地面站-helios-以及-dart-flutter-环境搭建",
+        
+          title: "地面站 Helios 以及 Dart/Flutter 环境搭建",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E5%9C%B0%E9%9D%A2%E7%AB%99-helios-%E4%BB%A5%E5%8F%8A-dart-flutter-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/";
+          
+        },
+      },{id: "post-ardupilot-笔记",
+        
+          title: "ArduPilot 笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ardupilot-notes/";
+          
+        },
+      },{id: "post-内存模型-memory-model-从多处理器到高级语言",
+        
+          title: "内存模型(Memory Model)：从多处理器到高级语言",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/memory_model2/";
+          
+        },
+      },{id: "post-再理解-std-condition-variable-条件变量",
+        
+          title: "再理解 std::condition_variable 条件变量",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/conditonal_variable/";
+          
+        },
+      },{id: "post-使用-libevent-实现时间戳调度",
+        
+          title: "使用 libevent 实现时间戳调度",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/timestamp_schedule_using_libevent/";
+          
+        },
+      },{id: "post-qml基础语法积累",
+        
+          title: "QML基础语法积累",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QML%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-交叉编译-qt-5-15-2",
+        
+          title: "交叉编译 Qt 5.15.2",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cross_build_qt_arm64_linaro_7.5/";
+          
+        },
+      },{id: "post-使用-c-template-构建一个通信用序列化反序列化模块",
+        
+          title: "使用 C++ template 构建一个通信用序列化反序列化模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%80%9A%E4%BF%A1%E7%94%A8%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%A8%A1%E5%9D%97/";
+          
+        },
+      },{id: "post-static-cast-与-reinterpret-cast",
+        
+          title: "static_cast 与 reinterpret_cast",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/static_cast_vs_reinterpret_cast/";
+          
+        },
+      },{id: "post-c-template-学习资料",
+        
+          title: "C++ template 学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp_template_study_res/";
+          
+        },
+      },{id: "post-使用-cmake-cpack-nsis-打包-qt-应用",
+        
+          title: "使用 CMake CPack NSIS 打包 Qt 应用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qt_cpack_nsis/";
+          
+        },
+      },{id: "post-cmake-export-命令以及-install-命令",
+        
+          title: "CMake export 命令以及 install 命令",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cmake_export_and_install/";
+          
+        },
+      },{id: "post-mavlink消息的打包和解包",
+        
+          title: "MAVLink消息的打包和解包",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/MAVLink_msg_pack_unpack/";
+          
+        },
+      },{id: "post-mavlink协议",
+        
+          title: "MAVLink协议",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/MAVLink_intro/";
+          
+        },
+      },{id: "post-qgc-笔记以及资料",
+        
+          title: "QGC 笔记以及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QGC%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-c-对象模型-多继承",
+        
+          title: "C++对象模型--多继承",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/C++%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B-%E5%A4%9A%E7%BB%A7%E6%89%BF/";
+          
+        },
+      },{id: "post-windows编译安装vtk-tcl-tk-occ",
+        
+          title: "Windows编译安装VTK, TCL/TK, OCC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/windows-build-tcl-tk-occ/";
+          
+        },
+      },{id: "post-系统监控工具套件sysstat的使用",
+        
+          title: "系统监控工具套件sysstat的使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7sysstat/";
+          
+        },
+      },{id: "post-待翻译-performance-hints",
+        
+          title: "待翻译 -- Performance Hints",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Performance-Hints/";
+          
+        },
+      },{id: "post-occ-待学习资料记录",
+        
+          title: "OCC 待学习资料记录",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/OCCT-study-notes/";
+          
+        },
+      },{id: "post-nvidia-jetson-orin-agx-安装",
+        
+          title: "NVIDIA Jetson Orin AGX 安装",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/NVIDIA-Jetson-Orin-AGX-%E5%AE%89%E8%A3%85/";
+          
+        },
+      },{id: "post-ampere-gpu-新特性",
+        
+          title: "Ampere GPU 新特性",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA-Ampere-Feature/";
+          
+        },
+      },{id: "post-使用-cute-tiled-copy-tiled-mma-以及-multi-stage-实现高性能-gemm",
+        
+          title: "使用 CuTe Tiled Copy、Tiled MMA 以及 Multi-Stage 实现高性能 GEMM",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CuTe-GEMM-TiledCopy-TiledMMA-Pipeline/";
+          
+        },
+      },{id: "post-gemm-版本1-使用-cute-实现一个-naive-gemm",
+        
+          title: "GEMM 版本1：使用 CuTe 实现一个 naive GEMM",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/GEMM1-Cute-naive-GEMM/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-6-cuda-gemm-计算优化-multi-stage-与软流水-software-pipelining",
+        
+          title: "CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A56-Pipeline-And-Multi-Stage/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-5-tv-layout",
+        
+          title: "CUTLASS-Cute 初步(5)：TV Layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A55-TV-Layout/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-4-1-mma-swizzle-mma-ldmatrix-smem-swizzle",
+        
+          title: "CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A54.1-mma-ldmatrix-swizzle/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-4-swizzle",
+        
+          title: "CUTLASS-Cute 初步(4)：Swizzle",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A54-swizzle/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-3-1-tiledcopy-以及-tiledmma-配置示例",
+        
+          title: "CUTLASS-Cute 初步(3.1)：TiledCopy 以及 TiledMMA 配置示例",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A53.1-TileMMA%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-3-tiledcopy-以及-tiledmma",
+        
+          title: "CUTLASS-Cute 初步(3)：TiledCopy 以及 TiledMMA",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A53-TiledCopy-TiledMMA/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-2-1-tensor-amp-layout-实操笔记",
+        
+          title: "CUTLASS-Cute 初步(2.1)：Tensor & Layout 实操笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A52.1-Tensor-Layout-%E5%AE%9E%E6%93%8D%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-2-tensor-amp-layout-algebra",
+        
+          title: "CUTLASS-Cute 初步(2)：Tensor & Layout Algebra",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A52-Tensor-Layout-Algebra/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-1-layout",
+        
+          title: "CUTLASS-Cute 初步(1)：Layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A51-Layout/";
+          
+        },
+      },{id: "post-使用-nsight-compute-进行-kernel-性能分析",
+        
+          title: "使用 Nsight Compute 进行 kernel 性能分析",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ncu-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/";
+          
+        },
+      },{id: "post-cuda入门-bank-conflict",
+        
+          title: "CUDA入门：Bank Conflict",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E5%85%A5%E9%97%A8-Bank-Conflict/";
+          
+        },
+      },{id: "post-cuda性能概述-影响因素及优化方法",
+        
+          title: "CUDA性能概述：影响因素及优化方法",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%80%A7%E8%83%BD%E6%A6%82%E8%BF%B0/";
+          
+        },
+      },{id: "post-cuda-架构及对应的计算能力cc",
+        
+          title: "CUDA 架构及对应的计算能力CC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84%E5%8F%8A%E5%85%B6%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9BCC/";
+          
+        },
+      },{id: "post-cuda-架构-1-1-hopper架构及性能分析-ncu-性能优化",
+        
+          title: "CUDA 架构(1.1)：Hopper架构及性能分析(ncu) + 性能优化",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%841.1-Hopper%E5%8F%8A%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/";
+          
+        },
+      },{id: "post-cuda-架构",
+        
+          title: "CUDA 架构",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84/";
+          
+        },
+      },{id: "post-hpc-零散笔记集合",
+        
+          title: "HPC 零散笔记集合",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/HPC%E7%AC%94%E8%AE%B0-%E9%9B%B6%E6%95%A3%E6%A6%82%E5%BF%B5/";
+          
+        },
+      },{id: "post-cuda-笔记集合",
+        
+          title: "CUDA 笔记集合",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E7%AC%94%E8%AE%B0%E9%9B%86%E5%90%88/";
+          
+        },
+      },{id: "post-c-右值引用-万能引用-完美转发",
+        
+          title: "C++ 右值引用，万能引用，完美转发",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp-rvalue/";
+          
+        },
+      },{id: "post-io多路复用与linux-epoll",
+        
+          title: "IO多路复用与linux epoll",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E4%B8%8Eepoll/";
+          
+        },
+      },{id: "post-jekyll-chirpy-主题配置优化记录",
+        
+          title: "Jekyll Chirpy 主题配置优化记录",
+        
+        description: "记录 Jekyll Chirpy 主题从部署错误修复到功能优化的完整过程，包括 GitHub Actions 配置、数学公式渲染、目录展开等改进。",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Jekyll-Chirpy%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/";
+          
+        },
+      },{id: "post-chirpy主题的安装与使用指南",
+        
+          title: "Chirpy主题的安装与使用指南",
+        
+        description: "搭建和使用本网页时找到或参考的各类指南和文档",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Chirpy%E6%A8%A1%E6%9D%BF%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/";
+          
+        },
+      },{id: "post-qemu-学习资料",
+        
+          title: "QEMU 学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qemu-study/";
+          
+        },
+      },{id: "post-memory-segmentation-cheet-sheets",
+        
+          title: "Memory Segmentation Cheet Sheets",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/memory-segmentation-cheet-sheets/";
+          
+        },
+      },{id: "post-std-pmr-内存池",
+        
+          title: "std::pmr -- 内存池",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/std-pmr-memory-pool/";
+          
+        },
+      },{id: "post-c-面向对象三个概念-重载-覆盖和隐藏",
+        
+          title: "C++面向对象三个概念——重载、覆盖和隐藏",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp-override-overload-hide/";
+          
+        },
+      },{id: "post-编译ffmpeg使能-nvidia-硬件解码",
+        
+          title: "编译FFMPEG使能 NVIDIA 硬件解码",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E7%BC%96%E8%AF%91FFMPEG%E4%BD%BF%E8%83%BDNvidia%E7%A1%AC%E4%BB%B6%E8%A7%A3%E7%A0%81/";
+          
+        },
+      },{id: "post-gcc-向量化相关选项",
+        
+          title: "gcc 向量化相关选项",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/gcc-vectorize-options/";
+          
+        },
+      },{id: "post-perf性能分析-7-top-down-分析方法及vtune工具",
+        
+          title: "perf性能分析(7) -- Top-down 分析方法及VTune工具",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-07-top-down-method/";
+          
+        },
+      },{id: "post-c-中-auto-和-decltype-的用法-update-20241106",
+        
+          title: "C++ 中 auto 和 decltype 的用法 (update 20241106)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp-auto-and-decltype/";
+          
+        },
+      },{id: "post-perf性能分析-6-perf实战-1-分支预测",
+        
+          title: "perf性能分析(6) -- perf实战(1) -- 分支预测",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-06-perf-practice-01/";
+          
+        },
+      },{id: "post-perf性能分析-5-linux-perf-工具介绍",
+        
+          title: "perf性能分析(5) -- linux perf 工具介绍",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-05-perf-introduce/";
+          
+        },
+      },{id: "post-perf性能分析-4-linux-perf-工具基本使用-1",
+        
+          title: "perf性能分析(4) -- linux perf 工具基本使用(1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-04-perf-usage/";
+          
+        },
+      },{id: "post-linux-性能及统计工具-1",
+        
+          title: "Linux 性能及统计工具 (1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Linux-perf-stat-commands/";
+          
+        },
+      },{id: "post-有用的-gcc-编译选项收集",
+        
+          title: "有用的 GCC 编译选项收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%9C%89%E7%94%A8%E7%9A%84GCC%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9%E6%94%B6%E9%9B%86/";
+          
+        },
+      },{id: "post-内存分析需要理解的几个概念",
+        
+          title: "内存分析需要理解的几个概念",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Linux-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E8%A6%81%E7%90%86%E8%A7%A3%E7%9A%84%E6%A6%82%E5%BF%B5/";
+          
+        },
+      },{id: "post-perf性能分析-3-intel-vtune-配合-linux-perf-使用",
+        
+          title: "perf性能分析(3) -- Intel VTune 配合 linux perf 使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-03-Intel-VTune-and-perf-usage-03/";
+          
+        },
+      },{id: "post-perf性能分析-2-intel-vtune-配置与使用-2",
+        
+          title: "perf性能分析(2) -- Intel VTune 配置与使用(2)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-02-Intel-VTune-usage-02/";
+          
+        },
+      },{id: "post-给-shared-ptr-添加自定义-deleter-的几种方式",
+        
+          title: "给 shared_ptr 添加自定义 deleter 的几种方式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/shared_ptr-deleters-usage/";
+          
+        },
+      },{id: "post-perf性能分析-1-intel-vtune-配置与使用-1",
+        
+          title: "perf性能分析(1) -- Intel VTune 配置与使用(1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-01-Intel-VTune/";
+          
+        },
+      },{id: "post-plugin-的创建及使用",
+        
+          title: "Plugin 的创建及使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Plugin-Boost-DLL/";
+          
+        },
+      },{id: "post-性能优化学习资料",
+        
+          title: "性能优化学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-stl-图解",
+        
+          title: "STL 图解",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/STL%E5%9B%BE%E8%A7%A3/";
+          
+        },
+      },{id: "post-c-11-新特性",
+        
+          title: "C++11 新特性",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/C++11%E6%96%B0%E7%89%B9%E6%80%A7/";
+          
+        },
+      },{id: "post-opencl-buffer-objects",
+        
+          title: "OpenCL Buffer Objects",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Buffer-Objects/";
+          
+        },
+      },{id: "post-opencl-学习资源",
+        
+          title: "OpenCL 学习资源",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Learn-Resources/";
+          
+        },
+      },{id: "post-opencl-同步操作",
+        
+          title: "OpenCL 同步操作",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Synchronization/";
+          
+        },
+      },{id: "post-opencl-平台模型-执行模型",
+        
+          title: "OpenCL 平台模型、执行模型",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-model/";
+          
+        },
+      },{id: "post-git加速资源",
+        
+          title: "Git加速资源",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/git%E5%8A%A0%E9%80%9F%E8%B5%84%E6%BA%90/";
+          
+        },
+      },{id: "post-总结-git-不常用命令",
+        
+          title: "总结：git 不常用命令",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/git-commands/";
+          
+        },
+      },{id: "post-opencl-端编程流程及主要概念实践",
+        
+          title: "OpenCL 端编程流程及主要概念实践",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-basic-coding-flow/";
+          
+        },
+      },{id: "post-使用-ffmpeg-从视频中提取音频",
+        
+          title: "使用 FFmpeg 从视频中提取音频",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/get-audio-from-vidio-using-ffmpeg/";
+          
+        },
+      },{id: "post-windows-环境编译-vtk",
+        
+          title: "Windows 环境编译 VTK",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/building-vtk-under-windows/";
+          
+        },
+      },{id: "post-spdlog-使用",
+        
+          title: "spdlog 使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/spdlog-usage/";
+          
+        },
+      },{id: "post-mesh-及相关开源仓库收集",
+        
+          title: "Mesh 及相关开源仓库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/mesh-tools/";
+          
+        },
+      },{id: "post-总结-using-几种使用场景",
+        
+          title: "总结：using 几种使用场景",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/keywork-using-of-cpp/";
+          
+        },
+      },{id: "post-复习-rvo-nrvo-and-std-move",
+        
+          title: "复习：RVO NRVO and std::move",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/RVO-NRVO-and-std_move/";
+          
+        },
+      },{id: "post-crtp-使用笔记",
+        
+          title: "CRTP：使用笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/CRTP-introduce/";
+          
+        },
+      },{id: "post-intel-tbb-并行计算",
+        
+          title: "Intel TBB 并行计算",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-parallel/";
+          
+        },
+      },{id: "post-intel-tbb-malloc-内存分配器",
+        
+          title: "Intel TBB malloc 内存分配器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-malloc/";
+          
+        },
+      },{id: "post-信号处理资料-butterworth-和-chebyshev-滤波器",
+        
+          title: "信号处理资料：Butterworth 和 Chebyshev 滤波器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/dsp-filter-butterworth-and-chebyshev/";
+          
+        },
+      },{id: "post-使用-mmap-读取文件",
+        
+          title: "使用 mmap 读取文件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/read-file-using-mmap/";
+          
+        },
+      },{id: "post-range-v3-用法积累-及资料",
+        
+          title: "Range-v3 用法积累，及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/c++-range-v3/";
+          
+        },
+      },{id: "post-总结-内存访问优化",
+        
+          title: "总结：内存访问优化",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp-perf-repos/";
+          
+        },
+      },{id: "post-聚类算法-密度-基于-nano-flann",
+        
+          title: "聚类算法（密度）：基于 nano-flann",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/density-algrithm-knn/";
+          
+        },
+      },{id: "post-ubuntu-安装-opencv",
+        
+          title: "Ubuntu 安装 OpenCV",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/ubuntu-install-opencv/";
+          
+        },
+      },{id: "post-cmake-检查系统和编译器",
+        
+          title: "CMake 检查系统和编译器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-check-system-andcompiler/";
+          
+        },
+      },{id: "post-备份-ubuntu-bash-alias-以及-bash-显示-git-status",
+        
+          title: "备份：Ubuntu Bash Alias, 以及 bash 显示 git status",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/ubuntu-bash-alias/";
+          
+        },
+      },{id: "post-随机一致性抽样算法-ransac",
+        
+          title: "随机一致性抽样算法（RANSAC）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/RANSAC/";
+          
+        },
+      },{id: "post-intel-tbb-malloc-使用-windows",
+        
+          title: "Intel TBB malloc 使用 (windows)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-malloc-usage/";
+          
+        },
+      },{id: "post-复习-std-function-用法笔记",
+        
+          title: "复习：std::function 用法笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/std-function/";
+          
+        },
+      },{id: "post-整理-内存一致模型",
+        
+          title: "整理：内存一致模型",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%95%B4%E7%90%86-%E5%A4%84%E7%90%86%E5%99%A8%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/";
+          
+        },
+      },{id: "post-总结-mmu-包括-tlb-以及-table-walk-unit-以及内存-page-table",
+        
+          title: "总结：MMU -- 包括 TLB 以及 Table Walk Unit ，以及内存 Page Table",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/mmu-tlb-table-walk-unit-page-table/";
+          
+        },
+      },{id: "post-自定义-operator-new-placement-new-以及释放内存",
+        
+          title: "自定义 operator new， placement new，以及释放内存",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/operator-new-placement-new/";
+          
+        },
+      },{id: "post-学术绘图工具-engauge-digitizer",
+        
+          title: "学术绘图工具 -- Engauge Digitizer",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Academic-plot-tools/";
+          
+        },
+      },{id: "post-opencl-环境准备及资料",
+        
+          title: "OpenCL 环境准备及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/openCL-Install-and-Resources/";
+          
+        },
+      },{id: "post-redis常用命令总结",
+        
+          title: "Redis常用命令总结",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/redis-commands/";
+          
+        },
+      },{id: "post-在-markdown-中使用数学公式",
+        
+          title: "在 Markdown 中使用数学公式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E5%9C%A8Markdown%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F/";
+          
+        },
+      },{id: "post-markdown-使用笔记",
+        
+          title: "Markdown 使用笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Markdown%E8%AF%AD%E6%B3%95%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-使用inotify监控文件目录中的文件变化-新建文件",
+        
+          title: "使用inotify监控文件目录中的文件变化（新建文件）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/monitor-files-change-in-dir-using-inotify/";
+          
+        },
+      },{id: "post-总结-使用-gperftools-进行性能分析",
+        
+          title: "总结：使用 gperftools 进行性能分析",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/gperf-tools/";
+          
+        },
+      },{id: "post-cmake-编写findpackage-模块",
+        
+          title: "CMake 编写FindPackage 模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-find_package/";
+          
+        },
+      },{id: "post-简单线程安全队列",
+        
+          title: "简单线程安全队列",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/simple-thread-safe-queue/";
+          
+        },
+      },{id: "post-使能-c-程序的核心转储",
+        
+          title: "使能 C++ 程序的核心转储",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/enable-core-dump-for-cpp/";
+          
+        },
+      },{id: "post-python-venv-环境搭建及-vscode-环境配置",
+        
+          title: "Python venv 环境搭建及 VSCode 环境配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E8%BF%9B%E8%A1%8CPython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E8%AE%BE%E7%BD%AE/";
+          
+        },
+      },{id: "post-nginx-用户的权限配置",
+        
+          title: "nginx 用户的权限配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/nginx-autho-config/";
+          
+        },
+      },{id: "post-vscode-remote-ssh-使用局域网代理",
+        
+          title: "VSCode Remote SSH 使用局域网代理",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-remotessh-%E5%B1%80%E5%9F%9F%E7%BD%91%E4%BB%A3%E7%90%86/";
+          
+        },
+      },{id: "post-vscode-remote-ssh-免密登陆",
+        
+          title: "VSCode Remote SSH 免密登陆",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-remotessh-%E5%85%8D%E5%AF%86%E7%99%BB%E9%99%86/";
+          
+        },
+      },{id: "post-opengl-流水线-待消化吸收",
+        
+          title: "OpenGL 流水线（待消化吸收）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/opengl-pipeline/";
+          
+        },
+      },{id: "post-occ-boolean-operations",
+        
+          title: "OCC boolean operations",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OCCT-boolean-ops/";
+          
+        },
+      },{id: "post-cam资料及笔记-待学习",
+        
+          title: "CAM资料及笔记（待学习）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/CAM%E8%B5%84%E6%96%99%E5%8F%8A%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-windows下安装-msmpi",
+        
+          title: "Windows下安装 MSMPI",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/windows-install-msmpi/";
+          
+        },
+      },{id: "post-基于vtk的3d软件",
+        
+          title: "基于VTK的3D软件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/vtk-based-3d-software/";
+          
+        },
+      },{id: "post-opengl-vulkan-学习网站-记录",
+        
+          title: "OpenGL/Vulkan 学习网站（记录）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/opengl-vulkan%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-为什么要使用-std-enable-shared-from-this-以及使用场景",
+        
+          title: "为什么要使用 std::enable_shared_from_this，以及使用场景",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8enable_shared_from_this/";
+          
+        },
+      },{id: "post-std-shared-ptr-线程安全及性能考量",
+        
+          title: "std::shared_ptr 线程安全及性能考量",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/shared_ptr_thread_safe/";
+          
+        },
+      },{id: "post-系统设计资料-以及23种设计模式彩图",
+        
+          title: "系统设计资料，以及23种设计模式彩图",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/design-patterns-23/";
+          
+        },
+      },{id: "post-c-实现一个简洁的-lru-缓存",
+        
+          title: "C++实现一个简洁的 LRU 缓存",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AALRU/";
+          
+        },
+      },{id: "post-pod-trivial-copyable-standard-layout",
+        
+          title: "POD、trivial copyable，standard layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp11-pod-type/";
+          
+        },
+      },{id: "post-google-gemini-updates-flash-1-5-gemma-2-and-project-astra",
+        
+          title: 'Google Gemini updates: Flash 1.5, Gemma 2 and Project Astra <svg width="1.2rem" height="1.2rem" top=".5rem" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        
+        description: "We’re sharing updates across our Gemini family of models and a glimpse of Project Astra, our vision for the future of AI assistants.",
+        section: "Posts",
+        handler: () => {
+          
+            window.open("https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/", "_blank");
+          
+        },
+      },{id: "post-cmake-创建自定义目标-在构建前复制文件",
+        
+          title: "CMake 创建自定义目标：在构建前复制文件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-create-custom-target-copy-files-before-build/";
+          
+        },
+      },{id: "post-opencascade拓扑与几何的关系",
+        
+          title: "OpenCascade拓扑与几何的关系",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Topology-and-Geometry-in-Open-CASCADE/";
+          
+        },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E7%BB%88%E7%AB%AF%E7%BE%8E%E5%8C%96/";
+          
+        },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/zed%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-vscode-改用-mathjax-渲染数学公式",
+        
+          title: "VSCode 改用 MathJax 渲染数学公式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E6%94%B9%E7%94%A8MathJax%E6%B8%B2%E6%9F%93%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F/";
+          
+        },
+      },{id: "post-我的vscode插件清单",
+        
+          title: "我的VSCode插件清单",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E6%8F%92%E4%BB%B6%E6%B8%85%E5%8D%95/";
+          
+        },
+      },{id: "post-vscode-开发-powershell-高效开发完整配置",
+        
+          title: "VSCode 开发，PowerShell 高效开发完整配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-PowerShell%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE/";
+          
+        },
+      },{id: "post-qt-笔记及开源库收集",
+        
+          title: "Qt 笔记及开源库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/qt-notes/";
+          
+        },
+      },{id: "post-linux系统及编译相关笔记",
+        
+          title: "Linux系统及编译相关笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/linux-and-compile-notes/";
+          
+        },
+      },{id: "post-如何使用-github-pages-以及-chirpy-theme-创建博客",
+        
+          title: "如何使用 github pages 以及 Chirpy Theme 创建博客",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/how-to-create-blog-using-github-pages-and-Chirpy-theme/";
+          
+        },
+      },{id: "post-ubuntu-24-04-分区-以及更换-kernel-6-18",
+        
+          title: "Ubuntu 24.04 分区，以及更换 kernel 6.18",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Ubuntu%E5%AE%89%E8%A3%85%E6%96%B0%E7%89%88%E6%9C%ACkernel/";
+          
+        },
+      },{id: "post-c-17-新功能-std-visit-和-std-variant-配合使用-待更新删除冗余描述",
+        
+          title: "C++ 17 新功能： std::visit 和 std::variant 配合使用 (待更新删除冗余描述)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/combind-usage-of-std-visit-and-std-variant/";
+          
+        },
+      },{id: "post-vtk-笔记",
+        
+          title: "VTK 笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/vtk-notes/";
+          
+        },
+      },{id: "post-linux-系统console使用命令清屏",
+        
+          title: "Linux 系统console使用命令清屏",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/clean-screen-and-reset/";
+          
+        },
+      },{id: "post-vtkunstructuredgrid-显示-hdf5-数据",
+        
+          title: "vtkUnstructuredGrid 显示 HDF5 数据",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/show-hdf5-data-using-vtkUnstructuredGrid/";
+          
+        },
+      },{id: "post-linux-系统下编译-gcc-9-2",
+        
+          title: "Linux 系统下编译 gcc 9.2",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/compile-gdb-commands/";
+          
+        },
+      },{id: "post-occt-使用-bvh-树加速-bounding-box-查找遍历",
+        
+          title: "OCCT 使用 BVH 树加速 bounding box 查找遍历",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-BHV-tree-bounding-box/";
+          
+        },
+      },{id: "post-occ-topexp-explorer-用法",
+        
+          title: "OCC TopExp_Explorer 用法",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-explore-api-usage/";
+          
+        },
+      },{id: "post-occ-boundding-box-以及-distance",
+        
+          title: "OCC boundding box 以及 distance",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-bounding-box/";
+          
+        },
+      },{id: "post-ubuntu-及-windows-系统下安装-qt5",
+        
+          title: "Ubuntu 及 Windows 系统下安装 Qt5",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/install-qt5-on-ubuntu-windows/";
+          
+        },
+      },{id: "post-从makefile创建compile-commands-json",
+        
+          title: "从Makefile创建compile_commands.json",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Create_CompileDB_from_Makefile/";
+          
+        },
+      },{id: "post-ubuntu-编译-qt-vtk-occt-samples",
+        
+          title: "Ubuntu 编译 Qt + VTK + OCCT + samples",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-build-with-samples/";
+          
+        },
+      },{id: "post-vtk学习资源收集",
+        
+          title: "VTK学习资源收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/VTK-official-examples/";
+          
+        },
+      },{id: "post-改用zsh以及oh-my-zsh",
+        
+          title: "改用zsh以及oh-my-zsh",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/%E5%AE%89%E8%A3%85zsh%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8oh-my-zsh/";
+          
+        },
+      },{id: "post-kill信号不同分类的影响",
+        
+          title: "kill信号不同分类的影响",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/kill-signals-of-linux-system/";
+          
+        },
+      },{id: "post-bash参数特殊变量符号",
+        
+          title: "Bash参数特殊变量符号",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/bash-args-and-special-symbols/";
+          
+        },
+      },{id: "post-ubuntu安装intel-gpu驱动",
+        
+          title: "Ubuntu安装Intel GPU驱动",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Ubuntu%E5%AE%89%E8%A3%85Intel-GPU%E9%A9%B1%E5%8A%A8/";
+          
+        },
+      },{id: "post-ubuntu-安装-occt",
+        
+          title: "Ubuntu 安装 OCCT",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Ubuntu-install-OCCT/";
+          
+        },
+      },{id: "post-occt-projects-on-github",
+        
+          title: "OCCT projects on github",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-sample-projects/";
+          
+        },
+      },{id: "post-office笔记",
+        
+          title: "Office笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6-Office%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-ubuntu-系统安装-llvm-套件-可选择版本",
+        
+          title: "Ubuntu 系统安装 LLVM 套件 （可选择版本）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/install-versioned-llvm-ubuntu/";
+          
+        },
+      },{id: "post-通过函数指针地址找到函数",
+        
+          title: "通过函数指针地址找到函数",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/get-function-via-address/";
+          
+        },
+      },{id: "post-写给大家看的设计模式",
+        
+          title: "写给大家看的设计模式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/design-modes-for-all/";
+          
+        },
+      },{id: "post-python与c-混合调试",
+        
+          title: "Python与C++混合调试",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/debug-combind-Python-and-C++/";
+          
+        },
+      },{id: "post-收藏-c-代码仓库-cpu-amp-性能资料",
+        
+          title: "收藏：C++ 代码仓库，CPU & 性能资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/cpu_and_perf_study_docs_collections/";
+          
+        },
+      },{id: "post-c-学习资源-及-代码片段积累",
+        
+          title: "C++ 学习资源 及 代码片段积累",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/cpp-code-snippet/";
+          
+        },
+      },{id: "post-displaying-external-posts-on-your-al-folio-blog",
+        
+          title: 'Displaying External Posts on Your al-folio Blog <svg width="1.2rem" height="1.2rem" top=".5rem" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.open("https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2", "_blank");
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-project-1",
+          title: 'project 1',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_project/";
+            },},{id: "projects-project-2",
+          title: 'project 2',
+          description: "a project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_project/";
+            },},{id: "projects-project-3-with-very-long-name",
+          title: 'project 3 with very long name',
+          description: "a project that redirects to another website",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_project/";
+            },},{id: "projects-project-4",
+          title: 'project 4',
+          description: "another without an image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_project/";
+            },},{id: "projects-project-5",
+          title: 'project 5',
+          description: "a project with a background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_project/";
+            },},{id: "projects-project-6",
+          title: 'project 6',
+          description: "a project with no image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_project/";
+            },},{id: "projects-project-7",
+          title: 'project 7',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_project/";
+            },},{id: "projects-project-8",
+          title: 'project 8',
+          description: "an other project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_project/";
+            },},{id: "projects-project-9",
+          title: 'project 9',
+          description: "another project with an image 🎉",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_project/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-cv',
+        title: 'CV',
+        section: 'Socials',
+        handler: () => {
+          window.open("/assets/pdf/example_pdf.pdf", "_blank");
+        },
+      },{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%79%6F%75@%65%78%61%6D%70%6C%65.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-inspire',
+        title: 'Inspire HEP',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://inspirehep.net/authors/1010907", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+        id: 'social-scholar',
+        title: 'Google Scholar',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://scholar.google.com/citations?user=qc6CJjYAAAAJ", "_blank");
+        },
+      },{
+        id: 'social-custom_social',
+        title: 'Custom_social',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://www.alberteinstein.com/", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>

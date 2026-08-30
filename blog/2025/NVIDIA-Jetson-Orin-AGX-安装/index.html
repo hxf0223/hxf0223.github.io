@@ -1,0 +1,2503 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> NVIDIA Jetson Orin AGX 安装 | Roderick Huang </title> <meta name="author" content="Roderick Huang"> <meta name="description" content="A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. "> <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.css" integrity="sha256-zTN0r+0OKaIv2xqeNNIYxNk0pWJ6+IqPGc1iDgVzWF0=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%E2%9A%9B%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=3116ba77db9ee1581d05bb3e86fbf7f1"> <link rel="canonical" href="https://hxf0223.github.io/blog/2025/NVIDIA-Jetson-Orin-AGX-%E5%AE%89%E8%A3%85/"> <script src="/assets/js/theme.js?v=5286c3e4c334d0ecb8fc0c40ff4fa7ec"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Roderick</span> Huang </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item "> <a class="nav-link" href="/repositories/">repositories </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item "> <a class="nav-link" href="/teaching/">teaching </a> </li> <li class="nav-item "> <a class="nav-link" href="/people/">people </a> </li> <li class="nav-item dropdown "> <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-nav-dropdown-toggle="true" aria-haspopup="true" aria-expanded="false">submenus </a> <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown"> <a class="dropdown-item " href="/books/">bookshelf</a> <div class="dropdown-divider"></div> <a class="dropdown-item " href="/blog/">blog</a> </div> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="row"> <div class="col-sm-9"> <div class="post"> <header class="post-header"> <h1 class="post-title">NVIDIA Jetson Orin AGX 安装</h1> <p class="post-meta"> Created on March 01, 2025 </p> <p class="post-tags"> <a href="/blog/2025"> <i class="fa-solid fa-calendar fa-sm"></i> 2025 </a>   ·   <a href="/blog/tag/nvidia"> <i class="fa-solid fa-hashtag fa-sm"></i> NVIDIA</a>   <a href="/blog/tag/jetson"> <i class="fa-solid fa-hashtag fa-sm"></i> Jetson</a>   <a href="/blog/tag/ai"> <i class="fa-solid fa-hashtag fa-sm"></i> AI</a>   ·   <a href="/blog/category/nvidia"> <i class="fa-solid fa-tag fa-sm"></i> NVIDIA</a>   <a href="/blog/category/jetson"> <i class="fa-solid fa-tag fa-sm"></i> Jetson</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <h2 id="1-nvidia-jetson-orin-agx-安装">1. NVIDIA Jetson Orin AGX 安装</h2> <p>使用 Nvidia Jetson SDK Manager 安装 Jetson Orin AGX 系列设备的系统镜像。截止目前最新版为 7.2， Ubuntu 24.04。安装完成之后，安装如下软件包：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 安装 Python</span>
+<span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt <span class="nb">install </span>python3
+<span class="nb">sudo </span>apt <span class="nb">install </span>python3-pip
+</code></pre></div></div> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 安装 JetPack（含 CUDA、cuDNN、TensorRT 等组件），需在 jtop 之前装好</span>
+<span class="nb">sudo </span>apt <span class="nb">install </span>nvidia-jetpack
+</code></pre></div></div> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 安装 jtop（依赖 JetPack 组件才能正常显示信息）</span>
+<span class="nb">sudo </span>pip3 <span class="nb">install</span> <span class="nt">-U</span> pip
+<span class="nb">sudo </span>pip3 <span class="nb">install</span> <span class="nt">--break-system-packages</span> <span class="nt">-U</span> jetson-stats
+<span class="c"># https://github.com/rbonghi/jetson_stats</span>
+</code></pre></div></div> <p>查看已经安装的组件：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/jetsonhacks/jetsonUtilities.git
+<span class="nb">cd </span>jetsonUtilities
+python3 jetsonInfo.py
+</code></pre></div></div> <p>安装 GTest：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>libgtest-dev libgmock-dev
+</code></pre></div></div> <h3 id="1a-参考及资源">1.A. 参考及资源</h3> <h4 id="1a1-参考">1.A.1. 参考</h4> <ul> <li> <a href="https://developer.nvidia.cn/embedded/jetson-linux-r3640" rel="external nofollow noopener" target="_blank">NVIDIA Jetson Linux 36.4</a>：官方资料页面，包含组件以及驱动源码下载列表</li> <li> <a href="https://zhaoxuhui.top/blog/2024/03/27/notes-on-nvidia-jetson-agx-orin-installation.html" rel="external nofollow noopener" target="_blank">Nvidia Jetson AGX Orin开发板配置与使用</a>：安装更多软件包，比如 SLAM，深度学习框架等。</li> <li><a href="https://yanjingang.com/blog/?p=9092" rel="external nofollow noopener" target="_blank">Nvidia Jetson AGX Orin系统刷写</a></li> </ul> <h4 id="1a2-资源">1.A.2. 资源</h4> <ul> <li><a href="https://www.jetson-ai-lab.com/models/" rel="external nofollow noopener" target="_blank">Jetson AI Lab – 支持的LLM模型</a></li> <li><a href="https://forums.developer.nvidia.com/t/jetpack-7-2-jetson-software-goes-agentic-with-jetson-linux-39-2/372056" rel="external nofollow noopener" target="_blank">JetPack 7.2: Jetson Software Goes Agentic with Jetson Linux 39.2</a></li> <li> <a href="https://github.com/NVIDIA-AI-IOT/jetson-device-skills" rel="external nofollow noopener" target="_blank">jetson skills</a>：官方github仓库</li> <li> <a href="https://www.jetson-ai-lab.com/models/" rel="external nofollow noopener" target="_blank">Jetson AI Lab – Supported Models</a>：Jetson AI Lab 模型库</li> </ul> <h2 id="2-cli-条件下连接-wifi">2. CLI 条件下连接 WIFI</h2> <p>刷写完系统后，若只有命令行环境，先配置网络，后续的 <code class="language-plaintext highlighter-rouge">apt</code>、<code class="language-plaintext highlighter-rouge">git</code>、<code class="language-plaintext highlighter-rouge">docker pull</code> 等操作都需要联网。</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 查看网卡列表</span>
+nmcli device status
+
+<span class="c"># 扫描附近的WiFi网络</span>
+nmcli device wifi list
+
+<span class="c"># 连接到指定的WiFi网络（替换SSID_NAME和WIFI_PASSWORD）</span>
+<span class="nb">sudo </span>nmcli device wifi connect <span class="s2">"SSID_NAME"</span> password <span class="s2">"WIFI_PASSWORD"</span>
+</code></pre></div></div> <h2 id="3-在-jetson-orin-agx-上挂载-ssd挂载-docker-目录及用户目录">3. 在 Jetson Orin AGX 上挂载 SSD，挂载 Docker 目录及用户目录</h2> <blockquote> <p>这里记录我在 Jetson Orin AGX 上挂载 M.2 NVMe SSD（约 1TB）的过程。前提是 SSD 已正确插入，系统能看到设备 <code class="language-plaintext highlighter-rouge">/dev/nvme0n1</code>（目前未分区）。所有操作均需要 <strong>root</strong>（使用 <code class="language-plaintext highlighter-rouge">sudo</code>）。</p> </blockquote> <hr> <h3 id="31-创建分区--格式化">3.1. 创建分区 &amp; 格式化</h3> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 确认设备</span>
+lsblk <span class="nt">-o</span> NAME,SIZE,MODEL
+
+<span class="c"># 使用 fdisk 创建一个主分区（占用整个磁盘）</span>
+<span class="nb">sudo </span>fdisk /dev/nvme0n1
+<span class="c"># 在交互界面依次输入：</span>
+<span class="c">#   n   → 新建分区</span>
+<span class="c">#   p   → 主分区</span>
+<span class="c">#   1   → 分区号</span>
+<span class="c">#   （回车）默认起始扇区</span>
+<span class="c">#   （回车）默认结束扇区（使用剩余全部空间）</span>
+<span class="c">#   w   → 写入分区表并退出</span>
+</code></pre></div></div> <p>完成后得到 <code class="language-plaintext highlighter-rouge">/dev/nvme0n1p1</code>。</p> <p>格式化为 ext4（可根据需要换成 xfs、btrfs 等）：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mkfs.ext4 <span class="nt">-L</span> nvme_ssd /dev/nvme0n1p1
+</code></pre></div></div> <p>查看 UUID（后续挂载会用到）：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>blkid /dev/nvme0n1p1
+<span class="c"># 示例输出：/dev/nvme0n1p1: UUID="a1b2c3d4-e5f6-7890-abcd-ef1234567890" TYPE="ext4" PARTLABEL="nvme_ssd"</span>
+</code></pre></div></div> <p>记下此 UUID（例如 <code class="language-plaintext highlighter-rouge">a1b2c3d4-e5f6-7890-abcd-ef1234567890</code>）。</p> <hr> <h3 id="32-创建挂载点--加入开机自动挂载etcfstab">3.2. 创建挂载点 &amp; 加入开机自动挂载（/etc/fstab）</h3> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 统一挂载点（可自行修改路径）</span>
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> /mnt/ssd
+
+<span class="c"># 临时挂载测试</span>
+<span class="nb">sudo </span>mount /dev/nvme0n1p1 /mnt/ssd
+<span class="nb">df</span> <span class="nt">-hT</span> /mnt/ssd   <span class="c"># 应看到约 1 TB 可用</span>
+
+<span class="c"># 写入 fstab（使用 UUID 更稳妥)</span>
+<span class="nb">echo</span> <span class="s2">"UUID=a1b2c3d4-e5f6-7890-abcd-ef1234567890  /mnt/ssd  ext4  defaults,noatime  0  2"</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/fstab
+
+<span class="c"># 检查并生效</span>
+<span class="nb">sudo </span>mount <span class="nt">-a</span>
+</code></pre></div></div> <p>以后每次开机都会自动把 <code class="language-plaintext highlighter-rouge">/dev/nvme0n1p1</code> 挂载到 <code class="language-plaintext highlighter-rouge">/mnt/ssd</code>。</p> <hr> <h3 id="33-把-docker-镜像容器数据放到-ssd">3.3. 把 Docker 镜像/容器数据放到 SSD</h3> <h4 id="331-推荐方案修改-docker-的-data-root">3.3.1. 推荐方案：修改 Docker 的 <code class="language-plaintext highlighter-rouge">data-root</code> </h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 停止 Docker</span>
+<span class="nb">sudo </span>systemctl stop docker
+
+<span class="c"># 创建目标目录并迁移原有数据（如果有）</span>
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> /mnt/ssd/docker
+<span class="nb">sudo </span>rsync <span class="nt">-aXS</span> /var/lib/docker/. /mnt/ssd/docker/
+
+<span class="c"># 配置 Docker 使用新目录</span>
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> /etc/docker
+<span class="nb">sudo tee</span> /etc/docker/daemon.json <span class="o">&gt;</span> /dev/null <span class="o">&lt;&lt;</span><span class="sh">'</span><span class="no">EOF</span><span class="sh">'
+{
+  "data-root": "/mnt/ssd/docker"
+}
+</span><span class="no">EOF
+
+</span><span class="c"># 重启 Docker</span>
+<span class="nb">sudo </span>systemctl start docker
+<span class="nb">sudo </span>systemctl status docker   <span class="c"># 确保无错误</span>
+
+<span class="c"># 验证</span>
+docker info | <span class="nb">grep</span> <span class="s2">"Docker Root Dir"</span>
+<span class="c"># 应显示： Docker Root Dir: /mnt/ssd/docker</span>
+</code></pre></div></div> <p><em>替代方案：</em> 使用符号链接（停止 Docker 后 <code class="language-plaintext highlighter-rouge">mv /var/lib/docker /var/lib/docker.bak &amp;&amp; ln -s /mnt/ssd/docker /var/lib/docker</code>），效果相同但不如 <code class="language-plaintext highlighter-rouge">daemon.json</code> 直观。</p> <blockquote> <p>这里写入的 <code class="language-plaintext highlighter-rouge">daemon.json</code> 只包含 <code class="language-plaintext highlighter-rouge">data-root</code>。在第 4 节部署 LLM 时，会把它<strong>整体替换</strong>为包含 <code class="language-plaintext highlighter-rouge">runtimes</code>、<code class="language-plaintext highlighter-rouge">registry-mirrors</code> 的完整版本，到时直接覆盖即可。</p> </blockquote> <hr> <h3 id="34-把用户主目录homehxf0223也放到-ssd">3.4. 把用户主目录（/home/hxf0223）也放到 SSD</h3> <p>如果计划在用户目录下存放大量 Docker 镜像、离线 LLM 模型等，建议把 <strong>整个用户主目录</strong> 挂载到 SSD。</p> <blockquote> <p>注意：下面 <code class="language-plaintext highlighter-rouge">mv /home/hxf0223</code> 时，若当前正登录在该家目录下会失败。请先 <code class="language-plaintext highlighter-rouge">cd /</code>（或切到 root 用户）再操作，并确认没有进程占用家目录（可 <code class="language-plaintext highlighter-rouge">sudo lsof +D /home/hxf0223</code> 检查）。</p> </blockquote> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 在 SSD 上创建对应目录</span>
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> /mnt/ssd/home/hxf0223
+
+<span class="c"># 复制现有数据（保持权限、属性）</span>
+<span class="nb">sudo </span>rsync <span class="nt">-aXS</span> /home/hxf0223/. /mnt/ssd/home/hxf0223/
+
+<span class="c"># 备份原目录</span>
+<span class="nb">sudo mv</span> /home/hxf0223 /home/hxf0223.bak
+
+<span class="c"># 绑定挂载使 /home/hxf0223 指向 SSD</span>
+<span class="nb">sudo </span>mount <span class="nt">--bind</span> /mnt/ssd/home/hxf0223 /home/hxf0223
+
+<span class="c"># 加入 fstab 以实现开机自动绑定挂载</span>
+<span class="nb">echo</span> <span class="s2">"/mnt/ssd/home/hxf0223  /home/hxf0223  none  bind  0  0"</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/fstab
+
+<span class="c"># 验证</span>
+<span class="nb">df</span> <span class="nt">-hT</span> /home/hxf0223   <span class="c"># 应看到和 /mnt/ssd 相同的可用空间</span>
+mount | <span class="nb">grep</span> <span class="s2">"on /home/hxf0223"</span>
+<span class="c"># 应显示类似： /mnt/ssd/home/hxf0223 on /home/hxf0223 type none (rw,relatime,bind)</span>
+</code></pre></div></div> <blockquote> <p>如果希望 <strong>所有用户的主目录</strong> 都放在 SSD，可把 <code class="language-plaintext highlighter-rouge">/mnt/ssd/home</code> 挂载到 <code class="language-plaintext highlighter-rouge">/home</code>，步骤类似。</p> </blockquote> <hr> <h3 id="35-检查一切是否正常">3.5. 检查一切是否正常</h3> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 检查挂载情况</span>
+<span class="nb">df</span> <span class="nt">-hT</span> /mnt/ssd /home/hxf0223 /var/lib/docker
+
+<span class="c"># 检查 Docker 实际使用的目录</span>
+docker info | <span class="nb">grep</span> <span class="s2">"Docker Root Dir"</span>
+
+<span class="c"># 检查用户目录是否真的指向 SSD</span>
+mount | <span class="nb">grep</span> <span class="s2">"on /home/hxf0223"</span>
+</code></pre></div></div> <p>如果输出均符合预期，说明已经成功：</p> <ul> <li>将 M.2 SSD 挂载为 <code class="language-plaintext highlighter-rouge">/mnt/ssd</code>（额外存储）。</li> <li>将 Docker 数据目录迁移到 SSD（<code class="language-plaintext highlighter-rouge">/var/lib/docker</code> → <code class="language-plaintext highlighter-rouge">/mnt/ssd/docker</code>）。</li> <li>将个人工作目录 <code class="language-plaintext highlighter-rouge">/home/hxf0223</code> 挂载到 SSD，后续的镜像拉取、模型下载、编译等 I/O 密集操作都会走高速 SSD。</li> </ul> <hr> <h3 id="36-常见问题--小贴士">3.6. 常见问题 &amp; 小贴士</h3> <table> <thead> <tr> <th>问题</th> <th>解决方案</th> </tr> </thead> <tbody> <tr> <td><strong>开机后挂载失败</strong></td> <td>检查 <code class="language-plaintext highlighter-rouge">/etc/fstab</code> 是否有语法错误；用 <code class="language-plaintext highlighter-rouge">sudo mount -a</code> 测试；根据报错修正 UUID 或挂载选项。</td> </tr> <tr> <td><strong>Docker 启动后仍在用旧目录</strong></td> <td>确认 <code class="language-plaintext highlighter-rouge">/etc/docker/daemon.json</code> JSON 合法（末尾无多余逗号）；重启 Docker 前先 <code class="language-plaintext highlighter-rouge">docker info</code> 查看 <code class="language-plaintext highlighter-rouge">Docker Root Dir</code>。</td> </tr> <tr> <td><strong>用户目录下出现权限问题</strong></td> <td>迁移时使用了 <code class="language-plaintext highlighter-rouge">-aXS</code> 保持权限；如仍有问题，可 <code class="language-plaintext highlighter-rouge">sudo chown -R $USER:$USER /home/hxf0223</code>。</td> </tr> </tbody> </table> <hr> <h3 id="37-验证迁移并清理-emmc-上的备份以释放空间">3.7. 验证迁移并清理 eMMC 上的备份以释放空间</h3> <p>完成上述迁移后，建议检查数据是否确实已迁移到 SSD，并删除 eMMC 上可能残留的备份副本，以腾出存储空间。</p> <h4 id="371-验证-docker-是否真的在使用-ssd">3.7.1. 验证 Docker 是否真的在使用 SSD</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 显示 Docker 的实际数据根目录</span>
+<span class="nb">sudo </span>docker info | <span class="nb">grep</span> <span class="nt">-i</span> <span class="s2">"Docker Root Dir"</span>
+</code></pre></div></div> <p><strong>预期输出</strong>：<code class="language-plaintext highlighter-rouge">Docker Root Dir: /mnt/ssd/docker</code>。</p> <p>如果看到上述路径，说明 Docker 已经在使用挂载到 SSD 的目录；此时 <code class="language-plaintext highlighter-rouge">/var/lib/docker</code> 只是一个普通目录（挂载点），实际数据不再占用 eMMC 空间。</p> <h4 id="372-验证-homehxf0223-是否已指向-ssd">3.7.2. 验证 <code class="language-plaintext highlighter-rouge">/home/hxf0223</code> 是否已指向 SSD</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 查看挂载情况</span>
+mount | <span class="nb">grep</span> <span class="s2">"on /home/hxf0223"</span>
+</code></pre></div></div> <p><strong>预期输出</strong>（示例）： <code class="language-plaintext highlighter-rouge">/mnt/ssd/home/hxf0223 on /home/hxf0223 type none (rw,relatime,bind)</code></p> <p>或者检查是否是 bind‑mount： <code class="language-plaintext highlighter-rouge">df -hT /home/hxf0223</code> 应该和 <code class="language-plaintext highlighter-rouge">/mnt/ssd</code> 显示相同的文件系统（ext4）和可用空间。</p> <p>如果是这样，用户的实际数据已经在 SSD 上，eMMC 上只保存了 mount point 本身（几乎不占空间）。</p> <h4 id="373-检查是否还有明显的备份占用空间">3.7.3. 检查是否还有明显的备份占用空间</h4> <p>按照之前的步骤，迁移后通常会有以下两种备份形式：</p> <table> <thead> <tr> <th>位置</th> <th>可能的内容</th> <th>大小检查命令</th> </tr> </thead> <tbody> <tr> <td> <code class="language-plaintext highlighter-rouge">/var/lib/docker</code> （原始目录）</td> <td>已迁移的 Docker 数据（若未删除）</td> <td><code class="language-plaintext highlighter-rouge">sudo du -sh /var/lib/docker</code></td> </tr> <tr> <td> <code class="language-plaintext highlighter-rouge">/home/hxf0223.bak</code> （用户家目录备份）</td> <td>完整的 <code class="language-plaintext highlighter-rouge">/home/hxf0223</code> 副本</td> <td> <code class="language-plaintext highlighter-rouge">sudo du -sh /home/hxf0223.bak</code>（若存在）</td> </tr> </tbody> </table> <p><strong>示例检查</strong>：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo du</span> <span class="nt">-sh</span> /var/lib/docker
+<span class="nb">sudo du</span> <span class="nt">-sh</span> /home/hxf0223.bak 2&gt;/dev/null <span class="o">||</span> <span class="nb">echo</span> <span class="s2">"没有找到 .bak 目录"</span>
+</code></pre></div></div> <blockquote> <p>我这边 <code class="language-plaintext highlighter-rouge">/var/lib/docker</code> 只有约 212 KB，说明几乎没有占用空间；如果看到类似的几百 MB 或几 GB，那就需要考虑删除。</p> </blockquote> <h4 id="374-安全清理在确认无误后">3.7.4. 安全清理（在确认无误后）</h4> <h5 id="3741-删除-docker-原始目录的残留如果仍然占用明显空间">3.7.4.1. 删除 Docker 原始目录的残留（如果仍然占用明显空间）</h5> <blockquote> <p><strong>注意</strong>：只有在确认 <code class="language-plaintext highlighter-rouge">docker info</code> 的 <code class="language-plaintext highlighter-rouge">Docker Root Dir</code> 已经是 <code class="language-plaintext highlighter-rouge">/mnt/ssd/docker</code> 且 <code class="language-plaintext highlighter-rouge">/var/lib/docker</code> 中不含需要的镜像/容器时才删除。</p> </blockquote> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 先再次确认 Docker 在使用 SSD（见 3.7.1）</span>
+<span class="nb">sudo </span>docker info | <span class="nb">grep</span> <span class="nt">-i</span> <span class="s2">"Docker Root Dir"</span>
+
+<span class="c"># 如果确认无误，删除残留目录（保险起见先改名再删）</span>
+<span class="nb">sudo mv</span> /var/lib/docker /var/lib/docker.bak_<span class="si">$(</span><span class="nb">date</span> +%F<span class="si">)</span>
+<span class="c"># 等待一会儿，确认一切正常后再彻底删除</span>
+<span class="nb">sudo rm</span> <span class="nt">-rf</span> /var/lib/docker.bak_<span class="si">$(</span><span class="nb">date</span> +%F<span class="si">)</span>
+</code></pre></div></div> <h5 id="3742-删除用户家目录备份如果存在">3.7.4.2. 删除用户家目录备份（如果存在）</h5> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="o">[</span> <span class="nt">-d</span> /home/hxf0223.bak <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="c"># 再次确认当前家目录已经是挂载到 SSD（见 3.7.2）</span>
+    mount | <span class="nb">grep</span> <span class="s2">"on /home/hxf0223"</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">"家目录已正确挂载"</span>
+    <span class="c"># 先改名再删，防止误删</span>
+    <span class="nb">sudo mv</span> /home/hxf0223.bak /home/hxf0223.bak_<span class="si">$(</span><span class="nb">date</span> +%F<span class="si">)</span>
+    <span class="nb">sudo rm</span> <span class="nt">-rf</span> /home/hxf0223.bak_<span class="si">$(</span><span class="nb">date</span> +%F<span class="si">)</span>
+<span class="k">fi</span>
+</code></pre></div></div> <h5 id="3743-可选清理-docker-未使用的镜像缓存进一步释放-ssd-空间">3.7.4.3. 可选：清理 Docker 未使用的镜像/缓存（进一步释放 SSD 空间）</h5> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker system prune <span class="nt">-af</span>   <span class="c"># 移除所有停止的容器、未使用的镜像、网络等</span>
+<span class="c"># 如果只想保留最近的，可改为：</span>
+<span class="c"># sudo docker system prune -a --filter "until=24h"</span>
+</code></pre></div></div> <h4 id="375-再次确认系统状态">3.7.5. 再次确认系统状态</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 检查 eMMC 剩余空间（应该会有所提升)</span>
+<span class="nb">df</span> <span class="nt">-hT</span> /                <span class="c"># eMMC 根分区</span>
+<span class="nb">df</span> <span class="nt">-hT</span> /mnt/ssd         <span class="c"># SSD 挂载点</span>
+<span class="nb">df</span> <span class="nt">-hT</span> /home/hxf0223    <span class="c"># 应该和上面一致</span>
+</code></pre></div></div> <p>如果一切正常，说明大量数据已迁移到 SSD，并在 eMMC 上释放了可用空间。后续拉取大型离线 LLM 模型、构建 Docker 镜像或进行其它 I/O 密集型工作都将享受到 SSD 的带宽和低延迟。</p> <hr> <h2 id="4-在-jetson-orin-agx-上部署与运行-llm-gemma-4">4. 在 Jetson Orin AGX 上部署与运行 LLM (Gemma 4)</h2> <ul> <li> <strong>设备</strong>: NVIDIA Jetson AGX Orin (64GB 统一内存)</li> <li> <strong>系统</strong>: Ubuntu 24.04, JetPack 7.2-b187, CUDA 13.2</li> <li> <strong>部署方式</strong>: 推荐使用 <strong>Docker Compose + ModelScope</strong> 进行一键化管理与部署；同时保留 <strong>Raw Docker + HuggingFace Mirror</strong> 作为手动分步运行的备选方案。</li> </ul> <hr> <h3 id="41-运行-llm-完整组件图">4.1. 运行 LLM 完整组件图</h3> <pre><code class="language-mermaid">flowchart TB
+    subgraph 硬件层["🖥️ 硬件层"]
+        GPU["Jetson AGX Orin\n64GB 统一内存"]
+        SSD["NVMe SSD\n/mnt/ssd"]
+    end
+
+    subgraph 系统驱动层["⚙️ 系统驱动层"]
+        JetPack["JetPack 7.2\n(含 L4T 内核)"]
+        CUDA["CUDA 13.2"]
+        NVIDIA-RT["nvidia-container-runtime\n(Docker 访问 GPU 的桥梁)"]
+    end
+
+    subgraph 容器运行时层["📦 容器运行时层"]
+        Docker["Docker"]
+        Containerd["containerd\n(镜像/容器存储 → SSD)"]
+    end
+
+    subgraph 推理引擎层["🧠 推理引擎层（支持二选一 / 共存）"]
+        vLLM["vLLM 容器镜像\nghcr.io/.../vllm:gemma4-jetson-orin\n(高性能，内存占用大)"]
+        llamaCPP["llama.cpp 容器镜像\nghcr.io/.../llama_cpp:latest-jetson-orin\n(内存效率高)"]
+    end
+
+    subgraph 模型数据层["💾 模型数据层（存在 SSD）"]
+        MS-Cache["ModelScope / HF 缓存\n/mnt/ssd/modelscope/ 或 /mnt/ssd/huggingface/"]
+        QAT-WT["31B QAT 权重\n(量化感知训练版本)\n→ 给 vLLM / llama.cpp"]
+        GGUF-WT["31B GGUF 权重\n→ 给 llama.cpp"]
+    end
+
+    subgraph 网络源["🌐 网络/镜像源"]
+        ModelScope-Site["ModelScope.cn\n(魔搭社区 - 国内加速)"]
+        HF-Mirror["hf-mirror.com\n(HuggingFace 国内镜像)"]
+        Docker-Mirror["docker.nju.edu.cn\n(Docker 镜像加速)"]
+    end
+
+    subgraph 配置文件["📝 配置文件"]
+        DaemonJSON["/etc/docker/daemon.json\n· data-root → SSD\n· registry-mirrors"]
+        ContainerdTOML["/etc/containerd/config.toml\n· root → SSD"]
+        BashRC["~/.bashrc\n· MODELSCOPE_CACHE\n· HF_HOME\n· HF_ENDPOINT"]
+    end
+
+    JetPack --&gt; CUDA
+    CUDA --&gt; NVIDIA-RT
+    NVIDIA-RT --&gt; Docker
+
+    Docker --&gt; Containerd
+    Containerd --&gt; SSD
+    Docker --&gt; vLLM
+    Docker --&gt; llamaCPP
+
+    Docker-Mirror -.-&gt; Docker
+    ModelScope-Site -.-&gt; MS-Cache
+    HF-Mirror -.-&gt; MS-Cache
+
+    vLLM -.-&gt; QAT-WT
+    llamaCPP -.-&gt; GGUF-WT
+
+    QAT-WT --&gt; MS-Cache
+    GGUF-WT --&gt; MS-Cache
+
+    DaemonJSON -.-&gt; Docker
+    ContainerdTOML -.-&gt; Containerd
+    BashRC -.-&gt; MS-Cache
+
+    SSD --&gt; MS-Cache
+    GPU --- SSD
+
+    style GPU fill:#4a9,color:#fff
+    style SSD fill:#4a9,color:#fff
+    style vLLM fill:#e8731a,color:#fff
+    style llamaCPP fill:#e8731a,color:#fff
+    style QAT-WT fill:#d33,color:#fff
+    style GGUF-WT fill:#393,color:#fff
+</code></pre> <h3 id="42-环境准备与推理引擎下载安装">4.2. 环境准备与推理引擎下载安装</h3> <p>为了防止写满宿主机板载的 eMMC 存储，并确保推理引擎可以利用 GPU 硬件加速，需要依次进行容器存储优化以及推理引擎的下载/安装。</p> <h4 id="421-docker-运行时及镜像加速配置">4.2.1. Docker 运行时及镜像加速配置</h4> <p>编辑 <code class="language-plaintext highlighter-rouge">/etc/docker/daemon.json</code>。这里在第 3.3.1 的基础上<strong>合并</strong>了 <code class="language-plaintext highlighter-rouge">runtimes</code>（NVIDIA GPU 运行时）与 <code class="language-plaintext highlighter-rouge">registry-mirrors</code>（国内镜像加速）字段，是最终版本，直接整体替换原文件即可：</p> <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"runtimes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"nvidia"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+      </span><span class="nl">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nvidia-container-runtime"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"data-root"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/mnt/ssd/docker"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"max-concurrent-downloads"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"registry-mirrors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"https://docker.nju.edu.cn"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div> <h4 id="422-containerd-存储配置">4.2.2. Containerd 存储配置</h4> <p>先把目录建好，并生成默认配置（文件默认可能不存在），再编辑 <code class="language-plaintext highlighter-rouge">/etc/containerd/config.toml</code> 重定向 containerd 目录至 SSD：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mkdir</span> <span class="nt">-p</span> /mnt/ssd/containerd
+<span class="nb">sudo </span>containerd config default | <span class="nb">sudo tee</span> /etc/containerd/config.toml <span class="o">&gt;</span> /dev/null
+</code></pre></div></div> <p>将其中的 <code class="language-plaintext highlighter-rouge">root</code> 与 <code class="language-plaintext highlighter-rouge">state</code> 字段改为：</p> <div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root</span> <span class="o">=</span><span class="w"> </span><span class="s">"/mnt/ssd/containerd"</span>
+<span class="n">state</span> <span class="o">=</span><span class="w"> </span><span class="s">"/mnt/ssd/containerd/state"</span>
+</code></pre></div></div> <p>保存配置后，重启容器相关服务以使改动生效：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart containerd
+<span class="nb">sudo </span>systemctl restart docker
+</code></pre></div></div> <h4 id="423-系统环境变量配置">4.2.3. 系统环境变量配置</h4> <p>编辑当前用户的 <code class="language-plaintext highlighter-rouge">~/.bashrc</code>，将模型缓存路径和镜像加速端点重定向到 SSD 上：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ModelScope (推荐：国内稳定高速下载)</span>
+<span class="nb">export </span><span class="nv">MODELSCOPE_CACHE</span><span class="o">=</span>/mnt/ssd/modelscope
+
+<span class="c"># HuggingFace (备用：配置国内镜像站)</span>
+<span class="nb">export </span><span class="nv">HF_HOME</span><span class="o">=</span>/mnt/ssd/huggingface
+<span class="nb">export </span><span class="nv">HF_HUB_CACHE</span><span class="o">=</span>/mnt/ssd/huggingface/hub
+<span class="nb">export </span><span class="nv">HF_ENDPOINT</span><span class="o">=</span>https://hf-mirror.com
+</code></pre></div></div> <p>运行 <code class="language-plaintext highlighter-rouge">source ~/.bashrc</code> 激活变量。</p> <h4 id="424-推理引擎的下载与安装方法">4.2.4. 推理引擎的下载与安装方法</h4> <p>在 Jetson Orin AGX 上部署推理引擎（llama.cpp 或 vLLM）时，通常有以下三种安装方式可选：</p> <h5 id="选项-a拉取预编译-docker-镜像推荐极简无痛">选项 A：拉取预编译 Docker 镜像（推荐，极简无痛）</h5> <p>如果使用容器化运行，<strong>下载安装引擎等同于拉取预编译镜像</strong>。镜像中已自动打包编译好的 CUDA 版本的推理引擎。 在已配置国内镜像加速的基础上，直接拉取所需的引擎镜像：</p> <ul> <li> <strong>拉取 llama.cpp 推理引擎镜像</strong>： <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker pull ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin
+</code></pre></div> </div> </li> <li> <strong>拉取 vLLM 推理引擎镜像</strong>： <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker pull ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin
+</code></pre></div> </div> </li> </ul> <h5 id="选项-b使用-jetson-containers-本地编译容器镜像进阶定制">选项 B：使用 <code class="language-plaintext highlighter-rouge">jetson-containers</code> 本地编译容器镜像（进阶定制）</h5> <p>如果需要针对特定 JetPack 固件版本或定制参数打包，可以使用官方的 <code class="language-plaintext highlighter-rouge">jetson-containers</code> 工具链在本地自动编译和构建容器：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 1. 克隆 NVIDIA 官方的 jetson-containers 仓库</span>
+git clone https://github.com/dusty-nv/jetson-containers.git
+<span class="nb">cd </span>jetson-containers
+
+<span class="c"># 2. 安装依赖</span>
+pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+
+<span class="c"># 3. 本地编译构建 llama.cpp 推理引擎容器镜像（会自动调取本机 CUDA 编译器编译源码）</span>
+./build.sh llama_cpp
+
+<span class="c"># 4. 或者构建 vllm 推理引擎镜像</span>
+./build.sh vllm
+</code></pre></div></div> <h5 id="选项-c在宿主机直接源码编译安装裸机运行备选">选项 C：在宿主机直接源码编译安装（裸机运行备选）</h5> <p>如果不使用 Docker，想在宿主机操作系统中直接编译运行 llama.cpp 推理引擎，按以下步骤操作：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 1. 安装编译所需的系统依赖项</span>
+<span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> build-essential cmake git libcurl4-openssl-dev libssl-dev
+
+<span class="c"># 2. 克隆官方仓库并包含第三方依赖子模块</span>
+git clone https://github.com/ggml-org/llama.cpp
+<span class="nb">cd </span>llama.cpp
+git submodule update <span class="nt">--init</span> <span class="nt">--recursive</span>
+
+<span class="c"># 3. 创建编译目录并使用 CMake 进行配置</span>
+<span class="nb">mkdir </span>build <span class="o">&amp;&amp;</span> <span class="nb">cd </span>build
+<span class="c"># 关键：针对 Orin 显卡架构指定 -DCMAKE_CUDA_ARCHITECTURES=87 启用 GPU 加载</span>
+cmake .. <span class="nt">-DGGML_CUDA</span><span class="o">=</span>ON <span class="nt">-DCMAKE_CUDA_ARCHITECTURES</span><span class="o">=</span>87 <span class="nt">-DGGML_CUDA_FA_ALL_QUANTS</span><span class="o">=</span>ON
+
+<span class="c"># 4. 编译构建</span>
+make <span class="nt">-j</span><span class="si">$(</span><span class="nb">nproc</span><span class="si">)</span>
+
+<span class="c"># 5. 安装至系统路径（可选）</span>
+<span class="nb">sudo </span>make <span class="nb">install</span>
+</code></pre></div></div> <h4 id="425-docker-模式下推理引擎的更新步骤">4.2.5. Docker 模式下推理引擎的更新步骤</h4> <p>当 <code class="language-plaintext highlighter-rouge">llama.cpp</code> 或 <code class="language-plaintext highlighter-rouge">vLLM</code> 上游发布更新、需要更换运行环境中的推理引擎时，按部署方式二选一。</p> <h5 id="方式-a使用-docker-compose-管理服务推荐">方式 A：使用 Docker Compose 管理服务（推荐）</h5> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 进入部署代码目录</span>
+<span class="nb">cd</span> /path/to/gemma4-server
+
+<span class="c"># 从镜像仓库中拉取最新的推理引擎镜像，并重建服务</span>
+<span class="nb">sudo </span>docker compose pull
+<span class="nb">sudo </span>docker compose up <span class="nt">-d</span> <span class="nt">--build</span>
+</code></pre></div></div> <blockquote> <p>说明：</p> <ol> <li> <code class="language-plaintext highlighter-rouge">docker compose pull</code>：读取当前目录下的 <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>，把其中所有服务引用的镜像从仓库下载到本地，只下载不启动容器。</li> <li> <code class="language-plaintext highlighter-rouge">docker compose up -d --build</code>：按配置文件创建并启动全部服务。<code class="language-plaintext highlighter-rouge">-d</code> 表示后台运行（detach，不占用终端）；<code class="language-plaintext highlighter-rouge">--build</code> 表示启动前重新构建那些用 <code class="language-plaintext highlighter-rouge">build:</code> 定义的本地镜像（对纯 <code class="language-plaintext highlighter-rouge">image:</code> 拉取的服务无影响）。</li> <li>两条分开执行的好处是：<code class="language-plaintext highlighter-rouge">pull</code> 若因网络失败不会影响正在运行的旧服务，等镜像确认下载完成后再 <code class="language-plaintext highlighter-rouge">up</code> 切换到新版本，更新过程更可控。</li> </ol> </blockquote> <h5 id="方式-b使用手动-docker-run-命令启动">方式 B：使用手动 <code class="language-plaintext highlighter-rouge">docker run</code> 命令启动</h5> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 拉取最新镜像（llama.cpp / vLLM 二选一）</span>
+<span class="nb">sudo </span>docker pull ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin
+<span class="nb">sudo </span>docker pull ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin
+
+<span class="c"># 停止并删除当前正在运行的老版本容器（假设名为 gemma4）</span>
+<span class="nb">sudo </span>docker stop gemma4
+</code></pre></div></div> <p>随后重新执行原有的 <code class="language-plaintext highlighter-rouge">docker run</code> 启动指令，新创建的容器即会自动应用并运行最新的推理引擎。</p> <hr> <h3 id="43-现代化部署方案docker-compose--modelscope-推荐">4.3. 现代化部署方案：Docker Compose + ModelScope (推荐)</h3> <p>此方案已整理并发布在代码仓库 <a href="https://github.com/aispace02/gemma4-server" rel="external nofollow noopener" target="_blank">Gemma-4 Local Servers on Jetson Orin</a>。使用 Docker Compose 可以一键拉起推理服务，且 ModelScope 国内下载速度更有保障。</p> <h4 id="431-克隆代码仓库">4.3.1. 克隆代码仓库</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/aispace02/gemma4-server.git
+<span class="nb">cd </span>gemma4-server
+</code></pre></div></div> <h4 id="432-下载模型权重-通过-modelscope">4.3.2. 下载模型权重 (通过 ModelScope)</h4> <p>使用 ModelScope 的 Python SDK 或 CLI 下载模型权重（推荐采用 <strong>量化感知训练 (QAT)</strong> 版本以在 Jetson 上获得更高精度与速度）：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 1. 安装 modelscope 库</span>
+pip <span class="nb">install </span>modelscope <span class="nt">--break-system-packages</span>
+<span class="c"># 若不想加 --break-system-packages，也可先建虚拟环境：</span>
+<span class="c"># python3 -m venv ~/venv &amp;&amp; source ~/venv/bin/activate &amp;&amp; pip install modelscope</span>
+
+<span class="c"># 2. 运行 Python 脚本将模型下载至 SSD 对应的 ModelScope 缓存路径</span>
+python3 <span class="nt">-c</span> <span class="s2">"
+from modelscope import snapshot_download
+# 下载 Gemma 4 31B QAT 版本模型
+snapshot_download('google/gemma-4-31B-it-QAT', cache_dir='/mnt/ssd/modelscope')
+"</span>
+</code></pre></div></div> <h4 id="433-使用-docker-compose-一键启动推理服务">4.3.3. 使用 Docker Compose 一键启动推理服务</h4> <p>根据需要的推理引擎，运行以下命令（Docker Compose 会自动读取配置文件，挂载宿主机的 SSD 模型目录，并开启服务）：</p> <ul> <li> <strong>运行 vLLM 服务</strong>（适合大显存，高吞吐性能优先）： <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code>docker compose up <span class="nt">-d</span> vllm
+</code></pre></div> </div> </li> <li> <strong>运行 llama.cpp 服务</strong>（适合轻量部署，内存开销较小）： <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code>docker compose up <span class="nt">-d</span> llama-cpp
+</code></pre></div> </div> </li> </ul> <hr> <h3 id="44-备选手动方案raw-docker--huggingface-mirror">4.4. 备选手动方案：Raw Docker + HuggingFace Mirror</h3> <p>如果不希望克隆额外的 compose 仓库，也可以通过纯手动命令下载权重和运行 Docker 容器。</p> <h4 id="441-下载模型权重-huggingface-命令行方式">4.4.1. 下载模型权重 (HuggingFace 命令行方式)</h4> <p>使用 <code class="language-plaintext highlighter-rouge">hf</code> 下载工具将指定模型拉取到 SSD 上的缓存目录中：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">HF_ENDPOINT</span><span class="o">=</span>https://hf-mirror.com
+<span class="nb">export </span><span class="nv">HF_HOME</span><span class="o">=</span>/mnt/ssd/huggingface
+<span class="c"># 下载 Gemma 4 31B AWQ 模型（vLLM 用）</span>
+hf download cyankiwi/gemma-4-31B-it-AWQ-4bit
+</code></pre></div></div> <p>模型默认下载位置：<code class="language-plaintext highlighter-rouge">/mnt/ssd/huggingface/hub/models--cyankiwi--gemma-4-31B-it-AWQ-4bit/</code>。</p> <blockquote> <p>如果要用 llama.cpp，则下载 GGUF 格式权重：</p> <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code>hf download ggml-org/gemma-4-31B-it-GGUF <span class="nt">--include</span> <span class="s2">"*Q4_K_M*"</span>
+</code></pre></div> </div> <p>下载后位于 <code class="language-plaintext highlighter-rouge">/mnt/ssd/huggingface/hub/models--ggml-org--gemma-4-31B-it-GGUF/</code>。</p> </blockquote> <h4 id="442-手动启动-vllm-容器服务">4.4.2. 手动启动 vLLM 容器服务</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">--pull</span> always <span class="nt">--name</span> gemma4 <span class="nt">--runtime</span><span class="o">=</span>nvidia <span class="nt">--network</span> host <span class="se">\</span>
+  <span class="nt">-v</span> /mnt/ssd/huggingface:/data/models/huggingface <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">HF_ENDPOINT</span><span class="o">=</span>https://hf-mirror.com <span class="se">\</span>
+  ghcr.io/nvidia-ai-iot/vllm:gemma4-jetson-orin <span class="se">\</span>
+  vllm serve cyankiwi/gemma-4-31B-it-AWQ-4bit <span class="se">\</span>
+    <span class="nt">--port</span> 18000 <span class="se">\</span>
+    <span class="nt">--gpu-memory-utilization</span> 0.70 <span class="se">\</span>
+    <span class="nt">--max-model-len</span> 32768 <span class="se">\</span>
+    <span class="nt">--enable-auto-tool-choice</span> <span class="se">\</span>
+    <span class="nt">--reasoning-parser</span> gemma4 <span class="se">\</span>
+    <span class="nt">--tool-call-parser</span> gemma4
+</code></pre></div></div> <h4 id="443-手动启动-llamacpp-容器服务">4.4.3. 手动启动 llama.cpp 容器服务</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">--name</span> gemma4 <span class="se">\</span>
+  <span class="nt">--runtime</span><span class="o">=</span>nvidia <span class="nt">--network</span> host <span class="se">\</span>
+  <span class="nt">-v</span> /mnt/ssd/huggingface:/data/models/huggingface <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">HF_ENDPOINT</span><span class="o">=</span>https://hf-mirror.com <span class="se">\</span>
+  ghcr.io/nvidia-ai-iot/llama_cpp:latest-jetson-orin <span class="se">\</span>
+  llama-server <span class="nt">-hf</span> ggml-org/gemma-4-31B-it-GGUF:Q4_K_M <span class="nt">--port</span> 8080
+</code></pre></div></div> <blockquote> <p>这里 <code class="language-plaintext highlighter-rouge">-hf ggml-org/gemma-4-31B-it-GGUF:Q4_K_M</code> 会从挂载的 HF 缓存中读取（即 4.4.1 中下载的 GGUF 权重）；若缓存里没有，容器会通过 <code class="language-plaintext highlighter-rouge">HF_ENDPOINT</code> 镜像站自动拉取。</p> </blockquote> <blockquote> <p><strong>关于 Docker 镜像的双标签问题</strong></p> <p>在 <code class="language-plaintext highlighter-rouge">docker images</code> 中可能会看到 <code class="language-plaintext highlighter-rouge">ghcr.io/nvidia-ai-iot/vllm...</code> 与 <code class="language-plaintext highlighter-rouge">ghcr.nju.edu.cn/nvidia-ai-iot/vllm...</code>，两者具有完全相同的 Image ID。这代表南大镜像站的加速标签与官方标签指向同一份物理镜像，不会占用额外的磁盘空间。两个标签都请予以保留，不要删除。</p> </blockquote> <hr> <h3 id="45-推理引擎使用与选型对比">4.5. 推理引擎使用与选型对比</h3> <table> <thead> <tr> <th style="text-align: left">引擎特性</th> <th style="text-align: left">🟢 vLLM</th> <th style="text-align: left">🟣 llama.cpp</th> </tr> </thead> <tbody> <tr> <td style="text-align: left"><strong>推荐模型格式</strong></td> <td style="text-align: left">AWQ 量化格式、QAT 量化版本</td> <td style="text-align: left">GGUF 格式、QAT 量化版本</td> </tr> <tr> <td style="text-align: left"><strong>内存/显存开销</strong></td> <td style="text-align: left">较大（Orin 64G 统合显存下需精细限制系统参数）</td> <td style="text-align: left">极小（对 Unified Memory 友好，支持更长上下文）</td> </tr> <tr> <td style="text-align: left"><strong>核心启动参数</strong></td> <td style="text-align: left"> <code class="language-plaintext highlighter-rouge">--gpu-memory-utilization 0.70</code> (防止 OOM)<br><code class="language-plaintext highlighter-rouge">--max-model-len 32768</code> (KV Cache 限制)</td> <td style="text-align: left"> <code class="language-plaintext highlighter-rouge">llama-server -hf &lt;model&gt;:&lt;quant&gt; --port 8080</code><br>参数极简，易用性高</td> </tr> <tr> <td style="text-align: left"><strong>优势场景</strong></td> <td style="text-align: left">并发吞吐量高，适合做生产 API 部署</td> <td style="text-align: left">适合本地单机轻量推理、极速测试，对内存不足的情况适应度高</td> </tr> </tbody> </table> <hr> <h3 id="46-日常运维操作">4.6. 日常运维操作</h3> <ul> <li> <strong>测试模型服务可用性（以 vLLM 18000 端口为例）：</strong> <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code>curl <span class="nt">-sN</span> http://127.0.0.1:18000/v1/chat/completions <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{
+    "model": "cyankiwi/gemma-4-31B-it-AWQ-4bit",
+    "messages": [{"role": "user", "content": "你好"}],
+    "chat_template_kwargs": {"enable_thinking": true},
+    "stream": true
+  }'</span>
+</code></pre></div> </div> </li> <li> <strong>手动释放系统内存（当多次推理后内存紧张时）：</strong> <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>sysctl <span class="nt">-w</span> vm.drop_caches<span class="o">=</span>3
+</code></pre></div> </div> </li> <li> <strong>监控容器与 GPU 运行状态：</strong> <div class="language-bash highlighter-rouge"> <div class="highlight"><pre class="highlight"><code><span class="c"># 查看容器 CPU / 内存占用</span>
+<span class="nb">sudo </span>docker stats
+<span class="c"># 查看 Jetson 硬件负载（使用 jtop 工具）</span>
+jtop
+</code></pre></div> </div> </li> </ul> <hr> <h3 id="47-常见报错及排查方案">4.7. 常见报错及排查方案</h3> <h4 id="1-网络连接超时-errno-101-network-is-unreachable">1. 网络连接超时 (<code class="language-plaintext highlighter-rouge">[Errno 101] Network is unreachable</code>)</h4> <ul> <li> <strong>原因</strong>：容器启动时未能成功通过国内镜像站连接 HuggingFace/ModelScope。</li> <li> <strong>解决</strong>：确保在 <code class="language-plaintext highlighter-rouge">docker run</code> 命令中正确传入了 <code class="language-plaintext highlighter-rouge">-e HF_ENDPOINT=https://hf-mirror.com</code>，或确认 ModelScope 缓存路径正确，并已在启动前通过脚本完成权重下载。</li> </ul> <h4 id="2-挂载路径寻找失败-localentrynotfounderror-cannot-find">2. 挂载路径寻找失败 (<code class="language-plaintext highlighter-rouge">LocalEntryNotFoundError: Cannot find...</code>)</h4> <ul> <li> <strong>原因</strong>：宿主机与容器内部的模型挂载映射路径不一致。</li> <li> <strong>解决</strong>：vLLM 官方 Jetson 镜像预设其 <code class="language-plaintext highlighter-rouge">HF_HOME</code> 为 <code class="language-plaintext highlighter-rouge">/data/models/huggingface</code>，挂载时务必使用 <code class="language-plaintext highlighter-rouge">-v /mnt/ssd/huggingface:/data/models/huggingface</code>，不能使用默认的 <code class="language-plaintext highlighter-rouge">/root/.cache</code>。</li> </ul> <h4 id="3-设备内存不足-oom-报错-valueerror-free-memory-is-less-than-desired">3. 设备内存不足 OOM 报错 (<code class="language-plaintext highlighter-rouge">ValueError: Free memory... is less than desired</code>)</h4> <ul> <li> <strong>原因</strong>：Jetson Orin 64GB 属于共享内存架构，除系统固定的 14GB 占用外，可用空间约为 47GB。vLLM 默认会尝试锁定 90% 物理内存导致溢出。</li> <li> <strong>解决</strong>：将启动参数设为 <code class="language-plaintext highlighter-rouge">--gpu-memory-utilization 0.70</code>，或配合 <code class="language-plaintext highlighter-rouge">--max-model-len 16384</code> 缩减 KV Cache。如果仍然报错，建议改用内存开销更低的 <code class="language-plaintext highlighter-rouge">llama.cpp</code> 引擎。</li> </ul> <hr> <h3 id="48-资料链接参考">4.8. 资料链接参考</h3> <ul> <li><a href="https://www.jetson-ai-lab.com/models/" rel="external nofollow noopener" target="_blank">Jetson AI Labs – Supported Models</a></li> <li><a href="https://www.jetson-ai-lab.com/tutorials/gemma4-on-jetson/" rel="external nofollow noopener" target="_blank">Gemma 4 on Jetson 官方教程</a></li> <li><a href="https://www.modelscope.cn/models/google/gemma-4-31B" rel="external nofollow noopener" target="_blank">ModelScope – Gemma 4 31B 官方页面</a></li> <li><a href="https://github.com/aispace02/gemma4-server" rel="external nofollow noopener" target="_blank">Gemma-4 Local Servers on Jetson Orin (配套 Compose 仓库)</a></li> <li><a href="https://news.miracleplus.com/share_link/135307" rel="external nofollow noopener" target="_blank">齐思头条：Gemma 4 MTP/QAT 合入 llama.cpp 实现低内存推理</a></li> </ul> </div> </article> <br> <hr> <br> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <ul class="list-disc pl-7 my-3 space-y-2 marker:text-[var(--global-theme-color)]"> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/" target="_blank" rel="noopener noreferrer">Google Gemini updates: Flash 1.5, Gemma 2 and Project Astra</a> <svg width="1rem" height="1rem" viewbox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2" target="_blank" rel="noopener noreferrer">Displaying External Posts on Your al-folio Blog</a> <svg width="1rem" height="1rem" viewbox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"> <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/OpenMAIC%E9%83%A8%E7%BD%B2/">在Ubuntu上部署OpenMAIC</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/">AI工具大全</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/Fast-DDS%E5%85%A5%E9%97%A8/">Fast DDS入门（On-Going）</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/NVIDIA-GPU-SP-SM-LSU/">NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/al-folio-customization-summary/">al-folio 模板定制修改总结</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/al-folio-local-deploy-ubuntu2404/">al-folio 部署记录（Ubuntu 24.04）</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/%E5%AE%89%E8%A3%85Docker-Docker-Compose/">Ubuntu 26.04 安装 Docker 和 Docker Compose</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/C++-Traits/">C++ Traits</a> </li> </ul> </div> </div> <div class="col-sm-3"> <nav id="toc-sidebar" class="sticky-top toc toc-sidebar" aria-label="Table of contents" data-toc-collapse="expanded" data-toc-collapse-depth=""></nav> </div> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Roderick Huang. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script defer src="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.min.js" integrity="sha256-lo/r+jQ81wWrxdIiiiEEd538z4+dTJTt+leOuAS7GCw=" crossorigin="anonymous"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "A growing collection of your cool projects.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "nav-repositories",
+          title: "repositories",
+          description: "Edit the `_data/repositories.yml` and change the `github_users` and `github_repos` lists to include your own GitHub profile and repositories.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/repositories/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "This is a description of the page. You can modify it in '_pages/cv.md'. You can also change or remove the top pdf download button.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "nav-teaching",
+          title: "teaching",
+          description: "Course materials, schedules, and resources for classes taught.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/teaching/";
+          },
+        },{id: "nav-people",
+          title: "people",
+          description: "members of the lab or group",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/people/";
+          },
+        },{id: "dropdown-bookshelf",
+              title: "bookshelf",
+              description: "",
+              section: "Dropdown",
+              handler: () => {
+                window.location.href = "/books/";
+              },
+            },{id: "dropdown-blog",
+              title: "blog",
+              description: "",
+              section: "Dropdown",
+              handler: () => {
+                window.location.href = "/blog/";
+              },
+            },{id: "post-在ubuntu上部署openmaic",
+        
+          title: "在Ubuntu上部署OpenMAIC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/OpenMAIC%E9%83%A8%E7%BD%B2/";
+          
+        },
+      },{id: "post-ai工具大全",
+        
+          title: "AI工具大全",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/AI%E5%B7%A5%E5%85%B7%E5%A4%A7%E5%85%A8/";
+          
+        },
+      },{id: "post-fast-dds入门-on-going",
+        
+          title: "Fast DDS入门（On-Going）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/Fast-DDS%E5%85%A5%E9%97%A8/";
+          
+        },
+      },{id: "post-nvidia-gpu-架构-sp-sm-与-lsu-工作原理详解",
+        
+          title: "NVIDIA GPU 架构：SP、SM 与 LSU 工作原理详解",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/NVIDIA-GPU-SP-SM-LSU/";
+          
+        },
+      },{id: "post-al-folio-模板定制修改总结",
+        
+          title: "al-folio 模板定制修改总结",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/al-folio-customization-summary/";
+          
+        },
+      },{id: "post-al-folio-部署记录-ubuntu-24-04",
+        
+          title: "al-folio 部署记录（Ubuntu 24.04）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/al-folio-local-deploy-ubuntu2404/";
+          
+        },
+      },{id: "post-ubuntu-26-04-安装-docker-和-docker-compose",
+        
+          title: "Ubuntu 26.04 安装 Docker 和 Docker Compose",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/%E5%AE%89%E8%A3%85Docker-Docker-Compose/";
+          
+        },
+      },{id: "post-c-traits",
+        
+          title: "C++ Traits",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/C++-Traits/";
+          
+        },
+      },{id: "post-道格拉斯-普克算法-douglas-peucker-algorithm",
+        
+          title: "道格拉斯-普克算法(Douglas–Peucker algorithm)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E9%81%93%E6%A0%BC%E6%8B%89%E6%96%AF-%E6%99%AE%E5%85%8B%E7%AE%97%E6%B3%95/";
+          
+        },
+      },{id: "post-cmake支持库收集",
+        
+          title: "CMake支持库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CMake%E6%94%AF%E6%8C%81%E5%BA%93/";
+          
+        },
+      },{id: "post-qgc代码架构解析-飞行前检查-起飞条件",
+        
+          title: "QGC代码架构解析：飞行前检查（起飞条件）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QGC%E9%A3%9E%E8%A1%8C%E5%89%8D%E6%A3%80%E6%9F%A5/";
+          
+        },
+      },{id: "post-qgc代码架构解析-mavlink-mission-protocol-以及-qgc-航点管理",
+        
+          title: "QGC代码架构解析：MAVLink Mission Protocol，以及 QGC 航点管理",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_mission_manager/";
+          
+        },
+      },{id: "post-ai工具收集及使用笔记-持续更新",
+        
+          title: "AI工具收集及使用笔记，持续更新",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/AI%E5%B7%A5%E5%85%B7%E6%94%B6%E9%9B%86%E5%8F%8A%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-ai工具-使用docling转换文档",
+        
+          title: "AI工具：使用docling转换文档",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/AI-%E4%BD%BF%E7%94%A8docling%E8%BD%AC%E6%8D%A2%E6%96%87%E4%BB%B6/";
+          
+        },
+      },{id: "post-qgc代码架构解析-qgc初始加载及状态机",
+        
+          title: "QGC代码架构解析：QGC初始加载及状态机",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_init_load_states/";
+          
+        },
+      },{id: "post-qgc代码架构解析-mavlink参数服务及qgc参数管理模块",
+        
+          title: "QGC代码架构解析：MAVLink参数服务及QGC参数管理模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_parameter_module/";
+          
+        },
+      },{id: "post-qgc代码架构解析-firmwareplugin与autopilotplugin",
+        
+          title: "QGC代码架构解析：FirmwarePlugin与AutopilotPlugin",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qgc_firmwareplugin_autopilotplugin/";
+          
+        },
+      },{id: "post-apm-pixhawk常用飞行模式",
+        
+          title: "APM/Pixhawk常用飞行模式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ardupilot-flight-modes/";
+          
+        },
+      },{id: "post-地面站-helios-以及-dart-flutter-环境搭建",
+        
+          title: "地面站 Helios 以及 Dart/Flutter 环境搭建",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E5%9C%B0%E9%9D%A2%E7%AB%99-helios-%E4%BB%A5%E5%8F%8A-dart-flutter-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/";
+          
+        },
+      },{id: "post-ardupilot-笔记",
+        
+          title: "ArduPilot 笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ardupilot-notes/";
+          
+        },
+      },{id: "post-内存模型-memory-model-从多处理器到高级语言",
+        
+          title: "内存模型(Memory Model)：从多处理器到高级语言",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/memory_model2/";
+          
+        },
+      },{id: "post-再理解-std-condition-variable-条件变量",
+        
+          title: "再理解 std::condition_variable 条件变量",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/conditonal_variable/";
+          
+        },
+      },{id: "post-使用-libevent-实现时间戳调度",
+        
+          title: "使用 libevent 实现时间戳调度",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/timestamp_schedule_using_libevent/";
+          
+        },
+      },{id: "post-qml基础语法积累",
+        
+          title: "QML基础语法积累",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QML%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-交叉编译-qt-5-15-2",
+        
+          title: "交叉编译 Qt 5.15.2",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cross_build_qt_arm64_linaro_7.5/";
+          
+        },
+      },{id: "post-使用-c-template-构建一个通信用序列化反序列化模块",
+        
+          title: "使用 C++ template 构建一个通信用序列化反序列化模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E9%80%9A%E4%BF%A1%E7%94%A8%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%A8%A1%E5%9D%97/";
+          
+        },
+      },{id: "post-static-cast-与-reinterpret-cast",
+        
+          title: "static_cast 与 reinterpret_cast",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/static_cast_vs_reinterpret_cast/";
+          
+        },
+      },{id: "post-c-template-学习资料",
+        
+          title: "C++ template 学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp_template_study_res/";
+          
+        },
+      },{id: "post-使用-cmake-cpack-nsis-打包-qt-应用",
+        
+          title: "使用 CMake CPack NSIS 打包 Qt 应用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qt_cpack_nsis/";
+          
+        },
+      },{id: "post-cmake-export-命令以及-install-命令",
+        
+          title: "CMake export 命令以及 install 命令",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cmake_export_and_install/";
+          
+        },
+      },{id: "post-mavlink消息的打包和解包",
+        
+          title: "MAVLink消息的打包和解包",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/MAVLink_msg_pack_unpack/";
+          
+        },
+      },{id: "post-mavlink协议",
+        
+          title: "MAVLink协议",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/MAVLink_intro/";
+          
+        },
+      },{id: "post-qgc-笔记以及资料",
+        
+          title: "QGC 笔记以及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/QGC%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-c-对象模型-多继承",
+        
+          title: "C++对象模型--多继承",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/C++%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B-%E5%A4%9A%E7%BB%A7%E6%89%BF/";
+          
+        },
+      },{id: "post-windows编译安装vtk-tcl-tk-occ",
+        
+          title: "Windows编译安装VTK, TCL/TK, OCC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/windows-build-tcl-tk-occ/";
+          
+        },
+      },{id: "post-系统监控工具套件sysstat的使用",
+        
+          title: "系统监控工具套件sysstat的使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7sysstat/";
+          
+        },
+      },{id: "post-待翻译-performance-hints",
+        
+          title: "待翻译 -- Performance Hints",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Performance-Hints/";
+          
+        },
+      },{id: "post-occ-待学习资料记录",
+        
+          title: "OCC 待学习资料记录",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/OCCT-study-notes/";
+          
+        },
+      },{id: "post-nvidia-jetson-orin-agx-安装",
+        
+          title: "NVIDIA Jetson Orin AGX 安装",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/NVIDIA-Jetson-Orin-AGX-%E5%AE%89%E8%A3%85/";
+          
+        },
+      },{id: "post-ampere-gpu-新特性",
+        
+          title: "Ampere GPU 新特性",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA-Ampere-Feature/";
+          
+        },
+      },{id: "post-使用-cute-tiled-copy-tiled-mma-以及-multi-stage-实现高性能-gemm",
+        
+          title: "使用 CuTe Tiled Copy、Tiled MMA 以及 Multi-Stage 实现高性能 GEMM",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CuTe-GEMM-TiledCopy-TiledMMA-Pipeline/";
+          
+        },
+      },{id: "post-gemm-版本1-使用-cute-实现一个-naive-gemm",
+        
+          title: "GEMM 版本1：使用 CuTe 实现一个 naive GEMM",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/GEMM1-Cute-naive-GEMM/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-6-cuda-gemm-计算优化-multi-stage-与软流水-software-pipelining",
+        
+          title: "CUTLASS-Cute 初步(6)：CUDA GEMM 计算优化、Multi-Stage 与软流水(Software Pipelining)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A56-Pipeline-And-Multi-Stage/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-5-tv-layout",
+        
+          title: "CUTLASS-Cute 初步(5)：TV Layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A55-TV-Layout/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-4-1-mma-swizzle-mma-ldmatrix-smem-swizzle",
+        
+          title: "CUTLASS-Cute 初步(4.1)：MMA Swizzle -- MMA、ldmatrix、smem swizzle",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A54.1-mma-ldmatrix-swizzle/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-4-swizzle",
+        
+          title: "CUTLASS-Cute 初步(4)：Swizzle",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A54-swizzle/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-3-1-tiledcopy-以及-tiledmma-配置示例",
+        
+          title: "CUTLASS-Cute 初步(3.1)：TiledCopy 以及 TiledMMA 配置示例",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A53.1-TileMMA%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-3-tiledcopy-以及-tiledmma",
+        
+          title: "CUTLASS-Cute 初步(3)：TiledCopy 以及 TiledMMA",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A53-TiledCopy-TiledMMA/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-2-1-tensor-amp-layout-实操笔记",
+        
+          title: "CUTLASS-Cute 初步(2.1)：Tensor & Layout 实操笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A52.1-Tensor-Layout-%E5%AE%9E%E6%93%8D%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-2-tensor-amp-layout-algebra",
+        
+          title: "CUTLASS-Cute 初步(2)：Tensor & Layout Algebra",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A52-Tensor-Layout-Algebra/";
+          
+        },
+      },{id: "post-cutlass-cute-初步-1-layout",
+        
+          title: "CUTLASS-Cute 初步(1)：Layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Cute%E5%88%9D%E6%AD%A51-Layout/";
+          
+        },
+      },{id: "post-使用-nsight-compute-进行-kernel-性能分析",
+        
+          title: "使用 Nsight Compute 进行 kernel 性能分析",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ncu-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/";
+          
+        },
+      },{id: "post-cuda入门-bank-conflict",
+        
+          title: "CUDA入门：Bank Conflict",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E5%85%A5%E9%97%A8-Bank-Conflict/";
+          
+        },
+      },{id: "post-cuda性能概述-影响因素及优化方法",
+        
+          title: "CUDA性能概述：影响因素及优化方法",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%80%A7%E8%83%BD%E6%A6%82%E8%BF%B0/";
+          
+        },
+      },{id: "post-cuda-架构及对应的计算能力cc",
+        
+          title: "CUDA 架构及对应的计算能力CC",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84%E5%8F%8A%E5%85%B6%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9BCC/";
+          
+        },
+      },{id: "post-cuda-架构-1-1-hopper架构及性能分析-ncu-性能优化",
+        
+          title: "CUDA 架构(1.1)：Hopper架构及性能分析(ncu) + 性能优化",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%841.1-Hopper%E5%8F%8A%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/";
+          
+        },
+      },{id: "post-cuda-架构",
+        
+          title: "CUDA 架构",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E6%9E%B6%E6%9E%84/";
+          
+        },
+      },{id: "post-hpc-零散笔记集合",
+        
+          title: "HPC 零散笔记集合",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/HPC%E7%AC%94%E8%AE%B0-%E9%9B%B6%E6%95%A3%E6%A6%82%E5%BF%B5/";
+          
+        },
+      },{id: "post-cuda-笔记集合",
+        
+          title: "CUDA 笔记集合",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/CUDA%E7%AC%94%E8%AE%B0%E9%9B%86%E5%90%88/";
+          
+        },
+      },{id: "post-c-右值引用-万能引用-完美转发",
+        
+          title: "C++ 右值引用，万能引用，完美转发",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp-rvalue/";
+          
+        },
+      },{id: "post-io多路复用与linux-epoll",
+        
+          title: "IO多路复用与linux epoll",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E4%B8%8Eepoll/";
+          
+        },
+      },{id: "post-jekyll-chirpy-主题配置优化记录",
+        
+          title: "Jekyll Chirpy 主题配置优化记录",
+        
+        description: "记录 Jekyll Chirpy 主题从部署错误修复到功能优化的完整过程，包括 GitHub Actions 配置、数学公式渲染、目录展开等改进。",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Jekyll-Chirpy%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/";
+          
+        },
+      },{id: "post-chirpy主题的安装与使用指南",
+        
+          title: "Chirpy主题的安装与使用指南",
+        
+        description: "搭建和使用本网页时找到或参考的各类指南和文档",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/Chirpy%E6%A8%A1%E6%9D%BF%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97/";
+          
+        },
+      },{id: "post-qemu-学习资料",
+        
+          title: "QEMU 学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/qemu-study/";
+          
+        },
+      },{id: "post-memory-segmentation-cheet-sheets",
+        
+          title: "Memory Segmentation Cheet Sheets",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/memory-segmentation-cheet-sheets/";
+          
+        },
+      },{id: "post-std-pmr-内存池",
+        
+          title: "std::pmr -- 内存池",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/std-pmr-memory-pool/";
+          
+        },
+      },{id: "post-c-面向对象三个概念-重载-覆盖和隐藏",
+        
+          title: "C++面向对象三个概念——重载、覆盖和隐藏",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/cpp-override-overload-hide/";
+          
+        },
+      },{id: "post-编译ffmpeg使能-nvidia-硬件解码",
+        
+          title: "编译FFMPEG使能 NVIDIA 硬件解码",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E7%BC%96%E8%AF%91FFMPEG%E4%BD%BF%E8%83%BDNvidia%E7%A1%AC%E4%BB%B6%E8%A7%A3%E7%A0%81/";
+          
+        },
+      },{id: "post-gcc-向量化相关选项",
+        
+          title: "gcc 向量化相关选项",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/gcc-vectorize-options/";
+          
+        },
+      },{id: "post-perf性能分析-7-top-down-分析方法及vtune工具",
+        
+          title: "perf性能分析(7) -- Top-down 分析方法及VTune工具",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-07-top-down-method/";
+          
+        },
+      },{id: "post-c-中-auto-和-decltype-的用法-update-20241106",
+        
+          title: "C++ 中 auto 和 decltype 的用法 (update 20241106)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp-auto-and-decltype/";
+          
+        },
+      },{id: "post-perf性能分析-6-perf实战-1-分支预测",
+        
+          title: "perf性能分析(6) -- perf实战(1) -- 分支预测",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-06-perf-practice-01/";
+          
+        },
+      },{id: "post-perf性能分析-5-linux-perf-工具介绍",
+        
+          title: "perf性能分析(5) -- linux perf 工具介绍",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-05-perf-introduce/";
+          
+        },
+      },{id: "post-perf性能分析-4-linux-perf-工具基本使用-1",
+        
+          title: "perf性能分析(4) -- linux perf 工具基本使用(1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-04-perf-usage/";
+          
+        },
+      },{id: "post-linux-性能及统计工具-1",
+        
+          title: "Linux 性能及统计工具 (1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Linux-perf-stat-commands/";
+          
+        },
+      },{id: "post-有用的-gcc-编译选项收集",
+        
+          title: "有用的 GCC 编译选项收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%9C%89%E7%94%A8%E7%9A%84GCC%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9%E6%94%B6%E9%9B%86/";
+          
+        },
+      },{id: "post-内存分析需要理解的几个概念",
+        
+          title: "内存分析需要理解的几个概念",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Linux-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E8%A6%81%E7%90%86%E8%A7%A3%E7%9A%84%E6%A6%82%E5%BF%B5/";
+          
+        },
+      },{id: "post-perf性能分析-3-intel-vtune-配合-linux-perf-使用",
+        
+          title: "perf性能分析(3) -- Intel VTune 配合 linux perf 使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-03-Intel-VTune-and-perf-usage-03/";
+          
+        },
+      },{id: "post-perf性能分析-2-intel-vtune-配置与使用-2",
+        
+          title: "perf性能分析(2) -- Intel VTune 配置与使用(2)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-02-Intel-VTune-usage-02/";
+          
+        },
+      },{id: "post-给-shared-ptr-添加自定义-deleter-的几种方式",
+        
+          title: "给 shared_ptr 添加自定义 deleter 的几种方式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/shared_ptr-deleters-usage/";
+          
+        },
+      },{id: "post-perf性能分析-1-intel-vtune-配置与使用-1",
+        
+          title: "perf性能分析(1) -- Intel VTune 配置与使用(1)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/perf-tools-01-Intel-VTune/";
+          
+        },
+      },{id: "post-plugin-的创建及使用",
+        
+          title: "Plugin 的创建及使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Plugin-Boost-DLL/";
+          
+        },
+      },{id: "post-性能优化学习资料",
+        
+          title: "性能优化学习资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-stl-图解",
+        
+          title: "STL 图解",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/STL%E5%9B%BE%E8%A7%A3/";
+          
+        },
+      },{id: "post-c-11-新特性",
+        
+          title: "C++11 新特性",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/C++11%E6%96%B0%E7%89%B9%E6%80%A7/";
+          
+        },
+      },{id: "post-opencl-buffer-objects",
+        
+          title: "OpenCL Buffer Objects",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Buffer-Objects/";
+          
+        },
+      },{id: "post-opencl-学习资源",
+        
+          title: "OpenCL 学习资源",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Learn-Resources/";
+          
+        },
+      },{id: "post-opencl-同步操作",
+        
+          title: "OpenCL 同步操作",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-Synchronization/";
+          
+        },
+      },{id: "post-opencl-平台模型-执行模型",
+        
+          title: "OpenCL 平台模型、执行模型",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-model/";
+          
+        },
+      },{id: "post-git加速资源",
+        
+          title: "Git加速资源",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/git%E5%8A%A0%E9%80%9F%E8%B5%84%E6%BA%90/";
+          
+        },
+      },{id: "post-总结-git-不常用命令",
+        
+          title: "总结：git 不常用命令",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/git-commands/";
+          
+        },
+      },{id: "post-opencl-端编程流程及主要概念实践",
+        
+          title: "OpenCL 端编程流程及主要概念实践",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OpenCL-basic-coding-flow/";
+          
+        },
+      },{id: "post-使用-ffmpeg-从视频中提取音频",
+        
+          title: "使用 FFmpeg 从视频中提取音频",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/get-audio-from-vidio-using-ffmpeg/";
+          
+        },
+      },{id: "post-windows-环境编译-vtk",
+        
+          title: "Windows 环境编译 VTK",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/building-vtk-under-windows/";
+          
+        },
+      },{id: "post-spdlog-使用",
+        
+          title: "spdlog 使用",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/spdlog-usage/";
+          
+        },
+      },{id: "post-mesh-及相关开源仓库收集",
+        
+          title: "Mesh 及相关开源仓库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/mesh-tools/";
+          
+        },
+      },{id: "post-总结-using-几种使用场景",
+        
+          title: "总结：using 几种使用场景",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/keywork-using-of-cpp/";
+          
+        },
+      },{id: "post-复习-rvo-nrvo-and-std-move",
+        
+          title: "复习：RVO NRVO and std::move",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/RVO-NRVO-and-std_move/";
+          
+        },
+      },{id: "post-crtp-使用笔记",
+        
+          title: "CRTP：使用笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/CRTP-introduce/";
+          
+        },
+      },{id: "post-intel-tbb-并行计算",
+        
+          title: "Intel TBB 并行计算",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-parallel/";
+          
+        },
+      },{id: "post-intel-tbb-malloc-内存分配器",
+        
+          title: "Intel TBB malloc 内存分配器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-malloc/";
+          
+        },
+      },{id: "post-信号处理资料-butterworth-和-chebyshev-滤波器",
+        
+          title: "信号处理资料：Butterworth 和 Chebyshev 滤波器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/dsp-filter-butterworth-and-chebyshev/";
+          
+        },
+      },{id: "post-使用-mmap-读取文件",
+        
+          title: "使用 mmap 读取文件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/read-file-using-mmap/";
+          
+        },
+      },{id: "post-range-v3-用法积累-及资料",
+        
+          title: "Range-v3 用法积累，及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/c++-range-v3/";
+          
+        },
+      },{id: "post-总结-内存访问优化",
+        
+          title: "总结：内存访问优化",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp-perf-repos/";
+          
+        },
+      },{id: "post-聚类算法-密度-基于-nano-flann",
+        
+          title: "聚类算法（密度）：基于 nano-flann",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/density-algrithm-knn/";
+          
+        },
+      },{id: "post-ubuntu-安装-opencv",
+        
+          title: "Ubuntu 安装 OpenCV",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/ubuntu-install-opencv/";
+          
+        },
+      },{id: "post-cmake-检查系统和编译器",
+        
+          title: "CMake 检查系统和编译器",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-check-system-andcompiler/";
+          
+        },
+      },{id: "post-备份-ubuntu-bash-alias-以及-bash-显示-git-status",
+        
+          title: "备份：Ubuntu Bash Alias, 以及 bash 显示 git status",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/ubuntu-bash-alias/";
+          
+        },
+      },{id: "post-随机一致性抽样算法-ransac",
+        
+          title: "随机一致性抽样算法（RANSAC）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/RANSAC/";
+          
+        },
+      },{id: "post-intel-tbb-malloc-使用-windows",
+        
+          title: "Intel TBB malloc 使用 (windows)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/intel-tbb-malloc-usage/";
+          
+        },
+      },{id: "post-复习-std-function-用法笔记",
+        
+          title: "复习：std::function 用法笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/std-function/";
+          
+        },
+      },{id: "post-整理-内存一致模型",
+        
+          title: "整理：内存一致模型",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E6%95%B4%E7%90%86-%E5%A4%84%E7%90%86%E5%99%A8%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/";
+          
+        },
+      },{id: "post-总结-mmu-包括-tlb-以及-table-walk-unit-以及内存-page-table",
+        
+          title: "总结：MMU -- 包括 TLB 以及 Table Walk Unit ，以及内存 Page Table",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/mmu-tlb-table-walk-unit-page-table/";
+          
+        },
+      },{id: "post-自定义-operator-new-placement-new-以及释放内存",
+        
+          title: "自定义 operator new， placement new，以及释放内存",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/operator-new-placement-new/";
+          
+        },
+      },{id: "post-学术绘图工具-engauge-digitizer",
+        
+          title: "学术绘图工具 -- Engauge Digitizer",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Academic-plot-tools/";
+          
+        },
+      },{id: "post-opencl-环境准备及资料",
+        
+          title: "OpenCL 环境准备及资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/openCL-Install-and-Resources/";
+          
+        },
+      },{id: "post-redis常用命令总结",
+        
+          title: "Redis常用命令总结",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/redis-commands/";
+          
+        },
+      },{id: "post-在-markdown-中使用数学公式",
+        
+          title: "在 Markdown 中使用数学公式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E5%9C%A8Markdown%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F/";
+          
+        },
+      },{id: "post-markdown-使用笔记",
+        
+          title: "Markdown 使用笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Markdown%E8%AF%AD%E6%B3%95%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-使用inotify监控文件目录中的文件变化-新建文件",
+        
+          title: "使用inotify监控文件目录中的文件变化（新建文件）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/monitor-files-change-in-dir-using-inotify/";
+          
+        },
+      },{id: "post-总结-使用-gperftools-进行性能分析",
+        
+          title: "总结：使用 gperftools 进行性能分析",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/gperf-tools/";
+          
+        },
+      },{id: "post-cmake-编写findpackage-模块",
+        
+          title: "CMake 编写FindPackage 模块",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-find_package/";
+          
+        },
+      },{id: "post-简单线程安全队列",
+        
+          title: "简单线程安全队列",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/simple-thread-safe-queue/";
+          
+        },
+      },{id: "post-使能-c-程序的核心转储",
+        
+          title: "使能 C++ 程序的核心转储",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/enable-core-dump-for-cpp/";
+          
+        },
+      },{id: "post-python-venv-环境搭建及-vscode-环境配置",
+        
+          title: "Python venv 环境搭建及 VSCode 环境配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E8%BF%9B%E8%A1%8CPython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E8%AE%BE%E7%BD%AE/";
+          
+        },
+      },{id: "post-nginx-用户的权限配置",
+        
+          title: "nginx 用户的权限配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/nginx-autho-config/";
+          
+        },
+      },{id: "post-vscode-remote-ssh-使用局域网代理",
+        
+          title: "VSCode Remote SSH 使用局域网代理",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-remotessh-%E5%B1%80%E5%9F%9F%E7%BD%91%E4%BB%A3%E7%90%86/";
+          
+        },
+      },{id: "post-vscode-remote-ssh-免密登陆",
+        
+          title: "VSCode Remote SSH 免密登陆",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-remotessh-%E5%85%8D%E5%AF%86%E7%99%BB%E9%99%86/";
+          
+        },
+      },{id: "post-opengl-流水线-待消化吸收",
+        
+          title: "OpenGL 流水线（待消化吸收）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/opengl-pipeline/";
+          
+        },
+      },{id: "post-occ-boolean-operations",
+        
+          title: "OCC boolean operations",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/OCCT-boolean-ops/";
+          
+        },
+      },{id: "post-cam资料及笔记-待学习",
+        
+          title: "CAM资料及笔记（待学习）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/CAM%E8%B5%84%E6%96%99%E5%8F%8A%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-windows下安装-msmpi",
+        
+          title: "Windows下安装 MSMPI",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/windows-install-msmpi/";
+          
+        },
+      },{id: "post-基于vtk的3d软件",
+        
+          title: "基于VTK的3D软件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/vtk-based-3d-software/";
+          
+        },
+      },{id: "post-opengl-vulkan-学习网站-记录",
+        
+          title: "OpenGL/Vulkan 学习网站（记录）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/opengl-vulkan%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/";
+          
+        },
+      },{id: "post-为什么要使用-std-enable-shared-from-this-以及使用场景",
+        
+          title: "为什么要使用 std::enable_shared_from_this，以及使用场景",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8enable_shared_from_this/";
+          
+        },
+      },{id: "post-std-shared-ptr-线程安全及性能考量",
+        
+          title: "std::shared_ptr 线程安全及性能考量",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/shared_ptr_thread_safe/";
+          
+        },
+      },{id: "post-系统设计资料-以及23种设计模式彩图",
+        
+          title: "系统设计资料，以及23种设计模式彩图",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/design-patterns-23/";
+          
+        },
+      },{id: "post-c-实现一个简洁的-lru-缓存",
+        
+          title: "C++实现一个简洁的 LRU 缓存",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AALRU/";
+          
+        },
+      },{id: "post-pod-trivial-copyable-standard-layout",
+        
+          title: "POD、trivial copyable，standard layout",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cpp11-pod-type/";
+          
+        },
+      },{id: "post-google-gemini-updates-flash-1-5-gemma-2-and-project-astra",
+        
+          title: 'Google Gemini updates: Flash 1.5, Gemma 2 and Project Astra <svg width="1.2rem" height="1.2rem" top=".5rem" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        
+        description: "We’re sharing updates across our Gemini family of models and a glimpse of Project Astra, our vision for the future of AI assistants.",
+        section: "Posts",
+        handler: () => {
+          
+            window.open("https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/", "_blank");
+          
+        },
+      },{id: "post-cmake-创建自定义目标-在构建前复制文件",
+        
+          title: "CMake 创建自定义目标：在构建前复制文件",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/cmake-create-custom-target-copy-files-before-build/";
+          
+        },
+      },{id: "post-opencascade拓扑与几何的关系",
+        
+          title: "OpenCascade拓扑与几何的关系",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Topology-and-Geometry-in-Open-CASCADE/";
+          
+        },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/%E7%BB%88%E7%AB%AF%E7%BE%8E%E5%8C%96/";
+          
+        },
+      },{id: "post-使用-starship-定制bash提示符",
+        
+          title: "使用 Starship 定制Bash提示符",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/zed%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-vscode-改用-mathjax-渲染数学公式",
+        
+          title: "VSCode 改用 MathJax 渲染数学公式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E6%94%B9%E7%94%A8MathJax%E6%B8%B2%E6%9F%93%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F/";
+          
+        },
+      },{id: "post-我的vscode插件清单",
+        
+          title: "我的VSCode插件清单",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode%E6%8F%92%E4%BB%B6%E6%B8%85%E5%8D%95/";
+          
+        },
+      },{id: "post-vscode-开发-powershell-高效开发完整配置",
+        
+          title: "VSCode 开发，PowerShell 高效开发完整配置",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/VSCode-PowerShell%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE/";
+          
+        },
+      },{id: "post-qt-笔记及开源库收集",
+        
+          title: "Qt 笔记及开源库收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/qt-notes/";
+          
+        },
+      },{id: "post-linux系统及编译相关笔记",
+        
+          title: "Linux系统及编译相关笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/linux-and-compile-notes/";
+          
+        },
+      },{id: "post-如何使用-github-pages-以及-chirpy-theme-创建博客",
+        
+          title: "如何使用 github pages 以及 Chirpy Theme 创建博客",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/how-to-create-blog-using-github-pages-and-Chirpy-theme/";
+          
+        },
+      },{id: "post-ubuntu-24-04-分区-以及更换-kernel-6-18",
+        
+          title: "Ubuntu 24.04 分区，以及更换 kernel 6.18",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/Ubuntu%E5%AE%89%E8%A3%85%E6%96%B0%E7%89%88%E6%9C%ACkernel/";
+          
+        },
+      },{id: "post-c-17-新功能-std-visit-和-std-variant-配合使用-待更新删除冗余描述",
+        
+          title: "C++ 17 新功能： std::visit 和 std::variant 配合使用 (待更新删除冗余描述)",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2024/combind-usage-of-std-visit-and-std-variant/";
+          
+        },
+      },{id: "post-vtk-笔记",
+        
+          title: "VTK 笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/vtk-notes/";
+          
+        },
+      },{id: "post-linux-系统console使用命令清屏",
+        
+          title: "Linux 系统console使用命令清屏",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/clean-screen-and-reset/";
+          
+        },
+      },{id: "post-vtkunstructuredgrid-显示-hdf5-数据",
+        
+          title: "vtkUnstructuredGrid 显示 HDF5 数据",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/show-hdf5-data-using-vtkUnstructuredGrid/";
+          
+        },
+      },{id: "post-linux-系统下编译-gcc-9-2",
+        
+          title: "Linux 系统下编译 gcc 9.2",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/compile-gdb-commands/";
+          
+        },
+      },{id: "post-occt-使用-bvh-树加速-bounding-box-查找遍历",
+        
+          title: "OCCT 使用 BVH 树加速 bounding box 查找遍历",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-BHV-tree-bounding-box/";
+          
+        },
+      },{id: "post-occ-topexp-explorer-用法",
+        
+          title: "OCC TopExp_Explorer 用法",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-explore-api-usage/";
+          
+        },
+      },{id: "post-occ-boundding-box-以及-distance",
+        
+          title: "OCC boundding box 以及 distance",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-bounding-box/";
+          
+        },
+      },{id: "post-ubuntu-及-windows-系统下安装-qt5",
+        
+          title: "Ubuntu 及 Windows 系统下安装 Qt5",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/install-qt5-on-ubuntu-windows/";
+          
+        },
+      },{id: "post-从makefile创建compile-commands-json",
+        
+          title: "从Makefile创建compile_commands.json",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Create_CompileDB_from_Makefile/";
+          
+        },
+      },{id: "post-ubuntu-编译-qt-vtk-occt-samples",
+        
+          title: "Ubuntu 编译 Qt + VTK + OCCT + samples",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-build-with-samples/";
+          
+        },
+      },{id: "post-vtk学习资源收集",
+        
+          title: "VTK学习资源收集",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/VTK-official-examples/";
+          
+        },
+      },{id: "post-改用zsh以及oh-my-zsh",
+        
+          title: "改用zsh以及oh-my-zsh",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/%E5%AE%89%E8%A3%85zsh%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8oh-my-zsh/";
+          
+        },
+      },{id: "post-kill信号不同分类的影响",
+        
+          title: "kill信号不同分类的影响",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/kill-signals-of-linux-system/";
+          
+        },
+      },{id: "post-bash参数特殊变量符号",
+        
+          title: "Bash参数特殊变量符号",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/bash-args-and-special-symbols/";
+          
+        },
+      },{id: "post-ubuntu安装intel-gpu驱动",
+        
+          title: "Ubuntu安装Intel GPU驱动",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Ubuntu%E5%AE%89%E8%A3%85Intel-GPU%E9%A9%B1%E5%8A%A8/";
+          
+        },
+      },{id: "post-ubuntu-安装-occt",
+        
+          title: "Ubuntu 安装 OCCT",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/Ubuntu-install-OCCT/";
+          
+        },
+      },{id: "post-occt-projects-on-github",
+        
+          title: "OCCT projects on github",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/OCCT-sample-projects/";
+          
+        },
+      },{id: "post-office笔记",
+        
+          title: "Office笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6-Office%E7%AC%94%E8%AE%B0/";
+          
+        },
+      },{id: "post-ubuntu-系统安装-llvm-套件-可选择版本",
+        
+          title: "Ubuntu 系统安装 LLVM 套件 （可选择版本）",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/install-versioned-llvm-ubuntu/";
+          
+        },
+      },{id: "post-通过函数指针地址找到函数",
+        
+          title: "通过函数指针地址找到函数",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/get-function-via-address/";
+          
+        },
+      },{id: "post-写给大家看的设计模式",
+        
+          title: "写给大家看的设计模式",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/design-modes-for-all/";
+          
+        },
+      },{id: "post-python与c-混合调试",
+        
+          title: "Python与C++混合调试",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/debug-combind-Python-and-C++/";
+          
+        },
+      },{id: "post-收藏-c-代码仓库-cpu-amp-性能资料",
+        
+          title: "收藏：C++ 代码仓库，CPU & 性能资料",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/cpu_and_perf_study_docs_collections/";
+          
+        },
+      },{id: "post-c-学习资源-及-代码片段积累",
+        
+          title: "C++ 学习资源 及 代码片段积累",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2023/cpp-code-snippet/";
+          
+        },
+      },{id: "post-displaying-external-posts-on-your-al-folio-blog",
+        
+          title: 'Displaying External Posts on Your al-folio Blog <svg width="1.2rem" height="1.2rem" top=".5rem" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.open("https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2", "_blank");
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-project-1",
+          title: 'project 1',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_project/";
+            },},{id: "projects-project-2",
+          title: 'project 2',
+          description: "a project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_project/";
+            },},{id: "projects-project-3-with-very-long-name",
+          title: 'project 3 with very long name',
+          description: "a project that redirects to another website",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_project/";
+            },},{id: "projects-project-4",
+          title: 'project 4',
+          description: "another without an image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_project/";
+            },},{id: "projects-project-5",
+          title: 'project 5',
+          description: "a project with a background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_project/";
+            },},{id: "projects-project-6",
+          title: 'project 6',
+          description: "a project with no image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_project/";
+            },},{id: "projects-project-7",
+          title: 'project 7',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_project/";
+            },},{id: "projects-project-8",
+          title: 'project 8',
+          description: "an other project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_project/";
+            },},{id: "projects-project-9",
+          title: 'project 9',
+          description: "another project with an image 🎉",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_project/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-cv',
+        title: 'CV',
+        section: 'Socials',
+        handler: () => {
+          window.open("/assets/pdf/example_pdf.pdf", "_blank");
+        },
+      },{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%79%6F%75@%65%78%61%6D%70%6C%65.%63%6F%6D", "_blank");
+        },
+      },{
+        id: 'social-inspire',
+        title: 'Inspire HEP',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://inspirehep.net/authors/1010907", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+        id: 'social-scholar',
+        title: 'Google Scholar',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://scholar.google.com/citations?user=qc6CJjYAAAAJ", "_blank");
+        },
+      },{
+        id: 'social-custom_social',
+        title: 'Custom_social',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://www.alberteinstein.com/", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>
