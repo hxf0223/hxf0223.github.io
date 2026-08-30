@@ -494,6 +494,8 @@ rougify style gruvbox.dark > assets/css/jekyll-pygments-themes-gruvbox-dark.css
 
 **`_includes/head.liquid`** — 更新两处 CSS 引用路径：
 
+{% raw %}
+
 ```html
 <!-- 亮色主题（原 github.css → 新 colorful.css，内容为 github.light 主题） -->
 <link
@@ -514,6 +516,8 @@ rougify style gruvbox.dark > assets/css/jekyll-pygments-themes-gruvbox-dark.css
 />
 ```
 
+{% endraw %}
+
 两个 `<link>` 的 `id` 不变（`highlight_theme_light` / `highlight_theme_dark`），`theme.js` 通过这两个 id 动态切换 `media` 属性来实现亮暗色主题切换，不需要改动 JS 逻辑。
 
 ---
@@ -528,15 +532,21 @@ rougify style gruvbox.dark > assets/css/jekyll-pygments-themes-gruvbox-dark.css
 
 Jekyll 的 `relative_url` 过滤器内部使用 `Addressable::URI` 解析 URL，会把路径中的中文字符 percent-encode 后写入 HTML `href` 属性。模板中大量使用了以下写法：
 
+{% raw %}
+
 ```liquid
 {{ tag | slugify | prepend: '/blog/tag/' | relative_url }}
 ```
+
+{% endraw %}
 
 `relative_url` 再处理含中文的路径时，产生编码后的 URL。
 
 ### 12.3. 改动文件
 
 修改 3 个文件共 8 处，将 `relative_url` 管道替换为直接字符串拼接：
+
+{% raw %}
 
 ```liquid
 {# 修改前 #}
@@ -545,6 +555,8 @@ Jekyll 的 `relative_url` 过滤器内部使用 `Addressable::URI` 解析 URL，
 {# 修改后 #}
 {{ site.baseurl }}/blog/tag/{{ tag | slugify }}
 ```
+
+{% endraw %}
 
 **修改的文件：**
 
