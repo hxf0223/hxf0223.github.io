@@ -60,8 +60,7 @@ a:focus {
 #logout:focus,
 #logout.focus,
 #logout:active,
-#logout.active,
-.open > .dropdown-toggle#logout {
+#logout.active {
   color: #1c1c1c;
   background-color: #303030;
   background: #303030;
@@ -78,24 +77,10 @@ body > #header {
   z-index: 100;
 }
 
-input[type="radio"],
+
 input[type="checkbox"] {
   margin-top: 1px;
   line-height: normal;
-}
-
-.breadcrumb > li {
-  font-size: 12pt;
-  color: #303030;
-  border: none;
-  text-shadow: none !important;
-}
-
-.breadcrumb > li + li:before {
-  content: "/\00a0";
-  padding: 0px;
-  color: #303030;
-  font-size: 18px;
 }
 
 ul#tabs a {
@@ -250,8 +235,7 @@ body > #header .header-bar {
 
 .btn:hover,
 .btn:active:hover,
-.btn.active:hover,
-.open > .dropdown-toggle.btn:hover {
+.btn.active:hover {
   color: #ef5c00;
   border: 2px solid #e0e0e0;
   background-color: #e0e0e0;
@@ -266,9 +250,7 @@ body > #header .header-bar {
 .btn:active:focus,
 .btn.active:focus,
 .btn:active.focus,
-.btn.active.focus,
-.open > .dropdown-toggle.btn:focus,
-.open > .dropdown-toggle.btn.focus {
+.btn.active.focus {
   color: #ef5c00;
   border: 2px solid #e0e0e0;
   background-color: #e0e0e0 !important;
@@ -323,51 +305,17 @@ button.close {
   font-weight: normal;
 }
 
-div.modal > button,
-div.modal-footer > button {
+div.modal > button {
   background: #e4e4e4;
   background-color: #e4e4e4;
   border-color: #e4e4e4;
 }
 
-div.modal > button:hover,
-div.modal-footer > button:hover {
+div.modal > button:hover {
   background: #dfdfdf;
   background-color: #dfdfdf;
   border-color: #dfdfdf;
   transition: 200ms ease;
-}
-
-.modal-content {
-  font-family: sans-serif;
-  font-size: 12pt;
-  position: relative;
-  background: #e4e4e4;
-  background-color: #e4e4e4;
-  border: none;
-  border-radius: 1px;
-  background-clip: padding-box;
-  outline: none;
-}
-
-.modal-content h4 {
-  font-family: sans-serif;
-  font-size: 16pt;
-  color: #303030;
-  padding: 5px;
-}
-
-.modal-body {
-  background-color: #ffffff;
-  position: relative;
-  padding: 15px;
-}
-
-.modal-footer {
-  padding: 8px;
-  text-align: right;
-  background-color: #ffffff;
-  border-top: none;
 }
 
 div.panel,
@@ -519,8 +467,7 @@ div.cell.selected .prompt {
 }
 
 pre,
-code,
-kbd {
+code {
   white-space: pre-wrap;
 }
 
@@ -533,16 +480,6 @@ code {
   background: #efefef;
   background-color: #efefef;
   border-color: #efefef;
-}
-
-kbd {
-  padding: 1px;
-  font-size: 11pt;
-  font-weight: 800;
-  color: #303030;
-  background-color: transparent !important;
-  border: 0;
-  box-shadow: none;
 }
 
 pre {
@@ -598,6 +535,11 @@ mark,
   background-color: #ffffff;
   color: #353535;
   padding: 0.15em;
+}
+
+a.text-warning,
+a.text-warning:hover {
+  color: #828892;
 }
 
 #toc a,
