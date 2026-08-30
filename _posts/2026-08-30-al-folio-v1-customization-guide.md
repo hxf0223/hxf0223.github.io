@@ -3,8 +3,8 @@ layout: post
 title: "al-folio v1.x 博客迁移与深度定制实践总结"
 date: 2026-08-30 10:30:00 +0800
 description: "记录将个人学术博客升级迁移至最新版 al-folio v1.x 的完整过程，涵盖 Docker 本地环境、CI/CD 修复、栏目精简、动态标签、三级目录、图片灯箱增强、全站全文搜索与 Prettier 加速优化。"
-tags: [jekyll, al-folio, 前端, 博客]
-categories: [技术, 博客]
+tags: [jekyll, al-folio, frontend, blog]
+categories: [tech, blog]
 toc:
   sidebar: right
 ---
