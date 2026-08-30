@@ -496,10 +496,22 @@ rougify style gruvbox.dark > assets/css/jekyll-pygments-themes-gruvbox-dark.css
 
 ```html
 <!-- 亮色主题（原 github.css → 新 colorful.css，内容为 github.light 主题） -->
-<link defer rel="stylesheet" href="{{ '/assets/css/jekyll-pygments-themes-colorful.css' | relative_url | bust_file_cache }}" media="" id="highlight_theme_light" />
+<link
+  defer
+  rel="stylesheet"
+  href="{{ '/assets/css/jekyll-pygments-themes-colorful.css' | relative_url | bust_file_cache }}"
+  media=""
+  id="highlight_theme_light"
+/>
 
 <!-- 暗色主题（原 native.css → 新 gruvbox-dark.css） -->
-<link defer rel="stylesheet" href="{{ '/assets/css/jekyll-pygments-themes-gruvbox-dark.css' | relative_url | bust_file_cache }}" media="none" id="highlight_theme_dark" />
+<link
+  defer
+  rel="stylesheet"
+  href="{{ '/assets/css/jekyll-pygments-themes-gruvbox-dark.css' | relative_url | bust_file_cache }}"
+  media="none"
+  id="highlight_theme_dark"
+/>
 ```
 
 两个 `<link>` 的 `id` 不变（`highlight_theme_light` / `highlight_theme_dark`），`theme.js` 通过这两个 id 动态切换 `media` 属性来实现亮暗色主题切换，不需要改动 JS 逻辑。

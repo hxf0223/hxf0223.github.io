@@ -104,7 +104,12 @@ katex: https://cdn.jsdelivr.net
 
 ```html
 {% raw %}{% if page.math %}
-<link rel="stylesheet" href="{{ site.data.origin[origin].katex.css | relative_url }}" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+<link
+  rel="stylesheet"
+  href="{{ site.data.origin[origin].katex.css | relative_url }}"
+  integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+  crossorigin="anonymous"
+/>
 {% endif %}{% endraw %}
 ```
 
@@ -115,8 +120,18 @@ katex: https://cdn.jsdelivr.net
 ```html
 {% raw %}{% if page.math %}
 <!-- KaTeX -->
-<script defer src="{{ site.data.origin[origin].katex.js | relative_url }}" integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY" crossorigin="anonymous"></script>
-<script defer src="{{ site.data.origin[origin].katex['auto-render'] | relative_url }}" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
+<script
+  defer
+  src="{{ site.data.origin[origin].katex.js | relative_url }}"
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"
+  crossorigin="anonymous"
+></script>
+<script
+  defer
+  src="{{ site.data.origin[origin].katex['auto-render'] | relative_url }}"
+  integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"
+  crossorigin="anonymous"
+></script>
 <script defer src="{{ '/assets/js/data/katex.js' | relative_url }}"></script>
 {% endif %}{% endraw %}
 ```
