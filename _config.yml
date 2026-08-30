@@ -7,15 +7,15 @@ first_name: Roderick
 middle_name:
 last_name: Huang
 contact_note: >
-  You can even add a little note about which of these is the best way to reach you.
+  欢迎通过 GitHub 或邮件与我联系。
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design.
+  Roderick Huang 的个人博客，记录工作与技术。
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
   Photos from <a href="https://unsplash.com" target="_blank">Unsplash</a>.
 keywords: jekyll, jekyll-theme, academic-website, portfolio-website # add your own keywords or leave empty
-lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
+lang: zh-CN # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: ⚛️ # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 apple_touch_icon: # image name in /assets/img/ (or a rooted path / absolute URL) used for iOS home-screen bookmarks; needs a real 180x180 PNG, since Safari ignores the emoji favicon above. Left empty, iOS falls back to a screenshot of the page.
 
@@ -103,7 +103,7 @@ posts_in_search: true
 bib_search: true
 
 # Dimensions
-max_width: 930px
+max_width: 1400px
 
 # -----------------------------------------------------------------------------
 # Open Graph & Schema.org
@@ -136,7 +136,7 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: al-folio # blog_name will be displayed in your blog page
+blog_name: WorkLog # blog_name will be displayed in your blog page
 blog_description: a simple whitespace theme for academics
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
@@ -173,17 +173,17 @@ disqus_shortname: al-folio # put your disqus shortname
 # If you have blog posts published on medium.com or other external sources,
 # you can display them in your blog by adding a link to the RSS feed.
 # Optional: Set default categories and tags for posts from each source.
-external_sources:
-  - name: medium.com
-    rss_url: https://medium.com/@al-folio/feed
-    categories: [external-posts]
-    tags: [medium]
-  - name: Google Blog
-    posts:
-      - url: https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/
-        published_date: 2024-05-14
-    categories: [external-posts]
-    tags: [google]
+# external_sources:
+#   - name: medium.com
+#     rss_url: https://medium.com/@al-folio/feed
+#     categories: [external-posts]
+#     tags: [medium]
+#   - name: Google Blog
+#     posts:
+#       - url: https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/
+#         published_date: 2024-05-14
+#     categories: [external-posts]
+#     tags: [google]
 
 # -----------------------------------------------------------------------------
 # Newsletter
@@ -293,7 +293,6 @@ plugins:
   - al_citations
   - al_ext_posts
   - al_img_tools
-  - al_search
   - al_charts
   - al_math
   - al_comments
@@ -308,6 +307,12 @@ defaults:
       path: "assets"
     values:
       sitemap: false
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      toc:
+        sidebar: right
 
 sass:
   style: compressed

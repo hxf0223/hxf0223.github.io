@@ -4,7 +4,7 @@ services:
     image: amirpourmand/al-folio:slim
     #build: .
     ports:
-      - 8080:8080
+      - 8081:8080
       - 35729:35729
     volumes:
       - .:/srv/jekyll
