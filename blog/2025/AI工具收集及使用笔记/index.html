@@ -219,7 +219,64 @@ prime-agent shutdown   <span class="c"># 停止所有 agent 和后台服务</spa
   </span><span class="nl">"defaultThinkingLevel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"high"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"enabledModels"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"nvidia/moonshotai/kimi-k3"</span><span class="p">,</span><span class="w"> </span><span class="s2">"nvidia/deepseek-ai/deepseek-v4-flash-0731"</span><span class="p">,</span><span class="w"> </span><span class="s2">"local-gemma-31b/gemma-4-31B"</span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre></div></div> <ul> <li> <code class="language-plaintext highlighter-rouge">defaultProvider</code> / <code class="language-plaintext highlighter-rouge">defaultModel</code>：启动时默认使用的模型。</li> <li> <code class="language-plaintext highlighter-rouge">enabledModels</code>：<code class="language-plaintext highlighter-rouge">Alt+M</code> 快速切换模型时的候选列表，格式为 <code class="language-plaintext highlighter-rouge">provider/model-id</code>。</li> <li>会话中也可以通过 <code class="language-plaintext highlighter-rouge">/model</code> 命令交互式选择模型。</li> </ul> <h4 id="prime-agent-的更多资料">Prime Agent 的更多资料</h4> <ul> <li> <a href="https://github.com/bbylw/prime-agent-cn" rel="external nofollow noopener" target="_blank">prime-agent-cn</a> prime-agent 中文翻译文档仓库</li> <li> <a href="https://www.cnblogs.com/windsake/articles/22610574" rel="external nofollow noopener" target="_blank">01 开篇：传统 Agent 绕不开的现实痛点</a>：介绍比较全面的一篇博客</li> </ul> <hr> <h3 id="copilot-资源及使用笔记">Copilot 资源及使用笔记</h3> <h4 id="copilot-中的-instructionspromptsskills">Copilot 中的 Instructions、Prompts、Skills</h4> <p>Instructions、Prompts、Skills 是 Copilot 中的三个重要概念，分别用于指导模型行为、提供输入提示和定义特定功能，他们之间的区别在于：</p> <ul> <li>Instructions = 「你必須這樣做」（規則）</li> <li>Prompts = 「幫我做這件事」（範本）</li> <li>Skills = 「遇到這類問題時請這樣處理」（專家知識）</li> </ul> <h4 id="copilot-添加qt的-instructionspromptsskills">Copilot 添加Qt的 Instructions、Prompts、Skills</h4> <p>Qt官方在github上的一个仓库，提供了相关的资源：<a href="https://github.com/TheQtCompanyRnD/agent-skills.git" rel="external nofollow noopener" target="_blank">Qt AI Skills</a>，可以放在项目中使用、也可以放在用户目录中作为全局配置使用。</p> <p>另外，这套Skills可以接入几乎所有工具中，比如Claude Code、CodeX等等十几种。在安装的时候，可以复选创建哪些工具的配置。</p> <p>在Windows系统上，使用方法如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 首先下载并安装 Copilot CLI，在 Copilot CLI 中使用如下</span>
+</span></code></pre></div></div> <ul> <li> <code class="language-plaintext highlighter-rouge">defaultProvider</code> / <code class="language-plaintext highlighter-rouge">defaultModel</code>：启动时默认使用的模型。</li> <li> <code class="language-plaintext highlighter-rouge">enabledModels</code>：<code class="language-plaintext highlighter-rouge">Alt+M</code> 快速切换模型时的候选列表，格式为 <code class="language-plaintext highlighter-rouge">provider/model-id</code>。</li> <li>会话中也可以通过 <code class="language-plaintext highlighter-rouge">/model</code> 命令交互式选择模型。</li> </ul> <h4 id="prime-agent-的更多资料">Prime Agent 的更多资料</h4> <ul> <li> <a href="https://github.com/bbylw/prime-agent-cn" rel="external nofollow noopener" target="_blank">prime-agent-cn</a> prime-agent 中文翻译文档仓库</li> <li> <a href="https://www.cnblogs.com/windsake/articles/22610574" rel="external nofollow noopener" target="_blank">01 开篇：传统 Agent 绕不开的现实痛点</a>：介绍比较全面的一篇博客</li> </ul> <hr> <h3 id="opencodereviewocrai-代码审查助手">OpenCodeReview（ocr）：AI 代码审查助手</h3> <p><a href="https://github.com/alibaba/open-code-review" rel="external nofollow noopener" target="_blank">OpenCodeReview</a> 是阿里开源的 AI 代码审查 CLI 工具，可以审查 <code class="language-plaintext highlighter-rouge">git diff</code>（工作区改动、分支范围、单个 commit），也可以对整个文件/目录做全量扫描（<code class="language-plaintext highlighter-rouge">ocr scan</code>），并生成带行号定位的结构化审查意见。</p> <p>官方文档：<a href="https://open-codereview.ai" rel="external nofollow noopener" target="_blank">https://open-codereview.ai</a>。</p> <h4 id="安装">安装</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">-g</span> @alibaba-group/open-code-review
+
+<span class="c"># 验证安装</span>
+ocr version
+</code></pre></div></div> <h4 id="配置-llmprovider--model">配置 LLM（provider + model）</h4> <p><code class="language-plaintext highlighter-rouge">ocr</code> 必须先配置一个 LLM 才能使用（除非使用 Delegation 模式，由宿主 agent 提供模型）。配置存放在 <code class="language-plaintext highlighter-rouge">~/.opencodereview/config.json</code>。</p> <p>交互式配置（内置 provider 列表中选择，自动测试连通性）：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ocr config provider   <span class="c"># 交互式选择 provider 并填写 API key</span>
+ocr config model      <span class="c"># 交互式选择模型</span>
+</code></pre></div></div> <p>非交互式配置（适合脚本/CI），以内置 anthropic 为例：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ocr config <span class="nb">set </span>provider anthropic
+ocr config <span class="nb">set </span>model claude-opus-4-6
+ocr config <span class="nb">set </span>providers.anthropic.api_key <span class="s2">"</span><span class="nv">$ANTHROPIC_API_KEY</span><span class="s2">"</span>
+</code></pre></div></div> <h4 id="接入自定义-openai-兼容服务nvidia-平台--局域网模型">接入自定义 OpenAI 兼容服务（NVIDIA 平台 / 局域网模型）</h4> <p>对于没有内置的 provider（例如 NVIDIA NIM 平台、局域网自建模型服务），使用 <code class="language-plaintext highlighter-rouge">custom_providers</code> 配置。以接入 NVIDIA 平台的 Kimi K3 为例：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 设置当前使用的 provider 为自定义的 nvidia</span>
+ocr config <span class="nb">set </span>provider nvidia
+
+<span class="c"># 配置 OpenAI 兼容接口地址和协议</span>
+ocr config <span class="nb">set </span>custom_providers.nvidia.url https://integrate.api.nvidia.com/v1
+ocr config <span class="nb">set </span>custom_providers.nvidia.protocol openai
+
+<span class="c"># API 密钥：使用 api_key_cmd 从环境变量读取，避免明文写入配置文件</span>
+<span class="c"># 要求 NVIDIA_API_KEY 已通过 export 导出（写入 ~/.bashrc 并 source）</span>
+ocr config <span class="nb">set </span>custom_providers.nvidia.api_key_cmd <span class="s2">"printenv NVIDIA_API_KEY"</span>
+
+<span class="c"># 设置模型</span>
+ocr config <span class="nb">set </span>custom_providers.nvidia.model moonshotai/kimi-k3
+
+<span class="c"># 测试连通性</span>
+ocr llm <span class="nb">test</span>
+</code></pre></div></div> <p>接入局域网自建模型服务的方式完全相同（局域网服务一般无鉴权，可不配置 api_key）：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ocr config <span class="nb">set </span>custom_providers.local.url http://192.168.137.240:8080/v1
+ocr config <span class="nb">set </span>custom_providers.local.protocol openai
+ocr config <span class="nb">set </span>custom_providers.local.model gemma-4-31B
+ocr config <span class="nb">set </span>provider <span class="nb">local</span>
+</code></pre></div></div> <p>自定义 provider 还支持的其他字段：<code class="language-plaintext highlighter-rouge">api_key</code>（明文密钥）、<code class="language-plaintext highlighter-rouge">model</code>、<code class="language-plaintext highlighter-rouge">models</code>（模型列表）、<code class="language-plaintext highlighter-rouge">timeout_sec</code>、<code class="language-plaintext highlighter-rouge">extra_body</code>、<code class="language-plaintext highlighter-rouge">extra_headers</code>、<code class="language-plaintext highlighter-rouge">retry_codes</code> 等，格式均为 <code class="language-plaintext highlighter-rouge">custom_providers.&lt;名称&gt;.&lt;字段&gt;</code>。</p> <p>删除某个自定义 provider 配置：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ocr config <span class="nb">unset </span>custom_providers.nvidia
+</code></pre></div></div> <h4 id="常用命令">常用命令</h4> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>your-project
+
+<span class="c"># 审查工作区改动（staged + unstaged + untracked，默认模式）</span>
+ocr review
+
+<span class="c"># 审查分支相对 main 分出的改动（merge-base 模式）</span>
+ocr review <span class="nt">--from</span> main <span class="nt">--to</span> feature-branch
+
+<span class="c"># 审查单个 commit</span>
+ocr review <span class="nt">--commit</span> abc123
+
+<span class="c"># 预览将要审查的文件，不实际执行</span>
+ocr review <span class="nt">--preview</span>
+
+<span class="c"># 全量扫描整个仓库 / 指定目录</span>
+ocr scan
+ocr scan <span class="nt">--path</span> internal/agent
+
+<span class="c"># 恢复中断的审查会话</span>
+ocr session list
+ocr review <span class="nt">--from</span> main <span class="nt">--to</span> feature-branch <span class="nt">--resume</span> &lt;session-id&gt;
+
+<span class="c"># JSON 输出，保存审查结果（适合接入 CI 或其他 agent）</span>
+ocr review <span class="nt">--format</span> json <span class="nt">--audience</span> agent <span class="nt">--output</span> result.json
+
+<span class="c"># 查看内置 provider 列表</span>
+ocr llm providers
+</code></pre></div></div> <hr> <h3 id="copilot-资源及使用笔记">Copilot 资源及使用笔记</h3> <h4 id="copilot-中的-instructionspromptsskills">Copilot 中的 Instructions、Prompts、Skills</h4> <p>Instructions、Prompts、Skills 是 Copilot 中的三个重要概念，分别用于指导模型行为、提供输入提示和定义特定功能，他们之间的区别在于：</p> <ul> <li>Instructions = 「你必須這樣做」（規則）</li> <li>Prompts = 「幫我做這件事」（範本）</li> <li>Skills = 「遇到這類問題時請這樣處理」（專家知識）</li> </ul> <h4 id="copilot-添加qt的-instructionspromptsskills">Copilot 添加Qt的 Instructions、Prompts、Skills</h4> <p>Qt官方在github上的一个仓库，提供了相关的资源：<a href="https://github.com/TheQtCompanyRnD/agent-skills.git" rel="external nofollow noopener" target="_blank">Qt AI Skills</a>，可以放在项目中使用、也可以放在用户目录中作为全局配置使用。</p> <p>另外，这套Skills可以接入几乎所有工具中，比如Claude Code、CodeX等等十几种。在安装的时候，可以复选创建哪些工具的配置。</p> <p>在Windows系统上，使用方法如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 首先下载并安装 Copilot CLI，在 Copilot CLI 中使用如下</span>
 <span class="c"># Copilot CLI地址：https://github.com/github/copilot-cli</span>
 gh skill <span class="nb">install </span>TheQtCompanyRnD/agent-skills qt-qml-review
 </code></pre></div></div> <p>在Linux系统上，使用方法如下：</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/TheQtCompanyRnD/agent-skills.git
