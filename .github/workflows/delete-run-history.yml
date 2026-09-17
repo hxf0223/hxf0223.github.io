@@ -1,0 +1,63 @@
+name: Delete workflow run history
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "delete" to actually delete runs (anything else = dry run)'
+        required: true
+        default: 'dry-run'
+      keep:
+        description: 'Number of most recent runs per workflow to keep (0 = delete all)'
+        required: true
+        default: '0'
+
+permissions:
+  actions: write
+
+jobs:
+  delete-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete workflow runs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIRM: ${{ inputs.confirm }}
+          KEEP: ${{ inputs.keep }}
+        run: |
+          set -euo pipefail
+
+          if [ "$CONFIRM" != "delete" ]; then
+            echo "Dry run: listing runs that would be deleted."
+          else
+            echo "CONFIRMED: runs will be deleted."
+          fi
+
+          total_deleted=0
+
+          # List workflow ids in this repo
+          workflows=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows" --paginate -q '.workflows[].id')
+
+          for wf in $workflows; do
+            echo "=== Workflow $wf ==="
+            # Run ids, newest first (gh api returns created_at desc per page order is not guaranteed; sort by created_at)
+            ids=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$wf/runs?per_page=100" --paginate \
+              -q '.workflow_runs | sort_by(.created_at) | reverse | .[].id')
+
+            i=0
+            for id in $ids; do
+              i=$((i+1))
+              if [ "$i" -le "$KEEP" ]; then
+                echo "keep   run $id"
+                continue
+              fi
+              if [ "$CONFIRM" = "delete" ]; then
+                gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/runs/$id" && echo "deleted run $id"
+                total_deleted=$((total_deleted+1))
+              else
+                echo "would delete run $id"
+              fi
+            done
+          done
+
+          echo "Done. Total deleted: $total_deleted"
