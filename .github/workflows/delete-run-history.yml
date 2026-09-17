@@ -4,9 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type "delete" to actually delete runs (anything else = dry run)'
+        description: 'Choose "delete" to actually delete runs; "dry-run" only lists them'
         required: true
-        default: "dry-run"
+        type: choice
+        options:
+          - dry-run
+          - delete
       keep:
         description: "Number of most recent runs per workflow to keep (0 = delete all)"
         required: true
