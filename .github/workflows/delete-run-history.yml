@@ -6,11 +6,11 @@ on:
       confirm:
         description: 'Type "delete" to actually delete runs (anything else = dry run)'
         required: true
-        default: 'dry-run'
+        default: "dry-run"
       keep:
-        description: 'Number of most recent runs per workflow to keep (0 = delete all)'
+        description: "Number of most recent runs per workflow to keep (0 = delete all)"
         required: true
-        default: '0'
+        default: "0"
 
 permissions:
   actions: write
