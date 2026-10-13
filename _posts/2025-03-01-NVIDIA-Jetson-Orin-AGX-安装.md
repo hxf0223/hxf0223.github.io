@@ -7,7 +7,9 @@ tags: [NVIDIA, Jetson, AI]
 
 # 以下默认false
 math: true
-mermaid: true
+mermaid:
+  enabled: true
+  zoomable: true
 # pin: true
 
 toc:
