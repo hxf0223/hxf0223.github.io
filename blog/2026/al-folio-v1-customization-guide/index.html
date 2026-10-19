@@ -55,7 +55,7 @@ docker compose down
       &lt;li&gt;
         &lt;i class="fa-solid fa-hashtag fa-sm"&gt;&lt;/i&gt;
         &lt;a href="/blog/tag/cad"&gt;CAD&lt;/a&gt;
-        &lt;span class="count"&gt;(2)&lt;/span&gt;
+        &lt;span class="count"&gt;(3)&lt;/span&gt;
       &lt;/li&gt;
     
       &lt;li&gt;
@@ -1254,8 +1254,8 @@ permalink: /assets/js/data/search.json
   "OCCT 依赖库 Introduction – Requirements下载OpenCascadeOCC 7.7编译有问题，使能VTK时编译错误，下载最新版的OCC修复该问题：# https://dev.opencascade.org/resources/git_repositorygit clone https://git.dev.opencascade.org/repos/occt.git occt编译安装命令1. 编译安装第三方库 注意要 tcl-dev, tk-dev, tcllib, tklib，除非自己编译安装，此时要设置TCL/TK相关的路径，比较麻烦。sudo apt install doxygen doxygen-gui graphviz graphviz-doc libx11-xcb-devsudo apt-get install tcllib tklib tcl-dev tk-dev libfreetype-dev libx11-dev libgl1-mesa-dev libfreeimage-devsudo apt-get install rapidjson-dev libdraco-devtcl 8.6编译安装命令(tk 8.6相同的编译配置命令)：# https://www.tcl.tk/software/tcltk/8.6.htmlcd tcl8.6.13/unix./configure --enable-gcc --enable-shared --enable-threads --enable-64bitmake \u0026amp;\u0026amp; sudo make installfreeType编译安装命令：# https://freetype.org/download.htmlCFLAGS='-m64 -fPIC' CPPFLAGS='-m64 -fPIC' ./configuremake \u0026amp;\u0026amp; sudo make installFreeImage编译安装命令：# https://freeimage.sourceforge.io/download.html# 修改 Makefile.fip：增加 CXXFLAGS += -std=c++11make -f Makefile.fip# 拷贝头文件及 .so, .a 到相应目录编译安装fdk-acc及ffmpeg:# install dependenciessudo apt install libavformat-dev libavcodec-dev libswresample-dev libswscale-dev libavutil-dev libsdl1.2-dev libx264-dev nasm# tdk-acc./configure \u0026amp;\u0026amp; make \u0026amp;\u0026amp; sudo make install# ffmpeg./configure --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libx264 --enable-filter=delogo --enable-shared --enable-pthreadsmake \u0026amp;\u0026amp; sudo make install2. 编译安装 OCCTcd opencascade-7.7.0mdkir build \u0026amp;\u0026amp; cd build# 配置OCC编译，使能VTK, ITK等功能ccmake ..make -j6sudo make install几次配置截图之后，配置如下3. 安装或编译 Qt5 安装 Qt5sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-toolssudo apt-get install qtcreator 编译 Qt5编译及设置环境变量见 VTK（1）：ubuntu 22.04 源码编译安装 Qt5.15.6国内学习博客 OpenCascade基本框架介绍-昨夜星辰 (hustlei.github.io) OpenCASCADE入门指南 - opencascade - 博客园 (cnblogs.com)http 链接：2.OpenCASCADE - eryar - C++博客 (cppblog.com) http://cppblog.com/eryar/category/17808.html?Show=All引用资料 Build 3rd-parties - Open CASCADE Technology Documentation Build OCCT - Open CASCADE Technology Documentation Download - Open CASCADE Technology 3rd party Components TCL/TK 8.6" },
 
   { "title": "OCCT projects on github", "url": "/blog/2023/OCCT-sample-projects/", "categories": "OCCT",
-  "tags": "OCCT", "date": "2023-05-24", "content":
-  "OCCT samples需要安装 OpenGL： 基于Ubuntu搭建OpenGL开发环境sudo apt-get install libglfw3-devsudo apt install mesa-utils以下两个项目均来自 github gkv311 occt-samples-qopenglwidget occt-helloOCCT 文章Boolean一些http链接：Open Cascade中的布尔操作 http://cppblog.com/eryar/archive/2013/01/17/197357.html OpenCASCADE 布尔运算简介 OpenCasCade拓扑几何的布尔运算 Boolean Operations OpenCascade Modeling Algorithms Boolean OperationsFillet autoCAD doc FilletMesh Mesh" },
+  "tags": "OCCT, CAD", "date": "2023-05-24", "content":
+  "OCCT samples需要安装 OpenGL： 基于Ubuntu搭建OpenGL开发环境sudo apt-get install libglfw3-devsudo apt install mesa-utils以下两个项目均来自 github gkv311 occt-samples-qopenglwidget occt-helloOCCT 文章Boolean一些http链接：Open Cascade中的布尔操作 http://cppblog.com/eryar/archive/2013/01/17/197357.html OpenCASCADE 布尔运算简介 OpenCasCade拓扑几何的布尔运算 Boolean Operations OpenCascade Modeling Algorithms Boolean OperationsFillet autoCAD doc FilletMesh Mesh来自Nvidia的CAD内核 USD BRep：NVIDIA 已在 GitHub 公开包含三维 CAD 几何内核 SMLib 的 USD BRep NVIDIA 以 Apache 2.0 公开 CAD 内核 SMLib｜USD BRep 里有什么、可以怎么用" },
 
   { "title": "Office笔记", "url": "/blog/2023/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6-Office%E7%AC%94%E8%AE%B0/", "categories": "Computer",
   "tags": "Computer, Office", "date": "2023-05-05", "content":
