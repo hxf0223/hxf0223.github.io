@@ -3,7 +3,7 @@ layout: post
 title: OCCT projects on github
 date: 2023-05-24 +0800 # 2022-01-01 13:14:15 +0800 只写日期也行；不写秒也行；这样也行 2022-03-09T00:55:42+08:00
 categories: [OCCT]
-tags: [OCCT]
+tags: [OCCT, CAD]
 
 # 以下默认false
 math: true
@@ -49,3 +49,8 @@ Open Cascade中的布尔操作 http://cppblog.com/eryar/archive/2013/01/17/19735
 ### Mesh
 
 - [Mesh](https://dev.opencascade.org/doc/overview/html/occt_user_guides__mesh.html)
+
+### 来自Nvidia的CAD内核
+
+- [USD BRep](https://github.com/NVIDIA-Omniverse/usd-brep)：NVIDIA 已在 GitHub 公开包含三维 CAD 几何内核 SMLib 的 USD BRep
+  - [NVIDIA 以 Apache 2.0 公开 CAD 内核 SMLib｜USD BRep 里有什么、可以怎么用](https://cldnavi.com/zh/blog/nvidia-smlib-usd-brep-2026/)
