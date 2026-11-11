@@ -30,6 +30,15 @@ a:focus {
   -webkit-font-smoothing: antialiased !important;
 }
 
+#project_name a {
+  display: inline-flex;
+  padding-left: 7px;
+  margin-left: -2px;
+  text-align: -webkit-auto;
+  vertical-align: baseline;
+  font-size: 18px;
+}
+
 
 #logout {
   font-family: "Proxima Nova", sans-serif;
