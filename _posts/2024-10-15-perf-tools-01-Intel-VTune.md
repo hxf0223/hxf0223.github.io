@@ -128,6 +128,23 @@ VTune 2025/2026 将官方支持的最低客户端微架构上调至第 10 代酷
 
 3. **硬件 PMU 采样（Cycles / Cache Misses）**：使用系统原生 `perf record` 采集后重命名为 `data.perf` 导入 VTune GUI 分析（详见《perf性能分析(3)》）。
 
+### 1.7 推荐组合：旧款 CPU（如 8 代酷睿）退回 VTune 2024.x + Linux 原生 Perf 模式
+
+若希望在旧款 CPU（如第 8 代酷睿 i5-8260U Skylake / Kabylake）上获得最完整、零折腾的硬件事件分析体验，推荐安装 **Intel VTune Profiler 2024.x**：
+
+1. **修正软链接**：安装 2024.x 之后，若系统此前装过更高版本（如 2026），需手动将软链接切换至 2024 版本：
+   ```bash
+   sudo ln -sfn 2024.2 /opt/intel/oneapi/vtune/latest
+   ```
+2. **无需编译内核驱动，免折腾开箱即用**：
+   在配置了 `kernel.perf_event_paranoid = 0` 后，VTune 2024 识别到 CPU 微架构（如 `Kabylake ULX / PMU: skylake`），会自动启用 **Linux Perf Driverless 模式**。
+   经实测，无需编译加载 `sep5` 内核驱动，以下所有分析类型均直接通过并可完美使用：
+   - **Performance Snapshot**（性能快照）
+   - **Hotspots (User-mode & HW event-based)**（热点分析与硬件事件采样）
+   - **Microarchitecture Exploration**（微架构探索，Top-Down 瓶颈定位）
+   - **Memory Access**（内存访问与带宽分析）
+   - **Threading with HW event-based sampling**（多线程硬件事件分析）
+
 ## 2. 参考及资料
 
 - [Intel® VTune™ Profiler 分析 C++ 程序的常见性能瓶颈( Windows 平台)](https://www.zevorn.cn/posts/8)
