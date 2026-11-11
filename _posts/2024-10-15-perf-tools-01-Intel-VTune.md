@@ -101,6 +101,33 @@ sudo ./boot-script --install -g vtune -d /opt/intel/oneapi/vtune/latest/sepdk/sr
 
 脚本会逐项检测并输出当前环境可执行的 `Profiling` 类型及潜在配置建议。
 
+### 1.6 旧代际 CPU（第 6~9 代酷睿）在 VTune 2026 下的兼容修复
+
+VTune 2025/2026 将官方支持的最低客户端微架构上调至第 10 代酷睿（Ice Lake），移除了第 6~9 代酷睿（如 `i5-8260U` Skylake/Whiskey Lake）的内置 PMU 事件表，导致 `PMU` 上下文变量为空字符串 `""`。这会触发 `hotspots.cfg` / `runss.cfg` 的空参数拼接 Bug：
+
+> `vtune: Error: Option 'pmu-type' received value from the next argument: '--event-config=...'`
+
+**解决方案**：
+
+1. **一劳永逸修复配置文件（使 `vtune -collect hotspots` 与 GUI 直接可用）**：
+
+   ```bash
+   sudo sed -i "s/test=\"exsl:ctx('enableCharacterizationInsights', 0)\"/test=\"exsl:ctx('enableCharacterizationInsights', 0) and exsl:ctx('PMU', '') != '' and exsl:ctx('PMU', 'none') != 'none'\"/g" \
+     /opt/intel/oneapi/vtune/latest/config/analysis_type/hotspots.cfg
+
+   sudo sed -i "s/test=\"exsl:ctx('PMU', 'none') != 'none'\"/test=\"exsl:ctx('PMU', 'none') != 'none' and exsl:ctx('PMU', '') != ''\"/g" \
+     /opt/intel/oneapi/vtune/latest/config/collector/runss.cfg \
+     /opt/intel/oneapi/vtune/latest/config/collector/runsa.cfg
+   ```
+
+2. **或在命令行采集时显式关闭硬件计数洞察**：
+
+   ```bash
+   vtune -collect hotspots -knob enable-characterization-insights=false -r ./result_dir -- ./your_app
+   ```
+
+3. **硬件 PMU 采样（Cycles / Cache Misses）**：使用系统原生 `perf record` 采集后重命名为 `data.perf` 导入 VTune GUI 分析（详见《perf性能分析(3)》）。
+
 ## 2. 参考及资料
 
 - [Intel® VTune™ Profiler 分析 C++ 程序的常见性能瓶颈( Windows 平台)](https://www.zevorn.cn/posts/8)
